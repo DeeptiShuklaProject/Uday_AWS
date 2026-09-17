@@ -24,5 +24,4 @@ databases:
   # ============================================================================
   - name: masterclass-postgres
     databaseName: masterclass_db
-    user: postgres
     plan: free
