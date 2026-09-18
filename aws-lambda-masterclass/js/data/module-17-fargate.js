@@ -407,15 +407,7 @@ task = run_fargate_task(
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 16: Amazon ECS', url: 'module-16.html' },
-        next: { title: 'Module 18: Elastic Load Balancing', url: 'module-18.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 24: Amazon ECS', url: 'module-16.html' }, next: { title: 'Chapter 26: AWS CodeBuild', url: 'module-19.html' } } }
   ]
 };
 

@@ -91,7 +91,7 @@ def list_accounts():
           'orgs.list_parents(ChildId=account_id)'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 30: AWS WAF & Shield', url: 'module-30.html' }, next: { title: 'Module 32: AWS PrivateLink', url: 'module-32.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 34: Amazon OpenSearch', url: 'module-34.html' }, next: { title: 'Chapter 36: AWS IAM Identity Center', url: 'module-36.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_31_DATA; } else { window.MODULE_31_DATA = MODULE_31_DATA; }

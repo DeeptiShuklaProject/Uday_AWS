@@ -86,7 +86,7 @@ def create_interface_endpoint(vpc_id, service, subnets, security_groups):
           'ec2.describe_vpc_endpoints()'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 31: AWS Organizations', url: 'module-31.html' }, next: { title: 'Module 33: Amazon ElastiCache', url: 'module-33.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 31: AWS WAF & Shield', url: 'module-30.html' }, next: { title: 'Chapter 33: Amazon ElastiCache', url: 'module-33.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_32_DATA; } else { window.MODULE_32_DATA = MODULE_32_DATA; }

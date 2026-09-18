@@ -393,15 +393,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 02: Amazon S3', url: 'module-02.html' },
-        next: { title: 'Module 04: Amazon VPC', url: 'module-04.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 01: Amazon VPC', url: 'module-04.html' }, next: { title: 'Chapter 03: Amazon S3', url: 'module-02.html' } } }
   ]
 };
 

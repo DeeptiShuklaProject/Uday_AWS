@@ -409,15 +409,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 20: AWS CodePipeline', url: 'module-20.html' },
-        next: { title: 'Module 22: AWS KMS', url: 'module-22.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 27: AWS CodePipeline', url: 'module-20.html' }, next: { title: 'Chapter 29: AWS Config', url: 'module-27.html' } } }
   ]
 };
 

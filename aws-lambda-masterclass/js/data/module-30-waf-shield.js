@@ -89,7 +89,7 @@ def get_web_acl_summary(name, scope='REGIONAL'):
           'waf.get_web_acl(Name=..., Scope=..., Id=...)'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 29: Amazon CloudFront', url: 'module-29.html' }, next: { title: 'Module 31: AWS Organizations', url: 'module-31.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 30: AWS Backup', url: 'module-28.html' }, next: { title: 'Chapter 32: AWS PrivateLink', url: 'module-32.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_30_DATA; } else { window.MODULE_30_DATA = MODULE_30_DATA; }

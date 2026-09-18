@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AWS Lambda Masterclass — Interactive hands-on learning platform. Master serverless computing from beginner to production-ready architect.">
-  <title>AWS Lambda Masterclass — From Zero to Production</title>
+  <meta name="description" content="AWS Production Masterclass — Build, deploy, secure, scale, and operate a real AWS production environment. 37 chapters from zero to production-ready architect.">
+  <title>AWS Production Masterclass — From Zero to Production</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/design-system.css">
@@ -74,6 +74,41 @@
       color: var(--color-neutral-500);
       margin-bottom: 0;
     }
+
+    /* Journey section */
+    .journey-section {
+      background: var(--surface-page);
+      padding: var(--space-8) 0;
+    }
+    .journey-flow {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-3);
+      padding: var(--space-4) 0;
+    }
+    .journey-stage {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 8px 16px;
+      background: var(--color-neutral-0);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--color-neutral-700);
+      transition: all var(--transition-base);
+    }
+    .journey-stage:hover {
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+    .journey-arrow {
+      color: var(--color-neutral-300);
+      font-size: var(--text-lg);
+      font-weight: bold;
+    }
   </style>
 </head>
 <body class="landing-body">
@@ -82,30 +117,27 @@
   <section class="hero">
     <div class="hero-content animate-fade-in-up">
       <div class="hero-badge">
-        ⚡ Interactive Learning Platform
+        🚀 Interactive Learning Platform
       </div>
       <h1>
-        AWS Lambda<br>
+        AWS Production<br>
         <span class="highlight">Masterclass</span>
       </h1>
       <p class="hero-desc">
-        From zero to production-ready serverless architect. Interactive labs, simulated consoles, real-world scenarios, and hands-on challenges.
+        Build, deploy, secure, scale, and operate a real AWS production environment. 37 chapters. One continuous project. From zero to production-ready architect.
       </p>
       <div style="display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
-        <a href="modules/module-08.html" class="btn btn-xl btn-primary" style="text-decoration: none;">
+        <a href="modules/module-04.html" class="btn btn-xl btn-primary" style="text-decoration: none;">
           🚀 Start Learning
         </a>
-        <a href="component-library.html" class="btn btn-xl btn-secondary" style="text-decoration: none;">
-          🧩 Component Library
-        </a>
-        <a href="#modules" class="btn btn-xl btn-ghost" style="text-decoration: none; color: white;">
-          📚 Browse Modules
+        <a href="#chapters" class="btn btn-xl btn-secondary" style="text-decoration: none;">
+          📚 Browse Chapters
         </a>
       </div>
       <div class="hero-stats stagger-children">
         <div class="hero-stat">
-          <div class="hero-stat-value">7</div>
-          <div class="hero-stat-label">Modules</div>
+          <div class="hero-stat-value">37</div>
+          <div class="hero-stat-label">Chapters</div>
         </div>
         <div class="hero-stat">
           <div class="hero-stat-value">50+</div>
@@ -119,6 +151,53 @@
           <div class="hero-stat-value">20+</div>
           <div class="hero-stat-label">Challenges</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEARNING JOURNEY -->
+  <section class="page-section journey-section">
+    <div class="container">
+      <div class="page-section-header">
+        <h2>Your Learning Journey</h2>
+        <p>A production-oriented path — each chapter solves a real problem that naturally introduces the next AWS service.</p>
+      </div>
+      <div class="journey-flow stagger-children">
+        <div class="journey-stage">🏗️ Build Network</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🖥️ Launch App</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🪣 Store Files</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🔐 Secure Access</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">⚖️ Load Balance</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🌐 Add DNS</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🌍 Add CDN</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">📊 Monitor</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🗃️ Database</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🔐 Encrypt</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">⚡ Go Serverless</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">📨 Messaging</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🚀 Containers</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🔄 CI/CD</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">⚙️ IaC</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🛡️ Protect</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🏢 Govern</div>
+        <span class="journey-arrow">→</span>
+        <div class="journey-stage">🧠 GenAI</div>
       </div>
     </div>
   </section>
@@ -170,7 +249,7 @@
     <div class="container">
       <div class="page-section-header">
         <h2>Your Progress</h2>
-        <p>Track your learning journey across all modules.</p>
+        <p>Track your learning journey across all 37 chapters.</p>
       </div>
       <div id="dashboard-stats" class="dashboard-grid stagger-children">
         <!-- Populated by app.js -->
@@ -178,12 +257,12 @@
     </div>
   </section>
 
-  <!-- MODULES -->
-  <section class="page-section" id="modules" style="background: var(--color-neutral-0);">
+  <!-- CHAPTERS -->
+  <section class="page-section" id="chapters" style="background: var(--color-neutral-0);">
     <div class="container">
       <div class="page-section-header">
-        <h2>Course Modules</h2>
-        <p>7 comprehensive modules covering AWS Lambda and its ecosystem.</p>
+        <h2>Course Chapters</h2>
+        <p>37 chapters following a real-world production architecture journey.</p>
       </div>
       <div id="module-grid" class="module-grid stagger-children">
         <!-- Populated by app.js -->
@@ -206,10 +285,7 @@
 
   <!-- FOOTER -->
   <footer class="app-footer">
-    <p>
-      AWS Lambda Masterclass — Interactive Learning Platform &bull; 
-      <a href="component-library.html" style="color: var(--color-primary-400); text-decoration: underline; font-weight: 600;">Explore Reusable Component Library</a>
-    </p>
+    <p>AWS Production Masterclass — Interactive Learning Platform</p>
     <p style="font-size: var(--text-xs); color: var(--color-neutral-400);">
       Built for learning. Content sourced from AWS documentation and rewritten for interactive instruction.<br>
       AWS, Lambda, and other AWS service names are trademarks of Amazon Web Services, Inc.

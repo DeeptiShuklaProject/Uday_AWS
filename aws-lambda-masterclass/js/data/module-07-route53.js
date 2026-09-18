@@ -399,15 +399,7 @@ def setup_failover(hosted_zone_id, domain, primary_alb_dns, secondary_alb_dns):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 06: Amazon RDS', url: 'module-06.html' },
-        next: { title: 'Module 08: AWS Lambda', url: 'module-08.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 05: Elastic Load Balancing', url: 'module-18.html' }, next: { title: 'Chapter 07: Amazon CloudFront', url: 'module-29.html' } } }
   ]
 };
 

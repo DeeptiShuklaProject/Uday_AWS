@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — PROGRESS ENGINE
+ * AWS PRODUCTION MASTERCLASS — PROGRESS ENGINE
  * Tracks course/module/lesson/section completion in localStorage
  * ============================================================
  * 

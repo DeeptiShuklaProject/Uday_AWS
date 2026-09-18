@@ -73,7 +73,7 @@ const MODULE_27_DATA = {
       starterCode: `import boto3\nimport logging\n\nlogger = logging.getLogger()\nlogger.setLevel(logging.INFO)\nconfig = boto3.client('config')\n\ndef lambda_handler(event, context):\n    # TODO: Get compliance summary\n    # TODO: Find non-compliant rules\n    # TODO: Return report\n    pass`,
       language: 'python', hints: ['config.get_compliance_summary_by_config_rule()', 'describe_compliance_by_config_rule()', 'Filter NON_COMPLIANT'],
       testCases: [{ description: 'Uses Config API', keywords: ['config'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 26: AWS CloudTrail', url: 'module-26.html' }, next: { title: 'Module 28: AWS Backup', url: 'module-28.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 28: AWS CloudFormation', url: 'module-21.html' }, next: { title: 'Chapter 30: AWS Backup', url: 'module-28.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_27_DATA; } else { window.MODULE_27_DATA = MODULE_27_DATA; }

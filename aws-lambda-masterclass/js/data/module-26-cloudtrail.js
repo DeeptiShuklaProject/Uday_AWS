@@ -180,7 +180,7 @@ def lookup_root_logins(hours=24):
         language: 'python', hints: ['ct.lookup_events(StartTime=...)', 'Check userIdentity type for Root', 'Group by EventName'],
         testCases: [{ description: 'Uses lookup_events', keywords: ['lookup_events'], expectedOutput: 'events' }] } },
 
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 25: AWS SSM', url: 'module-25.html' }, next: { title: 'Module 27: AWS Config', url: 'module-27.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 08: Amazon CloudWatch', url: 'module-05.html' }, next: { title: 'Chapter 10: Amazon RDS', url: 'module-06.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_26_DATA; } else { window.MODULE_26_DATA = MODULE_26_DATA; }

@@ -101,7 +101,7 @@ def invalidate_cache(key):
           'hit_rate = hits / (hits + misses) * 100'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 32: AWS PrivateLink', url: 'module-32.html' }, next: { title: 'Module 34: Amazon OpenSearch', url: 'module-34.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 32: AWS PrivateLink', url: 'module-32.html' }, next: { title: 'Chapter 34: Amazon OpenSearch', url: 'module-34.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_33_DATA; } else { window.MODULE_33_DATA = MODULE_33_DATA; }

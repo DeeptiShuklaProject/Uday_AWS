@@ -446,15 +446,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 12: Amazon SQS', url: 'module-12.html' },
-        next: { title: 'Module 14: Amazon EventBridge', url: 'module-14.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 19: Amazon SQS', url: 'module-12.html' }, next: { title: 'Chapter 21: Amazon EventBridge', url: 'module-14.html' } } }
   ]
 };
 

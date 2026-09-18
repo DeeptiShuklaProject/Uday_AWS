@@ -74,7 +74,7 @@ const MODULE_28_DATA = {
       starterCode: `import boto3\nimport logging\n\nlogger = logging.getLogger()\nlogger.setLevel(logging.INFO)\nbackup = boto3.client('backup')\n\ndef lambda_handler(event, context):\n    # TODO: List backup jobs\n    # TODO: Check for failures\n    # TODO: Return report\n    pass`,
       language: 'python', hints: ['backup.list_backup_jobs(ByState="FAILED")', 'Include ResourceType and StatusMessage'],
       testCases: [{ description: 'Uses backup API', keywords: ['backup'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 27: AWS Config', url: 'module-27.html' }, next: { title: 'Module 29: Amazon CloudFront', url: 'module-29.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 29: AWS Config', url: 'module-27.html' }, next: { title: 'Chapter 31: AWS WAF & Shield', url: 'module-30.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_28_DATA; } else { window.MODULE_28_DATA = MODULE_28_DATA; }

@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — LAB ENGINE
+ * AWS PRODUCTION MASTERCLASS — LAB ENGINE
  * State-machine-based lab with step validation
  * ============================================================
  */

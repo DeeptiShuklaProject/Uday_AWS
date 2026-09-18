@@ -401,15 +401,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 14: Amazon EventBridge', url: 'module-14.html' },
-        next: { title: 'Module 16: Amazon ECS', url: 'module-16.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 22: AWS Step Functions', url: 'module-35.html' }, next: { title: 'Chapter 24: Amazon ECS', url: 'module-16.html' } } }
   ]
 };
 

@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — CONSOLE SIMULATOR
+ * AWS PRODUCTION MASTERCLASS — CONSOLE SIMULATOR
  * Visual AWS Console mockup with guided navigation
  * ============================================================
  */

@@ -108,7 +108,7 @@ def list_distributions():
           'cf.create_invalidation(DistributionId=..., InvalidationBatch=...)'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 28: AWS Backup', url: 'module-28.html' }, next: { title: 'Module 30: AWS WAF & Shield', url: 'module-30.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 06: Amazon Route 53', url: 'module-07.html' }, next: { title: 'Chapter 08: Amazon CloudWatch', url: 'module-05.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_29_DATA; } else { window.MODULE_29_DATA = MODULE_29_DATA; }

@@ -396,15 +396,7 @@ def audit_key_policies():
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 21: AWS CloudFormation', url: 'module-21.html' },
-        next: { title: 'Module 23: AWS STS', url: 'module-23.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 10: Amazon RDS', url: 'module-06.html' }, next: { title: 'Chapter 12: AWS Secrets Manager', url: 'module-24.html' } } }
   ]
 };
 

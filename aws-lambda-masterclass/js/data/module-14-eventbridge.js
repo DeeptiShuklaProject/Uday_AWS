@@ -548,15 +548,7 @@ def handle_premium_order(order_id, amount):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 13: Amazon SNS', url: 'module-13.html' },
-        next: { title: 'Back to Course', url: '../index.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 20: Amazon SNS', url: 'module-13.html' }, next: { title: 'Chapter 22: AWS Step Functions', url: 'module-35.html' } } }
   ]
 };
 

@@ -510,15 +510,7 @@ simulate_policy(
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Course Home', url: '../index.html' },
-        next: { title: 'Module 02: Amazon S3', url: 'module-02.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 03: Amazon S3', url: 'module-02.html' }, next: { title: 'Chapter 05: Elastic Load Balancing', url: 'module-18.html' } } }
   ]
 };
 

@@ -392,15 +392,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 17: AWS Fargate', url: 'module-17.html' },
-        next: { title: 'Module 19: AWS CodeBuild', url: 'module-19.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 04: AWS IAM', url: 'module-01.html' }, next: { title: 'Chapter 06: Amazon Route 53', url: 'module-07.html' } } }
   ]
 };
 

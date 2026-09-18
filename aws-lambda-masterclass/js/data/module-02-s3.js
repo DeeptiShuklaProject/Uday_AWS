@@ -381,15 +381,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 01: AWS IAM', url: 'module-01.html' },
-        next: { title: 'Module 03: Amazon EC2', url: 'module-03.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 02: Amazon EC2', url: 'module-03.html' }, next: { title: 'Chapter 04: AWS IAM', url: 'module-01.html' } } }
   ]
 };
 

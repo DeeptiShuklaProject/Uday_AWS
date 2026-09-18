@@ -95,7 +95,7 @@ def get_execution_status(execution_arn):
           'sf.list_executions(stateMachineArn=..., statusFilter="FAILED")'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 34: Amazon OpenSearch', url: 'module-34.html' }, next: { title: 'Module 36: AWS IAM Identity Center', url: 'module-36.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 21: Amazon EventBridge', url: 'module-14.html' }, next: { title: 'Chapter 23: Amazon ECR', url: 'module-15.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_35_DATA; } else { window.MODULE_35_DATA = MODULE_35_DATA; }

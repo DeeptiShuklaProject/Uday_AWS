@@ -2,9 +2,6 @@
 
 Welcome to the **Enterprise AWS Masterclass Course Notes**. This comprehensive curriculum is designed to take software engineers, cloud architects, DevOps professionals, and security leads from foundational concepts to advanced enterprise deployment.
 
-
-> 💡 **Interactive Web App & Labs:** To run the interactive web application on any port, see [HOW_TO_RUN.md](file:///d:/wscs_bedrock/Uday_AWS_Services_notes/HOW_TO_RUN.md) or double-click [start_server.bat](file:///d:/wscs_bedrock/Uday_AWS_Services_notes/start_server.bat).
-
 ---
 
 ## Course Navigation Index

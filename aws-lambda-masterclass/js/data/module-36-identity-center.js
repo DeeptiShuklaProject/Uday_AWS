@@ -93,7 +93,7 @@ def list_permission_sets(instance_arn):
           'sso.list_account_assignments(InstanceArn=..., AccountId=..., PermissionSetArn=...)'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 35: AWS Step Functions', url: 'module-35.html' }, next: { title: 'Module 37: Amazon Bedrock & GenAI', url: 'module-37.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 35: AWS Organizations', url: 'module-31.html' }, next: { title: 'Chapter 37: Amazon Bedrock & GenAI', url: 'module-37.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_36_DATA; } else { window.MODULE_36_DATA = MODULE_36_DATA; }

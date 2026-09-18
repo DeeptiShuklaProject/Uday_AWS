@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — QUIZ ENGINE
+ * AWS PRODUCTION MASTERCLASS — QUIZ ENGINE
  * Interactive quiz system supporting multiple question types
  * ============================================================
  * 

@@ -406,15 +406,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 05: Amazon CloudWatch', url: 'module-05.html' },
-        next: { title: 'Module 07: Amazon Route 53', url: 'module-07.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 09: AWS CloudTrail', url: 'module-26.html' }, next: { title: 'Chapter 11: AWS KMS', url: 'module-22.html' } } }
   ]
 };
 

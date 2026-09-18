@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — CHALLENGE ENGINE
+ * AWS PRODUCTION MASTERCLASS — CHALLENGE ENGINE
  * Hands-on coding/configuration challenges with evaluation
  * ============================================================
  */

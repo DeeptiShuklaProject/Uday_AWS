@@ -1,23 +1,9 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — APP CONTROLLER
+ * AWS PRODUCTION MASTERCLASS — APP CONTROLLER
  * Main application initialization and coordination
  * ============================================================
  */
-
-// Ensure api-sync is dynamically loaded if not loaded explicitly
-if (typeof ApiSyncEngine === 'undefined') {
-  const isModule = window.location.pathname.includes('/modules/');
-  const syncPath = isModule ? '../js/engine/api-sync.js' : 'js/engine/api-sync.js';
-  const tag = document.createElement('script');
-  tag.src = syncPath;
-  tag.onload = () => {
-    if (window.app && window.app.progress && window.apiSync) {
-      window.apiSync.attachToProgressEngine(window.app.progress, window.app.currentModule);
-    }
-  };
-  document.head.appendChild(tag);
-}
 
 class App {
   constructor() {
@@ -34,10 +20,6 @@ class App {
       storageKey: 'aws-masterclass-progress',
       modules: COURSE_REGISTRY.modules
     });
-
-    if (window.apiSync) {
-      window.apiSync.attachToProgressEngine(this.progress, this.currentModule);
-    }
 
     this._renderLandingStats();
     this._renderModuleCards();
@@ -60,10 +42,6 @@ class App {
       storageKey: 'aws-masterclass-progress',
       modules: COURSE_REGISTRY.modules
     });
-
-    if (window.apiSync) {
-      window.apiSync.attachToProgressEngine(this.progress, this.currentModule);
-    }
 
     this._setupTopbarProgress();
     this._renderSidebar();
@@ -156,7 +134,7 @@ class App {
               ${mod.icon}
             </div>
             <div class="module-title">${mod.title}</div>
-            <div class="module-desc">${mod.description}</div>
+            <div class="module-desc">${mod.productionStory || mod.description}</div>
             <div style="margin-top: 12px;">
               <div class="progress-label">
                 <span class="progress-label-title" style="font-size: 12px;">${isComplete ? '✅ Complete' : 'Progress'}</span>

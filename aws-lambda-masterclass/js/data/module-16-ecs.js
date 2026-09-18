@@ -528,15 +528,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 15: Amazon ECR', url: 'module-15.html' },
-        next: { title: 'Module 17: AWS Fargate', url: 'module-17.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 23: Amazon ECR', url: 'module-15.html' }, next: { title: 'Chapter 25: AWS Fargate', url: 'module-17.html' } } }
   ]
 };
 

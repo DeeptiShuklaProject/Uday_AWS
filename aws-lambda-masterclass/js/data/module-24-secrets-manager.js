@@ -310,15 +310,7 @@ def lambda_handler(event, context):
         ]
       }
     },
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 23: AWS STS', url: 'module-23.html' },
-        next: { title: 'Module 25: AWS Systems Manager', url: 'module-25.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 11: AWS KMS', url: 'module-22.html' }, next: { title: 'Chapter 13: AWS STS', url: 'module-23.html' } } }
   ]
 };
 

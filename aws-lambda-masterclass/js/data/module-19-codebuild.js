@@ -402,15 +402,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 18: Elastic Load Balancing', url: 'module-18.html' },
-        next: { title: 'Module 20: AWS CodePipeline', url: 'module-20.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 25: AWS Fargate', url: 'module-17.html' }, next: { title: 'Chapter 27: AWS CodePipeline', url: 'module-20.html' } } }
   ]
 };
 

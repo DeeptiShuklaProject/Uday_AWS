@@ -406,15 +406,7 @@ def diagnose_connectivity(subnet_id):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 03: Amazon EC2', url: 'module-03.html' },
-        next: { title: 'Module 05: Amazon CloudWatch', url: 'module-05.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Course Home', url: '../index.html' }, next: { title: 'Chapter 02: Amazon EC2', url: 'module-03.html' } } }
   ]
 };
 

@@ -402,15 +402,7 @@ def create_lambda_error_alarm(function_name, threshold, sns_topic_arn):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 04: Amazon VPC', url: 'module-04.html' },
-        next: { title: 'Module 06: Amazon RDS', url: 'module-06.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 07: Amazon CloudFront', url: 'module-29.html' }, next: { title: 'Chapter 09: AWS CloudTrail', url: 'module-26.html' } } }
   ]
 };
 

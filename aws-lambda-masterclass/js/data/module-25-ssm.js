@@ -280,15 +280,7 @@ def lambda_handler(event, context):
         ]
       }
     },
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 24: AWS Secrets Manager', url: 'module-24.html' },
-        next: { title: 'Module 26: AWS CloudTrail', url: 'module-26.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 13: AWS STS', url: 'module-23.html' }, next: { title: 'Chapter 15: AWS Lambda', url: 'module-08.html' } } }
   ]
 };
 

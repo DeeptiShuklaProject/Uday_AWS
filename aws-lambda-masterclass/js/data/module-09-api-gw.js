@@ -438,15 +438,7 @@ def build_response(status_code, body):
     },
 
     // ===== NEXT =====
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 08: AWS Lambda', url: 'module-08.html' },
-        next: { title: 'Module 10: Amazon DynamoDB', url: 'module-10.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 15: AWS Lambda', url: 'module-08.html' }, next: { title: 'Chapter 17: Amazon DynamoDB', url: 'module-10.html' } } }
   ]
 };
 

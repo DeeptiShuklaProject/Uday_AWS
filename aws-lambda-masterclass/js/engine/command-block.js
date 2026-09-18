@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — COMMAND BLOCK ENGINE
+ * AWS PRODUCTION MASTERCLASS — COMMAND BLOCK ENGINE
  * Reusable command blocks with COPY/RUN/EXPLAIN/TRY IT/RESET
  * ============================================================
  */

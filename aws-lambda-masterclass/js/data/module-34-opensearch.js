@@ -94,7 +94,7 @@ def search_logs(index, query_text, size=10):
           'os_client.search(index="logs-*", body={"query": {"match": {"level": "ERROR"}}})'
       ],
       testCases: [{ description: 'Implements core logic', keywords: ['boto3'], expectedOutput: 'PASS' }] } },
-    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Module 33: Amazon ElastiCache', url: 'module-33.html' }, next: { title: 'Module 35: AWS Step Functions', url: 'module-35.html' } } }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 33: Amazon ElastiCache', url: 'module-33.html' }, next: { title: 'Chapter 35: AWS Organizations', url: 'module-31.html' } } }
   ]
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = MODULE_34_DATA; } else { window.MODULE_34_DATA = MODULE_34_DATA; }

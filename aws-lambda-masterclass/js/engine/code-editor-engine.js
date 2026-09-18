@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — CODE EDITOR ENGINE
+ * AWS PRODUCTION MASTERCLASS — CODE EDITOR ENGINE
  * Syntax-highlighted code editor with language tabs
  * ============================================================
  * 

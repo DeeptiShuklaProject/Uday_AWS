@@ -553,15 +553,7 @@ def lambda_handler(event, context):
       }
     },
 
-    {
-      id: 'next',
-      type: 'next',
-      title: '',
-      content: {
-        prev: { title: 'Module 09: Amazon API Gateway', url: 'module-09.html' },
-        next: { title: 'Module 11: Amazon Cognito', url: 'module-11.html' }
-      }
-    }
+    { id: 'next', type: 'next', title: '', content: { prev: { title: 'Chapter 16: Amazon API Gateway', url: 'module-09.html' }, next: { title: 'Chapter 18: Amazon Cognito', url: 'module-11.html' } } }
   ]
 };
 

@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — DIAGRAM ENGINE
+ * AWS PRODUCTION MASTERCLASS — DIAGRAM ENGINE
  * Interactive SVG architecture diagrams
  * ============================================================
  */

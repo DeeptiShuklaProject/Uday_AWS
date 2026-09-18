@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — TERMINAL ENGINE
+ * AWS PRODUCTION MASTERCLASS — TERMINAL ENGINE
  * Simulated CLI terminal with command registry
  * ============================================================
  * 

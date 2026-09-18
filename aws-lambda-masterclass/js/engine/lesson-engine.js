@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * AWS LAMBDA MASTERCLASS — LESSON ENGINE
+ * AWS PRODUCTION MASTERCLASS — LESSON ENGINE
  * Renders a complete lesson from structured data
  * ============================================================
  * 
