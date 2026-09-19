@@ -73,7 +73,7 @@ Ch 35-37: + Enterprise governance + GenAI capstone
 ### Option 1 — npx (Recommended)
 
 ```bash
-cd Uday_AWS_Services_notes
+cd Uday_AWS
 npx -y http-server ./aws-lambda-masterclass -p 5500 -c-1 -o
 ```
 
