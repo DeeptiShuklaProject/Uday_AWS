@@ -849,6 +849,216 @@ const COURSE_REGISTRY = {
         { id: 'concepts', title: 'Core Concepts', sections: [] },
         { id: 'quiz-bedrock', title: 'Knowledge Check', sections: [] }
       ]
+    },
+    {
+      id: 'module-38',
+      number: '38',
+      title: 'AWS Glue & ETL — Serverless Data Integration',
+      description: 'Master serverless data integration, ETL pipelines, Data Catalog, and Crawlers.',
+      productionStory: 'Transform and move petabytes of data without managing Spark clusters.',
+      icon: '🔄',
+      difficulty: 'advanced',
+      duration: '90 min',
+      color: '#059669',
+      colorBg: '#ecfdf5',
+      href: 'modules/module-38.html',
+      dataFile: 'module-38-glue',
+      tags: ['Glue', 'ETL', 'Analytics', 'Data'],
+      lessons: [
+        { id: 'glue-overview', title: 'AWS Glue Architecture', sections: [] },
+        { id: 'glue-etl', title: 'ETL Pipelines & Crawlers', sections: [] },
+        { id: 'glue-lab', title: 'Hands-on Glue Lab', sections: [] },
+        { id: 'quiz-glue', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-39',
+      number: '39',
+      title: 'Amazon Athena — Serverless Interactive Queries',
+      description: 'Query data directly in S3 using standard SQL with zero infrastructure setup.',
+      productionStory: 'Analyze terabytes of log data in seconds using standard SQL on S3.',
+      icon: '🔍',
+      difficulty: 'intermediate',
+      duration: '75 min',
+      color: '#0284c7',
+      colorBg: '#f0f9ff',
+      href: 'modules/module-39.html',
+      dataFile: 'module-39-athena',
+      tags: ['Athena', 'SQL', 'Data Lake', 'Analytics'],
+      lessons: [
+        { id: 'athena-overview', title: 'Amazon Athena Architecture', sections: [] },
+        { id: 'athena-queries', title: 'Partitioning & Performance', sections: [] },
+        { id: 'athena-lab', title: 'Hands-on Athena Lab', sections: [] },
+        { id: 'quiz-athena', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-40',
+      number: '40',
+      title: 'Amazon EFS — Elastic File System',
+      description: 'Serverless elastic file storage for EC2, ECS, and Lambda shared across AZs.',
+      productionStory: 'Shared POSIX file system accessible concurrently from thousands of instances.',
+      icon: '📁',
+      difficulty: 'intermediate',
+      duration: '80 min',
+      color: '#d97706',
+      colorBg: '#fffbeb',
+      href: 'modules/module-40.html',
+      dataFile: 'module-40-efs',
+      tags: ['EFS', 'Storage', 'NFS', 'POSIX'],
+      lessons: [
+        { id: 'efs-overview', title: 'EFS Architecture & Storage Classes', sections: [] },
+        { id: 'efs-performance', title: 'Throughput & Mount Targets', sections: [] },
+        { id: 'efs-lab', title: 'Hands-on EFS Lab', sections: [] },
+        { id: 'quiz-efs', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-41',
+      number: '41',
+      title: 'AWS X-Ray — Distributed Tracing & Observability',
+      description: 'Trace requests across microservices, analyze latency bottlenecks, and debug errors.',
+      productionStory: 'Visualize microservice call graphs and pinpoint latency spikes in real time.',
+      icon: '📉',
+      difficulty: 'intermediate',
+      duration: '70 min',
+      color: '#7c3aed',
+      colorBg: '#f5f3ff',
+      href: 'modules/module-41.html',
+      dataFile: 'module-41-xray',
+      tags: ['X-Ray', 'Tracing', 'Observability', 'DevOps'],
+      lessons: [
+        { id: 'xray-overview', title: 'X-Ray Tracing Architecture', sections: [] },
+        { id: 'xray-instrumentation', title: 'Service Map & Sampling', sections: [] },
+        { id: 'xray-lab', title: 'Hands-on X-Ray Lab', sections: [] },
+        { id: 'quiz-xray', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-42',
+      number: '42',
+      title: 'AWS CodeDeploy — Deployment Automation',
+      description: 'Automate code deployments to EC2, ECS, and AWS Lambda with zero downtime.',
+      productionStory: 'Safe zero-downtime deployments with automatic rollbacks on alarm triggers.',
+      icon: '🚀',
+      difficulty: 'intermediate',
+      duration: '85 min',
+      color: '#db2777',
+      colorBg: '#fdf2f8',
+      href: 'modules/module-42.html',
+      dataFile: 'module-42-codedeploy',
+      tags: ['CodeDeploy', 'CI/CD', 'Deployments', 'DevOps'],
+      lessons: [
+        { id: 'codedeploy-overview', title: 'Deployment Strategies (Blue/Green, Canary)', sections: [] },
+        { id: 'appspec', title: 'AppSpec File & Lifecycle Hooks', sections: [] },
+        { id: 'codedeploy-lab', title: 'Hands-on CodeDeploy Lab', sections: [] },
+        { id: 'quiz-codedeploy', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-43',
+      number: '43',
+      title: 'Amazon GuardDuty — Intelligent Threat Detection',
+      description: 'Continuous security monitoring using ML to detect compromised accounts and resources.',
+      productionStory: 'AI-driven threat detection analyzing CloudTrail, VPC Flow Logs, and DNS logs.',
+      icon: '🛡️',
+      difficulty: 'intermediate',
+      duration: '65 min',
+      color: '#dc2626',
+      colorBg: '#fef2f2',
+      href: 'modules/module-43.html',
+      dataFile: 'module-43-guardduty',
+      tags: ['GuardDuty', 'Security', 'Threat Detection', 'AI'],
+      lessons: [
+        { id: 'guardduty-overview', title: 'GuardDuty Threat Architecture', sections: [] },
+        { id: 'guardduty-findings', title: 'Findings & Remediation', sections: [] },
+        { id: 'guardduty-lab', title: 'Hands-on GuardDuty Lab', sections: [] },
+        { id: 'quiz-guardduty', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-44',
+      number: '44',
+      title: 'Amazon Inspector — Automated Vulnerability Assessment',
+      description: 'Automated vulnerability scanning for EC2 instances, ECR container images, and Lambda functions.',
+      productionStory: 'Continually scan container images and OS packages for CVE vulnerabilities.',
+      icon: '🔍',
+      difficulty: 'intermediate',
+      duration: '60 min',
+      color: '#4f46e5',
+      colorBg: '#eef2ff',
+      href: 'modules/module-44.html',
+      dataFile: 'module-44-inspector',
+      tags: ['Inspector', 'Vulnerabilities', 'Security', 'CVE'],
+      lessons: [
+        { id: 'inspector-overview', title: 'Inspector Scanning Architecture', sections: [] },
+        { id: 'inspector-findings', title: 'Risk Scores & Remediation', sections: [] },
+        { id: 'inspector-lab', title: 'Hands-on Inspector Lab', sections: [] },
+        { id: 'quiz-inspector', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-45',
+      number: '45',
+      title: 'AWS Security Hub — Centralized Security Posture',
+      description: 'Centralized security state management and automated compliance checks across accounts.',
+      productionStory: 'Single pane of glass for multi-account security compliance standards.',
+      icon: '🏛️',
+      difficulty: 'advanced',
+      duration: '75 min',
+      color: '#0891b2',
+      colorBg: '#ecfeff',
+      href: 'modules/module-45.html',
+      dataFile: 'module-45-securityhub',
+      tags: ['Security Hub', 'Compliance', 'Security', 'CIS'],
+      lessons: [
+        { id: 'securityhub-overview', title: 'Security Hub & ASFF Architecture', sections: [] },
+        { id: 'securityhub-standards', title: 'Compliance Standards (CIS, PCI-DSS)', sections: [] },
+        { id: 'securityhub-lab', title: 'Hands-on Security Hub Lab', sections: [] },
+        { id: 'quiz-securityhub', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-46',
+      number: '46',
+      title: 'AWS Resource Access Manager (RAM) — Resource Sharing',
+      description: 'Share AWS resources across AWS accounts or within your AWS Organization securely.',
+      productionStory: 'Share Subnets, Transit Gateways, and Route53 rules without duplicate deployment.',
+      icon: '🤝',
+      difficulty: 'intermediate',
+      duration: '60 min',
+      color: '#65a30d',
+      colorBg: '#f7fee7',
+      href: 'modules/module-46.html',
+      dataFile: 'module-46-ram',
+      tags: ['RAM', 'Multi-Account', 'Governance', 'Sharing'],
+      lessons: [
+        { id: 'ram-overview', title: 'RAM Architecture & Principles', sections: [] },
+        { id: 'ram-shares', title: 'Resource Shares & Permissions', sections: [] },
+        { id: 'ram-lab', title: 'Hands-on RAM Lab', sections: [] },
+        { id: 'quiz-ram', title: 'Knowledge Check', sections: [] }
+      ]
+    },
+    {
+      id: 'module-47',
+      number: '47',
+      title: 'AWS Cost Explorer & Budgets — Cost Optimization',
+      description: 'Analyze AWS spending, set budget alerts, and enforce cost allocation tags.',
+      productionStory: 'Prevent cloud bill surprises with anomaly detection and automated budget actions.',
+      icon: '💰',
+      difficulty: 'beginner',
+      duration: '70 min',
+      color: '#16a34a',
+      colorBg: '#f0fdf4',
+      href: 'modules/module-47.html',
+      dataFile: 'module-47-cost',
+      tags: ['Cost Explorer', 'Budgets', 'FinOps', 'Billing'],
+      lessons: [
+        { id: 'cost-overview', title: 'Cost Explorer & Cost Allocation Tags', sections: [] },
+        { id: 'budgets', title: 'AWS Budgets & Anomaly Detection', sections: [] },
+        { id: 'cost-lab', title: 'Hands-on Cost Optimization Lab', sections: [] },
+        { id: 'quiz-cost', title: 'Knowledge Check', sections: [] }
+      ]
     }
   ],
 
@@ -890,7 +1100,17 @@ const COURSE_REGISTRY = {
     { id: 'orgs-master', title: 'Governance Pro', description: 'Manage multi-account governance', icon: '🏢', moduleId: 'module-31' },
     { id: 'identity-center-master', title: 'SSO Master', description: 'Centralize workforce access', icon: '👔', moduleId: 'module-36' },
     { id: 'bedrock-master', title: 'AI Engineer', description: 'Build GenAI applications', icon: '🧠', moduleId: 'module-37' },
-    { id: 'serverless-architect', title: 'Production Architect', description: 'Complete all 37 chapters', icon: '🏆', moduleId: null },
+    { id: 'glue-master', title: 'Data Engineer', description: 'Build serverless ETL pipelines', icon: '🔄', moduleId: 'module-38' },
+    { id: 'athena-master', title: 'SQL Analytics Expert', description: 'Query S3 data lakes with SQL', icon: '🔍', moduleId: 'module-39' },
+    { id: 'efs-master', title: 'Shared Storage Master', description: 'Configure multi-AZ EFS storage', icon: '📁', moduleId: 'module-40' },
+    { id: 'xray-master', title: 'Tracing Master', description: 'Instrument microservices with X-Ray', icon: '📉', moduleId: 'module-41' },
+    { id: 'codedeploy-master', title: 'Deployment Master', description: 'Automate blue/green deployments', icon: '🚀', moduleId: 'module-42' },
+    { id: 'guardduty-master', title: 'Threat Hunter', description: 'Detect security threats with ML', icon: '🛡️', moduleId: 'module-43' },
+    { id: 'inspector-master', title: 'Vulnerability Auditor', description: 'Scan workloads for CVEs', icon: '🔍', moduleId: 'module-44' },
+    { id: 'securityhub-master', title: 'Security Ops Master', description: 'Manage compliance standards', icon: '🏛️', moduleId: 'module-45' },
+    { id: 'ram-master', title: 'Resource Sharer', description: 'Share resources across accounts', icon: '🤝', moduleId: 'module-46' },
+    { id: 'cost-master', title: 'FinOps Master', description: 'Optimize AWS costs and budgets', icon: '💰', moduleId: 'module-47' },
+    { id: 'serverless-architect', title: 'Production Architect', description: 'Complete all 47 chapters', icon: '🏆', moduleId: null },
     { id: 'debugger', title: 'Production Debugger', description: 'Solve 10 troubleshooting scenarios', icon: '🔍', moduleId: null },
     { id: 'quiz-master', title: 'Quiz Master', description: 'Score 90%+ on all quizzes', icon: '🧠', moduleId: null }
   ],
