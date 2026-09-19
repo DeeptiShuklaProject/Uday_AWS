@@ -16,7 +16,7 @@ const COURSE_REGISTRY = {
   id: 'aws-production-masterclass',
   title: 'AWS Production Masterclass',
   subtitle: 'From Zero to Production-Ready AWS Architect',
-  description: 'Build, deploy, secure, scale, and operate a real AWS production environment — one chapter at a time. 37 chapters. One continuous project.',
+  description: 'Build, deploy, secure, scale, and operate a real AWS production environment — one chapter at a time. 47 chapters. One continuous project.',
 
   modules: [
     // ─────────────────────────────────────────────────────────
@@ -853,43 +853,43 @@ const COURSE_REGISTRY = {
     {
       id: 'module-38',
       number: '38',
-      title: 'AWS Glue & ETL — Serverless Data Integration',
-      description: 'Master serverless data integration, ETL pipelines, Data Catalog, and Crawlers.',
-      productionStory: 'Transform and move petabytes of data without managing Spark clusters.',
-      icon: '🔄',
-      difficulty: 'advanced',
-      duration: '90 min',
+      title: 'AWS Certificate Manager (ACM) — SSL/TLS Certificates',
+      description: 'Free SSL/TLS certificates, DNS & email validation, auto-renewal, ALB & CloudFront integration.',
+      productionStory: 'Free managed SSL certificates that auto-renew. Never worry about expired certs again.',
+      icon: '🔒',
+      difficulty: 'intermediate',
+      duration: '60 min',
       color: '#059669',
       colorBg: '#ecfdf5',
       href: 'modules/module-38.html',
-      dataFile: 'module-38-glue',
-      tags: ['Glue', 'ETL', 'Analytics', 'Data'],
+      dataFile: 'module-38-acm',
+      tags: ['ACM', 'SSL', 'TLS', 'Certificates'],
       lessons: [
-        { id: 'glue-overview', title: 'AWS Glue Architecture', sections: [] },
-        { id: 'glue-etl', title: 'ETL Pipelines & Crawlers', sections: [] },
-        { id: 'glue-lab', title: 'Hands-on Glue Lab', sections: [] },
-        { id: 'quiz-glue', title: 'Knowledge Check', sections: [] }
+        { id: 'acm-overview', title: 'ACM Architecture & Validation', sections: [] },
+        { id: 'acm-integration', title: 'ALB & CloudFront Integration', sections: [] },
+        { id: 'acm-lab', title: 'Hands-on ACM Lab', sections: [] },
+        { id: 'quiz-acm', title: 'Knowledge Check', sections: [] }
       ]
     },
     {
       id: 'module-39',
       number: '39',
-      title: 'Amazon Athena — Serverless Interactive Queries',
-      description: 'Query data directly in S3 using standard SQL with zero infrastructure setup.',
-      productionStory: 'Analyze terabytes of log data in seconds using standard SQL on S3.',
-      icon: '🔍',
+      title: 'Amazon EC2 Auto Scaling — Automatic Capacity',
+      description: 'Launch Templates, ASG configuration, scaling policies, health checks, lifecycle hooks, warm pools.',
+      productionStory: 'Right-size automatically. Scale out during traffic spikes, scale in to save costs.',
+      icon: '📈',
       difficulty: 'intermediate',
       duration: '75 min',
       color: '#0284c7',
       colorBg: '#f0f9ff',
       href: 'modules/module-39.html',
-      dataFile: 'module-39-athena',
-      tags: ['Athena', 'SQL', 'Data Lake', 'Analytics'],
+      dataFile: 'module-39-autoscaling',
+      tags: ['Auto Scaling', 'ASG', 'EC2', 'Capacity'],
       lessons: [
-        { id: 'athena-overview', title: 'Amazon Athena Architecture', sections: [] },
-        { id: 'athena-queries', title: 'Partitioning & Performance', sections: [] },
-        { id: 'athena-lab', title: 'Hands-on Athena Lab', sections: [] },
-        { id: 'quiz-athena', title: 'Knowledge Check', sections: [] }
+        { id: 'asg-overview', title: 'Auto Scaling Architecture', sections: [] },
+        { id: 'scaling-policies', title: 'Scaling Policies & Lifecycle', sections: [] },
+        { id: 'asg-lab', title: 'Hands-on Auto Scaling Lab', sections: [] },
+        { id: 'quiz-asg', title: 'Knowledge Check', sections: [] }
       ]
     },
     {
@@ -1100,8 +1100,8 @@ const COURSE_REGISTRY = {
     { id: 'orgs-master', title: 'Governance Pro', description: 'Manage multi-account governance', icon: '🏢', moduleId: 'module-31' },
     { id: 'identity-center-master', title: 'SSO Master', description: 'Centralize workforce access', icon: '👔', moduleId: 'module-36' },
     { id: 'bedrock-master', title: 'AI Engineer', description: 'Build GenAI applications', icon: '🧠', moduleId: 'module-37' },
-    { id: 'glue-master', title: 'Data Engineer', description: 'Build serverless ETL pipelines', icon: '🔄', moduleId: 'module-38' },
-    { id: 'athena-master', title: 'SQL Analytics Expert', description: 'Query S3 data lakes with SQL', icon: '🔍', moduleId: 'module-39' },
+    { id: 'acm-master', title: 'Certificate Master', description: 'Manage SSL/TLS certificates with ACM', icon: '🔒', moduleId: 'module-38' },
+    { id: 'autoscaling-master', title: 'Scaling Expert', description: 'Auto-scale EC2 fleets dynamically', icon: '📈', moduleId: 'module-39' },
     { id: 'efs-master', title: 'Shared Storage Master', description: 'Configure multi-AZ EFS storage', icon: '📁', moduleId: 'module-40' },
     { id: 'xray-master', title: 'Tracing Master', description: 'Instrument microservices with X-Ray', icon: '📉', moduleId: 'module-41' },
     { id: 'codedeploy-master', title: 'Deployment Master', description: 'Automate blue/green deployments', icon: '🚀', moduleId: 'module-42' },

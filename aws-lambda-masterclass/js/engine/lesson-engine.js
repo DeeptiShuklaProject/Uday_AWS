@@ -116,7 +116,8 @@ class LessonEngine {
         'lab': '🔬', 'console': '🖥️', 'terminal': '💻',
         'code': '👨‍💻', 'command': '⌨️', 'expected-output': '📤',
         'what-happened': '🔍', 'troubleshooting': '🔧', 'quiz': '🧠',
-        'challenge': '🏆', 'cleanup': '🧹', 'next': '➡️', 'text': '📝'
+        'challenge': '🏆', 'cleanup': '🧹', 'next': '➡️', 'text': '📝',
+        'interview': '🎙️'
       };
       const icon = section.icon || iconMap[section.type] || '📌';
 
@@ -168,6 +169,9 @@ class LessonEngine {
         break;
       case 'challenge':
         this._renderChallengeSection(bodyEl, section);
+        break;
+      case 'interview':
+        this._renderInterviewSection(bodyEl, section);
         break;
       case 'next':
         this._renderNextSection(bodyEl, section);
@@ -328,6 +332,62 @@ class LessonEngine {
     });
     this.activeEngines.push(challenge);
     el.appendChild(challengeContainer);
+  }
+
+  _renderInterviewSection(el, section) {
+    const questions = section.content?.questions || section.content || [];
+    const diffColors = { beginner: 'var(--color-success-500)', intermediate: 'var(--color-warning-500)', advanced: 'var(--color-error-500, #ef4444)', scenario: 'var(--color-primary-500)', troubleshooting: 'var(--color-accent-500, #8b5cf6)' };
+    const diffBg = { beginner: 'var(--color-success-50)', intermediate: 'var(--color-warning-50)', advanced: '#fef2f2', scenario: 'var(--color-primary-50)', troubleshooting: '#f5f3ff' };
+
+    // Group by difficulty
+    const groups = {};
+    questions.forEach(q => {
+      const d = (q.difficulty || 'beginner').toLowerCase();
+      if (!groups[d]) groups[d] = [];
+      groups[d].push(q);
+    });
+
+    const order = ['beginner', 'intermediate', 'advanced', 'scenario', 'troubleshooting'];
+    const labels = { beginner: '🌱 Beginner', intermediate: '📈 Intermediate', advanced: '🚀 Advanced', scenario: '🎯 Scenario-Based', troubleshooting: '🔧 Troubleshooting' };
+
+    order.forEach(level => {
+      const items = groups[level];
+      if (!items || items.length === 0) return;
+
+      const groupDiv = document.createElement('div');
+      groupDiv.style.cssText = 'margin-bottom: 24px;';
+      groupDiv.innerHTML = `<h4 style="margin-bottom: 12px; color: ${diffColors[level] || 'var(--color-neutral-700)'};">${labels[level] || level}</h4>`;
+
+      items.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'accordion-item';
+        card.style.cssText = 'margin-bottom: 8px; border-left: 3px solid ' + (diffColors[level] || '#6366f1') + ';';
+        card.innerHTML = `
+          <button class="accordion-header" style="padding: 12px 16px;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 12px; padding: 2px 8px; border-radius: 4px; background: ${diffBg[level] || '#eef2ff'}; color: ${diffColors[level] || '#6366f1'}; font-weight: 600;">${level.charAt(0).toUpperCase() + level.slice(1)}</span>
+              <span>Q${idx + 1}: ${this._escapeHtml(q.question)}</span>
+            </span>
+            <span class="chevron">▼</span>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner" style="padding: 16px;">
+              ${q.shortAnswer ? `<div style="margin-bottom: 12px;"><strong style="color: var(--color-success-600, #16a34a);">Short Answer:</strong><br>${this._escapeHtml(q.shortAnswer)}</div>` : ''}
+              ${q.deepExplanation ? `<div style="margin-bottom: 12px; padding: 12px; background: var(--color-neutral-50, #f9fafb); border-radius: 8px;"><strong>Deep Explanation:</strong><br>${this._escapeHtml(q.deepExplanation)}</div>` : ''}
+              ${q.example ? `<div style="margin-bottom: 12px;"><strong>📌 Real-world Example:</strong><br>${this._escapeHtml(q.example)}</div>` : ''}
+              ${q.commonMistake ? `<div style="margin-bottom: 12px; padding: 8px 12px; background: #fef2f2; border-radius: 6px; border-left: 3px solid #ef4444;"><strong>⚠️ Common Mistake:</strong> ${this._escapeHtml(q.commonMistake)}</div>` : ''}
+              ${q.followUp ? `<div style="margin-top: 8px; padding: 8px 12px; background: var(--color-primary-50, #eef2ff); border-radius: 6px;"><strong>➔ Follow-up:</strong> ${this._escapeHtml(q.followUp)}</div>` : ''}
+            </div>
+          </div>
+        `;
+        card.querySelector('.accordion-header').addEventListener('click', () => {
+          card.classList.toggle('open');
+        });
+        groupDiv.appendChild(card);
+      });
+
+      el.appendChild(groupDiv);
+    });
   }
 
   _renderNextSection(el, section) {
