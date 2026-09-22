@@ -1026,13 +1026,7 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 23. Scenario-Based Interview Questions
-
-*(Covered in section 22 above — Q31 through Q40)*
-
----
-
-## 24. Common Mistakes
+## 23. Common Mistakes
 
 1. **Public bucket for "testing"** — attackers scan for open S3 buckets constantly
 2. **No lifecycle rules** — paying full price for data accessed once a year
@@ -1047,7 +1041,7 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 25. Production Checklist
+## 24. Production Checklist
 
 - [ ] Block Public Access enabled at account level
 - [ ] Block Public Access enabled at bucket level
@@ -1068,7 +1062,7 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 26. Chapter Summary
+## 25. Chapter Summary
 
 Amazon S3 is the most used AWS service — virtually every architecture includes it. Key takeaways:
 
@@ -1086,202 +1080,6 @@ Amazon S3 is the most used AWS service — virtually every architecture includes
 S3 is the foundation of data storage on AWS. Master it, and you can build data lakes, websites, backup systems, and application storage for any scale.
 
 ---
----
-
-# 🔬 Practical Lab 23 — Secure S3 Bucket
-
-## Lab Overview
-| Item | Detail |
-|------|--------|
-| **Difficulty** | Beginner |
-| **Duration** | 25 minutes |
-| **Cost** | Free tier eligible |
-| **Prerequisites** | Practical 01 (IAM) |
-| **Lab Environment** | Environment 7 — Storage & Security |
-
-## Business Scenario
-> Your team needs a secure S3 bucket for application assets. It must have versioning, encryption, blocked public access, and a bucket policy restricting access to specific IAM roles only.
-
-### Step 1 — Create Secure Bucket
-1. **S3** → **Create bucket**
-   - **Name**: `prod-assets-{account-id}`
-   - ✅ Block all public access
-   - ✅ Versioning enabled
-   - **Encryption**: SSE-S3 (default) or SSE-KMS
-
-📸 **Screenshot 01** — Secure Bucket Created
-> **Verify**: Block Public Access ON, Versioning ON, Encryption ON
-
-### Step 2 — Upload and Test Versioning
-```bash
-echo "v1" > app-config.json && aws s3 cp app-config.json s3://prod-assets-xxx/
-echo "v2" > app-config.json && aws s3 cp app-config.json s3://prod-assets-xxx/
-aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
-```
-
-📸 **Screenshot 02** — Multiple Versions Visible
-> **Verify**: Two version IDs shown for same object
-
-### Step 3 — Add Bucket Policy
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [{
-        "Sid": "AllowOnlyFromEC2Role",
-        "Effect": "Deny",
-        "Principal": "*",
-        "Action": "s3:*",
-        "Resource": ["arn:aws:s3:::prod-assets-xxx/*"],
-        "Condition": {
-            "StringNotLike": {
-                "aws:PrincipalArn": "arn:aws:iam::*:role/prod-ec2-web-role"
-            }
-        }
-    }]
-}
-```
-
-📸 **Screenshot 03** — Bucket Policy Applied
-**Q17: How do you optimize S3 costs for a data lake?**
-A: 1) Lifecycle rules to transition to IA/Glacier. 2) S3 Intelligent-Tiering for unpredictable access. 3) Compress data (gzip, Parquet). 4) Delete old/unnecessary data. 5) Use S3 analytics to identify access patterns. 6) Abort incomplete multipart uploads.
-
-**Q18: What is S3 Select and how does it save costs?**
-A: S3 Select lets you query CSV/JSON/Parquet objects using SQL without downloading the entire object. You transfer only the filtered data, reducing data transfer costs and processing time by up to 400%.
-
-**Q19: How do you monitor S3 bucket size and costs?**
-A: CloudWatch metrics (BucketSizeBytes, NumberOfObjects), S3 Storage Lens (fleet-wide dashboard), Cost Explorer (filter by S3), S3 Analytics (storage class analysis). Set CloudWatch alarms for unexpected growth.
-
-**Q20: What is the difference between SSE-S3, SSE-KMS, and SSE-C?**
-A: SSE-S3: AWS manages all keys (simplest, default). SSE-KMS: you manage keys via KMS (audit key usage, key rotation control, separate permissions). SSE-C: you provide the key with each request (highest control, you manage keys entirely).
-
-### Advanced Questions (10)
-
-**Q21: Design an S3 architecture for a compliance-regulated data lake.**
-A: Encryption: SSE-KMS with CMK (key rotation). Object Lock: Compliance mode for retention. Versioning: enabled. CRR: to DR region with encrypted destination. VPC endpoint: no internet access. CloudTrail S3 data events: full audit trail. S3 Access Points: per-team access control. Lifecycle: archive to Glacier after 1 year. Bucket policy: enforce HTTPS, deny unencrypted uploads.
-
-**Q22: Your S3 GET requests are throttled at 5,500/sec per prefix. How do you handle 50,000 requests/sec?**
-A: S3 automatically partitions by prefix. Distribute objects across multiple prefixes. Example: instead of `data/file1.txt`, use `data/a1/file1.txt`, `data/b2/file2.txt`. S3 can handle 3,500 PUT/5,500 GET per prefix, and thousands of prefixes. Also consider CloudFront caching for read-heavy workloads.
-
-**Q23: How does S3 achieve 11 nines durability?**
-A: S3 stores data across minimum 3 AZs within a region. Each AZ has multiple physical devices. Data is checksummed on storage and periodically verified. If a device fails or data corruption is detected, S3 automatically repairs from redundant copies.
-
-**Q24: S3 replication is hours behind. How do you investigate?**
-A: 1) Check S3 replication metrics (pending, failed). 2) Large objects take longer. 3) KMS throttling if encrypted. 4) Replication IAM role permissions. 5) Destination bucket versioning. 6) For existing objects: use S3 Batch Replication. 7) S3 Replication Time Control (RTC) guarantees 15-minute SLA.
-
-**Q25: How do you prevent data exfiltration from S3?**
-A: 1) VPC endpoint with policy restricting to specific buckets. 2) S3 Access Points with VPC restrictions. 3) GuardDuty S3 protection (detects unusual access patterns). 4) Macie (scans for PII). 5) CloudTrail data events for audit. 6) Bucket policies with condition keys (VPC, IP, region). 7) Deny s3:GetObject for non-VPC sources.
-
-**Q26: Describe a zero-downtime migration from one S3 bucket to another.**
-A: 1) Enable versioning on both. 2) Set up SRR (Same-Region Replication) or use S3 Batch Operations to copy. 3) Update application to read from new bucket. 4) Set up dual-write: application writes to both. 5) Verify new bucket has all objects. 6) Switch application to write only to new bucket. 7) Verify, then decommission old bucket.
-
-**Q27: How do you handle S3 access for a multi-account organization?**
-A: Use S3 Access Points — create per-account access points with specific policies. Or use bucket policies with account-specific principals. For shared data lake: central S3 in data account, bucket policy allowing specific roles from workload accounts. Use Lake Formation for fine-grained data lake permissions.
-
-**Q28: What is S3 Object Lambda?**
-A: S3 Object Lambda lets you add custom code (Lambda function) to process data returned by S3 GET requests. The Lambda transforms the data before it reaches the caller. Use cases: redact PII, convert formats, resize images on-the-fly, decompress data.
-
-**Q29: Design a cost-optimized backup strategy using S3.**
-A: Tier 1 (Active backups, <30 days): S3 Standard. Tier 2 (Monthly backups, 30-90 days): S3 Standard-IA. Tier 3 (Quarterly backups, 90-365 days): Glacier Instant Retrieval. Tier 4 (Annual backups, >365 days): Glacier Deep Archive. Use lifecycle rules for automatic transitions. Enable versioning for point-in-time recovery.
-
-**Q30: How do you troubleshoot "SlowDown" (503) errors from S3?**
-A: S3 returns 503 when request rate exceeds partition capacity. Solutions: 1) Add retries with exponential backoff (SDK handles this). 2) Distribute requests across prefixes. 3) Use CloudFront for read-heavy workloads. 4) Enable S3 request metrics to monitor request rates.
-
-### Scenario-Based Questions (10)
-
-**Q31: A developer made an S3 bucket public. 100,000 objects with PII are exposed. Incident response?**
-A: 1) IMMEDIATELY: enable Block Public Access on the bucket. 2) Check CloudTrail for external access in the exposure window. 3) Assess impact: which objects were accessed? 4) Notify security/compliance team. 5) If PII: legal notification requirements. 6) Prevention: account-level Block Public Access, AWS Config rule, GuardDuty S3 protection.
-
-**Q32: S3 storage costs went from $500 to $5,000 in one month. Investigation?**
-A: 1) S3 Storage Lens: identify which bucket grew. 2) Check versioning: non-current versions accumulating. 3) Check for multipart uploads: `list-multipart-uploads`. 4) Check lifecycle rules: are they applied? 5) Check for misconfigured logging: access logs going to the same bucket (infinite loop). 6) Add lifecycle rules for cleanup.
-
-**Q33: Your application needs to upload 10,000 files (each 100 MB) to S3 as fast as possible. How?**
-A: 1) Use multipart upload for each file (parallel parts). 2) Upload files in parallel (multi-threaded). 3) Use S3 Transfer Acceleration if uploading from far. 4) Use `aws s3 sync` with `--parallel` or write custom code with concurrent uploads. 5) Ensure source has sufficient bandwidth. 6) Consider AWS DataSync for initial bulk transfer.
-
-**Q34: You need to ensure S3 objects can never be deleted for 7 years (regulatory). How?**
-A: Enable S3 Object Lock in Compliance mode with 7-year retention. Once set, even the root user cannot delete objects. Enable versioning (required for Object Lock). Document the retention policy. Note: Compliance mode cannot be shortened once set.
-
-**Q35: CloudFront returns 403 when accessing S3 objects. What's wrong?**
-A: 1) Check CloudFront Origin Access Control (OAC) configuration. 2) Bucket policy must allow the CloudFront distribution. 3) Block Public Access must allow OAC (it does by default). 4) Check if object exists (404 can appear as 403 with some configurations). 5) Check for cache behavior path pattern mismatch.
-
-**Q36: Your S3 bucket receives 50,000 PUT requests/sec. Application gets 503 errors. Solution?**
-A: 1) S3 supports 3,500 PUT/sec per prefix. 2) Distribute writes across multiple prefixes (e.g., hash-based prefix). 3) Use random prefixes: `HASH/data/file.txt`. 4) S3 automatically partitions but needs time (pre-partition by contacting AWS support for known high-traffic buckets). 5) Implement retries with exponential backoff.
-
-**Q37: You accidentally deleted a critical file from S3. Versioning was enabled. How to recover?**
-A: 1) Delete creates a "delete marker" (not actual deletion). 2) List versions: `aws s3api list-object-versions --bucket BUCKET --prefix KEY`. 3) Delete the delete marker: `aws s3api delete-object --bucket BUCKET --key KEY --version-id DELETE_MARKER_VERSION_ID`. 4) Object is restored to latest version. 5) Or GET a specific version ID to download it.
-
-**Q38: How do you serve private S3 content to authenticated web users?**
-A: 1) Keep bucket private (Block Public Access ON). 2) Application generates presigned URLs (time-limited). 3) Frontend uses presigned URL to download/upload directly to S3. 4) Alternative: CloudFront with signed URLs/cookies for streaming. 5) Never make the bucket public for this use case.
-
-**Q39: Your data lake has 500 TB on S3 Standard. 80% is accessed less than once a month. Optimize?**
-A: 1) Enable S3 Analytics to confirm access patterns (runs for 30 days). 2) Configure lifecycle: move to Standard-IA after 30 days. 3) For < 10% accessed data: Glacier Instant Retrieval after 90 days. 4) Or use Intelligent-Tiering (automatic). 5) Estimated savings: 400 TB × ($0.023 - $0.0125) = $4,200/month (50% savings on 80% of data).
-
-**Q40: S3 replication from ap-south-1 to us-west-2 works for new objects but not existing ones. Why?**
-A: S3 replication only applies to NEW objects uploaded AFTER replication is enabled. Existing objects are NOT automatically replicated. Solution: Use S3 Batch Replication to replicate existing objects. Create a Batch Replication job specifying the source bucket and filters.
-
----
-
-## 23. Scenario-Based Interview Questions
-
-*(Covered in section 22 above — Q31 through Q40)*
-
----
-
-## 24. Common Mistakes
-
-1. **Public bucket for "testing"** — attackers scan for open S3 buckets constantly
-2. **No lifecycle rules** — paying full price for data accessed once a year
-3. **No versioning** — one accidental delete and data is gone forever
-4. **Forgetting `/*` in resource ARN** — `arn:aws:s3:::bucket` ≠ `arn:aws:s3:::bucket/*`
-5. **Using bucket ACLs** — deprecated, use bucket policies instead
-6. **No encryption** — enable default encryption (SSE-KMS for production)
-7. **Logging to the same bucket** — creates infinite loop of log generation
-8. **Not cleaning up multipart uploads** — they accumulate and cost money
-9. **Cross-account access with only IAM policy** — bucket policy also needed
-10. **Ignoring data transfer costs** — free in, paid out (use CloudFront)
-
----
-
-## 25. Production Checklist
-
-- [ ] Block Public Access enabled at account level
-- [ ] Block Public Access enabled at bucket level
-- [ ] Default encryption enabled (SSE-KMS for production)
-- [ ] Bucket Key enabled (reduces KMS costs)
-- [ ] Versioning enabled
-- [ ] Lifecycle rules configured (IA, Glacier transitions)
-- [ ] Non-current version expiration configured
-- [ ] Incomplete multipart upload cleanup (7 days)
-- [ ] Bucket policy enforces HTTPS (deny `SecureTransport: false`)
-- [ ] Server access logging to separate log bucket
-- [ ] CloudTrail S3 data events enabled (for sensitive buckets)
-- [ ] Cross-Region Replication for DR
-- [ ] S3 Storage Lens dashboard configured
-- [ ] CloudWatch alarms for BucketSizeBytes growth
-- [ ] VPC endpoint for private access (no internet)
-- [ ] Tags: Environment, Owner, CostCenter
-
----
-
-## 26. Chapter Summary
-
-Amazon S3 is the most used AWS service — virtually every architecture includes it. Key takeaways:
-
-1. **Object storage, not a file system** — HTTP API access, unlimited scale
-2. **11 nines durability** — your data is safer in S3 than anywhere else
-3. **Block Public Access at account level** — prevent bucket exposure incidents
-4. **Always enable versioning** — protection against accidental deletion
-5. **Always enable encryption** — SSE-KMS for production, SSE-S3 for general use
-6. **Lifecycle rules are mandatory** — Standard → IA → Glacier saves 50-95%
-7. **Use presigned URLs** — temporary access without making buckets public
-8. **S3 + CloudFront for websites** — serverless, global, sub-$1/month
-9. **Cross-Region Replication for DR** — automatic, asynchronous
-10. **Bucket policies + IAM policies** — both must allow for cross-account access
-
-S3 is the foundation of data storage on AWS. Master it, and you can build data lakes, websites, backup systems, and application storage for any scale.
-
----
----
-
 # 🔬 Practical Lab 23 — Secure S3 Bucket
 
 ## Lab Overview
@@ -1344,7 +1142,7 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 ---
 ---
 
-# 🔬 Practical Lab 25 — S3 Lifecycle Rules
+# 🔬 Practical Lab 24 — S3 Lifecycle Rules
 
 ## Lab Overview
 | Item | Detail |
@@ -1393,7 +1191,7 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 ---
 ---
 
-# 🔬 Practical Lab 26 — Secure Static Website (S3 + CloudFront + ACM + Route 53)
+# 🔬 Practical Lab 25 — Secure Static Website (S3 + CloudFront + ACM + Route 53)
 
 ## Lab Overview
 | Item | Detail |
@@ -1471,3 +1269,179 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 
 🎯 **Interview Insight**: "Why use CloudFront with S3 instead of just S3 Static Website Hosting?"
 > **Strong answer**: "Using CloudFront allows you to attach a custom SSL certificate (HTTPS), caches content at edge locations for faster global load times, and allows you to keep the S3 bucket entirely private via Origin Access Control (OAC), satisfying strict security and compliance requirements."
+
+---
+---
+
+# 🔬 Practical Lab 26 — S3 Cross-Region Replication (CRR)
+
+## Lab Overview
+| Item | Detail |
+|------|--------|
+| **Difficulty** | Intermediate |
+| **Duration** | 25 minutes |
+| **Cost** | A few cents (storage in second region, replication data transfer) |
+| **Prerequisites** | Practical 23 (Secure S3 Bucket) |
+| **Lab Environment** | Two AWS Regions (e.g., ap-south-1 → us-east-1) |
+
+## Business Scenario
+> Your company stores critical application data in an S3 bucket in **ap-south-1 (Mumbai)**. For disaster recovery compliance, all data must be automatically replicated to a secondary bucket in **us-east-1 (N. Virginia)**. If the primary region experiences an outage, the team must be able to failover to the DR bucket within minutes.
+
+### Step 1 — Create the Source Bucket (ap-south-1)
+1. Ensure your AWS Console region is set to **Asia Pacific (Mumbai) ap-south-1**.
+2. Go to **S3** → **Create bucket**.
+3. **Bucket name**: Enter `crr-source-{your-account-id}` (e.g., `crr-source-123456789012`).
+4. **AWS Region**: Confirm **ap-south-1**.
+5. **Block Public Access settings**: Leave **ON** (Block all public access).
+6. **Bucket Versioning**: Click **Enable**.
+   > ⚠️ **CRITICAL**: Versioning is **required** on **both** source and destination buckets for replication to work.
+7. **Default encryption**: Select **SSE-S3** (or SSE-KMS if preferred).
+8. Click **Create bucket**.
+
+📸 **Screenshot 01** — Source Bucket Created
+> **Verify**: Region = ap-south-1, Versioning = Enabled
+
+### Step 2 — Create the Destination Bucket (us-east-1)
+1. Switch your AWS Console region to **US East (N. Virginia) us-east-1**.
+2. Go to **S3** → **Create bucket**.
+3. **Bucket name**: Enter `crr-destination-{your-account-id}` (e.g., `crr-destination-123456789012`).
+4. **AWS Region**: Confirm **us-east-1**.
+5. **Block Public Access settings**: Leave **ON**.
+6. **Bucket Versioning**: Click **Enable**.
+7. **Default encryption**: Select **SSE-S3** (match source bucket).
+8. Click **Create bucket**.
+
+📸 **Screenshot 02** — Destination Bucket Created
+> **Verify**: Region = us-east-1, Versioning = Enabled
+
+### Step 3 — Create the IAM Replication Role
+1. Go to **IAM** → **Roles** → **Create role**.
+2. **Trusted entity type**: Select **AWS service**.
+3. **Use case**: Under the service dropdown, select **S3**.
+4. Click **Next**.
+5. **Permissions**: Attach the policy **AmazonS3FullAccess** (for this lab; in production, use a scoped-down custom policy).
+6. Click **Next**.
+7. **Role name**: Enter `S3-CRR-Role`.
+8. **Description**: `Allows S3 to replicate objects from source to destination bucket`.
+9. Click **Create role**.
+
+📸 **Screenshot 03** — IAM Replication Role Created
+> **Verify**: Role name = S3-CRR-Role, Trusted entity = s3.amazonaws.com
+
+> 💡 **Production Note**: In production, replace `AmazonS3FullAccess` with a custom policy that grants only `s3:GetReplicationConfiguration`, `s3:ListBucket`, `s3:GetObjectVersionForReplication`, `s3:GetObjectVersionAcl`, `s3:GetObjectVersionTagging` on the source bucket and `s3:ReplicateObject`, `s3:ReplicateDelete`, `s3:ReplicateTags` on the destination bucket.
+
+### Step 4 — Enable Replication on the Source Bucket
+1. Switch your AWS Console region back to **ap-south-1**.
+2. Open the **source bucket** (`crr-source-{your-account-id}`).
+3. Go to the **Management** tab.
+4. Scroll to the **Replication rules** section and click **Create replication rule**.
+5. **Replication rule name**: Enter `replicate-all-to-us-east-1`.
+6. **Status**: Ensure it is set to **Enabled**.
+7. **Source bucket**:
+   - **Choose a rule scope**: Select **Apply to all objects in the bucket**.
+8. **Destination**:
+   - Select **Choose a bucket in this account**.
+   - Click **Browse S3** and select your destination bucket (`crr-destination-{your-account-id}`) in us-east-1.
+9. **IAM role**:
+   - Select **Choose from existing IAM roles**.
+   - Select the `S3-CRR-Role` you created in Step 3.
+10. **Encryption** (if using SSE-KMS):
+    - Check **Replicate objects encrypted with AWS KMS** if both buckets use KMS encryption.
+    - Select the KMS key in the destination region.
+11. **Additional replication options** (optional):
+    - ✅ **Replication Time Control (RTC)** — Guarantees 99.99% of objects replicated within 15 minutes (additional cost).
+    - ✅ **Replication metrics and notifications** — Enables CloudWatch metrics for monitoring.
+    - ✅ **Delete marker replication** — Replicates delete markers to the destination.
+12. Click **Save**.
+13. A prompt will ask: **"Do you want to replicate existing objects?"**
+    - For this lab, select **No, do not replicate existing objects** (existing object replication requires S3 Batch Replication).
+    - Click **Submit**.
+
+📸 **Screenshot 04** — Replication Rule Created
+> **Verify**: Rule status = Enabled, Destination = crr-destination bucket in us-east-1
+
+### Step 5 — Upload Test Objects to the Source Bucket
+1. Open the **source bucket** in ap-south-1.
+2. Click **Upload**.
+3. Create and upload 3 test files:
+   - `test-file-1.txt` (with content: `This is test file 1 for CRR`)
+   - `test-file-2.txt` (with content: `This is test file 2 for CRR`)
+   - `test-file-3.txt` (with content: `This is test file 3 for CRR`)
+4. Click **Upload**.
+
+Alternatively, use the AWS CLI:
+```bash
+echo "This is test file 1 for CRR" > test-file-1.txt
+echo "This is test file 2 for CRR" > test-file-2.txt
+echo "This is test file 3 for CRR" > test-file-3.txt
+
+aws s3 cp test-file-1.txt s3://crr-source-{your-account-id}/
+aws s3 cp test-file-2.txt s3://crr-source-{your-account-id}/
+aws s3 cp test-file-3.txt s3://crr-source-{your-account-id}/
+```
+
+📸 **Screenshot 05** — Test Files Uploaded to Source
+> **Verify**: 3 files visible in the source bucket
+
+### Step 6 — Verify Replication in the Destination Bucket
+1. Switch your AWS Console region to **us-east-1**.
+2. Open the **destination bucket** (`crr-destination-{your-account-id}`).
+3. Wait 1–5 minutes (replication is asynchronous).
+4. Refresh the page — you should see all 3 test files replicated.
+5. Click on any replicated file → **Properties** tab → Scroll to **Object management overview**.
+6. Confirm the **Replication status** shows **REPLICA**.
+
+📸 **Screenshot 06** — Files Replicated to Destination
+> **Verify**: All 3 files present in destination bucket, Replication status = REPLICA
+
+### Step 7 — Check Replication Status via CLI
+```bash
+# Check replication status of a specific object in the SOURCE bucket
+aws s3api head-object \
+    --bucket crr-source-{your-account-id} \
+    --key test-file-1.txt \
+    --query 'ReplicationStatus'
+# Expected output: "COMPLETED"
+
+# List objects in destination bucket to confirm replication
+aws s3 ls s3://crr-destination-{your-account-id}/
+# Expected: all 3 test files listed
+
+# Check the replication configuration
+aws s3api get-bucket-replication \
+    --bucket crr-source-{your-account-id}
+```
+
+📸 **Screenshot 07** — CLI Replication Status = COMPLETED
+
+### Step 8 — Test Delete Marker Replication (Optional)
+1. In the **source bucket**, select `test-file-3.txt` and click **Delete**.
+2. Type `delete` to confirm.
+3. Switch to the **destination bucket** in us-east-1.
+4. Click **Show versions** toggle to view all versions.
+5. Verify that a **Delete marker** has been replicated for `test-file-3.txt`.
+
+> 💡 **Note**: Delete marker replication only works if you enabled it in Step 4. The actual object versions are **not** deleted — only the delete marker is replicated. This is a safety feature.
+
+📸 **Screenshot 08** — Delete Marker Replicated
+> **Verify**: Delete marker visible in destination bucket for test-file-3.txt
+
+### Step 9 — Clean Up
+1. **Delete destination bucket contents**:
+   - Open `crr-destination-{your-account-id}` → Select all objects → **Delete**.
+   - Toggle **Show versions** and delete all versions and delete markers.
+   - Delete the bucket.
+2. **Delete source bucket contents**:
+   - Open `crr-source-{your-account-id}` → Select all objects → **Delete**.
+   - Toggle **Show versions** and delete all versions and delete markers.
+   - Delete the bucket.
+3. **Delete IAM role**:
+   - Go to **IAM** → **Roles** → Search `S3-CRR-Role` → **Delete**.
+
+> **Note**: Always clean up both buckets and the IAM role to avoid unexpected storage charges.
+
+🎯 **Interview Insight**: "How does S3 Cross-Region Replication work and what are the requirements?"
+> **Strong answer**: "CRR automatically replicates every new object from a source bucket to a destination bucket in a different AWS region. Both buckets must have versioning enabled. It requires an IAM role granting S3 permission to replicate. Replication is asynchronous — typically seconds to minutes. It only applies to new objects; existing objects require S3 Batch Replication. Key use cases are disaster recovery, compliance (data residency), and latency reduction. For SLA-guaranteed replication, enable Replication Time Control (RTC) which ensures 99.99% of objects are replicated within 15 minutes."
+
+---
+
