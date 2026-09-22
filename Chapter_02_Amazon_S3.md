@@ -201,23 +201,23 @@ Bad:  192.168.1.1 (looks like IP)
 ```mermaid
 flowchart TD
     subgraph Users["Users"]
-        Browser[Browser]
-        Mobile[Mobile App]
+        Browser["Browser"]
+        Mobile["Mobile App"]
     end
     
     subgraph CDN["Content Delivery"]
-        CF[CloudFront<br>CDN + HTTPS]
+        CF["CloudFront<br>CDN + HTTPS"]
     end
     
     subgraph Storage["S3 Storage"]
-        Static[S3 Bucket<br>Static Website<br>React/Angular SPA]
-        Uploads[S3 Bucket<br>User Uploads<br>Encrypted SSE-KMS]
-        Logs[S3 Bucket<br>Logs<br>Lifecycle to Glacier]
+        Static["S3 Bucket<br>Static Website<br>React/Angular SPA"]
+        Uploads["S3 Bucket<br>User Uploads<br>Encrypted SSE-KMS"]
+        Logs["S3 Bucket<br>Logs<br>Lifecycle to Glacier"]
     end
     
     subgraph Processing["Event Processing"]
-        Lambda[Lambda<br>Image Resize]
-        SQS[SQS<br>Processing Queue]
+        Lambda["Lambda<br>Image Resize"]
+        SQS["SQS<br>Processing Queue"]
     end
     
     Browser --> CF
@@ -227,7 +227,7 @@ flowchart TD
     Uploads -->|Event Notification| SQS
     
     subgraph DR["Disaster Recovery"]
-        Replica[S3 Bucket<br>DR Region<br>Cross-Region Replication]
+        Replica["S3 Bucket<br>DR Region<br>Cross-Region Replication"]
     end
     
     Uploads -->|CRR| Replica
@@ -1142,6 +1142,200 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 ```
 
 📸 **Screenshot 03** — Bucket Policy Applied
+**Q17: How do you optimize S3 costs for a data lake?**
+A: 1) Lifecycle rules to transition to IA/Glacier. 2) S3 Intelligent-Tiering for unpredictable access. 3) Compress data (gzip, Parquet). 4) Delete old/unnecessary data. 5) Use S3 analytics to identify access patterns. 6) Abort incomplete multipart uploads.
+
+**Q18: What is S3 Select and how does it save costs?**
+A: S3 Select lets you query CSV/JSON/Parquet objects using SQL without downloading the entire object. You transfer only the filtered data, reducing data transfer costs and processing time by up to 400%.
+
+**Q19: How do you monitor S3 bucket size and costs?**
+A: CloudWatch metrics (BucketSizeBytes, NumberOfObjects), S3 Storage Lens (fleet-wide dashboard), Cost Explorer (filter by S3), S3 Analytics (storage class analysis). Set CloudWatch alarms for unexpected growth.
+
+**Q20: What is the difference between SSE-S3, SSE-KMS, and SSE-C?**
+A: SSE-S3: AWS manages all keys (simplest, default). SSE-KMS: you manage keys via KMS (audit key usage, key rotation control, separate permissions). SSE-C: you provide the key with each request (highest control, you manage keys entirely).
+
+### Advanced Questions (10)
+
+**Q21: Design an S3 architecture for a compliance-regulated data lake.**
+A: Encryption: SSE-KMS with CMK (key rotation). Object Lock: Compliance mode for retention. Versioning: enabled. CRR: to DR region with encrypted destination. VPC endpoint: no internet access. CloudTrail S3 data events: full audit trail. S3 Access Points: per-team access control. Lifecycle: archive to Glacier after 1 year. Bucket policy: enforce HTTPS, deny unencrypted uploads.
+
+**Q22: Your S3 GET requests are throttled at 5,500/sec per prefix. How do you handle 50,000 requests/sec?**
+A: S3 automatically partitions by prefix. Distribute objects across multiple prefixes. Example: instead of `data/file1.txt`, use `data/a1/file1.txt`, `data/b2/file2.txt`. S3 can handle 3,500 PUT/5,500 GET per prefix, and thousands of prefixes. Also consider CloudFront caching for read-heavy workloads.
+
+**Q23: How does S3 achieve 11 nines durability?**
+A: S3 stores data across minimum 3 AZs within a region. Each AZ has multiple physical devices. Data is checksummed on storage and periodically verified. If a device fails or data corruption is detected, S3 automatically repairs from redundant copies.
+
+**Q24: S3 replication is hours behind. How do you investigate?**
+A: 1) Check S3 replication metrics (pending, failed). 2) Large objects take longer. 3) KMS throttling if encrypted. 4) Replication IAM role permissions. 5) Destination bucket versioning. 6) For existing objects: use S3 Batch Replication. 7) S3 Replication Time Control (RTC) guarantees 15-minute SLA.
+
+**Q25: How do you prevent data exfiltration from S3?**
+A: 1) VPC endpoint with policy restricting to specific buckets. 2) S3 Access Points with VPC restrictions. 3) GuardDuty S3 protection (detects unusual access patterns). 4) Macie (scans for PII). 5) CloudTrail data events for audit. 6) Bucket policies with condition keys (VPC, IP, region). 7) Deny s3:GetObject for non-VPC sources.
+
+**Q26: Describe a zero-downtime migration from one S3 bucket to another.**
+A: 1) Enable versioning on both. 2) Set up SRR (Same-Region Replication) or use S3 Batch Operations to copy. 3) Update application to read from new bucket. 4) Set up dual-write: application writes to both. 5) Verify new bucket has all objects. 6) Switch application to write only to new bucket. 7) Verify, then decommission old bucket.
+
+**Q27: How do you handle S3 access for a multi-account organization?**
+A: Use S3 Access Points — create per-account access points with specific policies. Or use bucket policies with account-specific principals. For shared data lake: central S3 in data account, bucket policy allowing specific roles from workload accounts. Use Lake Formation for fine-grained data lake permissions.
+
+**Q28: What is S3 Object Lambda?**
+A: S3 Object Lambda lets you add custom code (Lambda function) to process data returned by S3 GET requests. The Lambda transforms the data before it reaches the caller. Use cases: redact PII, convert formats, resize images on-the-fly, decompress data.
+
+**Q29: Design a cost-optimized backup strategy using S3.**
+A: Tier 1 (Active backups, <30 days): S3 Standard. Tier 2 (Monthly backups, 30-90 days): S3 Standard-IA. Tier 3 (Quarterly backups, 90-365 days): Glacier Instant Retrieval. Tier 4 (Annual backups, >365 days): Glacier Deep Archive. Use lifecycle rules for automatic transitions. Enable versioning for point-in-time recovery.
+
+**Q30: How do you troubleshoot "SlowDown" (503) errors from S3?**
+A: S3 returns 503 when request rate exceeds partition capacity. Solutions: 1) Add retries with exponential backoff (SDK handles this). 2) Distribute requests across prefixes. 3) Use CloudFront for read-heavy workloads. 4) Enable S3 request metrics to monitor request rates.
+
+### Scenario-Based Questions (10)
+
+**Q31: A developer made an S3 bucket public. 100,000 objects with PII are exposed. Incident response?**
+A: 1) IMMEDIATELY: enable Block Public Access on the bucket. 2) Check CloudTrail for external access in the exposure window. 3) Assess impact: which objects were accessed? 4) Notify security/compliance team. 5) If PII: legal notification requirements. 6) Prevention: account-level Block Public Access, AWS Config rule, GuardDuty S3 protection.
+
+**Q32: S3 storage costs went from $500 to $5,000 in one month. Investigation?**
+A: 1) S3 Storage Lens: identify which bucket grew. 2) Check versioning: non-current versions accumulating. 3) Check for multipart uploads: `list-multipart-uploads`. 4) Check lifecycle rules: are they applied? 5) Check for misconfigured logging: access logs going to the same bucket (infinite loop). 6) Add lifecycle rules for cleanup.
+
+**Q33: Your application needs to upload 10,000 files (each 100 MB) to S3 as fast as possible. How?**
+A: 1) Use multipart upload for each file (parallel parts). 2) Upload files in parallel (multi-threaded). 3) Use S3 Transfer Acceleration if uploading from far. 4) Use `aws s3 sync` with `--parallel` or write custom code with concurrent uploads. 5) Ensure source has sufficient bandwidth. 6) Consider AWS DataSync for initial bulk transfer.
+
+**Q34: You need to ensure S3 objects can never be deleted for 7 years (regulatory). How?**
+A: Enable S3 Object Lock in Compliance mode with 7-year retention. Once set, even the root user cannot delete objects. Enable versioning (required for Object Lock). Document the retention policy. Note: Compliance mode cannot be shortened once set.
+
+**Q35: CloudFront returns 403 when accessing S3 objects. What's wrong?**
+A: 1) Check CloudFront Origin Access Control (OAC) configuration. 2) Bucket policy must allow the CloudFront distribution. 3) Block Public Access must allow OAC (it does by default). 4) Check if object exists (404 can appear as 403 with some configurations). 5) Check for cache behavior path pattern mismatch.
+
+**Q36: Your S3 bucket receives 50,000 PUT requests/sec. Application gets 503 errors. Solution?**
+A: 1) S3 supports 3,500 PUT/sec per prefix. 2) Distribute writes across multiple prefixes (e.g., hash-based prefix). 3) Use random prefixes: `HASH/data/file.txt`. 4) S3 automatically partitions but needs time (pre-partition by contacting AWS support for known high-traffic buckets). 5) Implement retries with exponential backoff.
+
+**Q37: You accidentally deleted a critical file from S3. Versioning was enabled. How to recover?**
+A: 1) Delete creates a "delete marker" (not actual deletion). 2) List versions: `aws s3api list-object-versions --bucket BUCKET --prefix KEY`. 3) Delete the delete marker: `aws s3api delete-object --bucket BUCKET --key KEY --version-id DELETE_MARKER_VERSION_ID`. 4) Object is restored to latest version. 5) Or GET a specific version ID to download it.
+
+**Q38: How do you serve private S3 content to authenticated web users?**
+A: 1) Keep bucket private (Block Public Access ON). 2) Application generates presigned URLs (time-limited). 3) Frontend uses presigned URL to download/upload directly to S3. 4) Alternative: CloudFront with signed URLs/cookies for streaming. 5) Never make the bucket public for this use case.
+
+**Q39: Your data lake has 500 TB on S3 Standard. 80% is accessed less than once a month. Optimize?**
+A: 1) Enable S3 Analytics to confirm access patterns (runs for 30 days). 2) Configure lifecycle: move to Standard-IA after 30 days. 3) For < 10% accessed data: Glacier Instant Retrieval after 90 days. 4) Or use Intelligent-Tiering (automatic). 5) Estimated savings: 400 TB × ($0.023 - $0.0125) = $4,200/month (50% savings on 80% of data).
+
+**Q40: S3 replication from ap-south-1 to us-west-2 works for new objects but not existing ones. Why?**
+A: S3 replication only applies to NEW objects uploaded AFTER replication is enabled. Existing objects are NOT automatically replicated. Solution: Use S3 Batch Replication to replicate existing objects. Create a Batch Replication job specifying the source bucket and filters.
+
+---
+
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above — Q31 through Q40)*
+
+---
+
+## 24. Common Mistakes
+
+1. **Public bucket for "testing"** — attackers scan for open S3 buckets constantly
+2. **No lifecycle rules** — paying full price for data accessed once a year
+3. **No versioning** — one accidental delete and data is gone forever
+4. **Forgetting `/*` in resource ARN** — `arn:aws:s3:::bucket` ≠ `arn:aws:s3:::bucket/*`
+5. **Using bucket ACLs** — deprecated, use bucket policies instead
+6. **No encryption** — enable default encryption (SSE-KMS for production)
+7. **Logging to the same bucket** — creates infinite loop of log generation
+8. **Not cleaning up multipart uploads** — they accumulate and cost money
+9. **Cross-account access with only IAM policy** — bucket policy also needed
+10. **Ignoring data transfer costs** — free in, paid out (use CloudFront)
+
+---
+
+## 25. Production Checklist
+
+- [ ] Block Public Access enabled at account level
+- [ ] Block Public Access enabled at bucket level
+- [ ] Default encryption enabled (SSE-KMS for production)
+- [ ] Bucket Key enabled (reduces KMS costs)
+- [ ] Versioning enabled
+- [ ] Lifecycle rules configured (IA, Glacier transitions)
+- [ ] Non-current version expiration configured
+- [ ] Incomplete multipart upload cleanup (7 days)
+- [ ] Bucket policy enforces HTTPS (deny `SecureTransport: false`)
+- [ ] Server access logging to separate log bucket
+- [ ] CloudTrail S3 data events enabled (for sensitive buckets)
+- [ ] Cross-Region Replication for DR
+- [ ] S3 Storage Lens dashboard configured
+- [ ] CloudWatch alarms for BucketSizeBytes growth
+- [ ] VPC endpoint for private access (no internet)
+- [ ] Tags: Environment, Owner, CostCenter
+
+---
+
+## 26. Chapter Summary
+
+Amazon S3 is the most used AWS service — virtually every architecture includes it. Key takeaways:
+
+1. **Object storage, not a file system** — HTTP API access, unlimited scale
+2. **11 nines durability** — your data is safer in S3 than anywhere else
+3. **Block Public Access at account level** — prevent bucket exposure incidents
+4. **Always enable versioning** — protection against accidental deletion
+5. **Always enable encryption** — SSE-KMS for production, SSE-S3 for general use
+6. **Lifecycle rules are mandatory** — Standard → IA → Glacier saves 50-95%
+7. **Use presigned URLs** — temporary access without making buckets public
+8. **S3 + CloudFront for websites** — serverless, global, sub-$1/month
+9. **Cross-Region Replication for DR** — automatic, asynchronous
+10. **Bucket policies + IAM policies** — both must allow for cross-account access
+
+S3 is the foundation of data storage on AWS. Master it, and you can build data lakes, websites, backup systems, and application storage for any scale.
+
+---
+---
+
+# 🔬 Practical Lab 23 — Secure S3 Bucket
+
+## Lab Overview
+| Item | Detail |
+|------|--------|
+| **Difficulty** | Beginner |
+| **Duration** | 25 minutes |
+| **Cost** | Free tier eligible |
+| **Prerequisites** | Practical 01 (IAM) |
+| **Lab Environment** | Environment 7 — Storage & Security |
+
+## Business Scenario
+> Your team needs a secure S3 bucket for application assets. It must have versioning, encryption, blocked public access, and a bucket policy restricting access to specific IAM roles only.
+
+### Step 1 — Create Secure Bucket
+1. **S3** → **Create bucket**
+   - **Name**: `prod-assets-{account-id}`
+   - ✅ Block all public access
+   - ✅ Versioning enabled
+   - **Encryption**: SSE-S3 (default) or SSE-KMS
+
+📸 **Screenshot 01** — Secure Bucket Created
+> **Verify**: Block Public Access ON, Versioning ON, Encryption ON
+
+### Step 2 — Upload and Test Versioning
+```bash
+echo "v1" > app-config.json && aws s3 cp app-config.json s3://prod-assets-xxx/
+echo "v2" > app-config.json && aws s3 cp app-config.json s3://prod-assets-xxx/
+aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
+```
+
+📸 **Screenshot 02** — Multiple Versions Visible
+> **Verify**: Two version IDs shown for same object
+
+### Step 3 — Add Bucket Policy
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "AllowOnlyFromEC2Role",
+        "Effect": "Deny",
+        "Principal": "*",
+        "Action": "s3:*",
+        "Resource": ["arn:aws:s3:::prod-assets-xxx/*"],
+        "Condition": {
+            "StringNotLike": {
+                "aws:PrincipalArn": "arn:aws:iam::*:role/prod-ec2-web-role"
+            }
+        }
+    }]
+}
+```
+
+📸 **Screenshot 03** — Bucket Policy Applied
 > **Verify**: Only EC2 role can access objects
 
 🎯 **Interview Insight**: "How do you secure an S3 bucket?"
@@ -1161,13 +1355,119 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 | **Prerequisites** | Practical 23 |
 
 ### Step 1 — Create Lifecycle Rule
-1. Bucket → **Management** → **Create lifecycle rule**
-   - **Rule name**: `archive-old-data`
-   - **Transitions**: Standard → Standard-IA after 30 days → Glacier after 90 days
-   - **Expiration**: Delete after 365 days
+1. Open your S3 Bucket and navigate to the **Management** tab.
+2. Under the *Lifecycle rules* section, click the **Create lifecycle rule** button.
+3. **Lifecycle rule name**: Enter `archive-old-data`.
+4. **Choose a rule scope**: Select **Apply to all objects in the bucket** (and tick the acknowledgment box that appears).
+5. **Lifecycle rule actions**: Check the following two boxes:
+   - *Move current versions of objects between storage classes*
+   - *Expire current versions of objects*
+6. **Transition current versions of objects**:
+   - Under *Storage class transitions*, select **Standard-IA**.
+   - **Days after object creation**: Enter `30`.
+   - Click **Add transition**.
+   - In the new row, select **Glacier Flexible Retrieval**.
+   - **Days after object creation**: Enter `90`.
+7. **Expire current versions of objects**:
+   - Under *Days after object creation*, enter `365`.
+8. Review the timeline summary at the bottom and click **Create rule**.
 
 📸 **Screenshot 01** — Lifecycle Rule Created
 > **Verify**: Three transitions configured with correct days
 
 🎯 **Interview Insight**: "How do you optimize S3 costs?"
 > **Strong answer**: "Lifecycle rules to transition to cheaper tiers (IA, Glacier). S3 Intelligent-Tiering for unknown access patterns. Delete incomplete multipart uploads. Use S3 Storage Lens for analysis. Compress before uploading."
+
+### Step 2 — Verify Lifecycle Rule
+1. Go to the bucket's **Management** tab.
+2. Under **Lifecycle rules**, verify the `archive-old-data` rule exists.
+3. Review the timeline to confirm the transitions (30 days Standard-IA, 90 days Glacier).
+
+📸 **Screenshot 02** — Lifecycle Rule Timeline
+
+### Step 3 — Clean Up
+1. Select the `archive-old-data` lifecycle rule.
+2. Click **Delete** and confirm.
+> **Note**: This prevents unexpected transitions and deletions if you continue to use this bucket.
+
+---
+---
+
+# 🔬 Practical Lab 26 — Secure Static Website (S3 + CloudFront + ACM + Route 53)
+
+## Lab Overview
+| Item | Detail |
+|------|--------|
+| **Difficulty** | Intermediate |
+| **Duration** | 30 minutes |
+| **Cost** | A few cents (CloudFront traffic, Route 53 hosted zone) |
+| **Prerequisites** | A registered domain name in Route 53 |
+
+## Business Scenario
+> Your company wants to host a highly available, blazingly fast frontend SPA (React/Angular) or a static marketing website. It must be served over HTTPS using a custom domain name, and the S3 bucket itself must remain completely private to the public internet to adhere to security best practices.
+
+### Step 1 — Request an SSL/TLS Certificate (ACM)
+> **CRITICAL**: CloudFront requires the certificate to be requested in the **us-east-1 (N. Virginia)** region, regardless of where your S3 bucket is located.
+
+1. Switch your AWS Console region to **N. Virginia (us-east-1)**.
+2. Go to **AWS Certificate Manager (ACM)** → **Request a certificate**.
+3. Select **Request a public certificate**.
+4. **Fully qualified domain name**: Enter your domain (e.g., `example.com`) and click **Add another name to this certificate** to add `*.example.com`.
+5. **Validation method**: Choose **DNS validation**.
+6. Click **Request**.
+7. Once requested, click into the certificate and click **Create records in Route 53**. This automatically creates the CNAME records to prove you own the domain.
+8. Wait for the status to change to **Issued** (usually takes a few minutes).
+
+### Step 2 — Create a Private S3 Bucket
+1. Go to **S3** → **Create bucket**.
+2. **Bucket name**: e.g., `my-secure-frontend-bucket` (can be any region).
+3. **Block Public Access settings**: Leave this **ON** (Block all public access). We want to keep the bucket private.
+4. **Bucket Versioning**: Enable (best practice for websites).
+5. Click **Create bucket**.
+
+### Step 3 — Upload Website Files
+1. Open your bucket and click **Upload**.
+2. Upload a simple `index.html` (and optionally an `error.html`).
+   ```html
+   <!-- index.html -->
+   <h1>Welcome to my secure CloudFront website!</h1>
+   ```
+3. Click **Upload**.
+
+### Step 4 — Create a CloudFront Distribution
+1. Go to **CloudFront** → **Create Distribution**.
+2. **Origin domain**: Select your S3 bucket from the dropdown.
+3. **Origin access**: Select **Origin access control settings (recommended)**.
+   - Click **Create control setting** and save the default configuration.
+4. **Viewer protocol policy**: Select **Redirect HTTP to HTTPS**.
+5. **Web Application Firewall (WAF)**: Select **Do not enable security protections** (to save costs for this lab).
+6. **Alternate domain name (CNAME)**: Enter your custom domain (e.g., `www.example.com`).
+7. **Custom SSL certificate**: Select the certificate you created in Step 1.
+8. **Default root object**: Type `index.html`.
+9. Click **Create distribution**.
+10. **IMPORTANT**: At the top of the screen, you will see a banner saying you must update the S3 bucket policy. Click **Copy policy**.
+
+### Step 5 — Update S3 Bucket Policy
+1. Go back to your **S3 Bucket** → **Permissions** tab.
+2. Scroll to **Bucket policy** and click **Edit**.
+3. Paste the policy copied from CloudFront. It allows CloudFront (using the Origin Access Control) to read the bucket, while keeping it blocked from the public internet.
+4. Click **Save changes**.
+
+### Step 6 — Point Route 53 to CloudFront
+1. Go to **Route 53** → **Hosted zones** → Click your domain.
+2. Click **Create record**.
+3. **Record name**: Enter the subdomain (e.g., `www`) or leave blank for the root domain.
+4. **Record type**: `A - Routes traffic to an IPv4 address and some AWS resources`.
+5. Turn on the **Alias** toggle.
+6. **Route traffic to**: 
+   - Select **Alias to CloudFront distribution**.
+   - Paste the CloudFront Distribution domain name (e.g., `d111111abcdef8.cloudfront.net`).
+7. Click **Create records**.
+
+### Step 7 — Verify the Setup
+1. Wait for the CloudFront distribution status to show as **Deployed** (can take 5-10 minutes).
+2. Open your browser and navigate to `https://www.example.com` (your custom domain).
+3. You should see your `index.html` file loaded securely with a padlock icon!
+
+🎯 **Interview Insight**: "Why use CloudFront with S3 instead of just S3 Static Website Hosting?"
+> **Strong answer**: "Using CloudFront allows you to attach a custom SSL certificate (HTTPS), caches content at edge locations for faster global load times, and allows you to keep the S3 bucket entirely private via Origin Access Control (OAC), satisfying strict security and compliance requirements."
