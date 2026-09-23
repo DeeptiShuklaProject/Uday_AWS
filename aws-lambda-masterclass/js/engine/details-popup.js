@@ -193,6 +193,23 @@
     }
   }
 
+  // Strip practical lab sections from chapter markdown
+  // Labs start with H1 headings like "# 🔬 Practical Lab NN — ..."
+  function stripPracticalLabs(md) {
+    const lines = md.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      if (/^#\s+.*Practical\s+Lab\s/i.test(lines[i].trim())) {
+        // Also remove preceding blank lines and horizontal rules
+        let cutPoint = i;
+        while (cutPoint > 0 && /^(\s*|---+\s*)$/.test(lines[cutPoint - 1].trim())) {
+          cutPoint--;
+        }
+        return lines.slice(0, cutPoint).join('\n');
+      }
+    }
+    return md; // No labs found, return as-is
+  }
+
   function getModuleId() {
     return (window.app && window.app.currentModule) || 'unknown';
   }
@@ -273,7 +290,9 @@
       try {
           await loadMarked();
           const mdContent = await fetchMarkdown(getModuleId());
-          contentBox.innerHTML = window.marked.parse(mdContent);
+          // Strip practical lab sections — they start with "# 🔬 Practical Lab"
+          const chapterOnly = stripPracticalLabs(mdContent);
+          contentBox.innerHTML = window.marked.parse(chapterOnly);
           // Render mermaid diagrams after content is mounted
           await renderMermaidDiagrams(contentBox);
       } catch(e) {
