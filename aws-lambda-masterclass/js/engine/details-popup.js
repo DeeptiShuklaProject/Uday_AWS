@@ -74,7 +74,7 @@
     }
     .details-overlay.open { opacity: 1; visibility: visible; }
     .details-modal {
-      width: 95%; max-width: 1000px; max-height: 90vh;
+      width: 88vw; max-width: 1600px; max-height: 90vh;
       background: #fff; border-radius: 16px;
       box-shadow: 0 24px 80px rgba(0,0,0,0.25);
       display: flex; flex-direction: column;
@@ -93,10 +93,10 @@
     .details-header-subtitle { font-size: 12px; color: #64748b; margin-top: 2px; }
     .details-close-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: #f1f5f9; border-radius: 8px; font-size: 18px; color: #64748b; cursor: pointer; transition: all 0.15s; }
     .details-close-btn:hover { background: #e2e8f0; color: #1e293b; }
-    .details-content-wrap { flex: 1; overflow-y: auto; padding: 32px 48px; }
+    .details-content-wrap { flex: 1; overflow-y: auto; padding: 40px 64px; }
     
     /* Markdown Rendering Styles */
-    .md-rendered { font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #334155; }
+    .md-rendered { font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.75; color: #334155; max-width: 100%; }
     .md-rendered h1, .md-rendered h2, .md-rendered h3, .md-rendered h4 { color: #0f172a; margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 700; }
     .md-rendered h1 { font-size: 2em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.3em; }
     .md-rendered h2 { font-size: 1.5em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.3em; }
@@ -114,6 +114,20 @@
     .md-rendered table tr { background-color: #fff; border-top: 1px solid #cbd5e1; }
     .md-rendered table tr:nth-child(2n) { background-color: #f8fafc; }
     .md-rendered img { max-width: 100%; box-sizing: content-box; background-color: #fff; }
+
+    /* Responsive: Tablet */
+    @media (max-width: 1024px) {
+      .details-modal { width: 92vw; }
+      .details-content-wrap { padding: 32px 40px; }
+    }
+    /* Responsive: Mobile */
+    @media (max-width: 640px) {
+      .details-modal { width: 96vw; max-width: none; border-radius: 10px; }
+      .details-content-wrap { padding: 24px 20px; }
+      .details-header { padding: 16px 18px 12px; }
+      .md-rendered { font-size: 15px; line-height: 1.65; }
+      .details-trigger-btn { padding: 5px 10px; font-size: 12px; }
+    }
   `;
   document.head.appendChild(style);
 
@@ -166,7 +180,7 @@
     const btn = document.createElement('button');
     btn.className = 'details-trigger-btn'; // Modified to look like Lab Notes but distinct color
     btn.id = 'details-trigger';
-    btn.innerHTML = '<span class="lab-icon">📄</span> Details Page';
+    btn.innerHTML = '<span class="lab-icon">📄</span> Detailed Chapter';
     
     // Attempt to add it next to the Lab Notes button
     const actions = document.querySelector('.topbar-actions');
