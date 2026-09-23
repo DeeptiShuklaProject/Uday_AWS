@@ -115,6 +115,10 @@
     .md-rendered table tr:nth-child(2n) { background-color: #f8fafc; }
     .md-rendered img { max-width: 100%; box-sizing: content-box; background-color: #fff; }
 
+    /* Mermaid Diagram Styles */
+    .md-rendered .mermaid { background: #f8fafc; border-radius: 8px; padding: 24px 16px; margin: 1em 0; text-align: center; overflow-x: auto; }
+    .md-rendered .mermaid svg { max-width: 100%; height: auto; }
+
     /* Responsive: Tablet */
     @media (max-width: 1024px) {
       .details-modal { width: 92vw; }
@@ -141,6 +145,52 @@
       script.onerror = reject;
       document.head.appendChild(script);
     });
+  }
+
+  // Load Mermaid.js for diagram rendering
+  function loadMermaid() {
+    return new Promise((resolve, reject) => {
+      if (window.mermaid) return resolve();
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+      script.onload = () => {
+        window.mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+        resolve();
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  // Render mermaid diagrams inside a container
+  async function renderMermaidDiagrams(container) {
+    // Find all <pre><code class="language-mermaid"> blocks produced by marked
+    const codeBlocks = container.querySelectorAll('pre code.language-mermaid');
+    if (codeBlocks.length === 0) return;
+
+    try {
+      await loadMermaid();
+    } catch (e) {
+      console.warn('Failed to load Mermaid library:', e);
+      return;
+    }
+
+    // Convert each code block into a mermaid div
+    codeBlocks.forEach((codeEl, i) => {
+      const mermaidSource = codeEl.textContent;
+      const preEl = codeEl.parentElement;
+      const mermaidDiv = document.createElement('div');
+      mermaidDiv.className = 'mermaid';
+      mermaidDiv.textContent = mermaidSource;
+      preEl.replaceWith(mermaidDiv);
+    });
+
+    // Run mermaid rendering on the new divs
+    try {
+      await window.mermaid.run({ nodes: container.querySelectorAll('.mermaid') });
+    } catch (e) {
+      console.warn('Mermaid rendering error:', e);
+    }
   }
 
   function getModuleId() {
@@ -224,6 +274,8 @@
           await loadMarked();
           const mdContent = await fetchMarkdown(getModuleId());
           contentBox.innerHTML = window.marked.parse(mdContent);
+          // Render mermaid diagrams after content is mounted
+          await renderMermaidDiagrams(contentBox);
       } catch(e) {
           contentBox.innerHTML = "<div style='color:red'>Failed to load or parse Markdown.</div>";
       }
