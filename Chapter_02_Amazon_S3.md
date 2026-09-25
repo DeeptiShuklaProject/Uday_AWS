@@ -1290,7 +1290,7 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 1. Wait for the CloudFront distribution status to show as **Deployed** (can take 5-10 minutes).
 2. Open your browser and navigate to `https://www.example.com` (your custom domain).
 3. You should see your `index.html` file loaded securely with a padlock icon!
-
+![alt text](image-17.png)
 🎯 **Interview Insight**: "Why use CloudFront with S3 instead of just S3 Static Website Hosting?"
 > **Strong answer**: "Using CloudFront allows you to attach a custom SSL certificate (HTTPS), caches content at edge locations for faster global load times, and allows you to keep the S3 bucket entirely private via Origin Access Control (OAC), satisfying strict security and compliance requirements."
 
