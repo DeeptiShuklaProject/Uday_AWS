@@ -730,6 +730,17 @@ body.modal-open { overflow: hidden; }
 .step-html p { margin: 0 0 var(--space-2); }
 .step-html pre { margin: var(--space-2) 0; }
 
+/* Doc mermaid diagrams → same card chrome as the interactive
+   DiagramSection (orange titlebar + bordered scroll canvas). */
+.diagram-embed { margin: var(--space-4) 0 var(--space-6); }
+.diagram-embed .diagram-scroll { min-height: 0; }
+.diagram-embed .diagram-scroll .mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
+.diagram-embed .mermaid svg { max-width: none; }
+
 /* ============================================================
    CHALLENGE EDITOR
    ============================================================ */

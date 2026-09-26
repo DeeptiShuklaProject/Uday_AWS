@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCourse } from '../../context/CourseContext';
+import { useMermaid } from '../../hooks/useMermaid';
 
 /**
  * LabSection — hands-on lab checklist card (reference-style):
@@ -16,6 +17,8 @@ export default function LabSection({ content = {}, sectionId, hintsLabel = 'Hint
   const [done, setDone] = useState({});
   const [openHint, setOpenHint] = useState({});
   const recorded = useRef(false);
+  const stepsRef = useRef(null);
+  useMermaid(stepsRef, [steps.length]);
   const doneCount = Object.values(done).filter(Boolean).length;
   const pct = steps.length ? Math.round((doneCount / steps.length) * 100) : 0;
 
@@ -62,7 +65,7 @@ export default function LabSection({ content = {}, sectionId, hintsLabel = 'Hint
         </div>
       )}
 
-      <div className="lab-steps">
+      <div className="lab-steps" ref={stepsRef}>
         {steps.map((step, i) => {
           const key = step.id || i;
           const complete = !!done[key];

@@ -19,7 +19,7 @@ const CAT_COLORS = {
   'python-devops':    { color: '#16a34a', colorBg: '#dcfce7' },
   kubernetes:         { color: '#6366f1', colorBg: '#eef2ff' },
   'basic-programming': { color: '#d946ef', colorBg: '#fae8ff' },
-  'code-adventure':   { color: '#ef4444', colorBg: '#fee2e2' },
+  'codeadventure':    { color: '#ef4444', colorBg: '#fee2e2' },
 };
 
 export const categories = [

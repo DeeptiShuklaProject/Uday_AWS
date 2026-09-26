@@ -14,6 +14,28 @@ const NODE_COLORS = {
 };
 
 /**
+ * Node labels wrap to at most 2 lines. A "Title — subtitle" label splits
+ * at the dash; plain long labels wrap on word boundaries.
+ */
+const wrapLabel = (label, max = 18) => {
+  const s = decodeEntities(label || '');
+  if (s.length <= max) return [s];
+  const dashParts = s.split(/\s+[—–]\s+/);
+  const lines = dashParts.length > 1
+    ? [dashParts[0], dashParts.slice(1).join(' — ')]
+    : (() => {
+        const out = [''];
+        for (const w of s.split(' ')) {
+          const cur = out[out.length - 1];
+          if (cur && (cur + ' ' + w).length > max) { out.push(w); if (out.length === 2) break; }
+          else out[out.length - 1] = cur ? `${cur} ${w}` : w;
+        }
+        return out;
+      })();
+  return lines.slice(0, 2).map(l => (l.length > max + 4 ? l.slice(0, max + 3) + '…' : l));
+};
+
+/**
  * DiagramSection — interactive SVG architecture diagram.
  * Port of the vanilla DiagramEngine: nodes (clickable → detail panel) and
  * labelled edges with optional animated dashes.
@@ -65,18 +87,22 @@ export default function DiagramSection({ content = {}, inspectHint = 'Click comp
           })}
           {nodes.map(node => {
             const colors = NODE_COLORS[node.type] || NODE_COLORS.client;
+            const lines = wrapLabel(node.label);
+            const twoLine = lines.length > 1;
             return (
               <g key={node.id} style={{ cursor: 'pointer' }} onClick={() => setSelected(node)}>
                 <rect x={node.x} y={node.y} width="120" height="60" rx="10"
                   fill={colors.bg} stroke={selected?.id === node.id ? '#f97316' : colors.border}
                   strokeWidth={selected?.id === node.id ? 3 : 2}
                   filter={`url(#shadow-${uid})`} />
-                <text x={node.x + 60} y={node.y + 22} textAnchor="middle" fontSize="18">
+                <text x={node.x + 60} y={node.y + (twoLine ? 16 : 22)} textAnchor="middle" fontSize="18">
                   {decodeEntities(node.icon || '☁️')}
                 </text>
-                <text x={node.x + 60} y={node.y + 44} textAnchor="middle" fill={colors.text}
+                <text x={node.x + 60} y={node.y + (twoLine ? 36 : 44)} textAnchor="middle" fill={colors.text}
                   fontSize="11" fontWeight="600" fontFamily="Inter, sans-serif">
-                  {decodeEntities(node.label)}
+                  {lines.map((l, i) => (
+                    <tspan key={i} x={node.x + 60} dy={i === 0 ? 0 : 13}>{l}</tspan>
+                  ))}
                 </text>
               </g>
             );

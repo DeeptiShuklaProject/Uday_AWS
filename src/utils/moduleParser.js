@@ -609,6 +609,154 @@ function alerts(html) {
   });
 }
 
+// Rendered mermaid blocks → same card chrome as the AWS DiagramSection
+// (orange titlebar + bordered scrollable canvas). Used as the fallback
+// when a mermaid block can't be converted to interactive nodes/edges.
+function wrapMermaid(html) {
+  return html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+    (_, code) =>
+      `<div class="diagram-embed"><div class="diagram-titlebar">` +
+      `<span class="diagram-titlebar-icon">📐</span>` +
+      `<span class="diagram-title">Architecture Diagram</span>` +
+      `</div><div class="diagram-scroll"><pre><code class="language-mermaid">${code}</code></pre></div></div>`);
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * mermaid flowchart → DiagramSection data (nodes/edges + layout)
+ *
+ * Doc sources author architecture as ```mermaid flowchart blocks.
+ * Instead of a static SVG, we parse them into the SAME data shape
+ * AWS architecture sections carry, so they render through the real
+ * interactive DiagramSection (icon cards, labelled edges, click-to-
+ * inspect detail panel).
+ * ───────────────────────────────────────────────────────────── */
+
+const NODE_STYLE = s => {
+  s = (s || '').toLowerCase();
+  if (/secur|govern|policy|identity|auth|cognito|guard|iam\b/.test(s)) return 'security';
+  if (/observ|metric|monitor|eval|log|cloudwatch|audit/i.test(s)) return 'monitoring';
+  if (/memory|storage|db|dynamo|cache|s3\b|bucket|data|state/i.test(s)) return 'storage';
+  if (/model|fm\b|bedrock|llm|service|lambda|compute|engine|runtime|vm|agent|executor/i.test(s)) return 'compute';
+  if (/output|response|result|ui\b|display|client app|report/i.test(s)) return 'output';
+  if (/queue|event|sns|sqs|stream|kinesis|webhook|bus/i.test(s)) return 'event';
+  if (/network|gateway|vpc|alb|api|route|cdn|proxy/i.test(s)) return 'network';
+  if (/trigger|schedule|cron|user|client|react|cli|caller|human/i.test(s)) return 'trigger';
+  return 'client';
+};
+const NODE_ICON = {
+  security: '🔒', compute: '⚙️', storage: '🗄️', client: '🖥️',
+  monitoring: '📊', output: '📤', event: '⚡', network: '🌐', trigger: '🎯',
+};
+
+function mermaidToDiagram(body) {
+  const m = body.match(/```mermaid\s*\n([\s\S]*?)```/);
+  if (!m) return null;
+  const src = m[1];
+  const dirM = src.match(/^\s*(?:graph|flowchart)\s+(LR|RL|TB|TD|BT)/m);
+  if (!dirM) return null;
+  const horizontal = /LR|RL/.test(dirM[2]);
+
+  const nodes = new Map();
+  const edges = [];
+  const tiers = new Map(); // nodeId → subgraph title
+  let currentTier = null;
+
+  const clean = s => (s || '').replace(/<br\s*\/?>/gi, ' — ').replace(/["'<>]/g, '').trim();
+  const NODE_DEF = /([A-Za-z0-9_]+)\s*(?:\[\[?"?([^\]"]+?)"?\]\]?|\("?([^)"]+?)"?\)|\(\("?([^)"]+?)"?\)\)|\(\(\("?([^)"]+?)"?\)\)\)|\{"?([^}"]+?)"?\}|\[\("?([^\]"]+?)"?\)\]|>"?([^\]"]+?)"?\])/g;
+  const parseNode = (s) => {
+    NODE_DEF.lastIndex = 0;
+    const d = NODE_DEF.exec(s);
+    if (!d) {
+      const bare = s.trim().match(/^([A-Za-z0-9_]+)$/);
+      return bare ? { id: bare[1], label: bare[1] } : null;
+    }
+    return { id: d[1], label: clean(d.slice(2).find(v => v != null) || d[1]) };
+  };
+  const register = (p) => {
+    if (!p) return;
+    if (!nodes.has(p.id)) nodes.set(p.id, { id: p.id, label: p.label });
+    else if (p.label && p.label !== p.id && nodes.get(p.id).label === p.id) {
+      nodes.get(p.id).label = p.label;
+    }
+    if (currentTier) tiers.set(p.id, currentTier);
+  };
+
+  src.split('\n').forEach(raw => {
+    const line = raw.trim();
+    if (!line || line.startsWith('%%')) return;
+    const sg = line.match(/^subgraph\s+(?:[A-Za-z0-9_]+\s*)?(?:\[(?:"([^"]*)"|'([^']*)'|([^\]]*))\]|(.+))?\s*$/);
+    if (sg) {
+      currentTier = clean(sg[1] || sg[2] || sg[3] || sg[4]) || null;
+      return;
+    }
+    if (/^end\b/.test(line)) { currentTier = null; return; }
+    if (/^(classDef|class\s|style\s|linkStyle|click\s|direction\s|graph|flowchart)\b/.test(line)) return;
+
+    // Edges: split on connectors, consuming an optional |label| that
+    // follows each connector. With a capture in the split regex, node
+    // parts land on even indexes and labels on odd ones:
+    //   "A -->|x| B --> C" → ["A", "x", "B", undefined, "C"]
+    const segs = line.split(/\s*(?:-->|---|-\.->|==>|->)\s*(?:\|([^|]*)\|)?\s*/);
+    if (segs.length > 2) {
+      const parts = segs.filter((_, i) => i % 2 === 0);
+      const labels = segs.filter((_, i) => i % 2 === 1);
+      for (let i = 0; i + 1 < parts.length; i++) {
+        const a = parseNode(parts[i]), b = parseNode(parts[i + 1]);
+        if (!a || !b) continue;
+        register(a); register(b);
+        edges.push({ from: a.id, to: b.id, label: labels[i] || '', animated: true });
+      }
+      return;
+    }
+    const single = parseNode(line);
+    if (single) register(single);
+  });
+
+  if (nodes.size < 2 || !edges.length) return null;
+
+  // Longest-path level layout (L→R or T→B), grouped within subgraphs.
+  const indeg = Object.fromEntries([...nodes.keys()].map(id => [id, 0]));
+  edges.forEach(e => { if (indeg[e.to] != null) indeg[e.to]++; });
+  const level = {};
+  [...nodes.keys()].filter(id => !indeg[id]).forEach(id => { level[id] = 0; });
+  for (let pass = 0; pass < 30; pass++) {
+    let changed = false;
+    edges.forEach(e => {
+      const lf = level[e.from] ?? 0;
+      if ((level[e.to] ?? -1) < lf + 1) { level[e.to] = lf + 1; changed = true; }
+    });
+    if (!changed) break;
+  }
+  nodes.forEach((n, id) => { if (level[id] == null) level[id] = 0; });
+  const byLevel = {};
+  Object.entries(level).forEach(([id, l]) => (byLevel[l] ||= []).push(id));
+
+  const GX = 200, GY = 110, PAD = 50;
+  const out = [...nodes.values()].map(n => {
+    const l = level[n.id];
+    const type = NODE_STYLE(`${tiers.get(n.id) || ''} ${n.label}`);
+    return {
+      id: n.id, type,
+      icon: NODE_ICON[type] || '☁️',
+      label: clean(n.label),
+      description: tiers.get(n.id) || undefined,
+      x: horizontal ? PAD + l * GX : PAD + byLevel[l].indexOf(n.id) * GX,
+      y: horizontal ? PAD + byLevel[l].indexOf(n.id) * GY : PAD + l * GY,
+    };
+  });
+  const maxL = Math.max(...Object.values(level));
+  const maxN = Math.max(...Object.values(byLevel).map(a => a.length));
+  return {
+    block: m[0],
+    content: {
+      title: 'Architecture Diagram',
+      nodes: out, edges,
+      width: PAD + (horizontal ? (maxL + 1) : maxN) * GX,
+      height: PAD + (horizontal ? maxN : (maxL + 1)) * GY,
+    },
+  };
+}
+
 /**
  * @param {string} md - raw markdown
  * @param {object} opts
@@ -620,7 +768,7 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
   codeExamples, quiz, interview } = {}) {
   if (!md) return null;
   const lines = md.split('\n');
-  const render = chunk => alerts(resolveMediaUrls(marked.parse(chunk.trim()), imageBaseUrl));
+  const render = chunk => alerts(wrapMermaid(resolveMediaUrls(marked.parse(chunk.trim()), imageBaseUrl)));
 
   // ── Title: first H1 ──
   let title = titleOverride || 'Chapter';
@@ -693,15 +841,34 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
     if (widgetSections) {
       widgetSections.forEach(s => sections.push({ icon: iconFor(hTitle), ...s }));
     } else {
-      const html = render(tmd);
-      if (html.trim()) {
+      // ```mermaid flowchart → real interactive architecture widget
+      // (prose around the diagram stays a normal text section).
+      const dia = mermaidToDiagram(tmd);
+      if (dia) {
+        const rest = tmd.replace(dia.block, '');
+        const restHtml = render(rest);
+        if (restHtml.trim()) {
+          sections.push({
+            id: idBase, type: typeFor(hTitle), icon: iconFor(hTitle),
+            title: hTitle, content: restHtml,
+          });
+        }
         sections.push({
-          id: idBase,
-          type: typeFor(hTitle),
-          icon: iconFor(hTitle),
-          title: hTitle,
-          content: html,
+          id: `${idBase}-architecture`, type: 'architecture', icon: '📐',
+          title: restHtml.trim() ? `${hTitle} — Diagram` : hTitle,
+          content: { ...dia.content, title: hTitle },
         });
+      } else {
+        const html = render(tmd);
+        if (html.trim()) {
+          sections.push({
+            id: idBase,
+            type: typeFor(hTitle),
+            icon: iconFor(hTitle),
+            title: hTitle,
+            content: html,
+          });
+        }
       }
     }
     quizzes.forEach((q, qi) => {
