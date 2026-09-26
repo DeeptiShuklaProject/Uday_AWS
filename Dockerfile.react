@@ -1,0 +1,26 @@
+# ==============================================================================
+# Production Dockerfile — React + Vite masterclass app
+# Multi-stage: build the SPA, then serve dist/ + lab-notes API via node server.
+# ==============================================================================
+
+# ── Stage 1: build ──
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# ── Stage 2: runtime ──
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY --from=build /app/dist ./dist
+COPY server ./server
+
+ENV NODE_ENV=production
+ENV PORT=8081
+EXPOSE 8081
+
+CMD ["node", "server/index.cjs"]

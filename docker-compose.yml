@@ -32,5 +32,22 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # React + Vite masterclass app (new SPA + lab-notes API).
+  # Run just this one:  docker compose up react-app
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    container_name: masterclass_react
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/masterclass_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   postgres_data:

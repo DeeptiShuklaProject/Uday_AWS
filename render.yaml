@@ -1,15 +1,14 @@
-# Render blueprint — creates the web service only.
-# The Postgres instance already exists, so DATABASE_URL is left as a
-# manual env var: paste the Internal Database URL when prompted during
-# the Blueprint deploy (or later in the Environment tab).
+# Render blueprint — React masterclass web service (Docker runtime).
+# The Postgres instance already exists, so DATABASE_URL is filled manually:
+# paste the Internal Database URL when prompted during the Blueprint deploy
+# (or later in the service's Environment tab).
 services:
   - type: web
     name: aws-masterclass
-    runtime: node
+    runtime: docker
+    dockerfilePath: ./Dockerfile.react
     region: ohio
     plan: starter
-    buildCommand: npm install && npm run build
-    startCommand: npm start
     envVars:
       - key: DATABASE_URL
         sync: false

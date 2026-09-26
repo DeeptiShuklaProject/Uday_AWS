@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.git/
+.github/
+*.log
+debug-*.mjs
+shot-*.png
+labs/
+data/
+.agents/
+scripts/debug/
