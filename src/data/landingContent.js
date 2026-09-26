@@ -14,6 +14,15 @@ export const landingContent = {
       'Build, deploy, secure, scale, and operate a real AWS production environment. 47 chapters. One continuous project. From zero to production-ready architect.',
     primaryCta: '🚀 Start Learning',
     secondaryCta: '📚 Browse Chapters',
+    // Vanilla index.html links Start Learning straight to module-04 (VPC —
+    // the production story's first build step).
+    startModule: 'module-04',
+    stats: [
+      { value: '47', label: 'Chapters' },
+      { value: '50+', label: 'Interactive Labs' },
+      { value: '100+', label: 'Quiz Questions' },
+      { value: '20+', label: 'Challenges' },
+    ],
   },
 
   // Thematic path through the course (production story beats).

@@ -12,11 +12,14 @@ export default function LandingPage({ content, chapterBase = '/chapter' }) {
   const stats = progress.getStats();
   const c = content;
 
-  // "Start Learning" resumes at the first incomplete chapter.
+  // "Start Learning" opens the configured start module (module-04 in the
+  // vanilla course); falls back to the first incomplete chapter.
   const firstIncomplete = modules.find(m => !progress.isModuleComplete(m.id));
-  const startId = firstIncomplete?.id || modules[0]?.id;
+  const startId =
+    (c.hero.startModule && modules.some(m => m.id === c.hero.startModule) && c.hero.startModule) ||
+    firstIncomplete?.id || modules[0]?.id;
 
-  const heroStats = [
+  const heroStats = c.hero.stats?.length ? c.hero.stats : [
     { value: registry?.stats?.chapters ?? modules.length, label: 'Chapters' },
     { value: `${registry?.stats?.labs ?? 0}+`, label: 'Interactive Labs' },
     { value: `${registry?.stats?.quizQuestions ?? 0}+`, label: 'Quiz Questions' },
@@ -162,31 +165,30 @@ export default function LandingPage({ content, chapterBase = '/chapter' }) {
         </div>
       </section>
 
-      {/* ACHIEVEMENTS */}
-      {registry?.achievements?.length > 0 && (
-        <section className="page-section" style={{ background: 'var(--surface-page)' }}>
-          <div className="container">
-            <div className="page-section-header">
-              <h2>{c.achievements.title}</h2>
-              <p>{c.achievements.subtitle}</p>
-            </div>
-            <div className="achievements-grid">
-              {registry.achievements.map(ach => {
-                const earned = progress.hasAchievement(ach.id);
-                return (
-                  <div key={ach.id} className={`achievement ${earned ? 'achievement-earned' : 'achievement-locked'}`}>
-                    <div className="achievement-icon">{ach.icon}</div>
-                    <div className="achievement-info">
-                      <div className="achievement-title">{ach.title}</div>
-                      <div className="achievement-desc">{ach.description}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+      {/* ACHIEVEMENTS — vanilla always shows the header; grid is empty when
+          the registry has no achievements */}
+      <section className="page-section" style={{ background: 'var(--surface-page)' }}>
+        <div className="container">
+          <div className="page-section-header">
+            <h2>{c.achievements.title}</h2>
+            <p>{c.achievements.subtitle}</p>
           </div>
-        </section>
-      )}
+          <div className="achievements-grid">
+            {(registry?.achievements || []).map(ach => {
+              const earned = progress.hasAchievement(ach.id);
+              return (
+                <div key={ach.id} className={`achievement ${earned ? 'achievement-earned' : 'achievement-locked'}`}>
+                  <div className="achievement-icon">{ach.icon}</div>
+                  <div className="achievement-info">
+                    <div className="achievement-title">{ach.title}</div>
+                    <div className="achievement-desc">{ach.description}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       {/* FOOTER */}
       <footer className="app-footer">
