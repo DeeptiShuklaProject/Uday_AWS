@@ -52,7 +52,8 @@ function QuizQuestion({ q, index, onAnswered }) {
 
 /** QuizSection — knowledge-check question cards with instant feedback. */
 export default function QuizSection({ content = {}, sectionId, completeLabel = 'Quiz complete' }) {
-  const { progress, currentModuleId } = useCourse();
+  const { progress, currentModule } = useCourse();
+  const moduleId = currentModule?.id;
   const questions = content.questions || [];
   const [answers, setAnswers] = useState({});
   const recorded = useRef(false);
@@ -65,9 +66,9 @@ export default function QuizSection({ content = {}, sectionId, completeLabel = '
   useEffect(() => {
     if (questions.length > 0 && answeredCount === questions.length && !recorded.current) {
       recorded.current = true;
-      progress.recordQuizScore(currentModuleId, sectionId || 'quiz', correctCount, questions.length);
+      progress.recordQuizScore(moduleId, sectionId || 'quiz', correctCount, questions.length);
     }
-  }, [answeredCount, correctCount, questions.length, progress, currentModuleId, sectionId]);
+  }, [answeredCount, correctCount, questions.length, progress, moduleId, sectionId]);
 
   return (
     <div>

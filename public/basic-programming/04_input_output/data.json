@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "04_input_output",
+  "title": "Input, Output & Console Formatting",
+  "description": "I/O handles reading user input and formatting stream outputs to stdout, stderr, and files.",
+  "category": "Core",
+  "badge": "Level 4: Practitioner",
+  "tags": [
+    "Input",
+    "Output",
+    "Formatting",
+    "Streams"
+  ],
+  "codeExamples": {
+    "python": "name = input('Enter name: ') if False else 'Alice'\nage = 25\nprint(f'User {name} is {age} years old.')\nprint('Raw bytes:', 'Hello'.encode('utf-8'))",
+    "java": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        String name = \"Alice\";\n        int age = 25;\n        System.out.printf(\"User %s is %d years old.%n\", name, age);\n    }\n}",
+    "javascript": "let name = 'Alice';\nlet age = 25;\nconsole.log(`User ${name} is ${age} years old.`);\nprocess.stdout.write('Direct stdout stream write\\n');",
+    "cpp": "#include <iostream>\n#include <string>\nint main() {\n    std::string name = \"Alice\";\n    int age = 25;\n    std::cout << \"User \" << name << \" is \" << age << \" years old.\" << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What data type does Python's built-in `input()` function ALWAYS return?",
+      "options": [
+        "String (`str`). Even if the user types a number like 42, `input()` returns `'42'`. Cast using `int()` or `float()`.",
+        "Integer (`int`).",
+        "Float (`float`).",
+        "Boolean (`bool`)."
+      ],
+      "correctIndex": 0,
+      "explanation": "Python `input()` reads input line-by-line from sys.stdin as a string object. Type casting is required for numeric computations."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. What is the difference between `sys.stdout.write()` and `print()` in Python?",
+      "a": "`print()` automatically adds a trailing newline (`\\n`) and handles argument string conversion. `sys.stdout.write()` writes raw strings directly to stdout stream without newline additions."
+    },
+    {
+      "q": "02. What is Stream Buffer Flushing and what does `flush=True` do?",
+      "a": "I/O streams buffer data in RAM before writing to disk or terminal. `flush=True` forces the OS to immediately flush the buffer out to hardware without waiting for newline or buffer overflow."
+    },
+    {
+      "q": "03. What is the difference between `stdout` vs `stderr`?",
+      "a": "`stdout` (Standard Output) streams normal program data (file descriptor 1). `stderr` (Standard Error) streams error logs and warnings (file descriptor 2), preventing error messages from corrupting piped output."
+    },
+    {
+      "q": "04. Why is fast I/O (`sys.stdin.read().split()`) required in competitive programming?",
+      "a": "Built-in `input()` has high per-line overhead. `sys.stdin.read()` buffers all input into a single RAM string, running up to 10-20x faster."
+    },
+    {
+      "q": "05. How does `f-string` formatting (`f\"{val:.2f}\"`) handle floating-point precision?",
+      "a": "Format specifier `.2f` rounds and formats floats to 2 decimal places (e.g. `f\"{3.14159:.2f}\"` -> `'3.14'`)."
+    },
+    {
+      "q": "06. What is EOF (End of File) and how do you handle EOF exceptions in Python?",
+      "a": "EOF signifies no more data remains in an input stream. Catch `EOFError` in a `try...except` block or check `while line := sys.stdin.readline():`."
+    },
+    {
+      "q": "07. What is Command Line I/O Piping (`|`) and Redirection (`>` / `<`)?",
+      "a": "`>` redirects stdout to a file (`python script.py > output.txt`). `<` feeds a file to stdin (`python script.py < input.txt`). `|` pipes stdout of process A to stdin of process B."
+    },
+    {
+      "q": "08. How does `print()` handle `sep` and `end` parameters?",
+      "a": "`sep` specifies delimiter string between multiple arguments (default space `' '`). `end` specifies string printed at the end (default newline `'\\n'`)."
+    },
+    {
+      "q": "09. What is String Interpolation vs Concatenation for output formatting?",
+      "a": "String interpolation (`f\"{a} {b}\"`) compiles to optimized string formatting bytecode, avoiding multi-object creation caused by string concatenation (`a + ' ' + b`)."
+    },
+    {
+      "q": "10. What is `Scanner` vs `BufferedReader` in Java I/O performance?",
+      "a": "`BufferedReader` reads large 8KB byte chunks from stream into memory, outperforming `Scanner` which parses tokens with heavy regex overhead."
+    },
+    {
+      "q": "11. How does `std::cin` and `std::cout` synchronization work in C++?",
+      "a": "By default `std::cin` flushes `std::cout`. Disabling synchronization using `std::ios_base::sync_with_stdio(false); std::cin.tie(NULL);` drastically accelerates C++ I/O."
+    },
+    {
+      "q": "12. What is Non-Blocking I/O vs Blocking I/O?",
+      "a": "Blocking I/O halts thread execution until input data arrives. Non-Blocking I/O returns immediately if no data is ready, used in asynchronous event loops (Node.js, asyncio)."
+    },
+    {
+      "q": "13. What is File I/O buffering modes (Unbuffered, Line-Buffered, Block-Buffered)?",
+      "a": "Unbuffered writes immediately. Line-buffered flushes on `\\n` (terminals). Block-buffered flushes when 4KB/8KB RAM buffer fills up (disk files)."
+    },
+    {
+      "q": "14. How do you print ANSI Escape Codes for colored terminal output?",
+      "a": "ANSI codes like `\\033[31mRed Text\\033[0m` instruct terminal emulators to change text color, background, or cursor position."
+    },
+    {
+      "q": "15. What is `repr()` vs `str()` when printing objects?",
+      "a": "`str()` returns a user-friendly string representation. `repr()` returns an unambiguous developer representation showing object type and exact state."
+    },
+    {
+      "q": "16. How does `sys.argv` parse command-line input arguments?",
+      "a": "`sys.argv` is a list where `sys.argv[0]` is script name and `sys.argv[1:]` contains passed positional argument strings."
+    },
+    {
+      "q": "17. What is `getpass` module used for in Python CLI apps?",
+      "a": "`getpass.getpass()` prompts for user passwords without echoing characters to terminal screen."
+    },
+    {
+      "q": "18. What is `struct` module in Python binary I/O?",
+      "a": "`struct.pack()` and `struct.unpack()` convert Python values to/from C binary struct bytes for raw network stream I/O."
+    },
+    {
+      "q": "19. How does `printf` specifier `%d`, `%s`, `%f`, `%x` work in C/C++/Java?",
+      "a": "%d = decimal integer, %s = string, %f = float, %x = hexadecimal integer."
+    },
+    {
+      "q": "20. What are production best practices for Console and Logging I/O?",
+      "a": "Use structured logging framework (`logging` module, JSON logs) instead of plain `print()`, write errors to `stderr`, and explicitly flush streams when logging critical crashes."
+    }
+  ]
+}

@@ -654,12 +654,81 @@ body.modal-open { overflow: hidden; }
 }
 .slide-html th { background: var(--color-neutral-100); font-weight: var(--weight-semibold); }
 .slide-html img { max-width: 100%; border-radius: var(--radius-md); }
+/* Continuous-scroll lesson: every section is an anchor target for the
+   right-hand On-This-Page nav — offset below the fixed topbar. */
+.lesson-anchor { scroll-margin-top: 90px; }
+
 .slide-html blockquote {
   border-left: 3px solid var(--color-primary-500);
   padding-left: var(--space-4);
   margin: var(--space-3) 0;
   color: var(--color-neutral-600);
 }
+/* Video embeds injected by moduleParser (<VideoSection> tags) */
+.slide-html .video-embed,
+.md-rendered .video-embed {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  margin: var(--space-3) 0;
+}
+.slide-html .video-embed iframe,
+.md-rendered .video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* <details>/<summary> in doc content → accordion-style cards matching the
+   app's .accordion-item look (progressive hints, FAQ answers, spoilers). */
+.slide-html details,
+.md-rendered details {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  margin: var(--space-2) 0;
+  overflow: hidden;
+  background: var(--color-neutral-0);
+}
+.slide-html details summary,
+.md-rendered details summary {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-800);
+  list-style: none;
+  user-select: none;
+  transition: background var(--transition-fast);
+}
+.slide-html details summary::-webkit-details-marker,
+.md-rendered details summary::-webkit-details-marker { display: none; }
+.slide-html details summary::after,
+.md-rendered details summary::after {
+  content: '▼';
+  float: right;
+  font-size: var(--text-xs);
+  color: var(--color-neutral-400);
+  transition: transform 0.2s;
+}
+.slide-html details[open] summary::after,
+.md-rendered details[open] summary::after { transform: rotate(180deg); }
+.slide-html details summary:hover,
+.md-rendered details summary:hover { background: var(--color-neutral-100); }
+.slide-html details > *:not(summary),
+.md-rendered details > *:not(summary) {
+  margin-left: var(--space-4);
+  margin-right: var(--space-4);
+}
+.slide-html details > *:not(summary):last-child,
+.md-rendered details > *:not(summary):last-child { margin-bottom: var(--space-3); }
+
+/* Rich HTML inside lab steps (code blocks, lists, hints) */
+.step-html { font-size: var(--text-sm); }
+.step-html p { margin: 0 0 var(--space-2); }
+.step-html pre { margin: var(--space-2) 0; }
 
 /* ============================================================
    CHALLENGE EDITOR
@@ -766,3 +835,40 @@ button.module-card { font: inherit; width: 100%; }
   .slide-nav-center { order: -1; width: 100%; justify-content: center; }
   .mc-modal-footer { flex-wrap: wrap; }
 }
+
+/* ── Doc library pages (Bedrock notes) ─────────────────────────── */
+.doc-page { min-height: 100vh; background: var(--surface-page); }
+.doc-header {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-neutral-0); border-bottom: 1px solid var(--color-neutral-200);
+}
+.doc-header-title { display: flex; align-items: center; gap: var(--space-3); }
+.doc-header-icon { font-size: 22px; }
+.doc-header-name { font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-neutral-400); }
+.doc-header-course { font-size: var(--text-base); font-weight: 700; color: var(--color-neutral-900); }
+.doc-body { max-width: 920px; margin: 0 auto; padding: var(--space-8) var(--space-6); }
+.doc-chapter-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.doc-chapter-item {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg); transition: all var(--transition-base);
+}
+.doc-chapter-item:hover { border-color: var(--color-primary-300); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.doc-chapter-num { font-size: var(--text-sm); font-weight: 700; color: var(--color-primary-500); min-width: 28px; }
+.doc-chapter-title { flex: 1; font-size: var(--text-base); font-weight: 600; color: var(--color-neutral-800); }
+.doc-chapter-arrow { color: var(--color-neutral-300); font-weight: 700; }
+.doc-chapter-item:hover .doc-chapter-arrow { color: var(--color-primary-500); }
+.doc-paper {
+  background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-xl); padding: var(--space-8) var(--space-10);
+}
+.doc-nav { display: flex; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--color-neutral-200); }
+@media (max-width: 640px) {
+  .doc-body { padding: var(--space-4); }
+  .doc-paper { padding: var(--space-5); }
+  .doc-nav { flex-direction: column; }
+}
+.doc-body-wide { max-width: 1400px; }

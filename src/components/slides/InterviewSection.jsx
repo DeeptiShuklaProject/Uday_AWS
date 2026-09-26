@@ -6,6 +6,7 @@ const DIFF_COLORS = {
   advanced: 'var(--color-error-500, #ef4444)',
   scenario: 'var(--color-primary-500)',
   troubleshooting: 'var(--color-accent-500, #8b5cf6)',
+  general: 'var(--color-neutral-500)',
 };
 const DIFF_BG = {
   beginner: 'var(--color-success-50)',
@@ -13,11 +14,12 @@ const DIFF_BG = {
   advanced: '#fef2f2',
   scenario: 'var(--color-primary-50)',
   troubleshooting: '#f5f3ff',
+  general: 'var(--color-neutral-100)',
 };
 const ORDER = ['beginner', 'intermediate', 'advanced', 'scenario', 'troubleshooting'];
 const LABELS = {
   beginner: '🌱 Beginner', intermediate: '📈 Intermediate', advanced: '🚀 Advanced',
-  scenario: '🎯 Scenario-Based', troubleshooting: '🔧 Troubleshooting',
+  scenario: '🎯 Scenario-Based', troubleshooting: '🔧 Troubleshooting', general: '❓ Q&A',
 };
 
 function InterviewCard({ q, index, level }) {
@@ -79,6 +81,16 @@ export default function InterviewSection({ content = {} }) {
     const d = (q.difficulty || 'beginner').toLowerCase();
     (groups[d] ||= []).push(q);
   });
+
+  // Doc-course Q&A items often carry no difficulty — render a flat list
+  // instead of an artificial "Beginner" group header.
+  if (!questions.some(q => q.difficulty)) {
+    return (
+      <div>
+        {questions.map((q, i) => <InterviewCard key={i} q={q} index={i} level="general" />)}
+      </div>
+    );
+  }
 
   return (
     <div>

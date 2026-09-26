@@ -1,0 +1,12 @@
+[
+  {
+    "src": "images/web_downloaded/java_virtual_machine.png",
+    "title": "JVM Architecture & Memory Management",
+    "caption": "Java Virtual Machine (JVM) stack, heap, and garbage collection model."
+  },
+  {
+    "src": "images/web_downloaded/call_stack_memory.png",
+    "title": "Call Stack & Activation Record",
+    "caption": "Hardware call stack frame layout showing stack pointer and return address."
+  }
+]

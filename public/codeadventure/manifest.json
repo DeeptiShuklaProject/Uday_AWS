@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0",
+  "engineVersion": "1.0",
+  "minimumEngineVersion": "1.0",
+  "id": "doc_CodeAdventure",
+  "title": "CodeAdventure - Learn Programming by Playing Games",
+  "subtitle": "Master 11+ Programming Languages Through Interactive Sci-Fi Coding Puzzles",
+  "version": "1.0.0",
+  "category": "Interactive Games",
+  "icon": "Gamepad2",
+  "defaultTopic": "01_onboarding/index.md",
+  "supportedLanguages": [
+    "python",
+    "javascript",
+    "typescript",
+    "java",
+    "cpp",
+    "csharp",
+    "go",
+    "rust",
+    "bash",
+    "ruby",
+    "php"
+  ],
+  "features": [
+    "CodeAdventureGame",
+    "MonacoPlayground",
+    "LanguageComparison",
+    "InteractiveNotes",
+    "Quiz"
+  ],
+  "topics": [
+    "01_onboarding",
+    "02_the_descent",
+    "03_mars_lander",
+    "04_shadows_of_knight",
+    "05_power_of_thor",
+    "06_oops_mecha_squad",
+    "07_decorator_energy_shield",
+    "08_ai_agent_cyber_companion"
+  ]
+}

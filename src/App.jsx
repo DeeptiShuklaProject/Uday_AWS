@@ -7,8 +7,12 @@ import ContextPanel from './components/ContextPanel';
 import DetailedChapterModal from './components/DetailedChapterModal';
 import LabNotesModal from './components/LabNotesModal';
 import LandingPage from './components/LandingPage';
+import CategoryPage from './components/CategoryPage';
+import DocCoursePage from './components/DocCoursePage';
+import DocChapterPage from './components/DocChapterPage';
 import { useModuleSlides } from './hooks/useModuleSlides';
 import registry from './data/courseRegistry.json';
+import { categories } from './data/categories';
 import { landingContent } from './data/landingContent';
 
 const FIRST_MODULE = registry.modules[0]?.id;
@@ -25,7 +29,7 @@ function ChapterPage() {
   const navigate = useNavigate();
   const { modules, currentModuleId, setCurrentModuleId, activeModal, closeModal } = useCourse();
   const { data: lesson, loading, error } = useModuleSlides(moduleId);
-  const [slideIndex, setSlideIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const valid = modules.some(m => m.id === moduleId);
 
@@ -34,11 +38,11 @@ function ChapterPage() {
     if (valid && moduleId !== currentModuleId) setCurrentModuleId(moduleId);
   }, [moduleId, valid, currentModuleId, setCurrentModuleId]);
 
-  // Reset the slide pointer when the chapter changes. Instant scroll —
-  // the design system sets `scroll-behavior: smooth`, which would otherwise
-  // animate the jump and look like flickering on every chapter switch.
+  // Jump to top on chapter change. Instant scroll — the design system sets
+  // `scroll-behavior: smooth`, which would otherwise animate the jump and
+  // look like flickering on every chapter switch.
   useEffect(() => {
-    setSlideIndex(0);
+    setActiveIndex(0);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [moduleId]);
 
@@ -63,8 +67,11 @@ function ChapterPage() {
         current && (
           <ContextPanel
             sections={current.sections || []}
-            currentIndex={slideIndex}
-            onSelect={setSlideIndex}
+            currentIndex={activeIndex}
+            onSelect={i => {
+              const el = document.getElementById(current.sections[i]?.id);
+              el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
           />
         )
       }
@@ -77,9 +84,7 @@ function ChapterPage() {
         <LessonViewer
           key={moduleId}
           lesson={current}
-          slideIndex={slideIndex}
-          onSlideChange={setSlideIndex}
-          modalOpen={!!activeModal}
+          onActiveSection={setActiveIndex}
         />
       )}
       <DetailedChapterModal open={activeModal === 'details'} onClose={closeModal} />
@@ -113,7 +118,10 @@ export default function App() {
     <BrowserRouter>
       <RoutedCourseProvider>
         <Routes>
-          <Route path="/" element={<LandingPage content={landingContent} />} />
+          <Route path="/" element={<LandingPage content={landingContent} categories={categories} />} />
+          <Route path="/courses/:categoryId" element={<CategoryPage categories={categories} />} />
+          <Route path="/courses/:categoryId/:courseId" element={<DocCoursePage />} />
+          <Route path="/courses/:categoryId/:courseId/:chapterId" element={<DocChapterPage />} />
           <Route path="/chapter/:moduleId" element={<ChapterPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

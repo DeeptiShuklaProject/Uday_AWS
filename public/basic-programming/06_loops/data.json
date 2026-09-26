@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "06_loops",
+  "title": "Loops & Iteration Mechanics",
+  "description": "Loops repeat execution blocks controlled by loop counters, boolean condition predicates, or iterable sequence iterators.",
+  "category": "Foundations",
+  "badge": "Level 6: Specialist",
+  "tags": [
+    "Loops",
+    "Iteration",
+    "ForLoop",
+    "WhileLoop"
+  ],
+  "codeExamples": {
+    "python": "total = 0\nfor i in range(1, 6):\n    total += i\n    print(f'Step {i}: running total = {total}')\nprint(f'Final Sum: {total}')",
+    "java": "public class Main {\n    public static void main(String[] args) {\n        int total = 0;\n        for (int i = 1; i <= 5; i++) {\n            total += i;\n            System.out.println(\"Step \" + i + \": running total = \" + total);\n        }\n        System.out.println(\"Final Sum: \" + total);\n    }\n}",
+    "javascript": "let total = 0;\nfor (let i = 1; i <= 5; i++) {\n    total += i;\n    console.log(`Step ${i}: running total = ${total}`);\n}\nconsole.log(`Final Sum: ${total}`);",
+    "cpp": "#include <iostream>\nint main() {\n    int total = 0;\n    for (int i = 1; i <= 5; i++) {\n        total += i;\n        std::cout << \"Step \" << i << \": running total = \" << total << std::endl;\n    }\n    std::cout << \"Final Sum: \" << total << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the key difference between break and continue statements inside a loop?",
+      "options": [
+        "break terminates the loop immediately, while continue skips the remaining code in the current iteration and jumps to the next iteration.",
+        "continue exits the loop entirely.",
+        "break pauses execution for 5 seconds.",
+        "Both perform identical actions."
+      ],
+      "correctIndex": 0,
+      "explanation": "break exits the enclosing loop completely. continue skips the rest of the current iteration and proceeds to the next iteration."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. What is an Infinite Loop and how do you prevent CPU 100% utilization crashes?",
+      "a": "An infinite loop occurs when a loop condition never becomes False (e.g. missing increment `i += 1` in `while i < 10:`). Prevent by adding explicit step increments or maximum loop safety counters."
+    },
+    {
+      "q": "02. What is the iterator protocol (`iter()` and `next()`) in Python?",
+      "a": "In Python, `for item in iterable:` calls `iter(iterable)` to obtain an iterator object, then calls `next(iterator)` repeatedly until a `StopIteration` exception is raised."
+    },
+    {
+      "q": "03. What is Loop Unrolling and how does it optimize performance in C/C++?",
+      "a": "Loop unrolling reduces loop control overhead (branch jumps & counter increments) by expanding loop iterations into sequential instructions (e.g., handling 4 elements per loop cycle)."
+    },
+    {
+      "q": "04. What is the difference between `range(10)` in Python 3 vs `range()` in Python 2?",
+      "a": "In Python 3, `range()` returns a lazy generator-like object that computes values on-demand with O(1) memory. In Python 2, `range()` created a full list in Heap RAM."
+    },
+    {
+      "q": "05. What is the purpose of the `else` block in Python `for` and `while` loops?",
+      "a": "The loop `else` block executes ONLY if the loop completed naturally without encountering a `break` statement. Useful for search loops."
+    },
+    {
+      "q": "06. How does modifying a list while iterating over it cause skips or index errors?",
+      "a": "Deleting or appending items to a list while iterating changes element index positions, causing elements to be skipped or triggering `IndexError`. Iterate over a copy (`for x in my_list[:]:`) instead."
+    },
+    {
+      "q": "07. What is nested loop time complexity and how to avoid O(N²) quadratic bottleneck?",
+      "a": "Nested loops iterating N times inside N outer iterations take O(N²) time. Avoid by using Hash Tables (dicts/sets) to reduce lookup operations from O(N) to O(1)."
+    },
+    {
+      "q": "08. What is the `enumerate()` built-in function and why is it preferred over `range(len(lst))`?",
+      "a": "`enumerate(lst)` yields `(index, value)` tuples directly in clean Pythonic syntax without manual index lookup `lst[i]`."
+    },
+    {
+      "q": "09. What is `zip()` and how does it iterate over multiple sequences simultaneously?",
+      "a": "`zip(listA, listB)` pairs elements from corresponding positions until the shortest list ends. `itertools.zip_longest()` fills missing values."
+    },
+    {
+      "q": "10. What is Generator Expression vs List Comprehension in loop memory usage?",
+      "a": "List comprehension `[x*2 for x in data]` builds the entire list in RAM memory immediately. Generator `(x*2 for x in data)` yields items lazily one at a time."
+    },
+    {
+      "q": "11. How does `while True:` loop pattern work with early break conditions?",
+      "a": "`while True:` creates an event loop that runs until an explicit `break` or `return` condition is met, commonly used in socket servers or CLI menus."
+    },
+    {
+      "q": "12. What is Off-by-One Error (OBOE) in loop bounds?",
+      "a": "An error where a loop runs one time too many or one time too few (e.g. using `<= len(arr)` instead of `< len(arr)` causing `IndexOutOfBounds`)."
+    },
+    {
+      "q": "13. How does recursion compare to iterative loops in Stack memory overhead?",
+      "a": "Iterative loops use O(1) fixed Stack memory. Recursive calls push call frames onto the call stack for every call, taking O(N) memory and risking StackOverflow Error."
+    },
+    {
+      "q": "14. What is Tail Call Optimization (TCO)?",
+      "a": "A compiler optimization where recursive function calls at the final statement of a function reuse the current stack frame, effectively transforming recursion into a fast loop."
+    },
+    {
+      "q": "15. How to use `break` inside nested loops to break out of all loop levels?",
+      "a": "In Python, use a boolean flag, wrap inner loops in a function and `return`, or use loop `else` clauses. (Java/JS support labeled breaks `outerLoop: for(...)`)."
+    },
+    {
+      "q": "16. What is `itertools` library in Python for high-performance iteration?",
+      "a": "Python's `itertools` module provides memory-efficient iteration building blocks like `count()`, `cycle()`, `chain()`, `product()`, and `permutations()`."
+    },
+    {
+      "q": "17. What is vectorized iteration in NumPy / Pandas vs Python for-loops?",
+      "a": "Python for-loops execute in interpreted bytecode. NumPy vectorized operations execute array loops in compiled C code at SIMD hardware speeds (100x faster)."
+    },
+    {
+      "q": "18. How to write a custom Iterator class in Python?",
+      "a": "Implement `__iter__()` returning `self` and `__next__()` raising `StopIteration` when sequence ends."
+    },
+    {
+      "q": "19. How does `continue` interact with loop counters in `while` vs `for` loops?",
+      "a": "In a `for` loop, `continue` automatically advances to the next item. In a `while` loop, placing `continue` before incrementing `i += 1` creates an infinite loop!"
+    },
+    {
+      "q": "20. What are production best practices for clean iteration?",
+      "a": "Use descriptive loop variable names over single letters when nested, prefer list comprehensions for transforming data, and avoid mutating collection length during iteration."
+    }
+  ]
+}

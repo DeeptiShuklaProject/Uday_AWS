@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+  <rect width="100%" height="100%" fill="#0f172a" rx="16"/>
+  <rect x="30" y="30" width="250" height="240" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="12"/>
+  <text x="155" y="65" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="18" text-anchor="middle">Stack Memory (Fast RAM)</text>
+  <rect x="50" y="90" width="210" height="45" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="1" rx="6"/>
+  <text x="155" y="118" fill="#f8fafc" font-family="monospace" font-size="14" text-anchor="middle">Frame: main()</text>
+  <rect x="50" y="145" width="210" height="45" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="1" rx="6"/>
+  <text x="155" y="173" fill="#f8fafc" font-family="monospace" font-size="14" text-anchor="middle">x: int = 10</text>
+  <rect x="320" y="30" width="250" height="240" fill="#1e293b" stroke="#818cf8" stroke-width="2" rx="12"/>
+  <text x="445" y="65" fill="#818cf8" font-family="sans-serif" font-weight="bold" font-size="18" text-anchor="middle">Heap Memory (Objects)</text>
+  <rect x="340" y="110" width="210" height="100" fill="rgba(129, 140, 248, 0.2)" stroke="#818cf8" stroke-width="1" rx="8"/>
+  <text x="445" y="145" fill="#f8fafc" font-family="monospace" font-size="14" text-anchor="middle">Object @0x7FA9</text>
+  <text x="445" y="175" fill="#34d399" font-family="monospace" font-size="14" text-anchor="middle">{ data: "Array Payload" }</text>
+</svg>

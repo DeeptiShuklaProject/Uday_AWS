@@ -49,7 +49,18 @@ export function CourseProvider({
 
   // ── Current chapter (route-driven; components jump via goToModule) ──
   const [currentModuleId, setCurrentModuleId] = useState(modules[0]?.id || null);
-  const currentModule = modules.find(m => m.id === currentModuleId) || null;
+
+  // ── External modules: lesson pages whose content isn't in the registry
+  // (e.g. markdown-derived Bedrock chapters). A page registers metas so
+  // progress denominators work, and sets externalModule while mounted so
+  // TopBar/modals see it as the current module.
+  const [externalModule, setExternalModule] = useState(null);
+  const [externalModules, setExternalModules] = useState({});
+  const registerModule = useCallback((meta) => {
+    if (!meta?.id) return;
+    setExternalModules(s => (s[meta.id]?.sectionCount === meta.sectionCount ? s : { ...s, [meta.id]: meta }));
+  }, []);
+  const currentModule = externalModule || modules.find(m => m.id === currentModuleId) || null;
 
   /**
    * goToModule — chapter switch used by Sidebar / NextSection.
@@ -151,7 +162,8 @@ export function CourseProvider({
   const resetProgress = useCallback(() => setProgressData(freshProgress()), []);
 
   const progress = useMemo(() => {
-    const sectionTotal = id => modules.find(m => m.id === id)?.sectionCount || 0;
+    const sectionTotal = id =>
+      modules.find(m => m.id === id)?.sectionCount || externalModules[id]?.sectionCount || 0;
     const completedCount = id => progressData.modules[id]?.completed?.length || 0;
     const getOverallProgress = () => {
       const total = modules.reduce((s, m) => s + (m.sectionCount || 0), 0);
@@ -195,8 +207,8 @@ export function CourseProvider({
       }),
       reset: resetProgress,
     };
-  }, [progressData, modules, markSectionComplete, recordQuizScore, recordChallengeScore,
-      incrementCommands, markLabComplete, grantAchievement, resetProgress]);
+  }, [progressData, modules, externalModules, markSectionComplete, recordQuizScore,
+      recordChallengeScore, incrementCommands, markLabComplete, grantAchievement, resetProgress]);
 
   const value = useMemo(() => ({
     registry,
@@ -206,6 +218,9 @@ export function CourseProvider({
     currentModule,
     setCurrentModuleId,
     goToModule,
+    externalModule,
+    setExternalModule,
+    registerModule,
     activeModal,
     openModal,
     closeModal,
@@ -215,7 +230,8 @@ export function CourseProvider({
     toggleTheme,
     progress,
     config: { notesEndpoint: '/api/lab', chapterBaseUrl: '/chapters', ...config },
-  }), [registry, modules, currentModuleId, currentModule, goToModule, activeModal, openModal,
+  }), [registry, modules, currentModuleId, currentModule, setExternalModule, externalModule,
+       registerModule, goToModule, activeModal, openModal,
        closeModal, notesStatus, reportNotesStatus, theme, toggleTheme, progress, config]);
 
   return <CourseContext.Provider value={value}>{children}</CourseContext.Provider>;

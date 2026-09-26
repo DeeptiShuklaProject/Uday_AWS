@@ -52,7 +52,8 @@ export default function LabNotesModal({
   useEffect(() => {
     if (!open || !markdown) { if (!open) setLabsHtml(''); return; }
     const labMd = extractPracticalLabs(markdown);
-    setLabsHtml(labMd ? resolveMediaUrls(marked.parse(labMd), config.chapterBaseUrl) : '');
+    const imgBase = currentModule?.imageBaseUrl || config.chapterBaseUrl;
+    setLabsHtml(labMd ? resolveMediaUrls(marked.parse(labMd), imgBase) : '');
   }, [open, markdown]);
 
   // Load saved notes when the modal opens / chapter changes.

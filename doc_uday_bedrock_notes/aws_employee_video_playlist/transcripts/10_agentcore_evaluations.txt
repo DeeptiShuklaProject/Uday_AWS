@@ -1,0 +1,1441 @@
+Title: 10_agentcore_evaluations
+Video URL: https://www.youtube.com/watch?v=i0h7xA8cqYs
+============================================================
+
+[00:00] Hey, hey, hey.
+[00:02] [music]
+[00:07] [music]
+[00:15] [music]
+[00:32] Hello all, welcome to another episode of
+[00:34] AWS show and tell. I am Anil Nadimi. Uh
+[00:37] joining from New Jersey today u and
+[00:40] we're going to dive deep into agent core
+[00:43] evaluations. Joining with me today uh
+[00:46] are Ishan Singh and Akasha Seawat. So uh
+[00:49] Ishan, you want to introduce yourself?
+[00:52] >> Yes, absolutely. Uh hey everyone, I'm
+[00:54] Ishan Singh. I'm a senior data scientist
+[00:57] on the uh Amazon betro go to market team
+[01:00] and uh very excited to be here.
+[01:03] >> Thanks Ishan.
+[01:05] >> Um hi everyone my name is Akasha Seag.
+[01:08] Uh I'm a part of uh agent core go to
+[01:10] market team as well. I'm working as a ji
+[01:12] data scientist and we are excited to be
+[01:15] here today to share with you uh what
+[01:17] agent core evaluations is all about and
+[01:20] what uh can it provide you with. Thank
+[01:23] you for joining. Thanks uh Ishan and
+[01:25] Akasha. So uh uh I know you're you're in
+[01:29] the same room in uh is that in Seattle?
+[01:32] >> Yes. Yes.
+[01:33] >> Excellent. So yeah, I'm joining from uh
+[01:36] New Jersey folks and let us know where
+[01:37] you are joining from.
+[01:40] >> Uh today's session we're going to focus
+[01:41] on agent core evaluations. Right. So we
+[01:43] had uh a session on observability last
+[01:46] week. Same time I'll post a link in the
+[01:47] chat. But uh uh let's let's take an
+[01:50] example of a use case. Right. So where
+[01:52] where do we need evaluations and let's
+[01:54] uh try to picture this. So um let's say
+[01:57] we have a use case where we are building
+[01:59] an agentic application and we need to uh
+[02:02] evaluate whether the agent is performing
+[02:05] uh according to any of those metrics
+[02:07] right so uh and then we had to see if uh
+[02:11] you know the agent is calling the right
+[02:12] tools is it calling with the right
+[02:14] parameters and uh we are here to dive
+[02:17] deep with Ishan and Akasha today and
+[02:19] understand how this fits into the big
+[02:21] picture right especially uh today we had
+[02:23] an announcement of uh uh set 4.6 that's
+[02:27] available. Ishan uh how does that uh you
+[02:29] know do we do we get started with 4.6
+[02:32] [laughter] valuations how do we where do
+[02:34] we get started?
+[02:35] >> Yeah. Yeah. No the these are ready to go
+[02:37] solutions. Um so yeah we we should
+[02:40] definitely start using them. Um and
+[02:43] today as we are diving deeper into evals
+[02:45] we will talk a lot about uh how these
+[02:48] different evaluators and uh you how you
+[02:50] can use different type of models for
+[02:52] your evaluation tasks. So we will really
+[02:54] really uh get deeper into those today.
+[02:57] >> Excellent.
+[03:00] >> Very cool. Uh I think with that we can
+[03:02] get started. Um I will start with um
+[03:06] laying out some agenda for today. So
+[03:08] first we will start with just like a
+[03:09] very high level overview of uh what
+[03:11] agent core is. Then we will dive deeper
+[03:13] into the evaluation specifics. Um
+[03:16] talking about the agent code evaluation
+[03:18] service. We also have some demos and
+[03:20] best practices for you. Precisely. We
+[03:22] have five different demos uh so that we
+[03:25] are really trying to uh make sure that
+[03:28] you are able to learn how to set things
+[03:30] up and be able to use those as you put
+[03:32] your agents in production.
+[03:35] All right. So with that said um so um
+[03:39] agent core um Amazon metro agent core it
+[03:42] has been out for a while now. We
+[03:44] launched this uh in preview um I think
+[03:47] July last year and then it went GA and u
+[03:51] among the offerings of agent core we
+[03:53] have now added evaluations which uh sort
+[03:55] of sits with uh observability and I
+[03:58] think uh Anit as you mentioned last week
+[04:00] or last last week you had a deep dive
+[04:02] session on agent core eval sorry agent
+[04:04] core observability so agent core
+[04:06] evaluation builds on top of that
+[04:08] observability so think of it like now
+[04:10] that you are measuring what um the
+[04:13] agents are doing in production. Now what
+[04:16] you measure now you can improve using
+[04:18] evaluations. So uh it sits right there
+[04:21] and with that let's uh dive into the
+[04:24] next uh topic.
+[04:27] >> Perfect. Um I mean today everything we
+[04:31] are doing right we're building all of
+[04:33] these agents with so much focus on
+[04:35] technical capabilities you know which
+[04:37] protocol to use are we using A2A MCP um
+[04:42] which new protocols are coming out which
+[04:44] features are we going to build with uh
+[04:46] what tools are we going to use which
+[04:48] model um is is going to is going to be
+[04:52] used but taking a step back thinking
+[04:55] about the bigger picture right The end
+[04:58] goal is to make sure that our agents are
+[05:01] providing a good user experience
+[05:04] and the good user experience to the
+[05:06] parody uh to the mark that our humans
+[05:10] are able to provide. So we want to be
+[05:13] able to give the same experience as our
+[05:16] experts are are providing but with the
+[05:18] speed of an agent. So that's the idea uh
+[05:21] that we're building.
+[05:23] Uh so the focus has to be to build
+[05:26] trusted agents such that you're able to
+[05:29] create a good user experience.
+[05:32] Um a big part of building that consumer
+[05:36] experience is
+[05:39] to be able to trust uh our new let's say
+[05:44] digital workforce that we are creating
+[05:47] uh with these agents to to do this job
+[05:50] correctly. And for a fact agents are
+[05:53] noneterministic by nature, right? Which
+[05:55] means we are allowing them uh to act
+[05:59] autonomously.
+[06:01] And one way we can build these agents um
+[06:05] is to is by making sure that these
+[06:09] agents uh have a job performance review
+[06:13] of some form. So we are able to evaluate
+[06:16] if this agent that we're building is
+[06:18] delivering the correct results. it is
+[06:20] effective. It can be relied to do a good
+[06:23] job consistently.
+[06:26] Uh so it's all about, you know, are your
+[06:28] agents making the right decisions? Are
+[06:30] they using the right tools? Um are they
+[06:35] providing the answers that are relevant
+[06:37] and appropriate as well? Um are they
+[06:40] polite to the customers that they are
+[06:42] talking to? Uh are they, you know,
+[06:45] representing the correct brand value
+[06:47] that you want them to represent? And
+[06:49] these are all difficult dimensions to
+[06:51] measure um because often they are very
+[06:56] subjective and they are critical to
+[06:59] assess 100%.
+[07:02] Because we want to be able to rely on
+[07:04] these agents to do a task, right? And
+[07:06] that's why evaluating an agent is an
+[07:09] imperative.
+[07:10] >> Would you say this is called as a
+[07:12] evaluationdriven development?
+[07:15] >> Yeah, that's definitely
+[07:16] >> that's a that's a nice nice way to put
+[07:18] it. Yes.
+[07:18] >> And I I really like the point that
+[07:20] Akasha shared here like your agents need
+[07:23] a job performance review like all of us
+[07:26] right we all work different type of uh
+[07:28] teams companies and all those things. So
+[07:30] yeah even agents as we work more with
+[07:33] them uh as like our co-workers
+[07:35] definitely
+[07:36] >> we need to make sure they're doing the
+[07:38] best possible right. So they have to be
+[07:42] evaluated at every step of the way.
+[07:44] >> So what's the goal of this right? So we
+[07:46] evaluate the agent and do we uh make our
+[07:50] agent uh you know maybe the prompts
+[07:52] better, maybe the uh tool calling
+[07:54] better. Is that the goal of this whole
+[07:56] evaluationdriven development? Do you say
+[07:58] that?
+[07:59] >> So I think I would pivot to what Akasha
+[08:01] shared initially. I think the goal is to
+[08:04] build trustworthy agents and whatever it
+[08:07] takes to get there. So if it requires to
+[08:09] update system prompts, yes, absolutely.
+[08:12] If it requires to like update tool
+[08:14] descriptions, yes. But you know it may
+[08:16] also require you to build like or sort
+[08:19] of break the agents down into like
+[08:21] specialist agent build like multi- aent
+[08:23] architectures and such. So it it can be
+[08:26] very complex but it um you usually start
+[08:29] with like just getting to work things
+[08:32] done in a way that you're working
+[08:34] backwards from what your end goal is
+[08:37] >> which and we will talk uh deeply about
+[08:39] success criteria in in a few slides uh
+[08:43] but yeah that's that's what I would work
+[08:45] backwards
+[08:45] >> and also Ian like you know again when we
+[08:48] talk about evaluations we always talk
+[08:49] about LLM as a judge right so where does
+[08:51] that fall in the big picture here? Yeah.
+[08:54] No, that's a very uh important question
+[08:57] actually and also like it's it's a part
+[08:59] of your strategy too like hey I need
+[09:02] LLMS judge to evaluate where I know that
+[09:06] the agent is making decisions
+[09:09] >> and where the output that it needs to
+[09:12] evaluate is coming based off of some
+[09:14] sort of natural language. So for an
+[09:17] example, you don't need LLM as judge
+[09:19] where you are using some sort of an API
+[09:23] call which always returns a fixed sort
+[09:26] of a string value. Let's say you're
+[09:28] looking up for employee ID for whatever
+[09:31] reason, right? You don't need LLM as
+[09:33] judge to verify whether employee ID was
+[09:35] returned or not.
+[09:36] >> You need LLM as judge when your agent is
+[09:39] using the whole context in order to
+[09:41] answer something whether it's passing
+[09:43] the correct parameters or not. things
+[09:45] like those.
+[09:46] >> So maybe like in the case of a research
+[09:48] agent which probably gathering in uh
+[09:50] information from the internet, you're
+[09:52] doing some tool calling. Maybe after
+[09:53] that you're doing a summarization,
+[09:55] right? So maybe the summarization can be
+[09:56] validated using an LLM as it
+[09:58] >> exactly and and think of this case also.
+[10:00] Sometimes what happens with agents is
+[10:02] that they would make all the right tool
+[10:05] calls or they would also pass the right
+[10:07] parameters but for some reason they just
+[10:10] decide not to use any of that context
+[10:12] and just answer things from memory like
+[10:14] complete hallucination of sort. So you
+[10:16] need LLM as judge in order to judge
+[10:18] those kind of things but not necessarily
+[10:21] that hey if it is uh picking up like um
+[10:26] let's say if there is employee ID type
+[10:28] of a u
+[10:31] yeah if if something is deterministic
+[10:32] you should not use an LMS for it
+[10:34] >> perfect okay thanks
+[10:38] >> and also I think the other approach
+[10:39] could be that you could introduce a
+[10:41] human in the loop to do the same but at
+[10:43] the scale that these agents are
+[10:45] operating
+[10:46] it's difficult to actually have you know
+[10:50] humans evaluate uh the responses and on
+[10:54] every level and on every trace that's
+[10:56] happening. So that's why LLM as a judge
+[10:59] is a very good middle ground to allow us
+[11:02] to do that.
+[11:03] >> Yeah. And I think you you sort of um so
+[11:06] Akasha just gave you like a peak of one
+[11:08] of the demos that we have today. Like
+[11:11] when you run things at scale, it's
+[11:14] impossible for humans and subject matter
+[11:16] experts to go and read everything. What
+[11:18] do you do with all these scores, all
+[11:20] these responses and u reasoning of
+[11:23] evaluations? So we will also be diving
+[11:25] deeper into that aspect today.
+[11:27] >> Excellent.
+[11:28] >> Okay. So getting back to um why are we
+[11:32] evaluating agents, right? because agents
+[11:35] may fail. Every time we are rolling out
+[11:38] a new version of the agent, uh we are
+[11:40] updating a model or perhaps changing the
+[11:44] source prompt, adding or removing the
+[11:46] tools. So any of these could result in
+[11:50] key failures um and therefore the agent
+[11:53] not not achieving the goal or not doing
+[11:56] the job in an optimal way. Um so this
+[12:00] usually starts with a quality failure
+[12:03] which includes you know hallucinations,
+[12:05] poor reasoning, uh selection of the
+[12:08] wrong tool or just inconsistent outputs
+[12:12] right and then these failures cascades
+[12:14] to reliability issues. Now these include
+[12:18] you you can have context loss, you can
+[12:20] have um bad or poor error handling uh or
+[12:25] some security or vulnerability gaps that
+[12:28] come in and then those result in the
+[12:31] agent efficiency on a on a bigger level,
+[12:33] right? So that in that includes uh
+[12:36] having to pay higher costs, having much
+[12:38] higher latency and therefore leading to
+[12:42] the loss of customer trust. And that's
+[12:45] where um you know that is let's say the
+[12:48] the peak of panic in a way. So um we do
+[12:52] not want to have any sort of loss of
+[12:56] customer trust or conf or any loss of
+[12:59] confidence in in our product because
+[13:01] that is the worst case scenario and by
+[13:03] the time that happens it's already too
+[13:04] late. So that has already created a bad
+[13:07] reputation for the product or the
+[13:09] company and might uh you know result in
+[13:13] a loss of the current or future business
+[13:16] and we cannot afford to do that. Um this
+[13:20] is why we need to be able to understand
+[13:22] where the agent went wrong so that you
+[13:24] can fix it before
+[13:27] uh the customer even experiences that
+[13:29] failure. Right?
+[13:31] And that's where uh agent core
+[13:33] evaluations
+[13:35] uh comes into play. I will let Isan
+[13:40] talk about that.
+[13:41] >> Yeah. No and and thanks so much for
+[13:43] bringing in the customer trust side of
+[13:45] the things and uh latency and cost
+[13:47] because uh a lot of times what happens
+[13:50] with these AI agents is that when we
+[13:52] build them, we think about like hey I
+[13:55] want to give the fastest response. I
+[13:56] want to like minimize the cost and want
+[13:59] to generate some sort of like good
+[14:00] experience. Good experience could be
+[14:02] like for customerf facing app it's c uh
+[14:06] a customerf facing app has a different
+[14:07] type of customer experience versus
+[14:11] processdriven event driven agent has a
+[14:13] very different type of uh success
+[14:15] criterias and like uh trust things. So
+[14:19] as you work through these, it's super
+[14:22] essential to manage it because
+[14:23] evaluation not only helps you to
+[14:25] generate higher quality response, but it
+[14:27] also helps you like minimize the cost,
+[14:29] improve the latency and finally maintain
+[14:32] the trust that you want to build and the
+[14:34] good experience you're building
+[14:35] >> continuously keep improving it.
+[14:37] >> Yep. Exactly. So uh in order to um help
+[14:41] uh our customers build u agents in a
+[14:44] trustworthy way we launched agent goore
+[14:46] evaluations in u during reinvent um this
+[14:50] past December just like couple months
+[14:51] ago. Uh currently the service is in uh
+[14:54] public preview. So all of us can go and
+[14:57] use it try it out. um it gives like lot
+[15:00] of out ofthe-box features that you need
+[15:02] in order to like get started, get going
+[15:05] with your agents and be able to track
+[15:06] the performance. Uh so some of the quick
+[15:09] features I want to cover today is um one
+[15:12] that there are 13 built-in evaluators
+[15:15] and these evaluators helps you assess
+[15:18] performance of your agent across like
+[15:20] different dimensions at different levels
+[15:22] as well. And we will look into what
+[15:24] these 13 evaluators are and what I mean
+[15:26] by different dimensions and levels in a
+[15:29] in just a couple of slides. Um you can
+[15:32] also build your own custom uh
+[15:34] evaluators. And when I say evaluators,
+[15:36] so currently the service supports uh LMS
+[15:39] judge uh in a reference free style. So
+[15:42] you could really build um any type of
+[15:45] evaluator be it like on your tool uh
+[15:48] selection or tool uh parameter accuracy
+[15:51] side or like across the entire session
+[15:54] looking at hey is my agent meeting the
+[15:56] goal or not and things like those.
+[15:58] >> So in this case these are the 13 ones
+[16:01] are the built-in ones and then uh we can
+[16:03] always customize these to our needs
+[16:06] right because we may have like a
+[16:07] specific use case that we want to
+[16:08] evaluate on and maybe that could be done
+[16:10] as well.
+[16:11] >> Yeah. Exactly. And and I think one of
+[16:13] the best practice is also that hey as
+[16:15] you get started right um there are lot
+[16:18] of moving things that you have while
+[16:20] you're building an agent because often
+[16:22] times what happens with the speed of
+[16:24] genai is that you started building today
+[16:27] um or let's say if you just started
+[16:28] building earlier this week and you were
+[16:31] experimenting with model X but as you
+[16:34] know sonnet 4.6 six is here now. So
+[16:36] things are moving so fast within Gen AI
+[16:38] that you need some of these
+[16:40] undifferiated uh heavy lifting to be
+[16:42] done by like let's say these
+[16:44] hyperscalers. So AWS is providing you
+[16:46] with these built-in so that you get
+[16:48] started quick and as you sort of
+[16:50] graduate from it you can customize those
+[16:53] specific tool like hey now that I
+[16:55] understand what my agent does what it
+[16:57] doesn't do I can customize specifically
+[17:00] to those type of problems or the areas
+[17:02] that I want to improve it on. So maybe
+[17:04] to think of it in a different
+[17:06] perspective to say that you know maybe
+[17:07] even if we use a smaller model and we
+[17:10] get a good score out of the evaluation
+[17:12] maybe we can still continue to use that
+[17:14] instead of uh you know paying more for a
+[17:16] larger model with reasoning capabilities
+[17:18] right so that could be
+[17:20] >> yeah yeah exactly and um so one of the
+[17:24] good things with these 13 built-in
+[17:25] evaluators is that uh that inference is
+[17:28] managed for it so what I mean by that is
+[17:31] um typically what happens when you
+[17:33] evaluate it uh using LLMS charge is that
+[17:36] you're using your AWS account kota
+[17:39] >> of sort right for your number of tokens
+[17:41] number of request and all of that for
+[17:43] the 13 built-in evaluators a u agent
+[17:46] core evaluation is managing that for you
+[17:48] so it doesn't affect the kota that you
+[17:51] have for your account you can still
+[17:53] continue to use your application in the
+[17:55] way you are using and it doesn't affect
+[17:57] that it's a very big uh plus point with
+[18:00] using the 13 built-in evaluators
+[18:03] >> that's a Great point.
+[18:04] >> Yeah. So, yeah, other than this, uh
+[18:07] there are so many other features, but
+[18:09] I'm just going to focus more on like how
+[18:12] do I get started with building agents
+[18:14] and evaluating. So, there are uh like
+[18:16] you get a built-in dashboard uh ready to
+[18:19] use and it uh so agent core evaluation
+[18:21] is a part of like agent core
+[18:23] observability. So, you get integrated
+[18:25] dashboard you can look at your trace but
+[18:27] now also get scores for those traces
+[18:30] specifically exactly in the same place.
+[18:32] So you have latencies, you have your
+[18:35] information about what the agent did,
+[18:37] the trajectories and all those info
+[18:38] along with evaluation in just one place.
+[18:41] And since everything with agent core
+[18:44] observability as well as evaluation is
+[18:46] powered by cloudatch. So you have all
+[18:48] the amazing features that cloudatch
+[18:50] supports. So alarms uh you could uh
+[18:53] trigger downstream tasks using those
+[18:55] alarms and things like those.
+[18:58] All right, let's dive deeper into uh the
+[19:01] evaluators that we have and then we will
+[19:04] u sort of get into the demos.
+[19:08] >> Perfect. So the 13 built-in evaluators
+[19:10] that Ian was talking about um they are
+[19:13] organized across three different
+[19:15] dimensions, right? So first one is the
+[19:18] session level metrics. This is where you
+[19:20] are evaluating the entire conversation,
+[19:23] right?
+[19:25] thinking in terms of uh did the agent
+[19:27] achieve the user goal? What was uh
+[19:30] assigned to it? Uh did the conversation
+[19:33] succeed end to end? So this is where we
+[19:35] are talking about the goal success rate.
+[19:38] Um or we can even create uh a custom
+[19:41] metric to have that. Um the second
+[19:44] dimension would be the trace level,
+[19:46] right? The trace level is where we are
+[19:48] assessing the individual responses. So
+[19:51] most of the quality signal um that comes
+[19:55] in this is where it goes. Um so thinking
+[19:58] in terms of uh let's say was the
+[20:00] response uh that the agent gave was it
+[20:03] correct? Was it faithful to the provided
+[20:06] context? Um was it helpful for the user
+[20:09] and is it you know following the
+[20:11] instructions correctly or not. Uh so
+[20:15] this is where the trace level metrics
+[20:16] comes in. The third one is the span
+[20:19] level. So this is where we are talking
+[20:21] about the tool usage uh for you know the
+[20:24] agents that are using the tools. Um was
+[20:27] it able to select the right tools for
+[20:29] the task? Did it uh perhaps use the
+[20:33] exact parameters that were uh that were
+[20:36] assigned for that per that user query
+[20:39] which were the relevant ones uh or let's
+[20:40] say the correct ones for that uh certain
+[20:43] tool. Right? And here's the thing we
+[20:47] don't need all 13. we are able to mix
+[20:50] and match and use the you know the three
+[20:53] or four or any number that actually
+[20:56] matter to your specific use case and if
+[20:59] let's say this is not enough this is not
+[21:02] covering what you need you can also
+[21:04] built in the custom metrics so to select
+[21:09] um to select the ones um we have this
+[21:14] broad criteria uh that we want you to
+[21:17] understand um have you you know defined
+[21:22] a clear success criteria for the agent
+[21:25] and what is the level that you want to
+[21:29] evaluate the agent at. So first talking
+[21:32] about the success criteria this is where
+[21:35] we are uh talking about a bare minimum
+[21:39] performance benchmark that you want to
+[21:41] achieve so that you're able to
+[21:43] successfully launch an agent into
+[21:45] production. Right? And this is you know
+[21:48] um often a balance between the
+[21:51] operational cost the latency and then
+[21:53] the acceptable error on quality that we
+[21:58] have. Um so perhaps talking about an
+[22:01] example let's say I want my customer
+[22:05] service agent to give a response under 5
+[22:07] seconds and now this is a non-negotiable
+[22:09] for me. Um, and I want 90% of my
+[22:13] responses to be of good quality that are
+[22:17] solving the users's problems and I want
+[22:20] the cost per user session to be let's
+[22:22] say less than $5. So something like
+[22:24] this, right? So we create the success
+[22:26] criteria um so that we can evaluate our
+[22:29] agents on different levels to achieve
+[22:32] this goal. Right? Right. So session
+[22:35] level evaluation
+[22:36] uh would let's say in this case uh track
+[22:39] something
+[22:41] where we are uh talking about is this
+[22:44] solving all of the pain points of the
+[22:45] user across all the questions that they
+[22:48] have asked. Right? And then we talk
+[22:50] about trace level evaluation where it's
+[22:52] it's talking about um the quality of
+[22:56] response of which uh of every question
+[23:00] that the user has asked, right? And then
+[23:02] the span level would be uh the
+[23:05] individual tool calls. Is it making it
+[23:07] the correct way? Is it using the right
+[23:08] parameters?
+[23:10] Um so we are here. Um so the main thing
+[23:15] we have to think about is how do you
+[23:17] select the metrics that you should use
+[23:20] right and for the most part it depends
+[23:21] on the use case um on the business
+[23:24] domain and you know what kind of
+[23:25] compliance needs that you have um but on
+[23:28] a general level
+[23:30] uh to give you know more generic
+[23:33] guideline we start with the output
+[23:35] evaluation. So this includes metrics
+[23:38] like faithfulness uh correctness
+[23:42] um perhaps response relevance and the
+[23:45] goal success rate. Um if your agent is
+[23:50] user centric you know add more
+[23:53] helpfulness or harmlessness metric to
+[23:55] it. Um if we are talking about having
+[23:59] you know the multiple tools uh that are
+[24:02] being used by the agent add tool
+[24:03] evaluators to it. Um, and for custom
+[24:07] evaluators, if you're looking at solving
+[24:10] perhaps a specific pattern or very
+[24:13] nuanced, a very niche use case, uh, you
+[24:16] can think about adding like trajectory
+[24:19] evaluator, uh, perhaps to debug or to do
+[24:23] the some reasoning analysis. And now
+[24:25] this is a great start. Um, now let's
+[24:29] look at what are the different ways we
+[24:31] can evaluate.
+[24:32] >> So that right. So if if anyone wants to
+[24:34] dive deep into what is behind this uh
+[24:37] these uh built-in evaluators, I put a
+[24:38] link in the chat. So you can see the
+[24:40] prompt itself, the prompt template that
+[24:42] is used to build those built-in
+[24:43] evaluators. So it's it's kind of
+[24:45] available and for anyone to look at,
+[24:47] right? So but one question here is uh we
+[24:49] always talk about uh hallucination,
+[24:51] right? So uh how do we measure like uh
+[24:53] like if an uh particular response is
+[24:55] hallucinated you know is if if the model
+[24:58] is hallucinating on a particular
+[24:59] response do we take all of these uh
+[25:02] entries and say you know maybe get a
+[25:05] custom metric or how do we approach
+[25:07] that?
+[25:08] >> Yeah that's an interesting question. So
+[25:10] for hallucination um you you so well
+[25:14] there are different types of
+[25:16] hallucination. Hallucination can be that
+[25:19] u your agent or your model did not
+[25:21] decide to use context and gave answer on
+[25:24] its own knowledge based off of what it
+[25:26] knows right from its training that's
+[25:28] also hallucination. Uh hallucination can
+[25:31] also be it used it incorrectly and you
+[25:33] know it can have number of things there.
+[25:35] Uh usually a combination of faithfulness
+[25:38] and correctness helps you get like a
+[25:40] balanced view of hey is this
+[25:42] hallucinated or not and the way agent
+[25:45] core evaluators work. So everything is
+[25:47] open telemetry based. So it looks at the
+[25:49] full context of what the agent has the
+[25:52] instructions that's your system prompt
+[25:54] which defines the behavior of the agent.
+[25:56] So it looks at that looks at the trace
+[25:58] looks at the whole context and the final
+[26:00] response that's generated and then it
+[26:03] sort of judges based on the rubric that
+[26:05] we have across these uh different
+[26:07] evaluators. So in short a combination of
+[26:10] faithfulness and correctness would uh
+[26:13] help you with that and even response
+[26:15] relevance can be a part of it because
+[26:17] you know it can also happen that you may
+[26:19] have asked like hey what's um and just
+[26:22] just to keep it simple maybe you just
+[26:24] ask like hey what's the weather right
+[26:25] now in Seattle and it sort of gives you
+[26:29] some you know like a random answer.
+[26:32] >> Mhm.
+[26:32] >> So response relevance can also be a part
+[26:34] of your but usually balance of
+[26:36] faithfulness and correctness.
+[26:37] >> Excellent. So it's a combination of
+[26:38] those uh metrics that you will look at
+[26:40] right. So perfect. Yeah. All right.
+[26:42] Let's keep moving.
+[26:44] >> All right. So uh let's look at um the
+[26:46] two common ways of doing evaluation. So
+[26:50] um I'll start with what we have on the
+[26:52] right hand side here the on demand
+[26:54] evaluation. Um so as you are building
+[26:56] your AI agent or let's say if you have
+[26:58] already put it in prod but now you want
+[27:01] to dive deeper into specifics you would
+[27:03] use something more of like a real-time
+[27:04] style uh API where um you have your
+[27:08] agent you have some test scenarios and
+[27:09] you're testing it getting a sense of
+[27:11] what does this agent do in these
+[27:13] specific uh situations maybe you're
+[27:15] changing the environment of the agent
+[27:17] and things like those so um on demand uh
+[27:20] uh is uh an API that uh agent code
+[27:23] evaluation supports exactly for these
+[27:25] type of use cases. Uh another type of a
+[27:27] use case that uh the on demand supports
+[27:30] is like let's say you are building CI/CD
+[27:32] pipelines because you want to make sure
+[27:34] that no faulty deployment uh goes in the
+[27:37] production so that your agent is
+[27:39] performant and it's performing on you
+[27:42] know your selected test cases. So uh on
+[27:44] demand really helps along those lines
+[27:46] and we will be doing a demo uh shortly.
+[27:49] We only have a couple of slides left. So
+[27:52] u that's where the on demand piece comes
+[27:54] in. Uh agent core evaluation also has
+[27:56] online evaluation which is where like
+[27:59] the end toend management of like uh
+[28:02] fetching the trace from uh the agent
+[28:04] core observability to applying
+[28:06] evaluations on top of it and giving you
+[28:08] in a dashboard form happens within the
+[28:11] uh online evaluation. In case of
+[28:14] ondemand evaluation, you do not get a
+[28:16] dashboard because hey, this is for you
+[28:18] as a developer to use it in your IDE in
+[28:21] your environment. So you are taking the
+[28:22] decisions right there live in real time
+[28:25] because hey, you don't want to like go
+[28:27] into some dashboard and see what's going
+[28:29] on there because you know like it's just
+[28:32] a matter of fractions which is where you
+[28:34] might lose an idea that you may have or
+[28:36] you want to try. So on demand really
+[28:38] helps along those lines.
+[28:42] All right. So, here's a very quick view
+[28:44] of um how agent code evaluation
+[28:46] generally works. And this is more so
+[28:48] your um online style evaluation. But you
+[28:51] know it can also be for your on demand
+[28:54] uh depending on how you see it. So if
+[28:57] you start from the right hand side again
+[29:00] um which is the on demand from the
+[29:02] previous slide. So you as a agent owner
+[29:05] u you have already logged your traces of
+[29:08] your agent in uh [clears throat]
+[29:10] excuse me in uh let's say agent go
+[29:12] observability. So you're fetching those
+[29:14] traces on your own because hey on demand
+[29:17] is working directly in your environment
+[29:19] in your CI/CD and things like those. So
+[29:22] you fetch those you apply evaluation on
+[29:25] top of it and we will see like the code
+[29:26] for applying these evaluators is like
+[29:29] really small um like probably what 10 20
+[29:33] lines of uh total code I would say um we
+[29:37] will do a demo there. So um you apply
+[29:40] that there uh you don't get a dashboard
+[29:42] because hey it's directly giving you the
+[29:44] responses and a reasoning in your
+[29:46] environment but if you're looking at the
+[29:48] online version of it which is where you
+[29:50] have deployed an agent your users are
+[29:53] interacting with an agent. Now in that
+[29:55] case your agent is logging all your
+[29:56] traces to agent core observability and
+[29:59] then the service depending on the
+[30:01] configuration you have specified which
+[30:03] is the next slide exactly in the demo
+[30:05] where I show you how to define that
+[30:07] configuration. So um you based on your
+[30:10] configuration the service agent code
+[30:12] evaluation automatically fetches the
+[30:14] trace on your behalf applies evaluation
+[30:16] on top of it put it into a dashboard as
+[30:19] you can see uh like a um a screenshot at
+[30:23] the bottom of this slide there is a corp
+[30:27] travel evaluator where you can see
+[30:29] different type of scores. Um so it it
+[30:31] does that out of the box for you u
+[30:33] making it super smooth and easy for you.
+[30:36] So what you're saying is it's not a a
+[30:38] lot of going into setting up
+[30:40] evaluations, right?
+[30:42] >> So my my demo is literally 27 seconds.
+[30:45] It it takes 27 seconds for me to
+[30:47] configure the um whole evaluation
+[30:51] pipeline that then runs continuously.
+[30:54] >> Excellent. [laughter]
+[30:55] We have a question in the chat coming
+[30:56] up. Uh you know, so how does Amazon
+[30:59] integrate with internal data and agent
+[31:00] feedback to improve generative AI in its
+[31:03] services? Right. So you know we do not
+[31:05] use customer data to train our models
+[31:08] and uh you know just to answer that
+[31:10] right. So uh this is not based on
+[31:13] customer data.
+[31:14] >> Yep. Exactly.
+[31:18] >> All right. So demo time um let me know
+[31:21] if you can. So what I have done is since
+[31:23] uh these demos with evaluation uh they
+[31:26] take time um and time here is let's say
+[31:29] I invoke an agent the trace gets
+[31:31] generated then the evaluation happens.
+[31:33] just for me to show you just one example
+[31:35] may take a couple of minutes. So what I
+[31:38] have done is I have just recorded them
+[31:39] in a video and the last demo where I'm
+[31:42] using the results I'm showing that live
+[31:44] because that that's what I wanted to
+[31:46] show you because uh like the real
+[31:48] takeaway for you is not to like just hey
+[31:50] I want to set this up because that's not
+[31:53] going to give you the value. The the
+[31:54] value that you'll get is how do I use
+[31:56] what this does in order for me to be
+[31:58] able to improve my application. Yeah. So
+[32:01] this shows you the entire life cycle of
+[32:03] >> All right. So excellent. So see the demo
+[32:06] here in action.
+[32:07] >> So here what I'm doing is I'm setting up
+[32:09] my online configuration where I have
+[32:12] three steps. One is to specify my agent
+[32:16] and um I'll just take pause here. So in
+[32:20] my agent what I have done is I'm going
+[32:22] to take a step back. You get two
+[32:24] options. One I could just directly
+[32:26] define an endpoint of my agent. this
+[32:29] endpoint is available to you if you have
+[32:31] deployed your AI agent on agent core
+[32:33] runtime and um that's when you can just
+[32:36] seamlessly provide a drop-down uh but in
+[32:39] other cases when you are uh you have
+[32:42] deployed your agent elsewhere which
+[32:43] could be let's say uh Amazon EKS EC2
+[32:47] Lambda even you know like outside of AWS
+[32:50] on a different cloud provider so as long
+[32:53] as you can send those traces using a dot
+[32:55] a dot is uh Amazon's open telemetry
+[32:58] distribution ation. So as long as you
+[33:00] can send it using that to one of the
+[33:02] cloudatch log groups and then you can
+[33:04] specify what that cloudatch log group
+[33:05] is, agent core evaluation can seamlessly
+[33:08] work for you.
+[33:08] >> So agents can be anywhere to in order to
+[33:10] run the evaluation here. So
+[33:12] >> you don't need to run your agents in
+[33:14] agent core uh to be able to do the
+[33:16] evaluations. It's always uh good to get
+[33:18] more visibility if you use agent core
+[33:21] >> and also because like if you have your
+[33:24] agents uh hosted on agent core you get
+[33:26] like those system uh level logging and
+[33:29] system metrics too which is usually like
+[33:31] if you are running it elsewhere you may
+[33:33] may not have those
+[33:35] >> depending on like where you are running
+[33:37] those. So usually what we have seen is
+[33:39] agent code uh related traces are 20%
+[33:41] more richer uh than like a traditional
+[33:44] agentic trace.
+[33:47] All right. So, um, of the three, uh,
+[33:50] steps that you need, uh, in order to set
+[33:52] this up, this is step number one where
+[33:54] you select or specify what your agent
+[33:56] is. Um, sorry, I'll go back here. Um,
+[34:01] yeah, so we were exactly at this point.
+[34:03] The next thing is for you to select the
+[34:05] evaluators that you want. And as you can
+[34:07] see, right, I'm just selecting them.
+[34:09] There is like sup this is super easy,
+[34:12] straightforward. If I have a custom
+[34:14] evaluator, I can just set that up and
+[34:17] that's it. Like you specify if there is
+[34:20] any filter criterias or any sampling
+[34:22] rate. And uh to think about filter
+[34:24] criterias, you can think of like let's
+[34:26] say you are defining uh user ID or user
+[34:31] group as a part of when your agent is
+[34:34] invoked. So you can really focus on
+[34:36] maybe you want to specify premium users
+[34:39] as the criteria to be filtered. You can
+[34:42] define that. So whatever the criteria
+[34:43] your business logic is define that in
+[34:46] your trace first which is a part of
+[34:48] observability and then this sort of
+[34:50] picks from there and you can define the
+[34:52] sampling rate. It really helps you
+[34:54] manage the cost because with continuous
+[34:56] monitoring you are sort of getting a
+[34:57] sense of if my agent is still performing
+[35:00] the way I want it to and is it meeting
+[35:02] the uh the criterias I have and once you
+[35:05] do that you just save it. So when I so
+[35:08] since I was explaining um I took more
+[35:11] time but if you look at the the entire
+[35:14] recording this is 27 seconds it took for
+[35:17] me to like really select things through
+[35:19] and like get it going and now what
+[35:21] happens is go ahead.
+[35:23] >> Yes. So so what we did is uh some click
+[35:25] ops there but uh agent c evaluations
+[35:27] does it support cloud formation or CDK
+[35:30] right? So can we do that as well?
+[35:32] >> So uh right now the service is in
+[35:35] preview. So um in preview those features
+[35:37] are not usually supported but we do have
+[35:40] our APIs so you could currently use the
+[35:42] APIs.
+[35:44] >> Excellent. And we also have a question
+[35:45] coming in the chat uh you know agent
+[35:48] code evaluations understanding that you
+[35:49] know it's part of the responsible AI
+[35:51] program and know should be included in
+[35:54] to understand the security concerns of
+[35:56] agentic uh you know frameworks out there
+[35:58] right so is that something uh is that
+[36:01] how we would see this?
+[36:04] So agent core eval is more so to get a
+[36:08] sense of the quality of your agent and
+[36:10] quality is multiffold here as we were
+[36:12] talking about like session level truth
+[36:14] level and spam level. So if my agent is
+[36:17] taking the right actions is it using the
+[36:19] context wisely and things like those. So
+[36:21] that's what the majority focus is. But
+[36:24] let's say if you are looking into the
+[36:26] responsible AI side of the things uh we
+[36:28] do have I think one or two evaluators uh
+[36:31] but if let's say they don't meet the
+[36:33] needs that you have you can uh create
+[36:36] custom evaluator
+[36:37] >> there you go right so you have the pump
+[36:38] template samples then you can always
+[36:40] customize them to make your custom
+[36:41] evaluator
+[36:42] >> and I think that's a perfect segue into
+[36:44] like how do you create a custom
+[36:46] evaluator in the first place so this is
+[36:48] another uh demo of like creating custom
+[36:52] evaluator this is a fourpart uh story
+[36:54] here. You select the uh template just to
+[36:58] get started quickly. Um and as uh Anilu
+[37:01] mentioned these prompts are published
+[37:03] publicly. So you can also load from
+[37:05] there or directly from here so that you
+[37:07] have context variables. You select the
+[37:09] model of your choice. So any model
+[37:11] that's available on uh Amazon Bedrock
+[37:13] can be used. Uh and this would also
+[37:16] support 4.6 because hey it got launched
+[37:18] right. So you select all those you
+[37:20] define the rubric that you have. Um and
+[37:23] rubric is very critical because this is
+[37:26] exactly what's used in order to get a
+[37:29] score get the category for um the
+[37:32] evaluation task. So evaluation is a task
+[37:35] that your LLM is performing in this case
+[37:37] um given the context of the trace.
+[37:41] So one quick question there is uh as we
+[37:44] uh as you pulled up the model on the
+[37:45] right side. So that's the uh important
+[37:47] difference that you mentioned earlier
+[37:49] about uh the built-in uh versus the
+[37:52] custom evaluator. So in custom evaluator
+[37:54] you can pick your model that you want to
+[37:56] use to run the evaluations.
+[37:58] >> Exactly. So in custom you pick the model
+[38:01] and uh I also mentioned about the
+[38:03] inference side of the thing. So
+[38:04] inference uh management is available
+[38:06] only on the built-in evaluators and not
+[38:09] the custom evaluator
+[38:11] because you are choosing uh things in
+[38:13] your custom way. So the like service
+[38:16] doesn't do that in that case. So the
+[38:19] kota comes out directly from your kota.
+[38:22] >> Excellent.
+[38:23] >> Okay.
+[38:25] So what I'll do next is uh I'm going to
+[38:28] quickly uh show [clears throat] you um
+[38:31] how these specific APIs work.
+[38:34] Um so specifically focusing first on the
+[38:37] on demand side of the things and then we
+[38:38] look at the demo for on demand. Uh then
+[38:41] we will look into the online and demo
+[38:43] for online and then finally how do we
+[38:45] combine all things together and best
+[38:47] practices from here. So uh the way on
+[38:50] demand API works is you as a developer
+[38:52] are responsible for one instrumenting
+[38:56] your agent uh and agent instrumentation
+[38:58] these days has become much easier with
+[39:00] the uh open source libraries. uh
+[39:03] depending on what type of agentic
+[39:04] framework you have it may have different
+[39:06] type of instrumentations
+[39:08] uh could be open telemetry based could
+[39:10] be open inference based uh so that's
+[39:12] some sort of like decision point for you
+[39:14] to decide how and what type of
+[39:16] instrumentation you need a do supports
+[39:19] both open telemetry as well as uh open
+[39:21] inference so it just makes it much
+[39:23] easier for you to um really like
+[39:25] instrument your agents once you have
+[39:28] instrumented uh your agent then produces
+[39:30] uh the open telemetry uh session traces
+[39:33] and spans that can then be used in order
+[39:35] to evaluate it. Uh so you as a developer
+[39:38] one instrument your agent to um like
+[39:42] fetch those traces and prepare the data
+[39:44] set that's needed in order to be
+[39:45] evaluated because the whole concept of
+[39:48] on demand is that you as a developer are
+[39:51] in control and you want everything in
+[39:54] your environment. So let's say if you're
+[39:55] working in visual code studio, you want
+[39:58] everything right there on demand is the
+[40:00] way to go. uh then you invoke the APIs
+[40:03] which are again invoking foundation
+[40:05] models on Amazon bedrock and really
+[40:07] you're getting the responses as well as
+[40:09] the reasoning behind why the evaluation
+[40:12] score is in your environment.
+[40:16] Okay. So now let's look at a demo of
+[40:19] this. Um so what I have here is I have
+[40:22] built a travel based agent. Uh all of
+[40:25] these uh tools that it has I think seven
+[40:27] of them.
+[40:28] >> Can you zoom that in? Uh um
+[40:31] >> yes.
+[40:32] >> Okay. Uh actually I think it should be
+[40:34] okay.
+[40:35] >> Okay. Cool. Cool.
+[40:36] >> Yeah.
+[40:37] >> So if you look at this um agent, what
+[40:40] this is doing is it is a travel helper
+[40:43] agent. It can search things for you. It
+[40:46] can get you the exact information, your
+[40:48] flight information, hotel information,
+[40:51] any travel restrictions, things like
+[40:53] those. All these tools are uh calling
+[40:55] some real uh realtime API and things
+[40:58] like those. This is my system prompt in
+[41:01] my baseline experimentation. Um so um I
+[41:04] think I didn't cover this piece. Um so
+[41:07] for evaluation you think about that the
+[41:11] very first agent that you built that
+[41:12] acts as your baseline. It may happen
+[41:15] that you may have ground truth data. It
+[41:17] may also happen that you don't have
+[41:18] ground truth data given your use case
+[41:20] and the nuances that you may be facing.
+[41:23] So it doesn't matter that what you have
+[41:26] at that point. Ideally, yes, it's best
+[41:29] if you have ground truth data so that
+[41:31] you know it it becomes much easier to
+[41:33] baseline things. But even if you don't
+[41:35] have it, you can still baseline things
+[41:37] because if you look at evaluation as a
+[41:40] task, uh the new LLM model and new here
+[41:44] is like not the same LLM model that's in
+[41:48] your AI agent in that session, but it
+[41:50] could be same model, but it's like at a
+[41:52] in a different session window, right? So
+[41:54] that LLM is now the task for it is to
+[41:59] look at what the agent did and sort of
+[42:02] give you an idea of whether it was good
+[42:04] or not. So that's the task for any of
+[42:07] your LLM based evaluator. Uh and then
+[42:09] you may define further subcategories
+[42:11] that was it partially correct, was it
+[42:13] like uh little bit better than partial
+[42:15] correctly? U partially correct and
+[42:18] things like those.
+[42:20] So here uh that's what I'm doing. Uh I'm
+[42:24] just setting up my baseline agent. The
+[42:26] very first agent I built. This is my
+[42:28] very first prompt.
+[42:30] Now what I'm doing here is um I am
+[42:33] deploying this agent first. Reason to
+[42:35] deploying it on a core runtime here is
+[42:37] because I want to finally deploy this
+[42:39] agent in agent core runtime if and when
+[42:42] I go to production. How does that help
+[42:44] me is uh and I'm not covering the
+[42:46] process of deploying because I think
+[42:48] Anel we have had like couple of sessions
+[42:50] on show and tell about how do you deploy
+[42:53] agents on runtime so I'm skipping that
+[42:55] piece but overall it's a super easy
+[42:57] process um you containerize your agent
+[42:59] code and deploy it so why why we are
+[43:02] deploying it in the first place is
+[43:04] because you want to test your agent
+[43:06] exactly where it's going to run if you
+[43:08] remember from the slides we were talking
+[43:10] about earlier your agent evaluation
+[43:12] isn't just the quality side of the
+[43:14] things but it is also your cost and
+[43:18] latency and latency isn't just your
+[43:21] agent runtime it's like the full uh
+[43:24] story of like invoking agent your
+[43:27] machine getting spun up and things like
+[43:29] those that's that's what happens right
+[43:30] in production so you're looking at that
+[43:32] you're looking at quality generated from
+[43:34] there so now if you look at this I'm
+[43:36] calling this experiment equal to
+[43:38] baseline just setting this my baseline
+[43:40] version and I'm invoking this agent that
+[43:42] I deployed on agent core runtime. And if
+[43:45] you look at this, this is just like me
+[43:47] passing through some questions.
+[43:51] Um, me passing through these questions
+[43:53] here. Oh, sorry. I think I clicked
+[43:55] accidentally on it. So, sorry about it.
+[43:59] Yeah, let me Yeah, right here. So, here
+[44:03] we are. Um,
+[44:06] maybe I'll do it this way.
+[44:09] Uh I'll just uh manually uh move this.
+[44:13] Yes, that that makes it much easier. So
+[44:16] what I'm doing here is I'm really just
+[44:18] invoking this agent by passing in some
+[44:20] session ID. And this session has
+[44:23] multiple questions within it. So it's a
+[44:25] multi-turn um experience in this case.
+[44:29] And uh what's happening here is my agent
+[44:31] gets invoked. It invokes tools uh
+[44:34] because it has those seven tools as I
+[44:36] was showing earlier. And then like you
+[44:38] can look at these questions. Question
+[44:39] number one, this person is uh planning
+[44:41] their honeymoon to Maldives. Uh there is
+[44:43] a response generated. There is a
+[44:45] follow-up question with a response and
+[44:47] things like those. In this session,
+[44:49] there were five questions. Then session
+[44:52] two and so on. So you can first invoke
+[44:54] these. And as you see, I'm not saving
+[44:58] anything other than just the session
+[44:59] ids.
+[45:00] >> Mhm.
+[45:01] >> So and I'm showing you the on demand
+[45:03] side of the things. It sort of runs
+[45:05] through all these. This is like what
+[45:06] those questions are that I'm asking. So
+[45:08] this is the first one I was specifically
+[45:11] talking about and then other ones and
+[45:13] then once I have asked all these
+[45:16] questions my agent produced traces. Now
+[45:19] what I'm doing is I am really just
+[45:22] passing the session ID to my evaluators
+[45:26] and this is all the code that you need
+[45:29] in order to evaluate using on demand
+[45:32] like 100% of the code. You are passing
+[45:35] in the session ids and you are just
+[45:37] invoking the evaluators and the these
+[45:41] APIs know automatically that hey I have
+[45:43] the session ID I can fetch things I can
+[45:46] use these in order to perform the
+[45:48] evaluation and give you the scores and
+[45:51] since this is on demand I get everything
+[45:53] right here in this environment there is
+[45:55] no dashboard of course hey on demand
+[45:57] right I'm using it in an offline
+[45:59] capacity
+[46:01] >> um so moving forward this is where I'm
+[46:04] now loading the results because now that
+[46:07] my uh evaluators have performed their
+[46:09] jobs. So I'm just loading these uh data
+[46:12] sets here that they have created for me.
+[46:15] And as we can see I performed like eight
+[46:17] different uh evaluator metrics. They are
+[46:20] different type of scores that they
+[46:22] generated. I'm looking at min max also
+[46:24] just to get like a sense of this. This
+[46:26] is across like 20 25 sessions. Uh and
+[46:29] then one of the uh specific question um
+[46:33] where one of the sessions scored
+[46:35] actually a zero score for goal success
+[46:37] because um my user asked something the
+[46:40] agent did something else agent did not
+[46:43] meet the user goal. So you can see the
+[46:44] full explanation of why the evaluator
+[46:47] gave it a zero score.
+[46:49] >> Yeah. And for every evaluation that's
+[46:51] generated there's an explanation for it.
+[46:53] So there's a reasoning of why the LLM is
+[46:55] generating that particular score so that
+[46:57] you can understand
+[46:59] Yeah.
+[46:59] >> To improve the system. Uh right. So you
+[47:01] need those that feedback as well.
+[47:03] >> Exactly. So now I have since run through
+[47:06] this like across 20 sessions but as you
+[47:09] are testing it you may have like
+[47:11] thousand test cases thousand sessions
+[47:13] because you really want to like be able
+[47:15] to trust it. With 20 sessions you may be
+[47:19] comfortable doing a demo in front of
+[47:21] your leadership but not like putting it
+[47:23] in front of your customer on your you
+[47:25] know um company's web page. So for that
+[47:29] to happen you are doing more
+[47:31] comprehensive testing and how that
+[47:33] happens is you increase your test cases
+[47:35] and you don't have to start with like a
+[47:38] real super set of questions of like
+[47:40] thousands and thousands of sample even
+[47:42] if you have 10 right just keep them
+[47:45] continuously build your corpus as you
+[47:47] move through different stages of like
+[47:49] building this AI agent
+[47:52] now that this is my stage one this was
+[47:54] just my baseline I then analyzed all
+[47:57] these reasonings that I have from the
+[48:00] evaluators
+[48:02] and I'll show you the full demo of what
+[48:04] I did after this but for continuity sake
+[48:06] assume that I did some analysis came up
+[48:09] with a better system prompt and updated
+[48:13] my system prompt next that's the next
+[48:15] step I took after I got evaluation
+[48:17] scores across all these um sessions so
+[48:21] now moving a little bit forward from
+[48:24] here yes so this is my updated system
+[48:27] prompt. Uh like so on a video you'll be
+[48:31] able to compare that these two system
+[48:33] prompts are different. So this is my new
+[48:35] system prompt. Everything else is same.
+[48:37] Same model, same temperature, everything
+[48:39] else.
+[48:42] And I performed the same analysis again,
+[48:44] ran through the same ondemand API again.
+[48:47] And what I see here is between these two
+[48:49] system prompts across these eight
+[48:51] metrics, I see some improvements. And
+[48:54] that was my trial one. Since I am still
+[48:57] doing a demo here today, um you want to
+[49:00] like dig deeper, define success criteria
+[49:03] and work on that like if it is meeting
+[49:06] that performance that you need. And from
+[49:08] there onwards you decide whether to
+[49:10] deploy it or not. And you would use your
+[49:13] subject matter experts in order to
+[49:15] analyze these uh reasonings that I was
+[49:17] uh showing earlier.
+[49:19] But as you scale thousands maybe 10,000
+[49:23] test cases even your subject matter
+[49:25] experts can't go and read through that
+[49:27] because that's like too much of human
+[49:29] time investment right uh what you can do
+[49:32] is you could take some hybrid style
+[49:34] approach where you have an LLM or some
+[49:37] model and I'm going to show you a demo
+[49:40] next about it um you can take some
+[49:42] hybrid approach where you get these LLM
+[49:46] models really good at understanding the
+[49:49] text to give you some evidence-driven uh
+[49:53] insights around what's going bad. You
+[49:56] have your subject matter experts exactly
+[49:58] look at those and then come up with like
+[50:00] better prompts or you can even do meta
+[50:03] prompting from there. Like you can make
+[50:05] it as complex as um
+[50:08] you want it to be or as simple as you
+[50:10] want it to be depending on um where you
+[50:13] are in that performance threshold gap.
+[50:15] So you update the whatever the criteria
+[50:17] it is and then you evaluate you test it.
+[50:19] If it looks good then you continue
+[50:21] >> you improve it again. If it looks bad
+[50:23] then maybe it on it right. Y
+[50:25] >> create the stats and create a bell curve
+[50:27] from that and then understand the
+[50:29] extremities extremities of like where
+[50:31] the tail is why is it the case what is
+[50:34] happening and then based on that
+[50:36] >> yeah and often times you'll find that
+[50:38] this is like you are getting really good
+[50:41] performance on like majority of groups
+[50:43] within your data but there is one
+[50:45] specific group of questions that your
+[50:47] agent is not able to handle. So for an
+[50:50] example I'll give you a good example
+[50:52] here.
+[50:53] Let's say your agent has um some sort of
+[50:57] like goal success metric and it's still
+[51:00] a travel agent and you as a user are
+[51:03] asking about some questions where your
+[51:05] agent needs a follow-up uh request or
+[51:08] follow-up information from you as a user
+[51:11] >> and since you evaluate it midway maybe
+[51:14] your evaluators would give it a zero
+[51:16] score or lower score because your agent
+[51:18] did not conduct an action there. So you
+[51:20] also want to look at what your
+[51:21] evaluators are doing not just what your
+[51:24] agent is doing because hey at the end of
+[51:27] the day if you're using LLM as judge LLM
+[51:30] is non-deterministic in this so your
+[51:32] LLMs judge or judges can also
+[51:34] hallucinate in cases. So you want to
+[51:36] also tailor for that
+[51:38] >> that's an important point. Yeah.
+[51:40] >> Yeah.
+[51:41] >> Yeah. So let's say assuming that in my
+[51:45] use case this specific metric works for
+[51:47] me it meets my success criteria I would
+[51:49] deploy this agent and the deployment
+[51:52] piece is I can deploy my agent on agent
+[51:55] core runtime or it could be elsewhere
+[51:57] like ECS EKS other cloud uh when my user
+[52:01] invokes my agent I write my open
+[52:03] telemetry based traces to agent core
+[52:04] observability and then rest of the
+[52:07] pipeline is that agent co evaluation
+[52:09] picks from there conducts eval put score
+[52:11] back there and you as a developer or
+[52:13] your subject matter experts can go in
+[52:15] and see now what does that dashboard
+[52:18] looks like that you get I have been
+[52:20] talking about this dashboard and you
+[52:22] know I haven't shown you thus far so
+[52:25] >> we are getting close to the end of the
+[52:26] hour also right so
+[52:28] >> yeah exactly so here's the dashboard uh
+[52:30] this is like your agent code evaluation
+[52:32] dashboard uh on top of what your agent
+[52:34] code observability dashboard is it just
+[52:36] adds another um tab to it um so you one
+[52:42] see the trends. This is like all your
+[52:44] trends around different evaluators that
+[52:46] you have set up. And if you look at this
+[52:48] closely, this is exactly those metrics
+[52:49] that I selected in my very first demo.
+[52:53] So one you get trends, but you know
+[52:56] trends are good to get a sense of how
+[52:59] things are. You really want to go dig
+[53:01] deeper into like specific trace. So I'm
+[53:03] going to open a specific trace here. You
+[53:06] can look at your session evaluator on
+[53:08] the top here. Then you can also see your
+[53:10] trace level evaluators. I did not in my
+[53:12] original demo select any tool based uh
+[53:15] evaluator but if you do that that would
+[53:17] also show up exactly here. So you get a
+[53:20] score you see the reasoning in this case
+[53:22] correctness is um just.5 it's because my
+[53:25] agent decided not to use the context
+[53:27] properly. So there was some mixup in in
+[53:31] the final response by not using or uh
+[53:34] relying on the tool responses. So that's
+[53:36] why this result is bad. But yeah, that's
+[53:39] that's really like the crux of um what
+[53:43] the service offers you out of the box.
+[53:45] You don't have to build this dashboard.
+[53:46] This just comes out of the box.
+[53:49] >> Ian, one question that I've been hearing
+[53:51] a lot uh is about how do we you know see
+[53:55] the data drift? So what part of the
+[53:57] pattern do we have to notice to see the
+[53:58] data drift that's been happening?
+[54:01] >> Yeah, that's an interesting question. So
+[54:03] I'm going to go back to one of my
+[54:06] previous slides. Remember I was showing
+[54:08] you my baseline trial one and then let's
+[54:12] say trial one is final scores for me. Uh
+[54:15] in order to detect drift what you are
+[54:17] going to do is uh it's it's little bit
+[54:20] of like scientific process also but it
+[54:23] can be very simple as hey I know what my
+[54:25] trial one scores are. Is my continuous
+[54:28] evaluation giving me similar scores?
+[54:31] Maybe they are within like one or 2%
+[54:34] data from these scores. it would be a
+[54:36] decent signal for you to look at hey is
+[54:39] it is there a drift or not
+[54:41] >> but let's say if you want to get more
+[54:44] nuanced around it you can look into like
+[54:47] calibration of these uh LM judge scores
+[54:50] against like your subject matter scores
+[54:52] and see whether
+[54:54] it's meeting your subject matter expert
+[54:56] criterias or not. So there are multiple
+[54:59] ways and then you can even go further
+[55:01] down the road by like having a panel of
+[55:03] judges and things like those to really
+[55:06] like um depending on the sensitivity
+[55:08] from here actually. But these two like
+[55:11] are easy ways to get started with like
+[55:13] drift detection.
+[55:16] >> Okay.
+[55:17] >> Yeah. So now the um Anil, how much time
+[55:21] do we have?
+[55:21] >> We have actually four more minutes. So
+[55:23] >> Okay. So I have
+[55:26] >> one more thing I would like to ask. So
+[55:28] the code that you showed where can our
+[55:31] viewers
+[55:32] >> Yeah. Uh we actually I'm just putting a
+[55:34] link in the chat. Uh we have that going
+[55:36] on. So I it should be coming up in a
+[55:39] second.
+[55:40] >> Very cool. So what I'll do is I'll show
+[55:43] you the demo of like how do you improve
+[55:45] the agents in about a minute time. We
+[55:48] already uh since Anil has shared the
+[55:50] link um you already have the link to
+[55:52] that code. Mhm.
+[55:55] So what I have done is I have already
+[55:57] downloaded a sample of 10 of the
+[55:59] sessions that I had. Um and this is like
+[56:02] your agent core um agent core samples
+[56:05] repo. If you go to tutorials, uh folder
+[56:08] number seven is evaluation. Within that
+[56:11] folder number seven is using evaluation
+[56:13] results. And I'm just using one of the
+[56:14] notebooks in this. And um it it does
+[56:18] list down uh in a more comprehensive way
+[56:21] of like what does the process of
+[56:22] improving agents look like and how you
+[56:24] should think about it and work through
+[56:26] this. So what I'm showing you here is I
+[56:29] have built an agent which has its own
+[56:31] sub agent uh and it creates those sub
+[56:34] aent on the fly right here to analyze
+[56:37] these reasoning scores and group them
+[56:39] into like different type of problem
+[56:40] areas. So you have access to all of this
+[56:43] code available directly in the repo. I'm
+[56:45] skipping things through so that I can
+[56:47] show you the meat of it. Um what I'm
+[56:50] doing is I'm asking in this code to look
+[56:52] at all my reasoning scores where the
+[56:55] score is less than or equal to 7 for any
+[56:59] evaluator and then what it does is it
+[57:02] looks at finds evidences things like
+[57:05] those in order to find the problems that
+[57:08] I uh that we are seeing through
+[57:11] evaluation and then comes up with a new
+[57:14] system prompt. So feel free to take a
+[57:16] look at this. As you can see, this was
+[57:18] my system prompt in this case. This is
+[57:20] exactly the system prompt I used. Uh I
+[57:22] would run it. Uh and then what what
+[57:25] happens is it created this um file for
+[57:29] me. So I'm going to like uh zoom in a
+[57:31] little so that all of us can see. So
+[57:33] this is what this agent generated for
+[57:35] me. One, it gives me summary of what is
+[57:37] happening. It tells me the top three
+[57:39] problem is one that my uh agent is
+[57:42] fabricating tool search parameters. So
+[57:45] it's not sticking to the user request
+[57:48] and it not only just like comes up with
+[57:50] um the
+[57:53] problems but it is really giving you the
+[57:55] trace ids and session ids to look at the
+[57:57] evidence piece. Uh then tells you like
+[58:00] of the 43 low scoring uh sessions it
+[58:03] comes in 10 and things like those and
+[58:06] yeah you can continue to take a look at
+[58:07] this. It gives you a system prompt uh at
+[58:10] the end.
+[58:12] All right. So with
+[58:14] >> so yeah. So what is the takeaway for our
+[58:17] viewers then right? We are almost at
+[58:18] time.
+[58:19] >> Yeah. So we have um one you have shared
+[58:22] the um link already to the GitHub
+[58:25] sample. So we have that we have
+[58:27] workshops documentations and code uh SDK
+[58:30] based uh documentation available for all
+[58:32] of our customers. Um feel free to take a
+[58:35] look. Um let us know if uh you have any
+[58:38] questions.
+[58:40] >> Excellent. So you know work on your uh
+[58:42] improving your agent with agent core
+[58:44] evaluations and uh uh I think uh that's
+[58:47] that's it from this uh session today.
+[58:49] We'll come back again next week uh same
+[58:51] time. Uh thank you Ishan and Kasha for
+[58:53] joining us and uh giving us a deep dive.
+[58:57] >> Thank you for having us.
+[58:59] >> Thank you everyone. Thank
+[59:04] [music]
+[59:13] >> [music]

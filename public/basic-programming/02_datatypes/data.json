@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "02_datatypes",
+  "title": "Data Types & Type Systems",
+  "description": "Data types define how bits in RAM are interpreted by the CPU as integers, floats, booleans, or reference objects.",
+  "category": "Foundations",
+  "badge": "Level 2: Apprentice",
+  "tags": [
+    "DataTypes",
+    "TypeSystem",
+    "Primitives",
+    "Heap"
+  ],
+  "codeExamples": {
+    "python": "age = 25\nheight = 5.9\nis_student = True\nname = 'Alice'\n\n# Type Conversion\nconverted_age = float(age)\nprint(f'{name} | Type: {type(age).__name__} | Float Age: {converted_age}')",
+    "java": "public class Main {\n    public static void main(String[] args) {\n        int age = 25;\n        double height = 5.9;\n        boolean isStudent = true;\n        String name = \"Alice\";\n        double convertedAge = (double) age;\n        System.out.println(name + \" | Type: int | Float Age: \" + convertedAge);\n    }\n}",
+    "javascript": "let age = 25;\nlet height = 5.9;\nlet isStudent = true;\nlet name = 'Alice';\nlet convertedAge = Number(age);\nconsole.log(`${name} | Type: ${typeof age} | Float Age: ${convertedAge}`);",
+    "cpp": "#include <iostream>\n#include <string>\nint main() {\n    int age = 25;\n    double height = 5.9;\n    bool isStudent = true;\n    std::string name = \"Alice\";\n    double convertedAge = static_cast<double>(age);\n    std::cout << name << \" | Type: int | Float Age: \" << convertedAge << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which of the following is considered a primitive data type stored directly on the Call Stack?",
+      "options": [
+        "Integer (int)",
+        "List (list)",
+        "Dictionary (dict)",
+        "Custom Class Instance"
+      ],
+      "correctIndex": 0,
+      "explanation": "Primitive data types like integer, float, and boolean have fixed byte sizes and are stored directly on the Call Stack frame."
+    },
+    {
+      "question": "What happens when you convert a float 9.99 to an integer using int(9.99) in Python?",
+      "options": [
+        "It truncates the decimal part, resulting in 9.",
+        "It rounds up to 10.",
+        "It throws a TypeError.",
+        "It converts it to a string '9.99'."
+      ],
+      "correctIndex": 0,
+      "explanation": "int() truncates towards zero, discarding the fractional part without rounding."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. What is the fundamental difference between Primitive Data Types and Reference Data Types?",
+      "a": "Primitive types (int, float, bool) store raw fixed-size data values directly in Call Stack memory frames. Reference types (strings, lists, objects) store memory pointers on the Stack that point to dynamic object data in Heap RAM."
+    },
+    {
+      "q": "02. Explain Dynamic Typing (Python/JavaScript) vs Static Typing (Java/C++).",
+      "a": "Static typing checks data types at compile-time and requires explicit type declarations (`int x = 10;`). Dynamic typing evaluates data types at runtime (`x = 10`), allowing variables to point to different data types over time."
+    },
+    {
+      "q": "03. What is Floating-Point Precision Imprecision (IEEE-754) and why does 0.1 + 0.2 != 0.3?",
+      "a": "Computers store numbers in binary (base-2). Decimals like 0.1 and 0.2 cannot be represented exactly in binary floating-point representation, producing 0.30000000000000004. Use Python's `decimal` module for exact currency calculations."
+    },
+    {
+      "q": "04. What is the difference between Implicit Coercion and Explicit Type Casting?",
+      "a": "Implicit coercion is automatic type promotion performed by the runtime (e.g., `5 + 2.0 -> 7.0`). Explicit casting is manually converting types using functions like `int('50')` or `(double)val`."
+    },
+    {
+      "q": "05. How does Python handle arbitrarily large integers without integer overflow?",
+      "a": "In C/Java, `int` overflows at 32-bit (2,147,483,647). Python 3 automatically converts large integers into `long` objects under the hood, allocating variable digits dynamically in Heap memory limited only by available RAM."
+    },
+    {
+      "q": "06. Why are Strings immutable in Python and Java, and what is String Interning?",
+      "a": "Immutability guarantees thread-safety and hash stability for dictionary keys. String Interning reuses immutable string object instances in memory if identical literal values exist, saving RAM space."
+    },
+    {
+      "q": "07. What is the difference between type() and isinstance() in Python type checking?",
+      "a": "`type(obj) == class` checks for exact class identity. `isinstance(obj, class)` checks if obj is an instance of class OR any of its derived subclasses (supports OOP inheritance)."
+    },
+    {
+      "q": "08. What is Duck Typing in dynamically typed languages?",
+      "a": "\"If it walks like a duck and quacks like a duck, it's a duck.\" Duck typing focuses on what methods/attributes an object has rather than its explicit class hierarchy."
+    },
+    {
+      "q": "09. What is the memory footprint of a boolean in Python vs a C bit flag?",
+      "a": "In C, a boolean can occupy 1 byte or 1 bit. In Python, due to object overhead (PyObject header, reference count, type pointer), a `bool` object consumes 28 bytes of RAM memory."
+    },
+    {
+      "q": "10. What is the difference between None (Python), null (Java/C++), and undefined (JS)?",
+      "a": "`None` and `null` represent explicit absence of value. `undefined` in JavaScript means a variable has been declared but not assigned any value yet."
+    },
+    {
+      "q": "11. How do value types behave during assignment compared to reference types?",
+      "a": "Value types copy the actual data (`y = x` creates an independent copy). Reference types copy the memory address pointer (`listB = listA` points both variables to the SAME Heap object)."
+    },
+    {
+      "q": "12. What is Type Widening vs Type Narrowing?",
+      "a": "Widening converts a smaller type to a larger type automatically without data loss (`int` -> `double`). Narrowing converts a larger type to a smaller type, requiring explicit casting and risking truncation (`double` -> `int`)."
+    },
+    {
+      "q": "13. What is a Strong Type System vs a Weak Type System?",
+      "a": "Strong type systems enforce strict type rules and prohibit invalid implicit operations (`'5' + 5` raises TypeError in Python). Weak type systems perform unexpected implicit conversions (`'5' + 5` yields `'55'` in JS)."
+    },
+    {
+      "q": "14. How does Python's sys.getsizeof() help inspect RAM memory utilization?",
+      "a": "`sys.getsizeof(obj)` returns the size of an object in bytes including Python interpreter GC header overhead."
+    },
+    {
+      "q": "15. What are Mutable vs Immutable Data Types?",
+      "a": "Immutable types (int, float, str, tuple) cannot be changed after creation; mutating them creates a new object. Mutable types (list, dict, set) can have their contents modified in-place at the same memory address."
+    },
+    {
+      "q": "16. How does Type Annotations (PEP 484) work in Python 3?",
+      "a": "Type hints (`def add(a: int) -> int:`) provide static analysis warnings in IDEs (mypy) without enforcing runtime type checking or altering Python's dynamic runtime."
+    },
+    {
+      "q": "17. What is a Union Type and Nullable Type in modern type systems?",
+      "a": "Union types allow a variable to hold multiple specific types (`int | str`). Nullable types explicitly allow a type or None (`Optional[int]`)."
+    },
+    {
+      "q": "18. How does Bitwise Representation work for signed integers (Two's Complement)?",
+      "a": "Negative integers are represented in Two's Complement binary format: invert all bits of the positive number and add 1."
+    },
+    {
+      "q": "19. What is Truthy and Falsy evaluation in logical expressions?",
+      "a": "Values like `0`, `0.0`, `\"\"`, `[]`, `None`, and `False` evaluate to `False` in boolean contexts. All other non-zero/non-empty values evaluate to `True`."
+    },
+    {
+      "q": "20. What are best practices for choosing Data Types in production high-scale systems?",
+      "a": "Use primitive fixed types for numeric loops, use `Decimal` for financial values, leverage tuples over lists for fixed immutable records, and avoid unnecessary type conversions inside hot loops."
+    }
+  ]
+}

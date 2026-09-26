@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "05_conditions",
+  "title": "Conditions & Control Flow",
+  "description": "Conditional statements control execution pathways based on boolean condition evaluation.",
+  "category": "Foundations",
+  "badge": "Level 5: Practitioner",
+  "tags": [
+    "Conditions",
+    "ControlFlow",
+    "IfElse",
+    "Logic"
+  ],
+  "codeExamples": {
+    "python": "score = 85\nif score >= 90:\n    grade = 'A'\nelif score >= 80:\n    grade = 'B'\nelse:\n    grade = 'C'\nprint(f'Score: {score} -> Grade: {grade}')",
+    "java": "public class Main {\n    public static void main(String[] args) {\n        int score = 85;\n        char grade;\n        if (score >= 90) {\n            grade = 'A';\n        } else if (score >= 80) {\n            grade = 'B';\n        } else {\n            grade = 'C';\n        }\n        System.out.println(\"Score: \" + score + \" -> Grade: \" + grade);\n    }\n}",
+    "javascript": "let score = 85;\nlet grade;\nif (score >= 90) {\n    grade = 'A';\n} else if (score >= 80) {\n    grade = 'B';\n} else {\n    grade = 'C';\n}\nconsole.log(`Score: ${score} -> Grade: ${grade}`);",
+    "cpp": "#include <iostream>\nint main() {\n    int score = 85;\n    char grade;\n    if (score >= 90) grade = 'A';\n    else if (score >= 80) grade = 'B';\n    else grade = 'C';\n    std::cout << \"Score: \" << score << \" -> Grade: \" << grade << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "In an if-elif-else block, what happens after the first condition evaluates to True?",
+      "options": [
+        "The block for that condition executes, and all subsequent elif/else blocks are skipped completely.",
+        "All remaining elif blocks are evaluated anyway.",
+        "The program restarts from line 1.",
+        "An exception is thrown."
+      ],
+      "correctIndex": 0,
+      "explanation": "Once any condition in an if-elif chain evaluates to True, its block executes and the rest of the chain is bypassed."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. How does CPU Branch Prediction optimize if-else conditional execution?",
+      "a": "Modern CPUs use branch predictors to guess which direction a condition (`if` vs `else`) will take before evaluating it, keeping the instruction pipeline full. Mispredictions cause pipeline flushes (10-20 cycle penalty)."
+    },
+    {
+      "q": "02. What is the difference between multiple `if` statements vs `if-elif-else` chain?",
+      "a": "Multiple `if` statements evaluate EVERY condition independently regardless of prior results. An `if-elif-else` chain stops evaluating as soon as one condition returns True."
+    },
+    {
+      "q": "03. How does Python 3.10+ Pattern Matching (`match-case`) compare to traditional `if-elif`?",
+      "a": "`match-case` (similar to switch-case in C/Java) provides structural pattern matching for data types, sequences, and dictionary patterns with higher readability and optimization."
+    },
+    {
+      "q": "04. What is Nested Conditions and how to refactor deep nesting using Guard Clauses?",
+      "a": "Deeply nested `if` statements create unreadable \"Pyramid of Doom\" code. Guard clauses handle error conditions early with `return` or `raise`, flattening the main happy path execution."
+    },
+    {
+      "q": "05. What is the difference between Bitwise AND (&) vs Logical AND (and) in conditional checks?",
+      "a": "`and` evaluates short-circuit boolean logic. `&` evaluates bitwise operations on integer bits or set intersection without short-circuiting, which can trigger AttributeError/IndexError if applied to objects."
+    },
+    {
+      "q": "06. What is Truthy and Falsy coercion in Python conditional statements?",
+      "a": "Python implicitly coerces non-boolean values in `if obj:`: `0`, `0.0`, `\"\"`, `[]`, `{}`, `None`, and `False` evaluate to Falsy. Non-empty objects evaluate to Truthy."
+    },
+    {
+      "q": "07. How to avoid dangling `else` ambiguities in programming languages?",
+      "a": "In languages without mandatory braces (like C/C++), an `else` binds to the nearest preceding `if`. Always use curly braces `{}` in C/Java and proper indentation in Python to prevent bugs."
+    },
+    {
+      "q": "08. How does the Ternary Operator inline conditional assignment work?",
+      "a": "`status = \"Adult\" if age >= 18 else \"Minor\"`. It keeps code concise for single assignments but should be avoided if nested multiple times."
+    },
+    {
+      "q": "09. How do logical De Morgan's Laws simplify complex boolean conditions?",
+      "a": "De Morgan's Laws: `not (A and B)` is equivalent to `(not A) or (not B)`. `not (A or B)` is equivalent to `(not A) and (not B)`."
+    },
+    {
+      "q": "10. What is the execution performance cost of dynamic type checks inside hot loops?",
+      "a": "Calling `isinstance()` or `type()` inside loops running millions of times adds overhead. Prefer polymorphism or pre-validating types outside the loop."
+    },
+    {
+      "q": "11. What is the fallback `else` clause in Python `for` and `while` loops?",
+      "a": "An `else` attached to a loop executes ONLY if the loop finishes naturally without encountering a `break` statement."
+    },
+    {
+      "q": "12. What is a Lookup Table / Dispatch Table dictionary alternative to long if-elif chains?",
+      "a": "Instead of 20 `elif` checks, store function references in a dictionary `handlers = {'add': do_add, 'sub': do_sub}` and invoke `handlers[op]()` in O(1) time."
+    },
+    {
+      "q": "13. How does short-circuit evaluation prevent Null Pointer Exceptions in conditionals?",
+      "a": "`if user is not None and user.is_active:` skips checking `.is_active` if `user` is `None`, preventing AttributeError crashes."
+    },
+    {
+      "q": "14. How to perform range checks cleanly in Python vs Java?",
+      "a": "Python supports chained comparisons `if 18 <= age <= 65:`. Java requires explicit AND conjunction `if (age >= 18 && age <= 65)`."
+    },
+    {
+      "q": "15. What is the difference between `pass` and `...` (Ellipsis) in conditional stubs?",
+      "a": "`pass` is a null statement that does nothing. `...` (Ellipsis) is a singleton object often used as a placeholder in unwritten conditional branches or function bodies."
+    },
+    {
+      "q": "16. Why is comparing floating point values with `==` dangerous in conditions?",
+      "a": "Due to IEEE-754 precision errors, `0.1 + 0.2 == 0.3` is False. Always check `abs(a - b) < 1e-9` or `math.isclose(a, b)`."
+    },
+    {
+      "q": "17. What is a Sentinel Value in conditional search loops?",
+      "a": "A special dummy value (like `-1` or `None` or `object()`) used to detect end-of-data or missing search items."
+    },
+    {
+      "q": "18. What is any() and all() built-in conditional aggregators in Python?",
+      "a": "`all([a, b, c])` returns True if ALL elements evaluate to True. `any([a, b, c])` returns True if AT LEAST ONE element evaluates to True."
+    },
+    {
+      "q": "19. How to test edge-cases in conditional branching logic during unit testing?",
+      "a": "Achieve 100% Branch Coverage by writing test cases that hit boundary values (e.g. `score = 79`, `score = 80`, `score = 81`) for every decision branch."
+    },
+    {
+      "q": "20. What are production best practices for clean conditional logic?",
+      "a": "Keep conditions positive (`if is_valid` over `if not is_invalid`), extract complex conditions into descriptive boolean variables, and flatten nesting with guard clauses."
+    }
+  ]
+}

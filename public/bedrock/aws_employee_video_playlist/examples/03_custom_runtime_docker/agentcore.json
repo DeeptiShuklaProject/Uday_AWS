@@ -1,0 +1,20 @@
+{
+  "agentName": "customer-support-agent",
+  "version": "1.0.0",
+  "entrypoint": "main.py",
+  "region": "us-east-1",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/BedrockAgentCoreExecutionRole",
+  "ecrRepositoryName": "123456789012.dkr.ecr.us-east-1.amazonaws.com/customer-support-agent",
+  "auth": {
+    "provider": "cognito",
+    "discoveryUrl": "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abcdef123/.well-known/openid-configuration",
+    "clientId": "7h7g7f7e7d7c7b7a7987654321",
+    "audience": "https://agent-api.customer-support.example.com"
+  },
+  "runtimeLimits": {
+    "timeoutSeconds": 900,
+    "maxPayloadSizeBytes": 104857600,
+    "maxConcurrentSessions": 500,
+    "sessionTTLSeconds": 28800
+  }
+}

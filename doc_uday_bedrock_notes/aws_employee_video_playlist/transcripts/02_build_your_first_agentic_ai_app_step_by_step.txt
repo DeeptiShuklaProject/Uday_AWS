@@ -1,0 +1,1443 @@
+Title: 02_build_your_first_agentic_ai_app_step_by_step
+Video URL: https://www.youtube.com/watch?v=aijS9fWB854
+============================================================
+
+[00:00] [Music]
+[00:21] [Music]
+[00:26] Hello all. Uh welcome to another episode
+[00:28] of uh AWS show and tell. Uh this is Anil
+[00:31] Nadivi. I'm your host joining today from
+[00:34] Seattle. And uh you know today we're
+[00:36] going to talk about uh a fun topic. It's
+[00:39] uh to build agentic AI apps and joining
+[00:42] alongside is Adam and Praash.
+[00:46] Hey, thanks Anil. Yeah, Adam Bloom here
+[00:48] from St. Louis. And I can't believe
+[00:49] you're all all the way in Seattle having
+[00:52] fun out there. Yeah, just uh came out
+[00:54] this morning. I mean it was a morning
+[00:56] flight so you know I'll be flying out
+[00:58] tomorrow and uh you know the it's always
+[01:01] good to be having uh you know the light
+[01:03] outside and uh I'm I'm going to have
+[01:05] some fun uh in the next couple of days.
+[01:09] We have Pash as well. Hey uh Anal and
+[01:12] Adam glad to meet you all and uh I'm hi
+[01:15] to everyone who's joining the session
+[01:17] very excited to moderate uh this session
+[01:19] from the chat side. By the way I'm based
+[01:22] out of Denver, Colorado. Uh we had 80s
+[01:24] for the last couple of days and today's
+[01:26] it is in 50s. Um anybody who knows
+[01:29] Colorado it is not surprising but that's
+[01:31] exactly like how the agents are building
+[01:33] it up. The dynamic nature the real
+[01:36] nature is coming into the AI here. Very
+[01:38] excited about the session.
+[01:41] Nice. Cool. So uh I I guess u you know
+[01:44] we're going to chat about uh u and also
+[01:47] show you building generative
+[01:49] applications with strands agents and
+[01:52] MCP. Today we have our uh uh guests that
+[01:56] are joining us guest speakers you know
+[01:58] they're internal to AWS and uh they're
+[02:00] here to present us uh a demo on how you
+[02:02] could build generative applications and
+[02:06] uh we'll bring them on the stage now.
+[02:14] Hey, hey, Strand's team. You guys want
+[02:16] to introduce yourselves? Starting with
+[02:17] Amanda? Yeah, of course. Um, hi
+[02:20] everyone. My name is uh Amanda. I'm a uh
+[02:23] a senior Genaii uh go to market
+[02:25] specialist at AWS based in Dallas, Texas
+[02:28] and excited to um tell tell everyone a
+[02:31] little bit more about uh strands agents
+[02:33] in uh MCP.
+[02:36] Awesome. Erin, how about you?
+[02:39] Yeah. Hi everybody. Um, thank you for
+[02:41] joining. I'm Aaron. Um, one of the
+[02:45] engineers working on strands. You might
+[02:46] see me around GitHub um, as AWS Aaron on
+[02:50] some of the issues and discussions. So,
+[02:52] yeah, looking forward to show you some
+[02:54] stuff today. Um, I'm I'm over in New
+[02:56] York, so we have a few different
+[02:58] locations today.
+[03:00] We're all all over the place and we have
+[03:02] guests joining from everywhere, right?
+[03:03] So, let us know in the chat where you're
+[03:05] joining from. We see people joining from
+[03:06] New Zealand, Chicago, uh SoCal, Kansas,
+[03:11] right? So there's folks from everywhere.
+[03:12] So yeah, I mean, uh we're getting into
+[03:15] and there uh we have somebody from
+[03:16] London as well, right? So we have folks
+[03:19] joining from everywhere, but uh today we
+[03:21] are going to join talk about an exciting
+[03:23] topic. You want to kick it off? Kick it
+[03:26] off for Maria.
+[03:28] Hi everyone.
+[03:30] Yeah, Myra here. So I'm a tech lead for
+[03:33] generative AI and agentic workloads at
+[03:36] AWS and I'm very excited to talk about
+[03:39] strengths here today with you and to
+[03:42] build a real life application. Can't
+[03:45] wait Myra. So there's a lot going on in
+[03:47] agentic space. uh we know that you've
+[03:49] been uh leading a number of
+[03:50] conversations there and uh Myra and me
+[03:53] have been uh uh you know working on some
+[03:56] workshops and uh you know can't wait to
+[03:58] see what we are presenting uh today and
+[04:00] showing our viewers.
+[04:04] Yeah, let's get into it. So what do you
+[04:07] guys got for us today about AWS Strand?
+[04:09] I'm I'm super excited about this. Yeah,
+[04:12] it it is uh we're we're super excited to
+[04:14] um uh to talk more about Strand's
+[04:17] agents. Strands agents uh is a uh new
+[04:21] open-sourced uh SDK that we uh just made
+[04:25] available for customers uh and announced
+[04:27] uh a little um under two weeks ago. And
+[04:31] uh uh specifically the the goal at AWS
+[04:35] is to make sure that we're providing um
+[04:37] all types of developers with the uh the
+[04:40] broadest choice for building and
+[04:42] deploying agents uh at scale and in
+[04:44] production. And uh Strands is uh uh one
+[04:48] of the many um solutions that are
+[04:51] available uh from AWS today to be able
+[04:54] to go and uh build and deploy agents.
+[04:56] And specifically
+[04:58] um when it comes to uh uh the available
+[05:03] options, we really think uh we we really
+[05:05] want to make sure that we're providing
+[05:07] uh multiple paths to to build agents
+[05:09] depending on the specific developer
+[05:11] needs. And what what do I mean by that
+[05:13] is uh uh today um we offer a specialized
+[05:18] um out of the box uh pre-built uh
+[05:21] products um uh from Amazon Q uh where
+[05:24] our Amazon team is building um agents
+[05:27] into uh products that you can uh use um
+[05:30] out of the box uh uh that will help
+[05:33] enhance the productivity of um your end
+[05:36] your end users. And then we also offer
+[05:39] uh fully managed uh uh a sol a fully
+[05:43] managed offering um for uh developers
+[05:46] called Amazon Bedrock agents which uh is
+[05:49] a uh a great solution for uh building um
+[05:53] a foundation model powered uh
+[05:55] orchestration. And uh if you are a
+[05:59] developer that wants more uh deeper
+[06:01] customization of agentic behavior and
+[06:04] you want to be able to leverage and
+[06:05] embrace the latest capabilities from
+[06:08] models and uh uh models and tools, uh
+[06:12] that's where Strand's agents is really
+[06:13] going to um uh meet the needs. And uh
+[06:17] and when you uh think about uh the
+[06:20] variety of different um offerings that
+[06:22] AWS offers today, this is uh one of the
+[06:24] the many ways that AWS in this rapidly
+[06:27] evolving um agentic AI space is helping
+[06:30] to to meet those needs and help
+[06:31] accelerate uh innovation for customers.
+[06:34] You know, Amanda, I was like thinking
+[06:36] like I love how we have so many great
+[06:39] choices here for customers. We're
+[06:41] meeting customers where they're at in
+[06:43] their agentic kind of um you know um
+[06:47] evolution here and I think strands is
+[06:49] just that next evolution of agents and
+[06:51] I'm super excited about this. Can do you
+[06:53] guys want to talk about you know why is
+[06:55] it named strands and you know what does
+[06:57] that mean?
+[06:58] Yeah. Yeah. Absolutely. It's a great
+[07:00] question. So um uh Strand's uh agents uh
+[07:04] is uh specifically it comes out of the
+[07:07] fact that um uh innovation is in
+[07:10] Amazon's uh DNA and uh when you think
+[07:13] about um uh Strands and and specifically
+[07:16] the design principles around uh this
+[07:20] particular SDK is that uh Strands is
+[07:24] going to be leveraging both the model
+[07:26] and the tools to get the the most out of
+[07:29] um the most out of uh your agents. So we
+[07:32] uh we want to make sure that um in in
+[07:34] the naming uh around uh strands agents
+[07:37] that we uh encompassed uh the the
+[07:40] evolution and the and the DNA aspect of
+[07:43] uh how um you can leverage uh strands to
+[07:46] accelerate innovation across the board
+[07:48] for for developers. Um Erin, is there
+[07:50] any other uh piece that you wanted to
+[07:52] add in uh add in there? No, I think
+[07:54] that's that's mostly it. Right. It's
+[07:56] like the the twin twin strands of DNA.
+[07:59] Um, exactly as you say, the the model,
+[08:01] uh, your tools kind of make the make the
+[08:03] agent. So, yeah,
+[08:07] looks like we have our first question.
+[08:09] Um, if we want to bring that up here
+[08:11] really quick. Um, yeah, Adriana is
+[08:14] asking which training is recommended for
+[08:16] learning more about strands agents.
+[08:20] We'll share a bunch of resources uh
+[08:22] today. But we've just launched this
+[08:24] morning a workshop uh with strands and
+[08:28] you can build like you can go step by
+[08:31] step from getting started to real
+[08:33] applications including the one we are
+[08:35] going to share today. So you can really
+[08:37] get started with the workshop and learn
+[08:39] step by step. Aaron's also going to show
+[08:41] the documentation. So I'm very proud of
+[08:44] the developers at Aaron's team because
+[08:47] they put a lot of effort on getting the
+[08:49] documentation to a stage where you can
+[08:52] search and you can really h get things
+[08:54] going. So there is a lot to learn there.
+[08:58] It's cool that you know the the workshop
+[08:59] is announced today and we are able to
+[09:02] get this in the show and tell series. Uh
+[09:04] thanks for that.
+[09:06] That is awesome. Yeah of course. And
+[09:08] then I'm just sharing on the on the
+[09:10] screen here some of the additional
+[09:12] resources that are available uh um uh on
+[09:15] the strands agents SDK and then we've
+[09:17] provided the QR code um uh so it makes
+[09:20] it easier for you to access the the
+[09:22] documentation uh specifically the SDK
+[09:25] and then um some of the pre-built tools
+[09:27] that we'll go into a little bit more in
+[09:29] detail when we do the demo. Uh and then
+[09:31] we have a variety of different uh
+[09:33] pre-built samples that our uh solution
+[09:36] architects and data scientists have
+[09:37] already uh pre-built um uh to make it
+[09:40] easier to to get started um uh building
+[09:42] your your agents. And uh we're also
+[09:45] putting the link to this uh workshop in
+[09:47] the chat. Uh Praash is doing that in a
+[09:49] second here. But uh but yeah, as we get
+[09:51] into this uh what what are we going to
+[09:54] demo today, right? So uh you know as we
+[09:56] talk more into the content I know that
+[09:58] we have like a couple of more slides but
+[10:00] just want to hear about what we're going
+[10:01] to be uh demoing today uh to our
+[10:03] viewers. Yeah. So today we are going to
+[10:06] create a personal assistant. I think the
+[10:09] whole agent AI has made this
+[10:11] transformation where you can create
+[10:13] things very quickly and it can be very
+[10:16] useful for your day-to-day life. So we
+[10:19] uh created a personal assistant that
+[10:21] will uh help you uh building uh
+[10:24] appointments um booking something on the
+[10:27] calendar. It will also help you
+[10:29] searching things on the internet and uh
+[10:32] getting some code. So I think code is in
+[10:35] the center of a AI. It's in the center
+[10:38] of the genai revolution and uh it makes
+[10:42] all the sense to bring that also to our
+[10:44] personal assistant. So yeah, I'm going
+[10:46] to be booking my appointments with our
+[10:48] personal assistant after today and I
+[10:50] hope you will too. Excellent. Uh yeah,
+[10:53] with that with that background about
+[10:55] what's going to come up. Um I see that
+[10:58] you brought up this slide about strands
+[10:59] agent and it all starts with hello
+[11:01] world.
+[11:03] Yes, absolutely. So um so just a little
+[11:06] bit more detail on on strands agents. Um
+[11:10] uh uh Strands is is an open- sourced SDK
+[11:13] and this uh uh was specifically a um uh
+[11:19] a product that we were building
+[11:22] internally uh to uh solve some of the
+[11:25] needs from our own internal teams that
+[11:28] were in the process of uh trying to
+[11:30] build agents into Amazon's own uh own
+[11:34] products. Um, one of the examples of one
+[11:37] of the teams that uh uh uh developed uh
+[11:41] Strand's agents and was having
+[11:43] challenges building um and making it
+[11:45] faster to uh to build agents into um
+[11:48] products that Amazon is offering today
+[11:50] at scale in production for for end users
+[11:53] is the Amazon uh uh Q development team.
+[11:56] And uh uh that team in particular um was
+[12:02] uh when when they were going through and
+[12:04] trying to uh build um for example Amazon
+[12:07] uh QLI
+[12:09] uh was run was running into the process
+[12:11] where it was taking uh months to get uh
+[12:14] uh these agent uh uh workloads into
+[12:17] production. Um and uh that team um in
+[12:21] terms of uh innovation uh uh and the
+[12:23] bias for action uh went ahead and built
+[12:26] the first version of Strand's agents SDK
+[12:29] uh uh with the intent to make um it
+[12:32] easier to leverage the reasoning and
+[12:34] tool use capabilities from uh from
+[12:37] models that are available today. And
+[12:38] they uh used this to um uh uh innovate
+[12:43] faster and to make it uh easier to put
+[12:45] these agentic products um into
+[12:48] production uh much faster. And and uh
+[12:50] you're seeing on the screen here uh the
+[12:52] um specifically the uh how accelerated
+[12:56] it is to uh for these uh various
+[12:58] internal teams to um to get those into
+[13:00] production. Um once uh once the the
+[13:05] Amazon Q team uh saw how easy it was to
+[13:09] uh uh benefit from uh building agents
+[13:11] with uh Strand's agents SDK, they then
+[13:15] opened it up for other uh development
+[13:17] teams internally. Um and uh some of
+[13:20] those additional internal teams that are
+[13:22] using uh strands agents today and have
+[13:24] uh built um agents that are in
+[13:26] production include the AWS glue team and
+[13:29] uh VPC uh um reachability analyzer is is
+[13:33] another team that's using it. Um and uh
+[13:36] from those uh from those success
+[13:38] stories, we really realized that um this
+[13:41] wasn't just uh uh uh something that was
+[13:44] battle tested internally, but something
+[13:46] that we could uh we could make sure is
+[13:47] available for uh customers and
+[13:49] developers around the world to be able
+[13:51] to uh utilize to make it easier to build
+[13:53] agents. And um uh that's why we then
+[13:56] decided to open source it. And we're
+[13:58] we're super excited to uh to bring uh
+[14:00] Strand agents to the open source uh
+[14:02] community.
+[14:05] Wow, this is really awesome. Yeah. Um I
+[14:09] think we have another question we could
+[14:10] bring up too if if you want to know.
+[14:12] Yep, sure. U so here's the next one. Um
+[14:15] you
+[14:17] know we asked if you can connect it to
+[14:19] Alexa.
+[14:21] You can connect to anything. It's open
+[14:23] source. Uh which is the beauty of Strand
+[14:27] agent, right? So you can uh develop your
+[14:31] application and connect it with uh
+[14:33] anything and uh Aren's team have
+[14:36] developed a set of built-in tools that
+[14:39] help integrating with some of our AWS
+[14:42] services. Uh so that makes it easier to
+[14:46] uh do as well. Uh but Aaron, have you
+[14:48] built anything for Alexa specifically?
+[14:51] Um not just yet. So looking forward to
+[14:54] see the the community uh work on that as
+[14:56] well. Um but yeah, we're we're able to
+[14:59] to connect the strands agents to
+[15:01] anywhere anywhere we can run Python u
+[15:04] we're able to run the strands agents and
+[15:06] we can connect them to you know APIs and
+[15:08] um client applications very easily. So
+[15:12] yeah. Yeah. So folks in the chat if you
+[15:14] want to collaborate uh and and build
+[15:15] something yeah share share it with us
+[15:18] right. So share it in the comments later
+[15:20] uh when we come back to this video. So
+[15:22] with that said, uh can we Yeah, Ma, you
+[15:24] were going to say something. I would say
+[15:26] not just share it like create the PR,
+[15:28] right? It is open source. So we the
+[15:31] community participation here. So go
+[15:34] ahead and create a PR, get your tools uh
+[15:37] added to the framework, get your samples
+[15:40] added to the framework as well and we
+[15:43] all together will make a strength even
+[15:45] better than what it is already, right?
+[15:48] and and also if you know if you have a
+[15:50] solutions architect with you uh you know
+[15:52] they can help you as well.
+[15:56] Okay. Excellent. So let's get into the
+[15:58] next part of the uh you know do we want
+[16:01] to chat more about the details of trans
+[16:02] agent or uh you want to get into demo
+[16:06] part? What are we doing next? Yeah, I'd
+[16:08] like to um I'd like to talk a little bit
+[16:10] um more with um uh Myra and Aaron
+[16:13] specifically around some of the the key
+[16:16] features that that really make it um uh
+[16:19] easy to to build and run these agents um
+[16:21] that I want to make sure that everyone
+[16:23] um uh that's joining us today is is
+[16:25] aware of. So I guess the the first
+[16:27] question um that I have for um Erin and
+[16:30] uh Myra is uh we we know that uh
+[16:34] Strand's agents uh uh simplifies um
+[16:37] agentic development, but but uh what's
+[16:39] specifically about um Strands uh makes
+[16:42] it makes it the easiest way to build uh
+[16:45] agents.
+[16:46] I'm gonna speed up here a little bit
+[16:49] because I also want to get to the fun
+[16:51] part of it, right? all builders here and
+[16:54] we want to get to the hands-on uh but
+[16:57] strength was built by builders for
+[17:01] builders. So it is a really a great tool
+[17:03] for you to get started. It's a great
+[17:05] tool for you to contribute. Uh and there
+[17:08] are a couple of uh functionalities that
+[17:10] I'm really excited about. uh the model
+[17:12] choice uh model choice is always has
+[17:16] always been a very important point for
+[17:18] AWS with h bedrock models and uh
+[17:22] bringing like different choices for the
+[17:24] applications because we know that it's
+[17:26] not a there is not one model that will
+[17:29] run the whole world and there are like
+[17:31] tradeoffs that needs to be done for
+[17:34] choosing the the best model for your
+[17:36] application and that's possible on
+[17:38] strengths you can connect it's even more
+[17:41] choice right you can connect with
+[17:43] bedrock models but you can also connect
+[17:45] with a light LLM you can connect with
+[17:48] entropic one p directly with meta h one
+[17:51] p directly you can uh build your own
+[17:55] connector as well if none of this is
+[17:57] available you can build your own on top
+[18:00] of that tools tools are uh available out
+[18:04] of the box with the built-in tools that
+[18:06] uh iron's team have created and they are
+[18:09] really really useful we are going going
+[18:11] to showcase some of those today. We
+[18:13] built a full agent for coding with only
+[18:16] built-in tools. I didn't write a code
+[18:18] for any of the tools and you get a full
+[18:21] uh code assistant, right? Uh but we know
+[18:24] that this is not sufficient for every
+[18:25] application and it wouldn't be a genai
+[18:28] agentic AI uh conversation today if we
+[18:32] wouldn't talk about MCP and MCP
+[18:35] integration is there. And Adam is
+[18:39] smiling here because we are all on
+[18:42] boarded on the MCP and we see the need
+[18:44] for that. We see the need for
+[18:46] standardization. Yes. Now E is equal
+[18:49] MCP. That's true. And uh like we
+[18:54] integrate with MCP with different
+[18:56] transport protocols of MCP. It's all
+[19:00] native. So it's very easy to get
+[19:01] started. And we are going to show you
+[19:03] that as well. Don't take my word for
+[19:04] that. We are going to take the code we
+[19:06] wrote for that. Right. And uh last like
+[19:10] even if like uh all the tools on MCP are
+[19:14] not enough or all the built-in tools are
+[19:16] not enough, you can create your own tool
+[19:18] and you can create your own tool with
+[19:20] decorators. It's super easy to do. So
+[19:23] you can create your own tools on
+[19:25] separated files using the tool spec
+[19:28] definition and uh use that re that
+[19:31] across applications. So it is very
+[19:33] scalable as well when you're having all
+[19:35] of those different tools. You cannot
+[19:37] talk about scalability without talking
+[19:39] about deploying. And I know AWS for
+[19:42] deploying, right? But we know that some
+[19:45] some of you might disagree with me. And
+[19:48] uh that's also really cool about
+[19:50] strands. You can deploy anywhere. You
+[19:52] can deploy on Lambda, you can deploy on
+[19:55] Fargate, H, EC2, ECS, all of those. And
+[19:59] also outside of AWS if you choose to do
+[20:02] so. And the last one that I really love
+[20:06] and I've been working with Asians for
+[20:08] almost two years now and I must say that
+[20:11] 90% of customer challenges on
+[20:13] observability and not being able to
+[20:16] really interact on the agent's
+[20:18] configurations and see what is happening
+[20:20] and then evaluate what is happening. And
+[20:22] the good news is stren integrates with
+[20:26] observability both natively if you're
+[20:28] just building on your experimentation
+[20:30] environment but also with open telemetry
+[20:33] which means that now you can connect
+[20:35] your strands to uh links you can connect
+[20:38] that to arise you can connect that to
+[20:41] your data dog uh instance as well and in
+[20:44] just a few lines of codes you're like
+[20:47] seeing your agent uh and seeing what is
+[20:49] going on. So it's really uh easier to do
+[20:53] debug as well. So uh so what you're
+[20:56] saying is that we can easily build uh
+[20:59] bring in uh tools, right? So we can
+[21:00] bring tools easily. We can uh integrate
+[21:03] MCP servers and we can bring in models
+[21:06] any models that are out there
+[21:08] practically you know you can bring your
+[21:10] own model provider as well customize the
+[21:11] model provider. Um we can deploy this
+[21:14] anywhere. We have uh details about you
+[21:16] know that it can be deployed in Lambda.
+[21:18] It can run anywhere right? So this is
+[21:19] some of the details that uh bringing in
+[21:22] and and yeah please continue there.
+[21:25] Yeah I want to say let's get started
+[21:27] because I think all of this is uh pretty
+[21:29] boring and the code is the real uh part
+[21:32] of it right and here is the application
+[21:34] we are building. Uh I think I forgot to
+[21:37] mention but we also support multi- aent
+[21:39] collaboration. It's not 2025 if we are
+[21:42] not talking about multi-agent
+[21:43] collaboration and there are different
+[21:45] ways of doing multi- aent collaboration
+[21:47] with threads. we can do with a agent as
+[21:50] a tool. We can uh create a swarm of
+[21:53] agents uh graphs if you want a bit more
+[21:56] control workflows as well if you want to
+[21:59] have the
+[22:00] like very set up the the very well-
+[22:03] definfined setup all of those are
+[22:05] available and uh H2A is coming soon as
+[22:10] well. So all of these we are
+[22:11] integrating. So I think Anil you're
+[22:13] going to need to have us back here uh in
+[22:16] a couple of weeks to talk about Hway as
+[22:19] well right? Yeah, I think I think after
+[22:21] we get to this, Maria, I think we should
+[22:23] definitely talk about swarms more
+[22:25] because I think that there's some
+[22:26] question in the chat we can get to a
+[22:28] little bit. Um, and I know swarms and
+[22:30] multi- aent collaboration uh is a really
+[22:32] really important area.
+[22:35] Yeah. Uh, I think Aaron can talk a
+[22:37] little bit about that as well, but we do
+[22:39] have a swarms built-in tool that allows
+[22:42] you to create a mutation collaboration
+[22:44] with swarms on trans agents already.
+[22:48] Yeah. Yeah, we have a few different um
+[22:52] tools and patterns that are supported um
+[22:54] of course actively working on them. So
+[22:56] please do try them out, share your
+[22:58] feedback but yeah swarms, networks of
+[23:01] agents, um graphs of agents, workflows,
+[23:05] uh supervisor agents, agents as tools
+[23:08] which which we'll look at today. Many
+[23:10] many different options for these kind of
+[23:12] multi- aent patterns. Let's dive in.
+[23:14] This is this is awesome. Let's dive in.
+[23:16] Yeah. So today this is what we are
+[23:18] creating your personal assistant. It's
+[23:21] multi- aent collaboration. So you have
+[23:22] three sub agents in this case. So we are
+[23:25] using uh agents as tool as a technology
+[23:28] here behind and uh the sub aents we have
+[23:32] is like a calendar assistant where we
+[23:34] are going to showcase different ways of
+[23:36] creating tools for this sub agent as
+[23:39] well as a built-in tool for the current
+[23:41] time. So your agent actually knows what
+[23:43] day is today which is pretty cool. Uh we
+[23:46] have MCP of course there is no demo
+[23:49] nowadays without MCP so we are going to
+[23:51] connect to the perplexity MCP server uh
+[23:55] before we get the question yes you can
+[23:57] do that with different ways as well uh
+[23:59] we are connecting with perplexity here
+[24:02] but you can have web search with
+[24:04] different MCP servers as well and Tavil
+[24:07] is for instance one that we like we've
+[24:10] got something built as well and we have
+[24:13] our code assistant where we didn't write
+[24:16] the code for any tool because they're
+[24:18] all built-in tools. And h this code
+[24:21] assistant can generate code, it can
+[24:24] execute the code, it can h execute shell
+[24:27] commands as well and uh have the editor
+[24:31] and journal tools as well. So Aaron,
+[24:34] what is the journal tool doing here?
+[24:38] Yes. um the journal tool here. So, we'll
+[24:41] we'll take a look at it a bit deeper
+[24:43] shortly, but it's it's giving the agent
+[24:46] uh a work log. So, the agent can assign
+[24:48] itself tasks um for the immediate future
+[24:53] for for a day in the future. Um that
+[24:55] kind of thing, and it can work through
+[24:57] them and record its progress, um resume
+[24:59] from there, all of that kind of stuff.
+[25:01] Just just like if you're, you know, um
+[25:04] on working on a project, right? You take
+[25:06] a journal, record what you're working
+[25:07] on, you are able to go back the next day
+[25:10] and continue from that that that sort of
+[25:12] stuff. So then the agents can keep a
+[25:14] track of uh all the tasks like a to-do
+[25:17] list and really get back to where it uh
+[25:19] left off, right? Yeah, exactly. That's
+[25:22] awesome.
+[25:24] That's really cool. And we are using for
+[25:26] this uh application we are going to use
+[25:28] bedrock models uh because it is uh very
+[25:31] easy to use and it scales quite uh
+[25:34] nicely here. Uh but of course you can
+[25:37] use whatever model you want. If you want
+[25:38] to have something running fully locally,
+[25:40] you can also have models uh with strands
+[25:44] agents. And maida I was going to also
+[25:46] ask a question, right? So uh can strands
+[25:48] agents also talk to AWS services?
+[25:51] Yes, they can. Uh so we do have a
+[25:54] built-in tool uh for some of those uh
+[25:56] services. So for instance a retrieve
+[25:58] that will talk with Amazon bedrock
+[26:01] knowledge bases. Uh we have a use AWS
+[26:04] tool as well that will talk with pretty
+[26:06] much any uh AWS services that has a B23
+[26:10] client. So you can do a lot with it and
+[26:14] you can build your owns. So there are
+[26:16] some examples where we are connecting to
+[26:18] Dynamo DBs where we are connecting with
+[26:20] lambda functions uh on the the code
+[26:23] samples we are sharing some of those as
+[26:25] well. Looks like we have a question is
+[26:27] there a SDK intended for low-level
+[26:29] infrastructure deployment of agents or
+[26:32] is it intended for extending bedrock
+[26:34] capabilities?
+[26:38] Uh so the the deployment of stren agents
+[26:41] can uh be done any way you you want. So
+[26:45] we are uh providing some guidance to
+[26:47] deploy lambda on Fargate uh on EC2 and
+[26:52] yes right Aaron. Mhm. Yeah.
+[26:55] Yeah. So it will work as any software
+[26:58] application and yeah some of the tools
+[27:01] help with like more the agentic flow of
+[27:03] it. I think one of the one of the the
+[27:06] key things that we we tried to add here
+[27:08] was when when you're calling these model
+[27:10] providers like you know Bedrock,
+[27:12] Anthropic, OpenAI etc. llama, all of
+[27:15] them really. Um when you call them, it's
+[27:19] almost one cycle um as an agent, right?
+[27:22] Um this stateless call to the model
+[27:25] where you provide, you know, all of the
+[27:27] context, your system prompt, the tools,
+[27:29] the messages um and it reasons through
+[27:31] those and and what Strands is adding is
+[27:33] some state management on top of that. So
+[27:36] um the agent is able to call a tool,
+[27:40] look at the results of that and then
+[27:41] continue until it decides that it's done
+[27:43] sort of thing and call multiple tools uh
+[27:46] sequentially or in parallel.
+[27:49] All right. So do we want to go to your
+[27:50] screen A?
+[27:52] Sure. Yeah.
+[27:57] So this is um yeah this is a GitHub
+[28:00] repository. You can see here um strands
+[28:03] agents is our GitHub organization. Here
+[28:06] we have the SDK. Lots of useful getting
+[28:09] started information here. Recommend you
+[28:11] go and have a look. Um an example of how
+[28:14] quick it is to get started just here as
+[28:16] well. Is that it is the the couple of
+[28:18] lines to build an agent. Yes, exactly.
+[28:21] And this this this example here uses one
+[28:24] of the built-in tools as well. So yeah,
+[28:26] just just that simple. Um, one of the
+[28:28] things we really tried to focus on was a
+[28:30] really simple, um, easy developer
+[28:32] experience for getting started, but also
+[28:35] making sure that that's not just
+[28:36] throwaway work, right? That we're able
+[28:38] to take what we've built and and, uh,
+[28:40] deploy into production in a in a way
+[28:42] that we're confident that the agent is
+[28:44] behaving how we want it to.
+[28:47] So, some some links here as well,
+[28:49] documentation, samples. Aaron, I got to
+[28:51] hand it to your team here. Um, I've used
+[28:54] strands myself and I'm just really blown
+[28:56] away how easy it is, how intuitive it is
+[28:58] to just to get going. Um, I figured like
+[29:01] swarms would have been a very um
+[29:03] difficult thing to get going, but it
+[29:05] really wasn't.
+[29:07] Yeah. Yeah. Oh, appreciate the
+[29:09] compliments.
+[29:11] Um, yeah.
+[29:14] So, couple of useful links at the top
+[29:16] here. uh the documentation that that
+[29:18] Myra mentioned, some useful links on the
+[29:21] left. If you if you have a look through,
+[29:23] recommend you start with the quick start
+[29:24] guide, but lots of useful links in here.
+[29:27] Um if we go up to the organization,
+[29:31] you'll see the rest of the repositories
+[29:33] here. So, this tools repository that
+[29:35] Myra mentioned, lots of useful tools in
+[29:37] here. Um we we'll take a look at some of
+[29:40] those that we're using along with the
+[29:42] samples repository, which is one of them
+[29:44] that we'll be going through today. So
+[29:46] you can follow along with the code if
+[29:48] you like at home as well.
+[29:51] Um in this O2 samples and then if you go
+[29:55] to 05 personal assistant this is this is
+[29:58] the one we're going through today so you
+[29:59] can can follow along as well. So this is
+[30:02] the
+[30:03] code. Um yeah so feel free to clone the
+[30:08] repo. You can follow along at home. If I
+[30:10] jump over to my IDE real Sanjay has a
+[30:13] question. Is strange agents available
+[30:15] for NodeJS?
+[30:17] Um, so this is something we get asked
+[30:20] quite a lot. At the moment, the SDK is
+[30:22] is just Python. Um, we do have um on
+[30:26] GitHub an open feature request for this.
+[30:28] So definitely go and give that a plus
+[30:30] one in in the issues. It's uh it's
+[30:33] definitely on our radar um along with
+[30:35] you know maybe some other languages as
+[30:36] well. Definitely something we're
+[30:38] considering. Yeah. And we also have a
+[30:40] question from Vive. Not that we want to
+[30:42] interrupt from the demo but uh the
+[30:44] question is the difference between the
+[30:46] agents using agents from bedrock agents
+[30:48] and versus uh agents from strands. So
+[30:51] bedrock agents is a fully managed
+[30:53] service that means that you don't have
+[30:55] to worry about uh deploying your agents
+[30:57] to the cloud. Uh it also means that your
+[31:00] agents will run in the cloud. uh it is
+[31:04] an opinionated service which means that
+[31:06] you have the setup for building your
+[31:08] agents and you can use that uh quite
+[31:10] quickly. So when you are uh building
+[31:12] agents and you want a fully managed
+[31:15] experience you can drop a agent and you
+[31:19] set up the instructions and you set up
+[31:21] your toolings and you can get your agent
+[31:22] ready. Uh strands agent is a open-source
+[31:26] framework uh which runs locally out of
+[31:30] the box and where you can deploy you can
+[31:33] choose your like technology for
+[31:35] deploying. Uh so it is pretty like it's
+[31:39] different personas as well right like if
+[31:42] you want the fully managed experience
+[31:43] you can use bedrock agents and when you
+[31:45] want to have all the flexibility of open
+[31:48] source of being able to change uh the
+[31:50] functions that you want and of deploying
+[31:53] it where you want then you can use
+[31:55] strands agents they are complimentary
+[31:57] offerings it's as Amanda was showing it
+[32:00] goes on the the full spectrum of agentic
+[32:03] AI development
+[32:05] and I think um when you think about it
+[32:07] it uh it's strands agents is geared for
+[32:10] those developers who may want deeper
+[32:12] customization
+[32:14] um and those capabilities uh and and
+[32:16] more flexibility when it when it comes
+[32:18] to the um the models that are available
+[32:21] as well as the um uh the AWS services
+[32:24] that it's that it's integrated with.
+[32:29] Yes. Okay. Back to uh back to VS Code
+[32:34] here. So, um, this just outlines the the
+[32:38] functionality of the three agents that
+[32:39] we're going to be piecing together. We
+[32:42] can get started. So, if you're following
+[32:45] along at home, you'll need these
+[32:46] prerequisites. So, Python and Docker,
+[32:48] the main ones we're we're going to be
+[32:50] using Amazon Bedrock here with Claude
+[32:52] Sonnet 4. So, we'll need an AWS account.
+[32:56] Um, I already set mine up earlier, of
+[32:58] course. Um, so we can we can get started
+[33:01] with with setting up the repository
+[33:03] here. So I have it cloned the samples
+[33:07] repository. Um we have the O2 samples 05
+[33:10] personal assistant that we mentioned
+[33:13] here. We can see the three agents right?
+[33:14] We can see the calendar assistant, the
+[33:16] code assistant, the search
+[33:18] assistant. So we can get started
+[33:23] by following some good Python practices
+[33:26] and
+[33:27] uh installing a virtual environment.
+[33:32] install the dependencies. This just
+[33:34] installs um strands SDK, that kind of
+[33:38] thing. At this point, we would set up um
+[33:41] our model provider credentials. So, in
+[33:43] this case, we're using Amazon Bedrock.
+[33:45] So, we can use the ads credentials from
+[33:47] these usual environment variables or we
+[33:51] can use ads configure to set those. And
+[33:54] then because we're using perplexity um
+[33:56] MCP server, we have our API key here as
+[33:59] well. Now, is this going to deploy the
+[34:01] MCP server um as a remote MCP server in
+[34:03] your account or is this already set up?
+[34:06] No, this one uh this MCP server I'll
+[34:09] show in a second when we get to the
+[34:11] search system, but this is just a local
+[34:13] um MCP server running a a local process,
+[34:16] but yeah, trans support um all of the
+[34:20] MCP spec um for tools and the different
+[34:23] transports. So, HTTP streamable and
+[34:25] server side events as well. That's
+[34:27] great. Yeah, nice.
+[34:30] So if we start with me make my terminal
+[34:33] there a little bigger here. We can clear
+[34:36] the install. So we just installed um we
+[34:38] can start the calendar assistant agent.
+[34:41] Ah I need to go into the personal
+[34:45] assistant directory
+[34:47] here. And if I
+[34:51] run calendar assistant,
+[34:55] oh, I'm in the wrong Python environment
+[34:58] here. So, while we are pulling this up,
+[35:00] you know, we have like couple of
+[35:01] questions, right? So, I know maybe we're
+[35:03] going to touch on this, but uh how how
+[35:06] can I get created with, you know, how
+[35:08] can I use guardrails? I guess it's a
+[35:09] question for uh strands, right? So,
+[35:13] you can integrate guardrails into your
+[35:16] application. So you can for instance use
+[35:18] Amazon bedrock guils in your application
+[35:20] and then you can pass that either before
+[35:23] or after uh the model execution or both
+[35:26] for your application. Uh but if you're
+[35:28] using bedrock models you can also add
+[35:30] that into the bedrock model uh
+[35:33] definition itself. We can share some
+[35:35] examples using guard rails with bedrock
+[35:38] models. Uh but overall you should add
+[35:40] guard rails to your applications. So it
+[35:43] sounds like it really, you know, the
+[35:45] best of breed here with strands. A
+[35:47] customer can have self-hosted models and
+[35:49] bedrock hosted models if they want to
+[35:51] have that kind of optionality but still
+[35:53] use some of the best services of bedrock
+[35:55] like guard rails or you know some other
+[35:57] kind of security solution that they may
+[35:59] have with strands um you know if they
+[36:02] have some kind of agentic security
+[36:04] platform. Yeah, I think that's one of
+[36:06] one of the things we wanted to um keep
+[36:09] as one of our core principles, right?
+[36:11] The the flexible nature, you know,
+[36:12] integrations with various different um
+[36:16] open source and uh APIs and tools for
+[36:19] observability, different model
+[36:20] providers, all of all of that guard
+[36:22] rails and uh security things as well.
+[36:24] Yeah. And u you know again everyone
+[36:27] wants to explore Olama, try and use that
+[36:30] as well, right? So I see that the model
+[36:32] providers also includes Olama as a
+[36:35] choice to be able to pull the models
+[36:37] from. Yeah. Exactly.
+[36:41] Yeah. So here in um in my terminal I
+[36:45] just started the agent. I said hello as
+[36:47] you can see I replied saying hello I'm
+[36:50] your calendar assistant. Uh we could say
+[36:52] uh what appointments do I have this
+[36:56] week?
+[36:58] So what we would expect it to do now we
+[37:01] can see the assistant is calling the
+[37:04] list appointments tool there and yet of
+[37:07] course I have the um show today right
+[37:09] that that we're doing now. So this is an
+[37:11] appointment that I scheduled earlier. So
+[37:12] what what the model has done here is
+[37:14] it's taken my request uh reasoned about
+[37:17] it using claude sonnet v4 in this case
+[37:21] decided that calling the list
+[37:23] appointments tool is what it needs to do
+[37:25] got the response from that which um gets
+[37:28] all of the information about my
+[37:29] appointments from an SQL light database
+[37:33] um and then reasons about that and and
+[37:34] gives me my response here. So yeah, just
+[37:37] a quick simple example.
+[37:41] Could we schedule a fund for agents next
+[37:45] week exactly at this time which uh where
+[37:47] all the folks here will have their
+[37:49] agents uh deployed already and they will
+[37:52] be planning uh what to do with their
+[37:54] personal assistant. Yes. So we can say
+[37:57] schedule a meeting at this time next
+[37:58] week um for everyone to share all of the
+[38:03] awesome stuff that they built on strats
+[38:07] agents. So we can give pretty broad
+[38:10] questions here. So um the model as we
+[38:13] can see is checking the current time. It
+[38:15] understands the current time date and
+[38:17] time here. So it's uh recording it next
+[38:20] week for me. So, it created the
+[38:21] appointment and now we have in one
+[38:23] week's time at the the same time 5:00 PM
+[38:27] Pacific. Um, yeah, that that appointment
+[38:30] for us.
+[38:32] That is awesome. Yeah. So, I'll just
+[38:34] minimize my terminal. We can look at the
+[38:36] code here. Close my file tree. So, we
+[38:40] start with a couple of imports. Um,
+[38:42] you'll see this in pretty much all of
+[38:43] them. We import the agent class. Let me
+[38:46] zoom in a little bit here. We import the
+[38:49] agent class. On line two, uh we're using
+[38:51] bedrock as we mentioned. So on line
+[38:53] three, we're importing
+[38:54] that. Strands tools is our built-in
+[38:57] tools package. So here we're using the
+[38:59] the current time tool. And then a couple
+[39:01] of um custom tools that we've built
+[39:04] ourselves. We'll look at those in just a
+[39:06] moment as well. So a few imports here.
+[39:09] We're enabling um for the built-in
+[39:12] tools. You we have two modes. If you're
+[39:15] working in a CLI like we are here in a
+[39:17] terminal can can be quite useful to show
+[39:19] like a rich UI um in the terminal for
+[39:22] that. So we enable this which you'll see
+[39:25] shortly. Here's where the agent's
+[39:26] actually being called. So very simple on
+[39:30] line
+[39:31] 22. Very simple, right? We're just
+[39:33] passing in this string uh to the agent
+[39:35] which is which is our query. It's what I
+[39:38] typed in the terminal. That's what this
+[39:40] query value is here. We call the agent
+[39:42] and return the response as a string.
+[39:44] Simple as
+[39:45] that. So this is invoking the agent.
+[39:48] This this calendar assistant function
+[39:50] here. We have the usual stuff you might
+[39:53] expect. Three main things. So the system
+[39:55] prompt here for the calendar assistant
+[39:58] gives the model um guidance on how it
+[40:00] should behave, its role, that sort of
+[40:02] stuff. We have the model as mentioned.
+[40:05] Um line 32. You can see we're using
+[40:08] Claude Sonic V4 here.
+[40:12] And here's where we instantiate the
+[40:14] agent on line 35. So this is where we
+[40:17] configure how our agent should behave.
+[40:19] Tell it which tools it has available,
+[40:21] which system prompt to use, which model
+[40:22] to use, um various configuration options
+[40:25] available. So we pass in the model, the
+[40:28] system prompt, and these uh five tools
+[40:31] that we have. So the example built into
+[40:34] current time along with our four custom
+[40:37] tools trace attributes we'll we'll talk
+[40:40] about in towards the end. This is used
+[40:43] for observability. Um so we can see what
+[40:45] what our agents are doing and why
+[40:47] they're behaving a certain way which
+[40:48] tools they called um why they decided to
+[40:51] call that their reasoning as well. And
+[40:54] then at the end here, um, this is just
+[40:56] our terminal helper script, right?
+[40:59] Um, we're just getting getting the
+[41:01] user's input and passing it to our
+[41:04] calendar assistant function, which if we
+[41:06] go back up to the top, that's as we saw
+[41:08] earlier, it's just calling our agent.
+[41:10] Very
+[41:11] simple. So that's that's the code for
+[41:14] the calendar assistant. Pretty pretty
+[41:15] simple, right? We do the imports,
+[41:18] instantiate our agent on line 35, and
+[41:21] then we have this function that calls
+[41:23] the agent on line 22. Those main three
+[41:25] things, import, instantiate, run.
+[41:28] MCP tool. Can we talk about how to do
+[41:32] that with an MCP tool as well? Yes. So,
+[41:36] if we jump over to the search assistant,
+[41:39] let me open that in my terminal real
+[41:41] quick as well. So we can run might clear
+[41:44] clear that we run the search assistant
+[41:50] here. So here we have a terminal again.
+[41:53] We could say something like um do a
+[41:55] quick search for strands agents SDK and
+[42:00] tell me what it
+[42:02] is. So this time we're running a
+[42:05] different agent, right? Our search
+[42:06] assistant agent. Here we can see again
+[42:08] the same flow. The model has taken our
+[42:11] request, the system prompt that we have,
+[42:12] which I'll show you in a moment. Um, and
+[42:14] it's calling the perplexity ask tool
+[42:17] here. If I jump over to the code while
+[42:21] that's
+[42:24] running, we'll pull that up again in a
+[42:26] second. But we see something very
+[42:28] similar here, right? We have our import,
+[42:29] you know, importing the the agent class,
+[42:32] the bedrock model. We have an additional
+[42:35] import here on line six for this MCP
+[42:37] client. And if we scroll down, this is
+[42:41] the main addition, the main difference
+[42:43] uh in the search assistant compared to
+[42:44] the calendar assistant, right? We're
+[42:46] instantiating this perplexity MCP
+[42:49] server. So very similar setup. So we do
+[42:52] the imports, we instantiate the agent
+[42:55] and the MCP server, and then we can run
+[42:58] our agent and it's able to use tools
+[43:00] from this MCP server.
+[43:03] How do I know the tools?
+[43:06] Yes. So um once we're running uh and to
+[43:10] to Adam's question from earlier here we
+[43:12] can see it's running on standard IO this
+[43:15] um this MCP server so this is a local
+[43:17] process here in this case it's running
+[43:18] on docker um once once we've
+[43:21] instantiated it like this just assign it
+[43:24] to a variable very
+[43:26] simple if we scroll down in the code
+[43:28] here we have this list tools function on
+[43:31] line 89
+[43:33] um this calls the MCP server part of the
+[43:36] MCP specification there's a list tools
+[43:38] function right tells you what tools the
+[43:41] MCP server has for your agents so we
+[43:43] call this get the list of tools and then
+[43:46] just how we passed the five tools to the
+[43:49] calendar assistant agent we just pass
+[43:51] that tools variable here that we got
+[43:53] from the MCP server we just pass that to
+[43:56] our agent on line 94 and our agents
+[43:58] tools are the tools in the MCP server
+[44:00] and it will just call them um in the
+[44:04] appropriate cases for So this makes it
+[44:06] pretty simple, right? So the MCP server
+[44:08] could expose a number of tools, but we
+[44:10] don't no longer need to individually
+[44:12] package them and then send them. All we
+[44:14] need to do is just invoke the list tool
+[44:16] sync and then we're going to get a list
+[44:19] of everything here. Yes, exactly. You
+[44:22] can Yeah. So I think it's really
+[44:24] powerful too to have the MCP client
+[44:26] built into strands is such a powerful uh
+[44:29] pattern. Um as well as a agent to agent
+[44:32] eventually as well. I think that's such
+[44:34] such an awesome feature. I absolutely
+[44:37] love how you don't need to change your
+[44:39] assistant code when the MCP server is
+[44:43] changing in the background because uh
+[44:45] you it be it remains the same but you
+[44:48] will just get to call the tools here and
+[44:50] you'll get this information. So it's
+[44:52] really really powerful. Mhm.
+[44:56] Yeah. Cool. Let's talk about uh code
+[45:00] assistant and multi- agent
+[45:01] collaboration. Right. I really how we
+[45:04] didn't write the code for any tool on
+[45:06] the code assistant and when Aaron and I
+[45:09] were developing this one uh this weekend
+[45:13] it is really cool because in like three
+[45:14] lines of code you have your code
+[45:16] assistant. What does our code assist do
+[45:18] uh Myra
+[45:21] can help you like creating and executing
+[45:23] code and it debugs things. It can do CLI
+[45:28] commands. It's pretty powerful. Yeah.
+[45:30] Let me start it up here. Can show an
+[45:32] example. And as you're doing this, does
+[45:35] this use any MCP servers or is it all uh
+[45:38] built? No, for this one. Um, so here we
+[45:41] can see this is in the code assistant
+[45:44] file. Um, also in the in the samples
+[45:47] repository. So in the code assistant
+[45:49] file here, we can see the agent has um
+[45:52] has a different set of tools, right? It
+[45:54] has the Python ripple tool on on line 34
+[45:57] has the Python ripple. This allows the
+[45:59] agent to run Python code either that you
+[46:03] provide to it or that it generates
+[46:05] itself. Um the editor tool allows it to
+[46:09] edit, read, write files, that kind of
+[46:12] thing. Um shell uh can run bash commands
+[46:17] um that kind of stuff. really useful for
+[46:19] you know running um formatterers,
+[46:21] llinters, debuggers even uh for
+[46:24] automatically running unit tests once
+[46:26] the agent has written code for you that
+[46:29] kind of stuff. And this with with the
+[46:31] style of agents where they have this
+[46:32] feedback mechanism, right? The the agent
+[46:34] loop. Um it's really useful for the
+[46:36] agent to be able to call these tools and
+[46:39] test what it has done, right? So it can
+[46:40] write code for you and then test it. Um
+[46:43] if it fails, it can understand the
+[46:45] failures and iterate on those.
+[46:48] Um, we have the the journal tool as
+[46:49] well, which again helps with this kind
+[46:51] of iteration. You know, the agent is
+[46:53] able to kind of set up a plan for itself
+[46:55] in the journal and and work through. Can
+[46:58] it help us improving our calendar
+[47:01] assistant? I I realize we forgot to
+[47:03] delete appointments. It's never possible
+[47:06] to delete an appointment. Yeah. So,
+[47:08] that's that's a good idea. So, yeah, if
+[47:11] we look at the files here, um, for the
+[47:13] calendar assistant, we have these
+[47:15] calendar tools, right? So um these these
+[47:18] are the tools that we saw at the
+[47:19] beginning for listing my appointments
+[47:21] and creating an appointment. If we if we
+[47:23] take a real quick look at the create
+[47:26] appointment tool
+[47:28] um really simple to to build a custom
+[47:31] tool. So this is just a Python function
+[47:35] as you see and we add this very simple
+[47:38] at tool decorator on line six and that
+[47:41] allows any Python function to become a
+[47:43] tool.
+[47:45] That simple. Nice. Yeah, that simple.
+[47:47] Yep. Yep. Yep. We tried to, like I
+[47:49] mentioned, we tried to keep the DevX
+[47:51] simple. So, this was um Yeah, I I really
+[47:54] like this personally. Um you pass in
+[47:57] your parameters for the Python function.
+[47:59] These are what the model will
+[48:01] um will generate for you based on the
+[48:05] context, right? So, when I asked it uh
+[48:06] from Myra's question to create an
+[48:08] appointment next week, it the date it
+[48:10] provided was for next week. The location
+[48:12] was um Twitch, YouTube, LinkedIn live
+[48:15] stream, right? The title was um was what
+[48:18] we provided in the context. And under
+[48:20] the hood, this dock string here, this is
+[48:23] used as the description for your tool.
+[48:26] So, this at tool decorator makes it
+[48:28] super easy to to turn any Python
+[48:30] function into a tool. You can you can
+[48:32] even import um tools from other
+[48:34] frameworks and and use those with your
+[48:36] strategy agents as well in this manner.
+[48:43] So back to Myra's question. Um you see
+[48:47] we have some tools here for creating,
+[48:50] getting, listing, and updating
+[48:52] appointments. We don't have anything for
+[48:54] deleting. So uh we can ask our coding
+[48:57] agent to do that. So I'm going to copy
+[48:59] the path to these tools. I'll open up
+[49:02] our terminal where the coding agents
+[49:03] waiting patiently for us. We could say
+[49:07] um so we could say I have some
+[49:11] uh Python tools in this folder. Um I
+[49:16] want to add a tool that deletes
+[49:19] appointments as well. I can say this is
+[49:23] for the uh calendar assistant, right?
+[49:27] And I'll I'll show it where that is as
+[49:29] well.
+[49:30] So if I just gave it if I didn't give it
+[49:33] these paths, it would attempt to
+[49:34] discover where they are, right? But you
+[49:36] know, if you if I already know where
+[49:37] they are, it can be useful to provide
+[49:38] that as context. So we'll give it that
+[49:43] request. So here it's using the editor
+[49:46] tool. Here we see it's it's listing some
+[49:48] files. This is the nice um this is the
+[49:50] rich UI that we enabled, right? So with
+[49:53] that at that environment variable, if I
+[49:55] go back to our code
+[49:58] assistant, this environment variable
+[50:00] enables this nice UI
+[50:02] here. Um, so it wants to run a command.
+[50:05] We can confirm that it's checking what
+[50:08] tool files are there. Using shell to run
+[50:12] find and and see what else is is is in
+[50:14] here. See if I missed anything. Model
+[50:17] doesn't trust me, so it's just double
+[50:18] checking. So here we can see it tried to
+[50:20] look for a file that doesn't exist. Um
+[50:23] good context for the model. Now it's
+[50:25] reading through those tool files. Right?
+[50:27] This is the content of those tool files
+[50:29] uh for creating the appointments and
+[50:31] updating
+[50:32] them. So it's doing this automatically
+[50:34] reading this for us. Reasoning through
+[50:37] now it's using the Python ripple tool as
+[50:39] we can see.
+[50:41] Um,
+[50:43] [Music]
+[50:44] examining some of those tools
+[50:48] files.
+[50:54] Okay. So, it's creating an init pie for
+[50:58] me. So, it's found that um in the
+[51:00] calendar assistant where we are just
+[51:03] jump back to the code here where we're
+[51:05] importing all of these, we could make
+[51:06] this a bit simpler, right? if this
+[51:07] calendar tools directory had an init
+[51:10] file um that would make it simpler to
+[51:12] import these tools. So it's making that
+[51:14] change for me here. Um and here we can
+[51:16] see the delete appointment tool that
+[51:18] that it has suggested. So um it's
+[51:21] suggesting to create it in delete
+[51:23] appointment py there's a python function
+[51:25] right with the appointment ID has that
+[51:27] at tool decorator that's imported from
+[51:29] strands on line three. And here we can
+[51:32] see it's it's using C SQL light um just
+[51:35] like the other tools to delete um to
+[51:38] actually delete appointments. So we can
+[51:41] save that. Then we could go and add it
+[51:44] to the search assistant um and continue
+[51:46] from there and use this tool
+[51:49] already documented. I love it.
+[51:52] Yeah, it's a good one. And you didn't
+[51:55] write a ton of code through uh through
+[51:57] that. really was going back and forth uh
+[51:59] working with the with the tool. Yes,
+[52:02] exactly. So, if I now that we have these
+[52:04] three agents um let me just cancel out
+[52:07] of this. We'll clear that. Now that we
+[52:09] have these three agents, so we have our
+[52:11] calendar assistant, we have our search
+[52:14] assistant with MCP. We have our code
+[52:16] assistant with the built-in tools that's
+[52:18] able to find context and information
+[52:20] itself as you just saw um and then
+[52:23] actually build working um working code
+[52:26] and software for us. So we want to piece
+[52:29] all of these together into the personal
+[52:31] assistant um multi- aent kind of style.
+[52:34] So very similar again if I if I open up
+[52:37] this personal assistant file you're
+[52:38] following along. Same kind of thing that
+[52:41] we saw earlier, right? we have this
+[52:43] agent that we import and the bedrock
+[52:45] model again um agent is being
+[52:48] instantiated on line 16 and there's one
+[52:51] interesting difference here we're using
+[52:54] um these three agents as tools in this
+[52:57] case so this is kind of a supervisor
+[53:00] pattern right where you have the
+[53:01] personal assistant
+[53:03] uh if I let me just jump back to the
+[53:06] diagram we have this personal assistant
+[53:08] orchestrating to the other two agents
+[53:10] kind of like a supervisor
+[53:13] Um, so we pass those as tools,
+[53:16] right? If we look in the calendar
+[53:18] assistant, we have this calendar
+[53:19] assistant function. That's what's being
+[53:22] imported in the personal assistant. All
+[53:24] we have to do to make this work is add
+[53:27] at
+[53:28] tool. We can import that from strands as
+[53:31] well. And just as simple as that, now
+[53:33] this agent is able to be invoked as a
+[53:35] tool with this function. Um, so we can
+[53:39] go ahead and just add that to all of the
+[53:42] agents. So we'll add it to the search
+[53:44] assistant as
+[53:46] well and the code assistant. And this
+[53:49] really speaks to Strand's like basically
+[53:52] model driven first paradigm, right? This
+[53:54] pattern that you know is model driven as
+[53:56] opposed to you know maybe some of the
+[53:59] other frameworks out there. And this was
+[54:01] really built from the ground up to be
+[54:02] agentic.
+[54:04] Yeah. Exactly. Exactly. And you can see
+[54:08] how easy it is to build these agents,
+[54:10] right? So, a supervisor pattern being
+[54:13] able I think this is great. Yeah. Please
+[54:15] continue. Yeah, we really tried to um
+[54:18] take advantage of some of the newer
+[54:20] models, right?
+[54:21] Um they've improved a lot since 2023. Um
+[54:25] you can you you often don't need to
+[54:27] build a lot of complex orchestration
+[54:29] anymore with these newer models. In
+[54:31] certain cases, of course, you do and and
+[54:33] Strands is flexible enough to do that.
+[54:35] provides some of these um tools that
+[54:37] make it easy for you to do that. But
+[54:39] yeah, we really tried to to lean into
+[54:40] that to make it as as powerful as
+[54:43] possible. Really, you get we get really
+[54:44] good results from these. So um here we
+[54:47] have the personal assistant. We can see
+[54:48] it has our three agents in there. So we
+[54:50] could say um we can say like what
+[54:53] appointments do I have next week, right?
+[54:56] We we scheduled that one on the 10th of
+[54:58] June. Um and here we see the tool that
+[55:01] it's calling is actually the calendar
+[55:03] assistant. And now the response is the
+[55:05] second response, I'll help you check
+[55:06] your appointments. That is from the
+[55:08] calendar assistant. So
+[55:11] the personal assistant has called the
+[55:13] calendar agent. The calendar agent has
+[55:16] called, we can see here, um, it has
+[55:19] called the current time tool for us, the
+[55:22] calendar assistant. It's listed our
+[55:23] appointments, given that information
+[55:26] back to the personal assistant agent,
+[55:28] the supervisor, and then the supervisor
+[55:31] has responded here at the very end.
+[55:33] Right? That's how we get our response.
+[55:35] We can we can do the same thing with
+[55:36] some of the other agents. Right? So, we
+[55:38] could say
+[55:40] um what appointments do I have today and
+[55:46] do a quick search for what's going on in
+[55:51] Manhattan. Let's see.
+[55:53] While while this is running, we have a
+[55:54] couple of questions in the chat. Uh I
+[55:56] know we're getting close to the end, so
+[55:57] we'll try to take a few of them. Um we
+[56:00] have this question. How's trans
+[56:02] different than crew AI?
+[56:05] I think we can add the crew AI and link
+[56:08] chain link graph to the question as
+[56:10] well. Right. So how is trans agent
+[56:14] different from the open source
+[56:16] frameworks that we have h in the market
+[56:18] right now? Aaron, do you want to take a
+[56:21] first shot at that? Yeah. Um, so we've
+[56:24] we've used a lot of these these the
+[56:26] frameworks ourselves internally in the
+[56:28] past. Um CLA Leguri, one of the senior
+[56:31] principal engineers on Amazon Q, wrote a
+[56:33] really great blog post about it actually
+[56:36] um for the launch and we've we've found
+[56:39] that um yeah, a lot of these the
+[56:41] frameworks were built a couple of years
+[56:42] ago in 2023 when models were not as
+[56:45] capable um of orchestrating things and
+[56:48] there are still cases today where you
+[56:50] want more customized perhaps code
+[56:53] defined manual workflows. totally
+[56:57] possible with strands. Um but we we
+[56:59] found with some of the newer models
+[57:00] especially since you know some of the
+[57:02] GPT4 kind of models and um Claude 3 and
+[57:06] Claude 37 and Claude 4 um they're
+[57:10] they're really good um at doing some of
+[57:12] this orchestration with tools and even
+[57:14] between other agents as we see here
+[57:16] right so we we really tried to lean into
+[57:19] that a lot um I would say that um we've
+[57:23] also heard from customers that they um a
+[57:27] lot of frameworks And a lot of um MCP
+[57:29] servers and things exist in open source,
+[57:31] right, with very powerful tools that
+[57:32] they want to use in their agents. So
+[57:34] we've also with the with the tool
+[57:35] decorator, for example, tried to make it
+[57:37] so that you know um if you have a tool
+[57:40] in in a customuilt tool or in another
+[57:43] package somewhere, you can import it and
+[57:45] use it with strands as well. Yeah. So
+[57:48] just to to give like a overview to this
+[57:51] question. So what strands agent does
+[57:53] pretty well is to rely on the model
+[57:55] reasoning capabilities. It's a model
+[57:57] first type of framework. Uh it is more
+[58:01] focused on like the tool usage and the
+[58:04] loop uh is based on what the model
+[58:07] wants. So it is not it's less
+[58:09] opinionated than frameworks like AI and
+[58:13] link chain link graph where you would
+[58:14] have like for instance react or you
+[58:17] would have a plan and solver or you
+[58:19] would have uh any type of orchestration.
+[58:21] The orchestration here is based more on
+[58:24] the model. However, you can also write
+[58:27] your own prompts to have this more
+[58:29] opinionated orchestration. So, we are
+[58:32] just discussing that when we were
+[58:33] building this one, which we did in a
+[58:36] couple of hours. Uh so, like okay, how
+[58:39] can I h change the orchestration from
+[58:41] the model to be something more plain and
+[58:44] sober? You can instruct the model to do
+[58:46] so uh based on the the prompts that
+[58:49] you're giving like on your system
+[58:51] prompt. Uh on top of that what I think
+[58:53] it's pretty cool it relies a lot on the
+[58:55] model setup as well. So for instance um
+[58:59] like thinking right like some of the uh
+[59:02] newer models have this reasoning
+[59:04] capability. So you can enable thinking
+[59:07] uh with just a flag on the model and all
+[59:10] of those are out of the box. So it's
+[59:12] less opinionated, very uh lightweight uh
+[59:16] model uh that relies a lot on the uh
+[59:19] newer LLMs because the newer LLMs are
+[59:22] already fine-tuned for agentic
+[59:24] workloads. Yeah. And and thanks for uh
+[59:27] sharing uh you know this demo walking us
+[59:29] through how easy it is to build this uh
+[59:31] agentic app. There's a lot more that we
+[59:34] really want to dive. We have a number of
+[59:35] questions in the chat. Uh we really want
+[59:37] you folks to come back again and uh
+[59:39] continue this, right? So we want you to
+[59:41] probably do a deeper dive on uh on
+[59:44] strands and share more knowledge to our
+[59:46] viewers who are you know pretty excited
+[59:48] about this as well. So uh with that Adam
+[59:51] what do you think? This is awesome. I
+[59:54] love it. Thank you guys very much. Yeah
+[59:57] thank you for having us. I would um if
+[59:59] uh if if folks want to um you know stay
+[60:03] up to date and that kind of thing as
+[60:04] well definitely go and um follow the
+[60:06] GitHub or star the repos you'll get
+[60:08] notifications for those uh we have
+[60:10] discussion board on there uh yeah pretty
+[60:13] vibrant sort of community building up so
+[60:16] please and how can people contribute uh
+[60:19] since this is an open- sourced uh uh
+[60:21] framework. Yeah, contributions very
+[60:23] welcome. Please file issues, pull
+[60:25] requests. There is a contribution guide
+[60:27] in the in the repositories as well. So,
+[60:29] yeah, looking forward to to see folks
+[60:31] there. We'll get back to all your
+[60:32] questions in chat. But uh from us uh you
+[60:35] know from from the show and tell series
+[60:37] uh today this week uh this is all we
+[60:38] got. We'll definitely get uh our folks
+[60:41] back uh you know to chat more on
+[60:43] strands. Uh but uh you know it was nice
+[60:46] having you all and uh thanks for all the
+[60:48] viewers to view this. Right. Come back
+[60:49] again next week for another episode.
+[60:51] Next week we'll have Claude for an inter
+[60:54] thinking uh demo for us. Thank you so
+[60:57] much. Thanks all.
+[61:01] [Music]
+[61:10] [Music]

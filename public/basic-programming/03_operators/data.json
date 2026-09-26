@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "03_operators",
+  "title": "Operators & Expression Evaluation",
+  "description": "Operators define arithmetic, relational, logical, and bitwise computational operations performed by CPU ALU units.",
+  "category": "Foundations",
+  "badge": "Level 3: Explorer",
+  "tags": [
+    "Operators",
+    "Math",
+    "Logic",
+    "CPU"
+  ],
+  "codeExamples": {
+    "python": "a = 15\nb = 4\nsum_val = a + b\ndiv_val = a / b\nfloor_val = a // b\nrem_val = a % b\nis_greater = a > b\nprint(f'Sum: {sum_val}, Float Div: {div_val}, Floor: {floor_val}, Rem: {rem_val}')",
+    "java": "public class Main {\n    public static void main(String[] args) {\n        int a = 15;\n        int b = 4;\n        int sumVal = a + b;\n        double divVal = (double) a / b;\n        int floorVal = a / b;\n        int remVal = a % b;\n        boolean isGreater = a > b;\n        System.out.println(\"Sum: \" + sumVal + \", Div: \" + divVal + \", Rem: \" + remVal);\n    }\n}",
+    "javascript": "let a = 15;\nlet b = 4;\nlet sumVal = a + b;\nlet divVal = a / b;\nlet floorVal = Math.floor(a / b);\nlet remVal = a % b;\nlet isGreater = a > b;\nconsole.log(`Sum: ${sumVal}, Div: ${divVal}, Floor: ${floorVal}, Rem: ${remVal}`);",
+    "cpp": "#include <iostream>\nint main() {\n    int a = 15, b = 4;\n    int sumVal = a + b;\n    double divVal = static_cast<double>(a) / b;\n    int floorVal = a / b;\n    int remVal = a % b;\n    bool isGreater = a > b;\n    std::cout << \"Sum: \" << sumVal << \", Div: \" << divVal << \", Rem: \" << remVal << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the difference between true division (/) and floor division (//) in Python 3?",
+      "options": [
+        "True division (/) always returns a float (e.g. 7 / 2 -> 3.5), while floor division (//) truncates down to an integer (7 // 2 -> 3).",
+        "Both return integers always.",
+        "Floor division rounds up to the nearest integer.",
+        "True division operates only on boolean values."
+      ],
+      "correctIndex": 0,
+      "explanation": "In Python 3, / produces a float result, while // performs floor division truncating towards negative infinity."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. What is Operator Precedence (PEMDAS / BODMAS) and why does 5 + 3 * 2 equal 11 instead of 16?",
+      "a": "Operator precedence dictates the evaluation order of operations. Multiplication (`*`) has higher precedence than addition (`+`), so `3 * 2` is evaluated first (6), then added to 5 (11). Use parentheses `(5 + 3) * 2` to override precedence."
+    },
+    {
+      "q": "02. Explain Short-Circuit Evaluation in Logical Operators (AND / OR).",
+      "a": "In `A and B`, if `A` evaluates to `False`, `B` is NEVER evaluated because the result is guaranteed `False`. In `A or B`, if `A` evaluates to `True`, `B` is skipped. This prevents NullPointer / ZeroDivision errors."
+    },
+    {
+      "q": "03. What is the Modulo Operator (%) and how is it used in cyclic indexing and even/odd checks?",
+      "a": "`a % b` returns the remainder after division. `num % 2 == 0` checks if a number is even. `index = (index + 1) % array_length` wraps indices around in circular buffers."
+    },
+    {
+      "q": "04. What is Bitwise Operations (&, |, ^, ~, <<, >>) and how are Bit Masks used?",
+      "a": "Bitwise operators operate directly on binary bits of integer numbers. `&` (AND), `|` (OR), `^` (XOR), `<<` (Left Shift multiplies by 2), `>>` (Right Shift divides by 2). Used for high-speed flag packing and cryptography."
+    },
+    {
+      "q": "05. What is the difference between Identity Operator (is) vs Equality Operator (==) in Python?",
+      "a": "`==` checks if the VALUES of two objects are equal. `is` checks if two variables point to the EXACT SAME memory address address in RAM (`id(a) == id(b)`)."
+    },
+    {
+      "q": "06. How does Integer Division behave with negative numbers in Python vs C/Java?",
+      "a": "In Python, `-7 // 2` evaluates to `-4` (flooring towards negative infinity). In C/Java, `-7 / 2` evaluates to `-3` (truncating towards zero)."
+    },
+    {
+      "q": "07. What is the Ternary Operator in Python vs Java/JS?",
+      "a": "Python: `result = 'Pass' if score >= 50 else 'Fail'`. Java/JS: `result = (score >= 50) ? \"Pass\" : \"Fail\";`."
+    },
+    {
+      "q": "08. What is Operator Overloading in Python (Dunder / Magic Methods)?",
+      "a": "Classes define magic methods like `__add__()`, `__sub__()`, `__eq__()` to define how standard operators (`+`, `-`, `==`) behave when applied to custom objects."
+    },
+    {
+      "q": "09. What is Chained Comparison in Python (10 < x < 20)?",
+      "a": "Python allows chaining comparisons like `10 < x < 20`, which automatically evaluates as `(10 < x) and (x < 20)` without evaluating `x` twice."
+    },
+    {
+      "q": "10. What is the Exponentiation Operator (**) vs pow()?",
+      "a": "`2 ** 3` evaluates to 8. `pow(2, 3, 5)` computes `(2^3) % 5` efficiently using modular exponentiation."
+    },
+    {
+      "q": "11. What are Assignment Operators (+=, -=, *=, /=) and in-place mutation?",
+      "a": "`x += 5` is shorthand for `x = x + 5`. For mutable objects like lists, `listA += [4]` mutates the list in-place, whereas `listA = listA + [4]` creates a brand new list object."
+    },
+    {
+      "q": "12. What is Membership Operator (in / not in) and what is its time complexity?",
+      "a": "`x in list` takes O(N) linear time scanning sequential elements. `x in set` or `x in dict` takes O(1) constant time average using hash table lookup."
+    },
+    {
+      "q": "13. What is the difference between Unary, Binary, and Ternary Operators?",
+      "a": "Unary operators take 1 operand (`-x`, `not x`). Binary operators take 2 operands (`x + y`, `x == y`). Ternary operators take 3 operands (`val if cond else alt`)."
+    },
+    {
+      "q": "14. How does the Walrus Operator (:=) work in Python 3.8+?",
+      "a": "The assignment expression operator `:=` assigns values to variables inside larger expressions (e.g. `while (line := file.readline()):`)."
+    },
+    {
+      "q": "15. Why should you never use `is` to compare string or numeric equality?",
+      "a": "Small integer interning (-5 to 256) causes `a = 10; b = 10; a is b` to return True, but `a = 1000; b = 1000; a is b` may return False because different Heap memory instances were allocated."
+    },
+    {
+      "q": "16. What is Bitwise XOR (^) swap trick without temporary variable?",
+      "a": "`a = a ^ b; b = a ^ b; a = a ^ b;` swaps `a` and `b` in-place using bitwise XOR algebra."
+    },
+    {
+      "q": "17. How does associativity (Left-to-Right vs Right-to-Left) affect operator evaluation?",
+      "a": "Most binary operators are Left-to-Right (`10 - 5 - 2` -> `(10 - 5) - 2` -> `3`). Exponentiation `**` is Right-to-Left (`2 ** 3 ** 2` -> `2 ** (3 ** 2)` -> `512`)."
+    },
+    {
+      "q": "18. What happens during ZeroDivisionError and how to guard against it?",
+      "a": "Dividing by zero raises `ZeroDivisionError`. Guard using short-circuit logical checks `if count != 0 and (total / count > 50):`."
+    },
+    {
+      "q": "19. How does boolean coercion convert integers and non-empty collections to True/False?",
+      "a": "`bool(0)` is False, `bool(42)` is True. `bool([])` is False, `bool([10])` is True."
+    },
+    {
+      "q": "20. What are production performance best practices when working with Operators?",
+      "a": "Use bitwise shift `<< 1` or `>> 1` for ultra-fast integer powers of 2 in embedded systems, use set `in` operations over list scans, and always use explicit parentheses to clarify complex expressions."
+    }
+  ]
+}

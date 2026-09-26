@@ -1,55 +1,66 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useCourse } from '../context/CourseContext';
 import SlideRenderer from './SlideRenderer';
 
-function isTypingTarget(e) {
-  const t = e.target;
-  return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-}
-
 /**
- * LessonViewer — slide engine. Renders the lesson header plus ONE section
- * ("slide") at a time, with Prev/Next buttons, a "Slide X of N" counter and
- * arrow-key navigation. Slide index + progress come via props/context.
+ * LessonViewer — continuous-scroll course page. Renders the lesson header
+ * plus EVERY section stacked vertically (no slide pagination) — matching
+ * the reference course UX: scroll from top to bottom through the whole
+ * chapter.
+ *
+ * Scroll behavior:
+ *   - IntersectionObserver tracks which section is in view → reports the
+ *     active index upward (On-This-Page highlight) via onActiveSection.
+ *   - A section counts as "read" once it has scrolled into view —
+ *     feeds the same per-section progress model as before.
  */
 export default function LessonViewer({
   lesson,
-  slideIndex,
-  onSlideChange,
-  modalOpen,
-  labels = {},
+  onActiveSection,
+  moduleId: moduleIdProp,
 }) {
   const { progress, currentModuleId } = useCourse();
-  const {
-    prev = '← Previous', next = 'Next →', slideOf = 'Slide',
-    of = 'of', markRead = '☐ Mark as Read', markedRead = '✅ Section Complete',
-  } = labels;
-
+  const modId = moduleIdProp || currentModuleId;
+  const rootRef = useRef(null);
   const sections = lesson?.sections || [];
-  const total = sections.length;
-  const section = sections[slideIndex] || null;
 
-  const go = useCallback((dir) => {
-    onSlideChange(i => Math.min(Math.max(i + dir, 0), total - 1));
-  }, [onSlideChange, total]);
-
-  // Keyboard navigation (arrow keys) — disabled while a modal is open or
-  // focus is inside an editable element.
+  // Scroll-spy + auto-read marking. Re-binds when the section list changes.
   useEffect(() => {
-    const onKey = (e) => {
-      if (modalOpen || isTypingTarget(e)) return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [go, modalOpen]);
+    const root = rootRef.current;
+    if (!root || !sections.length) return;
+    const els = [...root.querySelectorAll('[data-section-id]')];
+
+    // Track visibility for both active-section reporting and read marking.
+    const seen = new Set();
+    const ratios = new Map();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        const idx = els.indexOf(en.target);
+        if (idx === -1) return;
+        ratios.set(idx, en.isIntersecting ? en.intersectionRatio : 0);
+        if (en.isIntersecting && en.intersectionRatio >= 0.25) {
+          const sid = en.target.dataset.sectionId;
+          if (sid && !seen.has(sid)) {
+            seen.add(sid);
+            progress.markSectionComplete(modId, sid, true);
+          }
+        }
+      });
+      // Active = first in-view section (topmost), else last fully passed.
+      const visible = els
+        .map((el, i) => ({ i, top: el.getBoundingClientRect().top }))
+        .filter(v => v.top < window.innerHeight * 0.45);
+      if (visible.length) onActiveSection?.(visible[visible.length - 1].i);
+    }, { threshold: [0, 0.25, 0.6] });
+
+    els.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [sections, modId, onActiveSection, progress]);
 
   if (!lesson) return null;
-  const isRead = section ? progress.isSectionComplete(currentModuleId, section.id) : false;
 
   return (
-    <div>
+    <div ref={rootRef}>
       <div className="lesson-header">
         <div className="breadcrumbs">
           <span className="current">{lesson.title}</span>
@@ -71,27 +82,11 @@ export default function LessonViewer({
         )}
       </div>
 
-      <SlideRenderer section={section} />
-
-      {total > 0 && (
-        <div className="slide-nav">
-          <button type="button" className="btn btn-secondary" disabled={slideIndex <= 0}
-            onClick={() => go(-1)}>{prev}</button>
-          <div className="slide-nav-center">
-            <span className="slide-counter">{slideOf} {slideIndex + 1} {of} {total}</span>
-            {section && (
-              <button
-                type="button"
-                className="btn btn-xs btn-ghost slide-mark-read"
-                style={isRead ? { color: 'var(--color-success-500)' } : undefined}
-                onClick={() => progress.markSectionComplete(currentModuleId, section.id, !isRead)}
-              >{isRead ? markedRead : markRead}</button>
-            )}
-          </div>
-          <button type="button" className="btn btn-primary" disabled={slideIndex >= total - 1}
-            onClick={() => go(1)}>{next}</button>
-        </div>
-      )}
+      {sections.map(sec => (
+        <section key={sec.id} id={sec.id} data-section-id={sec.id} className="lesson-anchor">
+          <SlideRenderer section={sec} />
+        </section>
+      ))}
     </div>
   );
 }

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "09_strings",
+  "title": "Strings, Immutability & Encoding",
+  "description": "Strings store sequence characters as immutable bytes/code points using UTF-8 / UTF-16 encodings.",
+  "category": "Structures",
+  "badge": "Level 9: Grandmaster",
+  "tags": [
+    "Strings",
+    "Immutability",
+    "Encoding",
+    "UTF8"
+  ],
+  "codeExamples": {
+    "python": "text = 'Hello World'\nupper_text = text.upper()\nsplit_words = text.split(' ')\njoined_text = '-'.join(split_words)\nprint(f'Upper: {upper_text}, Words: {split_words}, Joined: {joined_text}')",
+    "java": "public class Main {\n    public static void main(String[] args) {\n        String text = \"Hello World\";\n        String upperText = text.toUpperCase();\n        String[] splitWords = text.split(\" \");\n        System.out.println(\"Upper: \" + upperText + \", Word Count: \" + splitWords.length);\n    }\n}",
+    "javascript": "let text = 'Hello World';\nlet upperText = text.toUpperCase();\nlet splitWords = text.split(' ');\nlet joinedText = splitWords.join('-');\nconsole.log(`Upper: ${upperText}, Words: ${splitWords}, Joined: ${joinedText}`);",
+    "cpp": "#include <iostream>\n#include <string>\n#include <algorithm>\nint main() {\n    std::string text = \"Hello World\";\n    std::transform(text.begin(), text.end(), text.begin(), ::toupper);\n    std::cout << \"Upper: \" << text << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does String Immutability mean in Python and Java?",
+      "options": [
+        "Once a string object is created in memory, its text content cannot be altered in-place. Modifying a string creates a brand new string object in Heap RAM.",
+        "Strings can only contain digits.",
+        "Strings automatically delete themselves after 1 minute.",
+        "Strings cannot be passed into functions."
+      ],
+      "correctIndex": 0,
+      "explanation": "String immutability ensures security, hashability, and thread safety. Modifying a string generates a new memory object."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. Why are Strings Immutable in Python and Java?",
+      "a": "Immutability provides thread safety, allows string interning (reusing identical string literals in memory), and ensures strings can safely be used as dictionary keys (hash value remains constant)."
+    },
+    {
+      "q": "02. What is String Interning and how does it save RAM memory?",
+      "a": "String Interning reuses a single Heap object for identical string literals (e.g. `a = 'hello'`, `b = 'hello'`). `a is b` evaluates to True because both point to the same interned address."
+    },
+    {
+      "q": "03. What is the performance pitfall of string concatenation inside a loop (`s += char`)?",
+      "a": "Because strings are immutable, `s += char` inside an N-iteration loop creates N intermediate string objects, taking quadratic O(N²) time. Use `''.join(char_list)` or `StringBuilder` for linear O(N) performance."
+    },
+    {
+      "q": "04. What is Unicode (ASCII, UTF-8, UTF-16, UTF-32) encoding?",
+      "a": "ASCII uses 7 bits (128 characters). Unicode maps 1,114,112 code points. UTF-8 is a variable-width encoding (1 to 4 bytes per character) backward compatible with ASCII."
+    },
+    {
+      "q": "05. What is the difference between `ord()` and `chr()` in Python?",
+      "a": "`ord('A')` returns the integer Unicode code point (65). `chr(65)` converts the integer code point back into its character string representation ('A')."
+    },
+    {
+      "q": "06. How does Python 3.3+ (PEP 393) flexible string representation work internally?",
+      "a": "Python dynamically picks 1-byte (Latin-1), 2-byte (UCS-2), or 4-byte (UCS-4) memory layouts per string depending on the highest code point inside, optimizing memory usage."
+    },
+    {
+      "q": "07. What is string slicing complexity in Python?",
+      "a": "In Python 3, string slicing `s[start:stop]` allocates and copies characters into a new string object in O(K) time, where K is slice length."
+    },
+    {
+      "q": "08. What is the difference between `str` vs `bytes` in Python 3?",
+      "a": "`str` stores human-readable Unicode text code points. `bytes` stores raw 8-bit binary data (`b'hello'`). Convert using `text.encode('utf-8')` and `raw_bytes.decode('utf-8')`."
+    },
+    {
+      "q": "09. What is String Matching Algorithms (KMP, Rabin-Karp, Boyer-Moore)?",
+      "a": "Naïve string pattern matching takes O(N*M) time. Knuth-Morris-Pratt (KMP) preprocesses pattern prefix functions to achieve O(N) linear time search."
+    },
+    {
+      "q": "10. What is Anagram Detection algorithm and what is its time complexity?",
+      "a": "Two strings are anagrams if sorting both returns equal strings (O(N log N)) or if frequency hash maps of both character counts match (O(N) linear time)."
+    },
+    {
+      "q": "11. What is Palindrome Verification algorithm?",
+      "a": "Check if a string reads the same forward and backward (`s == s[::-1]`) or use two pointers moving inward from index 0 and N-1 in O(N) time and O(1) space."
+    },
+    {
+      "q": "12. What is Levenshtein Edit Distance algorithm?",
+      "a": "A dynamic programming algorithm computing the minimum number of single-character edits (insertions, deletions, substitutions) required to transform one string into another."
+    },
+    {
+      "q": "13. How does f-string (`f\"{var}\"`) formatting compare to `%` and `.format()` in Python?",
+      "a": "f-strings (PEP 498) evaluate expressions at runtime in compiled bytecode, rendering faster and more readably than `.format()` or `%` formatting."
+    },
+    {
+      "q": "14. How does `strip()`, `lstrip()`, and `rstrip()` work?",
+      "a": "Removes leading and trailing whitespace characters (or specified character sets) from string ends."
+    },
+    {
+      "q": "15. What is the difference between `find()` vs `index()` in Python strings?",
+      "a": "`find('sub')` returns `-1` if substring is not found. `index('sub')` raises a `ValueError` exception if substring is missing."
+    },
+    {
+      "q": "16. How does Regular Expression (`re` module) work on strings?",
+      "a": "Regex compiles pattern strings into finite state automata (NFA/DFA) to match complex text patterns, sub-string extractions, and replacements."
+    },
+    {
+      "q": "17. What is String Pool in Java JVM Heap?",
+      "a": "A special storage area inside Java Heap RAM where string literals are cached to avoid creating duplicate string instances."
+    },
+    {
+      "q": "18. What is Trie (Prefix Tree) data structure for autocomplete search?",
+      "a": "A tree-based data structure storing string characters as node edges, providing fast O(L) prefix lookup for search autocompletion."
+    },
+    {
+      "q": "19. What is String Reversal in-place in languages with mutable strings (C/C++)?",
+      "a": "In C++, `std::swap(str[i], str[n-i-1])` reverses strings in-place without auxiliary memory."
+    },
+    {
+      "q": "20. What are production best practices when working with Strings?",
+      "a": "Use `''.join()` for aggregating multiple strings, explicitly specify encoding `encoding='utf-8'` when reading files, and sanitize string inputs against SQL/XSS injections."
+    }
+  ]
+}

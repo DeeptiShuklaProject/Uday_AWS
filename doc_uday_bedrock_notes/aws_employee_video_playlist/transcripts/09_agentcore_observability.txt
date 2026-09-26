@@ -1,0 +1,1461 @@
+Title: 09_agentcore_observability
+Video URL: https://www.youtube.com/watch?v=wWQgawUPr1k
+============================================================
+
+[00:11] [music]
+[00:16] [music]
+[00:20] [music]
+[00:24] Hey. Hey.
+[00:28] Hey.
+[00:32] Hello everybody,
+[00:34] >> welcome to another episode of AWS show
+[00:36] and tell. I am Anil Ninti. I'm joining
+[00:38] uh from Princeton, New Jersey today
+[00:40] along with Pete.
+[00:42] >> Hey everybody, I'm Pete Alfonso and I'm
+[00:44] joining from uh right outside of our HQ2
+[00:46] office in Washington DC.
+[00:48] >> Hey, so today we have a session on agent
+[00:52] observability, right? So, uh, I mean,
+[00:54] Pete, so what's what's the vibe out
+[00:56] there, right, with agents and
+[00:59] observability?
+[01:00] >> I mean, a lot of people are building
+[01:01] agents. They're learning the
+[01:02] complexities of scaling them, but in the
+[01:04] end, they still need that core
+[01:05] observability data. What is actually
+[01:07] going on with my agent, and it's not as
+[01:10] simple as some people are thinking it
+[01:12] is, but hopefully today we'll ease a
+[01:14] little bit of those concerns.
+[01:16] >> Yeah. And we're joined by our specialist
+[01:19] team. Uh, let's bring them on stage. So
+[01:23] Rajes and Madu are also joining us.
+[01:28] >> Hey An thanks for hosting us. Really
+[01:31] glad to be here with the team here.
+[01:34] >> Hello everyone. Hope you're doing uh
+[01:36] having a great time.
+[01:38] >> Hey uh folks yeah Rajes uh Madu where
+[01:40] are you joining from and uh chat let us
+[01:42] know where you're connecting from today.
+[01:44] Uh right so
+[01:46] >> yeah sure I'm calling in from New York.
+[01:49] I'm a specialist solution architect
+[01:51] aligned with agent core and agent core
+[01:53] observability. I've been in AWS for
+[01:55] quite some time. I've been part of the
+[01:57] launch of bedrock Q business quick suite
+[02:01] and now agent core really happy to be
+[02:03] here to share about observability.
+[02:06] >> Uh hello everyone. I'm Madu Sam Wangara
+[02:09] also a generative AI specialist solution
+[02:12] architect uh with uh associated with all
+[02:15] things agentic AI which is trans and
+[02:18] agent core uh really happy to be here
+[02:20] and excited to dive in.
+[02:23] Hey so yeah awesome right so uh again we
+[02:26] are uh going to go deep into some agent
+[02:29] core observability concepts Rajes and
+[02:32] Madu are going to show us some live
+[02:33] demos of how things work under the
+[02:36] scenes right so behind the scenes so um
+[02:38] Pete so how do we get started here right
+[02:40] so uh do we chat about uh agentic
+[02:44] applications how I mean again and why
+[02:46] absorbent is important right so maybe we
+[02:48] should do that
+[02:49] >> yeah I mean I I think let's start off
+[02:52] with you What is agent core and why is
+[02:55] it that people really should be saying
+[02:57] oh I need to be using agent core in
+[02:58] general? I mean I they say never try to
+[03:01] speak on it if there's a more qualified
+[03:02] person in the room. So let me turn that
+[03:04] specialist answer.
+[03:06] >> Hey thank thank you Pete and I know like
+[03:08] uh yeah this is the most important
+[03:10] question I think uh you know that's
+[03:13] running in many folks uh mind. Uh so
+[03:16] today we got a packed agenda. We will
+[03:18] definitely cover you know what the uh
+[03:21] what the agent core observability is all
+[03:23] about and why you need it and you'll see
+[03:25] how to set it up and then if you're
+[03:27] sticking around we will go deep dive
+[03:30] into the under the hood open telemetry
+[03:32] mechanics and some of the advanced demos
+[03:35] that mother will also share. So let's
+[03:38] start with Pete's question like what
+[03:39] exactly is agent core observability and
+[03:42] uh and um
+[03:45] and uh and why you need this right so
+[03:48] every system that we build needs some
+[03:51] kind of an observability for your
+[03:53] operations right so if you want to know
+[03:55] what your agent is doing what your
+[03:57] application is doing you want to know uh
+[03:59] you want to collect data and visualize
+[04:01] it so that you can make uh intelligent
+[04:03] actions on what your uh system is doing
+[04:06] and agent core observability has been
+[04:08] purposeuilt for monitoring your agents
+[04:11] to understand what it's going to do what
+[04:14] it's doing and agent core observability
+[04:16] is part of a a larger suite of uh
+[04:20] services that we offer uh under the
+[04:23] Amazon bedrock agent core service which
+[04:26] covers various aspect of agent building
+[04:30] and deploying and setting up it in
+[04:31] production. So with observability
+[04:34] service what you get is an ability to
+[04:36] visualize what is going on within your
+[04:39] agents. What are the different actions
+[04:41] and execution steps that the agent did
+[04:44] and this is kind of uh um uh you know
+[04:47] materialized as a trace uh which is a
+[04:51] telemetry concept and you can see all
+[04:53] the steps all the different uh requests
+[04:56] the prompts and the calls uh that the
+[04:58] agent did so that you can be confident
+[05:00] about what your agent is doing. behind
+[05:03] the scenes and get the transparency.
+[05:06] We also provide as a value added
+[05:08] capabilities ability to kind of you know
+[05:12] um zoom in into what different
+[05:14] operations your agent is doing. Is there
+[05:17] any latencies? Are there any errors? Can
+[05:19] I quickly take a look at it and then go
+[05:21] into that specific um operation and and
+[05:25] action on it? So those kind of
+[05:27] dashboards are also we are providing out
+[05:29] of the box. That's what the agent core
+[05:31] observation is all about within the
+[05:34] agent core suite. Now you may think oh I
+[05:38] have my agent application running there
+[05:40] and I have some telemetry uh hooked to
+[05:43] it but is that enough? It's not always
+[05:46] enough in an operation system, right?
+[05:48] When you're running an operating uh when
+[05:50] you're operating an application at
+[05:51] production scale, you want to know how
+[05:52] your agent is performing and how the
+[05:55] different hosts the runtimes that you're
+[05:57] running it running those agents on are
+[05:59] also performing. You want to see the
+[06:01] complete picture and we have built-in
+[06:03] dashboards and we have provided we have
+[06:05] capabilities where you can build your
+[06:07] own dashboards and set alarms and
+[06:09] whatnot based on that. This is kind of
+[06:11] what we will be covering uh today on how
+[06:15] to set it up, how to go and view it and
+[06:18] uh and uh and look into and and how to
+[06:21] explore this
+[06:22] >> and uh also quick question there Rajes,
+[06:25] we also need like these observability uh
+[06:28] to surface into other integrations,
+[06:30] right? Because you know we we want to be
+[06:32] able to surface them on other
+[06:34] dashboards. Everyone uses a different uh
+[06:36] dashboard, you know, name it different
+[06:38] companies, right? So how do we is agent
+[06:40] core observability integrated with uh
+[06:43] you know tools like that right so let's
+[06:45] talk about that for a second
+[06:47] >> fantastic question this is a very good
+[06:50] question because this is always in the
+[06:51] mind of the many customers I have made
+[06:54] lot of investments and I want to have my
+[06:56] own uh personalizations and uh tools
+[06:59] that I have been already invested on. So
+[07:02] yes, the agent core observability the
+[07:04] overall system is basically built on
+[07:07] open standards open telemetry uh
+[07:10] framework. Um so that means that you
+[07:13] have mobility right. So whatever we
+[07:15] collect it's all standardsbased. So that
+[07:18] means you can hook your own tools and
+[07:20] your own applications as long as they
+[07:21] understand the open telemetry framework
+[07:24] language you are free to use. Plus all
+[07:27] the data storage that we use is based on
+[07:29] cloudatch services and x-ray. So what
+[07:32] that means is that our customers you
+[07:35] know who have been used to using
+[07:36] cloudatch and other services can
+[07:38] integrate their tools which are probably
+[07:40] already integrated uh to these uh
+[07:43] foundational services that AWS provides
+[07:45] for observability. Uh they can continue
+[07:48] to leverage it while also entering the
+[07:51] era of agentic world.
+[07:53] >> Thanks for clarifying that. Yeah, that's
+[07:56] a great question. Yep. Pete, uh,
+[07:58] >> that's great to hear. Integration with
+[08:00] Cloudatch is great. Now, if some of our
+[08:03] customers, they're using strands, but a
+[08:04] lot of people are using some other
+[08:06] frameworks. Does this also integrate if
+[08:08] you're not using strands?
+[08:09] >> Absolutely. We we integrate with any u
+[08:13] uh application framework that is out
+[08:15] there whether it's agents or not. Right.
+[08:18] So be again that is uh we we provide
+[08:21] that through the mechanics of open
+[08:24] telemetry uh standards right because we
+[08:26] are standards based almost everybody
+[08:28] complies to those standards we are able
+[08:30] to do that as well and we will deep dive
+[08:32] into some of these things we'll show you
+[08:34] exactly how this configuration works and
+[08:36] how you can basically you're not limited
+[08:39] to AWS in project you can have your
+[08:41] agent anywhere and still use our
+[08:43] observability tool because again it's
+[08:44] standardsbased [snorts] so those are
+[08:46] great questions and we will show you how
+[08:48] that works. uh in a in a moment uh I
+[08:52] just want to uh kind of quickly touch on
+[08:55] why observability matters in the world
+[08:58] of agent uh you know implementations
+[09:00] right so if you think about you know
+[09:03] beyond the uh simple root cause analysis
+[09:06] and all the operational needs and all of
+[09:08] those things if you really think about
+[09:10] it
+[09:11] you there is fundamentally something
+[09:14] different about agent deployments these
+[09:16] are nondeterministic in nature so if you
+[09:18] look at a tradition traditional
+[09:19] application you have an input you have a
+[09:22] processing you have an output as a
+[09:23] developer as a builder we know exactly
+[09:25] what it does all we are interested in is
+[09:28] if there is any error happening and
+[09:29] things like that right but with agents
+[09:32] that's not no longer the case you are
+[09:34] giving the agent as some kind of a
+[09:36] target and you are letting the agent
+[09:39] solve it in production scary because it
+[09:42] can call different APIs it can do
+[09:44] different data retrieval it can do
+[09:46] different reasoning paths right so you
+[09:48] really do not know what it is that it's
+[09:50] doing. So how where is the transparency
+[09:52] coming from? It comes from the data that
+[09:54] you get from observability. So that's
+[09:56] why it's super critical that you collect
+[09:59] uh a strong set of observ data and keep
+[10:02] it so that you can not only do root
+[10:04] cause analysis and error and debugging
+[10:06] and all of those things but also it
+[10:08] becomes your system of records for your
+[10:10] future. But more importantly, if you are
+[10:13] building agents,
+[10:15] your agent quality is a competitive
+[10:18] differentiator. This is key, right? So,
+[10:21] everybody has access to worldclass large
+[10:24] language models that are out there. But
+[10:26] where you get the differentiation, it is
+[10:28] the quality of your agent on achieving
+[10:31] the specific tasks they're building it
+[10:33] for. And this is where the data that you
+[10:36] collect through the observity makes a
+[10:38] big difference. And the platform that
+[10:40] helps you evaluate your agents on the
+[10:43] fly and understand what's going on is
+[10:46] super critical and that's where we from
+[10:48] agent core obserability are putting a
+[10:50] lot of focus on
+[10:52] >> and you bring up a great point here uh
+[10:54] Rajes because when when we deploy these
+[10:57] agents in production we need to collect
+[10:59] the telemetry and understand are we
+[11:02] doing the right tool calling are we able
+[11:04] to you know how is the agent performing
+[11:06] right so how many tokens are being used.
+[11:09] Uh so there is a lot of data that needs
+[11:11] to be gathered and that will only help
+[11:13] in improving the performance of uh you
+[11:16] know the system that we are developing
+[11:18] right so I think this is very super
+[11:20] critical
+[11:22] >> absolutely you got that right uh so now
+[11:27] now we know why it is right why it is
+[11:30] important let's take a look at like okay
+[11:32] I'm new to agent core observability how
+[11:34] do I get started what do I install and
+[11:36] how do I go and access. So I'll hand it
+[11:39] over to Madu to quickly show us this and
+[11:41] then we'll come back and then deep dive
+[11:42] into open telemetry concepts.
+[11:45] >> Thank you Rajes. Um so let's get into
+[11:49] the different steps that we need to do
+[11:51] to enable uh and leverage agent core
+[11:54] observability specifically on uh AWS
+[11:57] cloudatch. To begin with let's start
+[12:00] through a simple developer journey. You
+[12:03] could be a developer implementing an
+[12:05] agent testing out to see how it is
+[12:07] performing and uh have a simple code
+[12:10] that is running locally within your
+[12:12] agent. And how would you get started? Um
+[12:15] to begin with first uh a single one-time
+[12:18] setup that you need to do as a
+[12:20] prerequisite uh to leverage Asian core
+[12:22] observability on cloudatch is to enable
+[12:25] transaction search. Um so this is a
+[12:27] one-time step you would need to do uh on
+[12:30] your account and of course have the
+[12:31] permissions to access these different
+[12:34] resources uh creation of uh log streams
+[12:37] etc. [snorts] Um with that uh you have
+[12:41] uh a local agent code uh here I have a
+[12:44] simple agent that has access to uh a web
+[12:47] search tool. I'm leveraging uh DDGS. it
+[12:51] has access to bringing in real time data
+[12:54] uh to my agent and keep in mind as Anil
+[12:58] earlier pointed out that for this
+[13:00] example I'm developing an agent with
+[13:02] open-source trans agent framework but
+[13:05] the same agent code could be written in
+[13:07] any of the popular open-source
+[13:09] frameworks. So define um and it can be
+[13:12] calling any of the models whether on
+[13:14] bedrock of or or off bedrock. So simply
+[13:18] define a local agent uh with access to
+[13:21] web search uh capabilities and execute
+[13:24] tools. So let's take a look at how a
+[13:27] local agent can leverage uh agent core
+[13:30] observability. So after enabling
+[13:32] transaction search um another uh aspect
+[13:36] of the configuration steps is
+[13:38] configuring certain environment
+[13:40] variables so that you're able to send
+[13:42] that telemetry data to AWS cloudatch
+[13:45] which includes uh setting up hotel
+[13:48] python distro uh which leverages AWS
+[13:51] distribution Python distribution for
+[13:53] open telemetry. We'll be diving into the
+[13:56] details of this one a bit later so I'll
+[13:58] keep that part. Uh another aspect is
+[14:01] specifying the log groups where you want
+[14:04] the um where you want to send this uh
+[14:07] telemetry to and the log streams. So you
+[14:10] can define this on your own and at the
+[14:12] same time how you would like to identify
+[14:15] this agent is where you would specify
+[14:17] your specific agent name that you're
+[14:19] developing locally. Uh well this
+[14:23] additional step uh is something that you
+[14:25] would need to do not just for your agent
+[14:28] which is running locally but also for
+[14:30] agents running on your custom hosting
+[14:33] infrastructure which could include EKS,
+[14:35] ECS etc. So after loading this
+[14:39] environment variable within um your
+[14:42] environment, uh what you would need to
+[14:44] do as a third step after you have run uh
+[14:47] defined your final agent logic um as uh
+[14:51] here that we have defined is including
+[14:55] uh open telemetry instrument command in
+[14:58] front of your Python execution. And uh
+[15:01] we will be diving deeper into the
+[15:03] concepts of open telemetry which
+[15:05] includes passing session ids etc. Uh so
+[15:09] this is the four different steps that
+[15:11] you would need to do to take a local
+[15:13] agent or a custom hosted agent and
+[15:15] leverage and visualize the end traces on
+[15:18] agent core observability dashboard.
+[15:21] Well, uh that is
+[15:22] >> now uh just uh so what you're really
+[15:25] doing here is really installing the
+[15:27] open-source open telemetry auto
+[15:29] instrumentation tool and configuring all
+[15:31] the different uh environment variables
+[15:33] that it needs. Is that what we are doing
+[15:35] in a nutshell?
+[15:36] >> Um absolutely. So uh along with enabling
+[15:40] transaction search uh setting your
+[15:42] environment variable and ensuring your
+[15:44] framework emits open telemetry traces,
+[15:47] you also include the AWS open telemetry
+[15:50] distribution package uh within your
+[15:53] execution environment to uh simply auto
+[15:56] instrument your traces onto cloudatch
+[15:59] >> and a link to the sample code we are
+[16:01] discussing is in the chat so you can
+[16:03] look at that and uh it's also linked to
+[16:04] the description of the video as well.
+[16:07] Awesome.
+[16:08] So we saw how to take a local agent and
+[16:11] leverage agent core observability
+[16:14] dashboard. Now different hosting talking
+[16:17] about different hosting environments. Uh
+[16:19] there is also something um which is
+[16:21] agent core runtime and let's take a
+[16:23] quick look at this how the setup varies
+[16:26] and how agent core runtime makes it very
+[16:29] seamless to leverage agent core
+[16:31] observability. So if you have the same
+[16:33] code uh a local code running uh locally
+[16:37] to host that code onto runtime you
+[16:40] simply have to add four additional
+[16:41] lines. If you are leveraging bedrock
+[16:43] agent core SDK uh u you simply have to
+[16:47] define the app um in before your
+[16:50] invocation wherever that is use the
+[16:52] decorator of app entry point and app dot
+[16:56] run and your local agent code is
+[16:58] transformed to be ready to be hosted on
+[17:01] runtime leveraging the bedrock agent
+[17:03] core starter toolkit uh you can also
+[17:06] create uh dockerize this agent code and
+[17:10] um that's it All you need to do uh to
+[17:14] host your agent on runtime with
+[17:16] observability is enable transaction
+[17:19] search. Ensure your framework MS open
+[17:21] telemetry in in the case of strand we
+[17:24] have a strand agents hotel uh package
+[17:27] include a AWS open telemetry in in there
+[17:31] and before your invocation include open
+[17:34] telemetry python uh open telemetry
+[17:37] instrument command. So you can see how
+[17:39] runtime sort of makes it very easy. You
+[17:42] don't have to do that additional
+[17:44] environment variable configuration and
+[17:47] once once you host this um configure and
+[17:51] launch this agent onto runtime you'll be
+[17:54] able to see the traces onto agent core
+[17:56] observability dashboard. I'll just take
+[17:59] a quick few minutes now that we have
+[18:01] understood the setup of agent
+[18:04] observability. I'd like to also
+[18:06] highlight another concept Rajes which
+[18:08] you were previously talking about is
+[18:10] understanding the service health of this
+[18:13] is to enable logs and tracing per your
+[18:17] agent core resources. Uh that could be
+[18:19] runtime agent core gateway memory so
+[18:22] forth and so on. So to do that um you'll
+[18:25] go to the agent core console and here
+[18:28] you have an observability uh section
+[18:31] where you can set up your log delivery
+[18:33] for application logs um on as uh
+[18:37] cloudatch and also enable tracing per
+[18:42] runtime resource. So this would be
+[18:44] information that is emitted uh by
+[18:46] runtime which will also be available on
+[18:48] your cloudatch dashboard. While while
+[18:51] Madu is showing these from the console,
+[18:53] there's these are also available from
+[18:55] cloud formation and CDK as well, right?
+[18:57] So you can uh set it up as part of
+[19:00] infrastructure code as well.
+[19:04] >> Yeah. Uh so we could share additional
+[19:06] documentation on how you could do that
+[19:09] to get started.
+[19:11] >> Yes. So mother while you're in the
+[19:13] screen, one quick clarification. So is
+[19:15] instrumenting like you just enabled the
+[19:17] trace for the runtime. Is this same as
+[19:20] uh instrumenting your application that
+[19:23] is running in the runtime?
+[19:25] >> Um that's a great question. So to
+[19:27] clarify that uh understanding the
+[19:29] difference between framework emitted
+[19:32] open telemetry and runtime emitted uh
+[19:36] service is the key difference.
+[19:39] Everything that your agent is doing uh
+[19:42] is emitted by the framework and the
+[19:45] different tools that your agent has
+[19:47] access to. And that is what we see when
+[19:50] we see uh the different spans of the
+[19:52] agent uh execution. Enabling when logs
+[19:56] and tracing on runtime shows us
+[19:59] information associated with invoke
+[20:01] runtime operation which includes
+[20:04] requests and a v variety of other
+[20:06] aspects of runtime service health
+[20:08] metrics which we can dive deep in in a
+[20:11] bit in the following demo.
+[20:13] >> So fair to say that some of this is more
+[20:16] agent-based application kind of logging
+[20:18] versus the runtime
+[20:20] >> runtime specific metrics and logging.
+[20:22] >> That makes sense. Okay. Absolutely. Um
+[20:25] so to give a little more on that it
+[20:27] doesn't just stop with runtime. It also
+[20:30] the same concept of service health that
+[20:32] is service emitted telemetry also
+[20:34] extends to your memory resources where
+[20:37] you'll be able to see your different
+[20:39] memory related uh metrics and logs and
+[20:42] spans. When you do the same enabling
+[20:44] vended logs and tracing for built-in
+[20:46] tools for gateways, you get a complete
+[20:49] overview of visibility across a custom
+[20:53] time frame across all your resources uh
+[20:56] across Asian core services. So this is
+[20:58] >> and so you have to use these like
+[21:00] gateway or one of these tools but if you
+[21:02] choose to use it you do have this
+[21:04] unified telemetry and data. Is that what
+[21:05] you're saying?
+[21:06] >> Absolutely. And that that's the best
+[21:08] part about Asian core uh as a platform
+[21:11] is that you can use these independently
+[21:14] as well. If your agent running locally
+[21:17] only leverages agent core memory, you
+[21:19] will still be able to monitor your agent
+[21:21] core memory related resources associated
+[21:24] with that agent. And similarly um you're
+[21:27] able to monitor your agents that are
+[21:29] developed using open source framework
+[21:31] which emit open telemetry on or off
+[21:34] runtime. So here you can see some of my
+[21:36] agents are hosted on agent core runtime
+[21:38] while some of them are simply running
+[21:40] locally or on EKS or any local um local
+[21:45] hosting infrastru uh hosting
+[21:46] infrastructure as well and just just a
+[21:50] little more on that is apart from all
+[21:52] the capabilities you're also have you
+[21:54] also have visibility into all the
+[21:57] sessions and all the traces associated
+[21:59] with these uh agents and traces as well
+[22:02] in a single dashboard. So you truly come
+[22:04] in and get everything in one unified uh
+[22:08] place to monitor every aspect of your
+[22:10] agents.
+[22:11] >> And what's can you give me an overview
+[22:13] real quick? What is a trace in this
+[22:15] particular terminology?
+[22:16] >> Um that's a great question. So I'll I'll
+[22:19] post to Rajes to take it over and dive
+[22:21] into open telemetry traces sessions and
+[22:25] a lot more.
+[22:26] >> Hey, thank you M. That was a real good
+[22:28] overview. Um uh so before we jump into
+[22:33] this, who are the personas that you
+[22:34] think will be using these uh different
+[22:37] this dashboards? What are the personas
+[22:39] you think uh are evolved here?
+[22:41] >> It could be developers.
+[22:44] >> Most of the builder personas are around,
+[22:45] right? So um you know, they're all
+[22:47] looking at how do we how do we get to
+[22:49] know what is happening under the hood,
+[22:51] right?
+[22:52] >> I imagine the IT leaders, they want to
+[22:54] brag about, oh, look how many of my
+[22:55] agents are running, you know.
+[22:57] >> Yeah.
+[22:58] teams Rajes and subject matter experts
+[23:02] looking at the data of what your agent
+[23:04] is doing in certain domains.
+[23:06] >> Yeah, that that could be data scientists
+[23:08] looking at the traces to see how well
+[23:11] the agent is performing and we do have
+[23:13] evaluations which we can show later. Um
+[23:17] there could be support engineers looking
+[23:19] at the data to see if there are any
+[23:21] errors going on. So there is a whole lot
+[23:22] of personas that this is designed for uh
+[23:26] as the product as the company or
+[23:29] enterprise scales their production
+[23:31] capability. Now this is great overview.
+[23:34] Now we will roll our sleeves and get a
+[23:36] little bit into the details of how
+[23:38] exactly this whole plumbing works
+[23:41] because that is uh that exactly that
+[23:44] helps you understand what's going on
+[23:45] behind the scenes. So
+[23:49] um let's jump into that part of it
+[23:51] right. So observability uh by now it it
+[23:55] it will be clear that it's it's not just
+[23:59] one thing. It's not just logs traces or
+[24:01] metrics. It's a combination of all these
+[24:03] three things that gives a powerful set
+[24:06] of data rich data all correlated in a
+[24:09] single context. So you get to understand
+[24:11] what's going on with the reagents. The
+[24:14] logs tell you
+[24:16] um the logs tell you what happened. The
+[24:19] traces tell you how it happened and the
+[24:22] metrics tell you how much or how well it
+[24:25] happened. So that's the observability
+[24:27] pillars. So within the agent core
+[24:30] observability uh concepts that you you
+[24:33] know Madu was just showing us some
+[24:35] sessions and some traces and Pete you
+[24:38] just asked the right question what
+[24:40] exactly all this means and why do I
+[24:42] bother about it? So this comes from open
+[24:45] telemetry concepts. So when you are
+[24:47] executing uh any application or in this
+[24:50] case an agent um you make a request to
+[24:53] the agent and then the agent does a
+[24:55] sequence of steps and it may also call a
+[24:57] different tools and whatnot. Each of
+[25:00] those operation is recorded by what is
+[25:04] called a span. Right? So open telemetry
+[25:07] would record these operations the the
+[25:09] the agent would record these operations
+[25:11] into what is called a span which is a
+[25:13] JSON object and send it to an
+[25:16] observatory platform like us. So that is
+[25:19] a span as a building block. Now when you
+[25:21] talk about the operations that happened
+[25:23] when within a request or response there
+[25:25] are multiple operations that happened.
+[25:27] So those sequenced together or put
+[25:30] together or chained together is one
+[25:32] trace. So essentially these span objects
+[25:34] that we send out and we will see later
+[25:36] on we can show you how this looks like
+[25:38] in the cloudatch uh will have the same
+[25:41] trace ID and that's how we know that
+[25:43] it's just as simple as just having an ID
+[25:45] that is uh used. Now when when you are
+[25:49] talking about application a user comes
+[25:51] in they may do many request and response
+[25:53] and request and response they let's say
+[25:55] a chat agent and then you're just asking
+[25:58] the chat agent something it responds
+[26:00] with something and then so there's a
+[26:01] bunch of request response happening
+[26:03] within a specific session and without
+[26:08] there is no imagination needed here so
+[26:09] we just call that a session ID so
+[26:11] multiple you know request response is a
+[26:14] session and that's connected together by
+[26:16] having a single session ID Okay. So
+[26:18] that's the open telemetry concepts that
+[26:21] uh kind of binds these uh different
+[26:24] operations together to build that
+[26:26] picture of what happened behind the
+[26:28] scenes.
+[26:30] Now when we saw the setup, Madu was
+[26:34] showing us there was a a a tool called
+[26:37] AOT that you installed which is stands
+[26:39] for AWS u distribution for open
+[26:42] telemetry and you added a kind of a
+[26:46] wrapper called open telemetry
+[26:47] instrumentation. What exactly you did?
+[26:50] Why did we do that? So the the whole
+[26:52] idea of having that uh to deployed along
+[26:56] with your application and wrapping it is
+[26:58] really making it easy to capture what
+[27:00] your agent is doing under the hood. All
+[27:04] part of a single application process. So
+[27:07] imagine your application code. This is
+[27:09] the agent code that you wrote here which
+[27:11] is basically saying agent. You're
+[27:13] initiating an agent calling an LLM call
+[27:15] and then calling some kind of a
+[27:17] knowledgebased search and then doing
+[27:18] some tool execution. This is your code.
+[27:21] You have not done anything to say log
+[27:24] these messages or anything like that.
+[27:26] Right? But somehow magically this
+[27:28] information has to be captured. What
+[27:30] happens behind the scenes is when you
+[27:33] when you are installing your framework,
+[27:35] these frameworks often also include an
+[27:38] open telemetry related library. So Madus
+[27:41] showed something called strand hotel
+[27:44] that you installed along with your
+[27:46] strands agent that is for the strands.
+[27:48] If you're using langraph or or other
+[27:50] tools, you could be installing lang or
+[27:53] open inference or one of those
+[27:54] libraries. What are these libraries are
+[27:57] essentially extension of the agent
+[28:00] framework to provide hooks into these
+[28:02] calls so that some kind of telemetry is
+[28:05] generated. Now the auto instrumentation
+[28:08] library that we added includes
+[28:11] additional hooks for system calls and
+[28:13] and memory calls and memory operations
+[28:16] and many other things that are regular
+[28:18] Python code or any HTTP requests that
+[28:20] would be happening. So all of this
+[28:22] information these hooks together with
+[28:24] the extended LLM libraries just keep
+[28:29] generating right and behind the scenes
+[28:33] uh there is an OTEL SDK this is all
+[28:35] open-source based uh that is provided by
+[28:38] open um open telemetry framework uh
+[28:42] called the open telemetry
+[28:43] instrumentation that collects all this
+[28:46] data and say and and and basically
+[28:48] collapses that into trace and metric and
+[28:51] logs. Right now
+[28:55] when we when you are using agent core
+[28:58] observability we are storing all this
+[29:00] data in cloudatch. So cloudatch uses the
+[29:03] metrics cloudatch metrics for cloudatch
+[29:06] uh storing the metrics and logs for log
+[29:08] groups and then there is a separate uh
+[29:11] special log group called AWS spans where
+[29:13] it stores all the telemetry spans. Right
+[29:17] now
+[29:18] you don't want to be that person trying
+[29:21] to figure this out how to write into all
+[29:23] of this. So we provide within the a dot
+[29:26] an abstraction over whatever the basic
+[29:29] open telemetry uh system provides that
+[29:32] basically takes this information and
+[29:34] automatically writes it to these
+[29:35] systems. So you do not have to do any
+[29:37] configuration from your perspective
+[29:39] other than telling where your uh which
+[29:42] account uh you are using for agent core
+[29:44] observability. That's pretty much what
+[29:46] it is. Suppose if you're not using uh
+[29:49] our platform, you can all of this still
+[29:51] applies. The the standard hotel SDK can
+[29:55] generate uh these logs and send it to
+[29:58] whatever uh open telemetry endpoint that
+[30:02] other providers might provide and then
+[30:03] it may just be automatically forwarded.
+[30:05] So it's you basically you're essentially
+[30:07] using open telemetry behind the scenes.
+[30:09] It's not we are not building anything
+[30:12] custom for you. So this is all handled
+[30:14] in an open standardsbased way.
+[30:17] >> Now Rajes, real quick, we had a question
+[30:19] uh come in on uh LinkedIn asking us uh
+[30:23] if I was to deal with if I was to enable
+[30:26] this, will it impact the the latency
+[30:29] that I'm seeing from uh from the actual
+[30:32] like the the call and response and those
+[30:33] kinds of activities. Thanks G for the
+[30:35] question.
+[30:37] >> That's a great question actually. So the
+[30:41] so there is a lot of telemetry data that
+[30:43] is generated. So what happens is if you
+[30:45] are pushing all this data at a high
+[30:48] frequency you can uh so these telemetry
+[30:52] systems usually the open telemetry what
+[30:54] it does is it it basically
+[30:57] um
+[30:59] creates a block before it flushes it out
+[31:02] to the end observability backends.
+[31:05] Right? You can tune to say I want it to
+[31:08] be pushed flushed every second or less
+[31:11] than that whatever that is uh
+[31:13] comfortable for you but you have to keep
+[31:16] in mind this is also very intensive. So
+[31:18] you if you want to uh this is a very
+[31:20] process uh high intensive takes a little
+[31:22] bit of your process resource so you have
+[31:24] to be careful and you have to do the
+[31:26] balancing on your specific applications.
+[31:28] Typically the default is around um I
+[31:32] believe it's like 2 seconds or something
+[31:34] like that. every two seconds it just
+[31:36] flushes. So that'll be how frequently
+[31:39] this data goes. Uh so it's a balance
+[31:41] between what your system needs are, your
+[31:43] agent resource needs and versus your
+[31:46] observability needs. Uh but we would uh
+[31:49] uh if you have the luxury to have a
+[31:51] little bit delayed response, I would
+[31:53] increase the uh the the buffer size so
+[31:56] that uh it is more efficient in terms of
+[31:59] using your bandwidth and so on network.
+[32:00] >> Yeah. And we also have another question
+[32:02] coming in the chat. Uh this question is
+[32:04] about guardrails right so about the logs
+[32:07] right because agents are now are doing a
+[32:09] lot of these operations there there is
+[32:11] like secure material uh probably in the
+[32:13] agents so how do we you know what is
+[32:16] available uh so that way the you know
+[32:19] the privacy private info is not uh you
+[32:22] know in these
+[32:22] >> observers
+[32:24] oh yeah we will share some samples I
+[32:26] think Madu is so excit will be excited
+[32:28] to show you actually how you can set it
+[32:30] up uh so the guardrails can be set up at
+[32:33] two levels. One is at the agent level
+[32:35] itself. So when it's making a when it
+[32:37] gets a request and when it's making a
+[32:39] request. M you want to talk about a
+[32:41] little bit about that?
+[32:42] >> Um absolutely. Um if I could just share
+[32:44] my screen, I think we can quickly answer
+[32:46] that, right? Um that's the power of
+[32:50] connecting uh Asian core cloudatch is
+[32:53] that because Asian core observability
+[32:55] sits on top of cloudatch data, you can
+[32:58] leverage a variety of cloudatch
+[33:00] capabilities. For example, to answer
+[33:02] your question, setting up data
+[33:04] protection policies to handle PII
+[33:07] related data per log group policy so
+[33:10] that any information coming can be
+[33:13] redacted or masked and uh highly
+[33:16] recommend to check out cloudatchbi
+[33:18] masking uh strategies that are
+[33:20] available. So you could do this um per
+[33:22] log group level and even if you're
+[33:24] including some custom logging within
+[33:26] your agent application code uh you'll be
+[33:29] able to handle that with this capability
+[33:31] um on cloudatch. Yeah,
+[33:35] >> I keep trying to stress to customers is
+[33:37] like we have been doing these kinds of
+[33:39] things for a while. When it comes to
+[33:41] hosting agents, it's very similar to how
+[33:43] you host things like Lambda. We've been
+[33:45] dealing with how do you deal with PII
+[33:47] and log groups for a decade.
+[33:49] [clears throat] And so we have a bunch
+[33:50] of tools that are already built in that
+[33:52] are standard for your industry that you
+[33:55] can say to your security or your privacy
+[33:57] group, it's exactly how we've been doing
+[33:58] it all along. We're going to enable
+[34:00] these kinds of protections and so you
+[34:02] can move forward with confidence without
+[34:03] having to reinvent something on a
+[34:05] different platform.
+[34:06] >> Absolutely. And u you could quickly uh
+[34:10] look at how that reflects even on Asian
+[34:12] core observability data. So let me just
+[34:15] quickly show that to you on how that
+[34:17] would look like at uh the trace level.
+[34:22] Yeah.
+[34:24] >> So um here's a quick demo uh to see that
+[34:27] kind of uh logging and masking that you
+[34:31] set up. Um and also you could leverage
+[34:34] bedrock agent core uh bedrock guardrails
+[34:37] to further in initiate more defense
+[34:40] in-depth strategies. So essentially the
+[34:43] secure content is still going to be
+[34:44] secure. It's not going to be leaking in
+[34:46] the logs, right? So as long as you you
+[34:48] can uh tune that.
+[34:51] >> Absolutely. Let's go back to
+[34:52] understanding hotel in depth.
+[34:55] >> Yeah, these are so yeah thanks for
+[34:57] showing that mother. So these are some
+[34:59] of the capabilities as Pete also pointed
+[35:01] out that's already there because we are
+[35:03] building on proven technology. You get
+[35:06] all of that out of the box.
+[35:08] >> [snorts]
+[35:08] >> So let's just go into a little bit of uh
+[35:11] how exactly this telemetry uh okay you
+[35:14] install the auto instrument and you
+[35:16] configure the a dot to send it to
+[35:18] cloudatch all that is good so what is
+[35:21] happening behind the scenes how does
+[35:22] open telemetry actually work uh so that
+[35:26] is where this whole um you know um the
+[35:30] ability to uh transfer the context
+[35:33] becomes a key that open telemetry
+[35:35] frameworks provide. So when you're
+[35:37] building an agent, your agent could be
+[35:39] the front end um and it could be behind
+[35:42] the scenes calling different MCP servers
+[35:44] and tools and whatnot, right? And may
+[35:46] call a gateway, may call a memory and
+[35:48] within the gateway may call different
+[35:49] tools and may do certain actions on
+[35:51] behalf of you. So each of these systems
+[35:55] are independent from each other. It's
+[35:57] not one single system. Right? So the
+[35:59] open telemetry mechanism what it does is
+[36:02] when the first
+[36:04] producer or the caller or the the
+[36:06] originator
+[36:08] generates an open telemetry token it it
+[36:11] includes a something called a trace ID
+[36:12] that it's generated and what it does is
+[36:16] whenever it calls any child application
+[36:19] could be a complete different process
+[36:20] running in a completely different place
+[36:22] right maybe even outside AWS right so it
+[36:26] basically sends that trace ID as a
+[36:30] header in an HTTP request behind the
+[36:33] scenes completely transparent to you.
+[36:35] You all have you have to do is just
+[36:37] enable open telemetry in your
+[36:38] application, install the framework.
+[36:40] That's it. It basically takes care of
+[36:42] all of this by hooking into your HTTP
+[36:45] request and adding this uh trace uh ID
+[36:48] to that header. So any receiving system
+[36:51] that is also open telemetry compatible
+[36:53] will know how to read this and include
+[36:56] the same trace ID whenever it is
+[36:58] generating a telemetry basically a span
+[37:01] right and it will include the same trace
+[37:02] ID as long as all these spans are going
+[37:05] to the same system in this case agent
+[37:08] core observability powered by cloudatch
+[37:11] we will be able to pull together all
+[37:13] these spans and then build a meaningful
+[37:15] kind of a view of a combi like an end
+[37:18] toend view of all the different
+[37:20] operations happen along with the
+[37:22] timelines and what are the child
+[37:24] operations and what not by just using
+[37:27] this mechanism that open telemetry gives
+[37:29] us out of the box. So we're not making
+[37:32] anything proprietary here. And one
+[37:34] interesting concept that the open
+[37:36] telemetry also does is it has a concept
+[37:38] of what is called a baggage. And within
+[37:41] the baggage you can include your own
+[37:43] attributes that matters so that you can
+[37:46] establish some kind of a context across
+[37:48] your applications uh stack right. So
+[37:51] this is uh this could be business unit
+[37:54] ID or some tenant ID or something like
+[37:56] that for a billing purpose or it could
+[37:59] be some kind of uh conversation ID for
+[38:01] your uh um you know for tracking reasons
+[38:05] whatnot you can include that and the
+[38:07] open telemetry includes that baggage
+[38:09] also as part of uh that uh header
+[38:13] request and sends it across and if you
+[38:16] think that this is only limited to HTTP
+[38:18] no it's it it has a very broad set of
+[38:21] support for different types of
+[38:23] integrations. So your applications could
+[38:25] be interacting with each other using
+[38:26] HTTP requests or it could be using a
+[38:29] gRPC request or it even using Kafka cues
+[38:33] or even a database calls. All of these
+[38:35] the open telemetry automatically
+[38:37] instruments and adds these headers and
+[38:39] metadata so that you know each of these
+[38:42] system can independently generate spans
+[38:44] to build that picture for you and that's
+[38:46] what we are leveraging behind the scenes
+[38:48] by the way. Now by now you you kind of
+[38:52] understood that you have you start your
+[38:55] agent development with some kind of an
+[38:57] agent framework that could be strands uh
+[38:59] it could be langraph it could be crew AI
+[39:02] and each of these frameworks comes with
+[39:06] an addedal related library that that
+[39:09] they add include it in case of strands
+[39:11] it's called struses
+[39:13] um in in in langraph it could be lang or
+[39:17] open inference depends on which library
+[39:19] you choose So that means there are
+[39:21] different telemetry libraries that is
+[39:24] kind of trying to interpret what your
+[39:26] LLM is doing or agent is doing and
+[39:29] producing some very specific format that
+[39:33] is unique to those libraries and
+[39:35] producing those telemetry. So even
+[39:37] though we are using standards to collect
+[39:39] and uh and organize the uh the the
+[39:42] telemetry data the actual content might
+[39:45] be slightly different. So this is where
+[39:48] agent core observability all helps you a
+[39:51] little bit more. Uh so you do not end up
+[39:54] doing all the translations and and
+[39:56] trying to decide which library to use
+[39:58] and all of that. We provide broad set of
+[40:01] support for the most popular libraries
+[40:03] out of the box. So independent of which
+[40:05] library you use, you will be able to see
+[40:08] the traces in the system uh in our agent
+[40:12] core observability and we do the
+[40:13] interpretation and and all the ma
+[40:16] mapping of different attribute fields
+[40:18] and whatnot of the context of the data
+[40:20] so that you do not do the heavy lifting.
+[40:22] So so sometimes what happens you might
+[40:24] choose some uh library and then your
+[40:27] platform may not be able to understand
+[40:29] it. So you are on the who to do the
+[40:33] translation. So we basically save that
+[40:35] for you. We don't want you to be
+[40:37] spending time on that.
+[40:39] I will so so this kind of um so you got
+[40:44] the picture you got the framework that
+[40:46] you selected and you installed a dot on
+[40:49] that and the framework came with some
+[40:52] kind of an extension to uh to produce
+[40:54] the telemetry. So with the a dot that
+[40:57] data gets straight into agent core
+[40:59] observability you don't have to do
+[41:00] anything else right. So that's pretty
+[41:02] much what uh a typical system will do.
+[41:06] Now you may ask hey if I don't want to
+[41:08] get it into a dot what do I do? Uh I
+[41:10] don't want agent core observatory I'm
+[41:11] using some other service. U then you can
+[41:14] just not use a dot or use a dot but send
+[41:17] the uh forward the telemetry to your
+[41:19] third party observity platform right
+[41:22] either works. Uh but one of the things
+[41:26] that we do extra is and Madu showed this
+[41:29] right. We go to the specific services
+[41:32] that is fully managed by us. You can go
+[41:35] and enable the trace and uh and and the
+[41:38] logs from there as well. So this is
+[41:40] independent of what your agent framework
+[41:42] is doing agent is doing and um and these
+[41:46] additionally sense uh metrics which are
+[41:49] very very important for you to be able
+[41:51] to actually understand what's going on
+[41:53] in your production environments
+[41:57] memory billing. Yeah.
+[41:58] >> Yeah. And to add to the previous
+[41:59] question of analyzing your latency I
+[42:02] think it extends beyond just the
+[42:04] framework. Latency could be from runtime
+[42:06] gateway memory. So having that holistic
+[42:09] picture of putting the metrics from
+[42:12] across everything together is very
+[42:14] important.
+[42:18] >> Excellent point. And and uh and and the
+[42:21] and the last thing is this data that you
+[42:23] collect, it not only gives you a
+[42:25] picture, it can power other important
+[42:28] tools like evaluations
+[42:30] which is critical for you to understand
+[42:32] how your agent is performing. Because
+[42:35] you know when your agent is running
+[42:36] thousands of instances of your agent is
+[42:38] running in a production scale, you want
+[42:41] to be having a system that is
+[42:42] continuously looking for how your agent
+[42:44] is performing and uh and we have uh a
+[42:48] closer integration with agent core
+[42:49] evaluations that is based on the data
+[42:51] that we collect uh that uh that you can
+[42:54] leverage to um monitor your agent uh on
+[42:58] an automated fashion. And since you
+[43:00] brought up agent core evaluation, we
+[43:02] have the agent core evaluation session
+[43:04] coming up next week. So tune in again.
+[43:07] Uh it's going to give you a deep dive on
+[43:10] how you can evaluate your agents on a
+[43:13] number of criteria categories and uh
+[43:15] improve your AI applications, right? So
+[43:17] yeah,
+[43:19] >> hey that's that'll be great session to
+[43:21] attend. Um so so far we saw how exactly
+[43:26] the open telemetry plays a role here and
+[43:28] how we are basically building everything
+[43:31] based on open standard so you are not
+[43:33] being logged into anything. Um so now we
+[43:36] will see some very advanced demos like
+[43:38] how do if I have multiple agents how
+[43:40] does it work and and what exactly the
+[43:43] data gets stored. Uh so on to muzzle
+[43:45] please show us how this all comes
+[43:47] together.
+[43:48] >> Absolutely. Um speaking about open
+[43:51] telemetry I think u very key aspect of
+[43:54] open telemetry is distributed tracing
+[43:57] and to extend that concept we have
+[43:59] developed a demo which leverages multi-
+[44:02] aent frameworks in here we are
+[44:04] leveraging strand agents framework and
+[44:07] langraph which is a popular open-source
+[44:09] framework and let's understand how when
+[44:12] these different multi- aents hosted
+[44:15] across different runtime environments
+[44:18] here uh We're going to be hosting these
+[44:20] hierarchical multi- aent pattern across
+[44:24] three different runtimes and see how we
+[44:27] can leverage open telemetries
+[44:28] distributed tracing to connect all of
+[44:31] these aspects together. Um so
+[44:34] >> so u just a quick pause there is u you
+[44:37] have this code from the multi- aent
+[44:39] obser uh notebook. So can you show us
+[44:42] where in the sample code um you picked
+[44:44] this up from? uh if you go to bedrock
+[44:48] Asian core samples we have tutorials uh
+[44:50] >> right so okay so I think on the left
+[44:53] side you see that menu bar so maybe if
+[44:55] you can scroll through that that's uh
+[44:57] yeah
+[44:57] >> yeah so we have uh bedrock Asian core
+[45:00] samples out of which we have 01
+[45:02] tutorials folder uh this current
+[45:05] notebook is within the agent core
+[45:07] observability tutorials uh within agent
+[45:10] hosted on runtime uh folder
+[45:13] >> thank you thank you so much yeah I just
+[45:14] wanted to make sure so that folks who
+[45:16] are following uh this can uh um
+[45:19] >> browse through. Yep.
+[45:21] >> Sure. Uh so for the purpose of the demo,
+[45:23] we've kept the agent logic simple. So
+[45:25] this means that different team different
+[45:28] teams can be building out complex agent
+[45:30] and hosting them in their own custom
+[45:32] infrastructure. That means that this uh
+[45:35] langraph agent could be hosted on EKS uh
+[45:38] across different hosting infrastructures
+[45:41] as well. Um the key concept being that
+[45:45] each framework or aspect now we're
+[45:47] talking about the fact all we're
+[45:50] indexing on agents alone that means that
+[45:53] uh with open telemetry these could be
+[45:55] even MCP servers emitting open telemetry
+[45:58] traces etc. So once you ensure the
+[46:01] components emit open telemetry traces in
+[46:04] in my demo which is trans and langraph
+[46:08] uh we also saw how to uh enable agent
+[46:12] core observability in the previous demo.
+[46:14] So leveraging the similar steps uh I've
+[46:16] hosted three separate uh runtimes and
+[46:20] how we really connect these different
+[46:22] components together is by leveraging
+[46:26] open telemetries baggage uh which sort
+[46:29] of which is the reason we are able to
+[46:32] propagate our uh traces across. So this
+[46:36] is how uh within my orchestrator agent
+[46:38] developed in strand's agent framework uh
+[46:42] wherever uh we are invoking the
+[46:44] orchestrator agent simply by setting the
+[46:46] baggage uh we are able to uh leverage
+[46:50] distributed tracing capabilities of open
+[46:52] telemetry and uh see how a single
+[46:55] invocation connects all the different
+[46:57] trace ids together and I'm also not just
+[47:00] using runtime agents I'm currently
+[47:02] storing my u multi other multi- aent
+[47:05] security in SSM uh as an SSM parameter
+[47:09] for uh the sub aents to uh sub agent
+[47:12] ARNs and etc to be stored. So let's take
+[47:15] a look at how all of this gets connected
+[47:19] on agent core observability dashboard.
+[47:22] So uh another key [clears throat] aspect
+[47:23] as Rajes was talking about earlier is
+[47:26] understanding not just the agent related
+[47:29] metrics but also runtime uh runtime
+[47:32] related metrics which is very key in
+[47:35] understanding performance and monitoring
+[47:38] uh it across. So you can see how uh for
+[47:41] agents that are hosted on runtime we
+[47:43] provide all of those details. Uh here
+[47:45] I've hosted three separate agent uh
+[47:48] runtime. So you could filter this onto
+[47:50] custom dashboard and monitor all of this
+[47:52] information which leverage different
+[47:55] frameworks across in a single uh pane of
+[47:57] glass. So we saw how we can monitor
+[48:00] >> a quick question. Um so if you scroll up
+[48:04] uh so there are two different types of
+[48:06] sessions. Can you quickly talk about
+[48:08] what those two numbers are?
+[48:11] >> Um sorry
+[48:12] >> like in the in the overview you just
+[48:13] showed. Uh so there is a session count
+[48:16] up there. there is a sessions 13
+[48:21] and then if you if you open the runtime
+[48:23] metrics there's another set of sessions
+[48:25] ID there. So can you talk about what
+[48:26] these two are?
+[48:28] >> Um absolutely. So when it comes to
+[48:31] runtime a runtime uh handles um uh
+[48:35] session ids uh in a different uh
+[48:37] fashion. These are um as as if you're
+[48:40] familiar with agent core runtime uh
+[48:43] implements session isolation using
+[48:45] microVMs. So this information is
+[48:48] associated with Asian code runtime
+[48:50] related uh session ids uh and this
+[48:54] information is how you manage your open
+[48:57] telemetry session across your agent
+[49:00] application. So that's a key
+[49:01] differentiation to note.
+[49:04] Um
+[49:06] following our demo where we are
+[49:08] developing a multi- aent uh we saw how
+[49:11] to monitor these agents across your
+[49:13] different agents but you can also
+[49:15] doubleclick and dive into a single
+[49:18] agent. So here you can see um as Rajes
+[49:21] pointed out you can quickly pinpoint
+[49:23] what's going on and understand your
+[49:26] average span latency across your
+[49:29] different capabilities within your
+[49:30] agent. uh here I can see a variety of
+[49:34] spans that are invoked um and this
+[49:36] easily helps us also sort of uh uh
+[49:40] filter those traces and dive into
+[49:42] something specific uh that you are
+[49:44] looking into. So you have a variety of
+[49:46] filters to experiment at the trace level
+[49:49] and also at uh within a trace. So uh
+[49:54] going into our orchestrator uh strands
+[49:57] agent which passes the baggage using
+[49:59] open telemetry baggage. Uh here you can
+[50:02] see how across the trajectory you're
+[50:06] also able to connect the runtime vended
+[50:09] uh when spans which is runtime invoke
+[50:12] that we enabled using enabling logs and
+[50:15] tracing at runtime and also
+[50:17] understanding
+[50:20] framework related open telemetry traces
+[50:22] in the in the case of strand strand
+[50:24] takes an agentic loop with a modeldriven
+[50:27] approach. So this is how a trans agent
+[50:30] uh framework tracing looks like and you
+[50:32] can see how one of the sub agent that we
+[50:35] called which sits in a completely
+[50:37] different runtime um uh invokes a
+[50:41] langraph agent and this is how the
+[50:43] langraph traces and spans uh look like.
+[50:47] So this is a for a for a single trace
+[50:49] we're seeing the flow of
+[50:50] >> all of the different agents uh across
+[50:53] different runtime environments all
+[50:55] connected in a single trace ID
+[50:58] >> and that's really I feel like this is an
+[51:00] important topic for customers that are
+[51:02] worried about the quoteunquote blackbox
+[51:04] concerns of I don't know what's going
+[51:05] on. I don't know where it's doing it.
+[51:07] Like if you ever need to explain the
+[51:09] full extent of what happens or you want
+[51:11] to walk a stakeholder, a business user
+[51:14] through something, instead of just
+[51:16] showing them a bunch of these like raw
+[51:18] logs, you can actually show them the
+[51:20] flow of each step to actually give them
+[51:22] the confidence of of understanding
+[51:23] what's going on at each step.
+[51:25] >> Absolutely. And
+[51:27] >> of these nondeterministic systems to
+[51:28] know what's happening right under the
+[51:30] hood.
+[51:31] >> Absolutely. So along with the trajectory
+[51:33] view we also have a tree view which also
+[51:36] stitches the latency aspect uh together.
+[51:39] And um another key aspect is
+[51:42] understanding how um it is able to
+[51:46] stitch the logs and the spans and the
+[51:49] metrics together all in a single place.
+[51:52] So you're also able to for example see
+[51:55] span level metrics uh trace level
+[51:57] metrics and uh session level uh session
+[52:00] level metrics in the sessions view as
+[52:02] well. So here you can see that the
+[52:05] orchestrator agent had just 15 spans
+[52:08] associated with it execution. So let's
+[52:11] take a look at that langraph agent that
+[52:13] we uh developed earlier and search with
+[52:16] the same trace ID and see how the same
+[52:20] trace ID connects the langraph agent and
+[52:23] the orchestrator agent in within the
+[52:26] same flow. And you can see how uh the
+[52:28] langraph ID uh the langraph agent had uh
+[52:31] 13 different invocations compared uh 13
+[52:34] different spans compared to that. So
+[52:36] you're able to have this level of
+[52:38] comparisons and not just connecting
+[52:41] agents these same concepts applies to
+[52:45] connecting the different aspects of
+[52:47] agent core services as well. So ex so
+[52:51] talking double diving on not just agents
+[52:54] but understanding how when you leverage
+[52:56] uh let us say an agent that leverages
+[52:58] agent core memory you have a dedicated
+[53:01] dashboard that shows you the metrics of
+[53:04] operations associated with your
+[53:06] short-term and long-term memory
+[53:08] capabilities and get some charts
+[53:10] associated with invocation retrieving
+[53:12] records or things like that. uh but when
+[53:15] a memory agent is associated with a
+[53:19] runtime agent, you'll be able to see how
+[53:22] uh you can leverage uh how the traces
+[53:25] are connected with the memory and uh
+[53:28] runtime uh traces together like this. So
+[53:31] here you can see you had a runtime
+[53:34] invocation that leveraged agent core
+[53:37] memory uh create event operation and see
+[53:40] how all of this is stitched together.
+[53:43] So,
+[53:44] >> real quick, if I can see now how they I
+[53:46] can see this across a single invocation
+[53:48] and and all of the different spans uh
+[53:50] components, but if I have a user that
+[53:53] comes along and says, you know, it seems
+[53:54] like all of the agents are running slow
+[53:56] today or gives me some kind of feedback
+[53:58] like that that happens a lot. Is there a
+[54:00] way to see what's causing the most
+[54:02] amount of latency in in an average run?
+[54:05] >> Um, so there are different aspects of
+[54:08] measuring latency, right? One is
+[54:11] drilling down into metrics uh associated
+[54:14] uh with uh uh runtime uh analyzing
+[54:19] runtime agent uh latency as well as
+[54:22] analyzing average span latency
+[54:24] associated with all the capabilities.
+[54:27] But double diving on that uh
+[54:29] understanding latency is leveraging AWS
+[54:32] cloudatch metrics right um so this means
+[54:36] that um you're able to create those
+[54:39] custom dashboards with all the
+[54:43] information that is available uh that is
+[54:45] emitted not just by your agents but also
+[54:48] by your framework uh together per
+[54:51] different combinations. As you can see,
+[54:53] we have a variety of metrics associated.
+[54:56] So you could group this by certain
+[54:59] single agent that you're doing or
+[55:01] analyze the different metrics like
+[55:03] throttling, latency, errors, input,
+[55:06] output tokens that you want to leverage
+[55:09] etc. or even by um even if you're trying
+[55:13] to analyze some agent core related
+[55:15] operations. So think about the variety
+[55:18] of combinations you could leverage this
+[55:20] data and to give a a quick overview on
+[55:24] what are the kind of dashboards you can
+[55:26] develop uh with that is as you rightly
+[55:29] pointed out like latency so you can
+[55:31] build these custom latencies for example
+[55:34] here is a quick dashboard on how I I'm
+[55:37] comparing my latency across my three
+[55:40] different agents that is my two sub
+[55:42] aents and see that glamoral visibility
+[55:44] into it and also input output tokens and
+[55:48] with cloudatch connecting this to
+[55:50] cloudatch gives you the ability to not
+[55:52] just visualize metrics but also uh
+[55:56] analyze log groups that means as Rajes
+[55:59] previously pointed out leveraging open
+[56:01] telemetry means that you can pass your
+[56:04] custom attributes uh within your Asians
+[56:07] and um custom attributes leveraging open
+[56:11] telemetry baggage which looks like this.
+[56:14] Mhm.
+[56:14] >> So you can create those custom spans and
+[56:17] attributes as well. For a simple web
+[56:19] search agent, I'd like to see how
+[56:21] different web search uh providers are
+[56:23] performing for the same query or some
+[56:25] other business specific uh attributes
+[56:28] that you would like to monitor. So by
+[56:30] passing these open telemetry attributes
+[56:32] and packages uh you will also be able to
+[56:35] query them across your log groups and um
+[56:39] also um set alarms cloudatch alarms
+[56:43] associated with performance. For
+[56:44] example, if your particular memory
+[56:46] resource is taking uh too much time, you
+[56:49] could set up a cloudatch alarm. Or when
+[56:51] there is a high token usage from a
+[56:54] particular agent ARN, you could set up a
+[56:57] cloudatch alarm. And this is just the
+[57:00] beginning of leveraging all of this
+[57:02] information to create actionable uh
+[57:05] dashboards for you to see from.
+[57:09] >> Super convenient. That's that's uh being
+[57:11] able to see all that one place,
+[57:12] particularly in Cloudatch, would be
+[57:13] helpful. And that's exactly what we go
+[57:15] go back to the logs to see, hey, what's
+[57:17] the one that's what's what's causing the
+[57:18] slowness or you know something's
+[57:22] >> and
+[57:23] >> and it goes without saying, right? Like
+[57:24] there are multiple paths you can do,
+[57:27] right? You get the full access to the
+[57:29] data, not only the dashboards. So the
+[57:31] dashboards gives you a overview. You can
+[57:34] go into the trace details view and then
+[57:36] see a timeline to see specific delay
+[57:38] points if that is what you're looking
+[57:40] for. Or you can actually go and use the
+[57:44] metrics to see establish a pattern or is
+[57:46] this a systemic pattern or is this
+[57:49] something specific one point in time. So
+[57:51] that's a a powerful set of uh
+[57:54] capabilities that we're providing here.
+[57:56] >> That's interesting. Very cool. or or
+[57:57] simply query using log insights to uh
+[58:01] see if you're looking for something
+[58:02] specific information within your a uh
+[58:05] spans which are written to AWS spans log
+[58:08] group or across your different uh
+[58:11] runtime uh log groups as well or
+[58:14] something that you're looking for u
+[58:16] specifically within gateway. So
+[58:19] understand how the different logs
+[58:21] metrics and uh traces work together. But
+[58:24] just to conclude on uh just a teaser to
+[58:28] what's very important to uh stitch
+[58:31] together along with observability is
+[58:33] understanding how observability data
+[58:37] sits right next to evaluations to uh
+[58:40] understand your information all in one
+[58:43] place. So leveraging Asian core
+[58:45] evaluations on your agents, you're also
+[58:48] able to see your traces, sessions,
+[58:50] observability data and uh evaluation
+[58:54] data all in a single place. So you get
+[58:57] dedicated dashboards about uh your
+[58:59] evaluation metrics uh which could be
+[59:02] builtin or custom and understand uh how
+[59:06] uh an agent is doing uh what are the
+[59:09] evaluation performances also uh together
+[59:12] with the observability trace.
+[59:15] >> Yeah, that's a that's a great uh you
+[59:17] know wrap to you know what we're showing
+[59:20] today. So I mean you took us through the
+[59:22] whole journey of how uh the agents are
+[59:25] uh can be you know evaluated against all
+[59:28] these criteria right so there's there's
+[59:30] a lot that you showed us today Madu and
+[59:32] Rajes so uh folks uh any closing
+[59:36] comments there from from you
+[59:41] so I mean in in a nutshell you know the
+[59:43] data that you collect makes or breaks
+[59:45] right your your agent quality so you
+[59:48] know we provide the most comprehensive
+[59:50] set tools uh that are built on
+[59:52] production ready capabilities that have
+[59:54] been there for quite some time and we
+[59:56] really invite uh you know folks to
+[59:59] explore this. We have the
+[60:00] documentations, the links were shared.
+[60:01] These are the documentations and the
+[60:03] code samples are really there to start
+[60:05] building and exploring what you can do
+[60:07] with this and we try to be as open as
+[60:10] possible using open standards like open
+[60:13] telemetry to build this whole system and
+[60:15] make it available for you across all but
+[60:19] appreciate hosting us and thank you for
+[60:21] spending the time with us uh this
+[60:23] evening today.
+[60:25] >> Absolutely. And as a closing comment,
+[60:27] I'd also like to add that we have Asian
+[60:30] core samples that are associated with
+[60:33] Asian core observability. Please do
+[60:35] check them out and also check out how
+[60:37] you can leverage uh Asian core
+[60:39] observability for the rest of the Asian
+[60:41] core services as well.
+[60:44] >> Excellent. Thanks for tuning in and uh
+[60:46] we'll come back next week uh for more on
+[60:49] deep dive on agent core evaluations.
+[60:51] That's it from our side. See you all.
+[60:54] >> Thank you everyone.
+[60:59] >> [music]
+[61:04] [music]

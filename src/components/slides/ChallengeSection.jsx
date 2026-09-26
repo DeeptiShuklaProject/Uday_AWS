@@ -6,7 +6,8 @@ import { useCourse } from '../../context/CourseContext';
  * and keyword-based test-case checks against the user's attempt.
  */
 export default function ChallengeSection({ content = {}, sectionId, checkLabel = 'Run checks' }) {
-  const { progress, currentModuleId } = useCourse();
+  const { progress, currentModule } = useCourse();
+  const moduleId = currentModule?.id;
   const [attempt, setAttempt] = useState(content.starterCode || '');
   const [results, setResults] = useState(null);
   const [hintsOpen, setHintsOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function ChallengeSection({ content = {}, sectionId, checkLabel =
     }));
     setResults(res);
     progress.recordChallengeScore(
-      currentModuleId, sectionId || 'challenge', res.filter(r => r.pass).length, res.length);
+      moduleId, sectionId || 'challenge', res.filter(r => r.pass).length, res.length);
   };
 
   return (

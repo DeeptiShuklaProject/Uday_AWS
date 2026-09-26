@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "kbId": "doc_CodeAdventure",
+  "portalBadge": "Gamified Programming Engine",
+  "portalTitle": "CodeAdventure: Learn Languages By Playing",
+  "portalSubtitle": "Interactive Multi-Language Arcade & Sci-Fi Coding Arena",
+  "portalDescription": "Master 11+ programming languages including Python, JavaScript, Java, C++, C#, Go, Rust, and Bash through real-time interactive game visualizers and CodinGame-style puzzles.",
+  "modules": [
+    {
+      "id": "module-01",
+      "title": "Phase 01: Onboarding & Closest Target Acquisition",
+      "iconName": "Crosshair",
+      "badge": "Level 1",
+      "description": "Learn input scanning, conditional logic, and targeting calculations by destroying approaching enemy ships."
+    },
+    {
+      "id": "module-02",
+      "title": "Phase 02: The Descent & Peak Altitude Radar",
+      "iconName": "TrendingDown",
+      "badge": "Level 2",
+      "description": "Scan mountain peak heights across game turns and select the highest peak to fire laser cannon."
+    },
+    {
+      "id": "module-03",
+      "title": "Phase 03: Mars Lander Physics & Thrust Controls",
+      "iconName": "Rocket",
+      "badge": "Level 3",
+      "description": "Calculate downward velocity and apply optimal thruster power to land safely on Mars."
+    },
+    {
+      "id": "module-04",
+      "title": "Phase 04: Shadows of the Knight - Binary Search Radar",
+      "iconName": "Radar",
+      "badge": "Level 4",
+      "description": "Use 2D binary search radar signals to locate targets in optimal log(N) steps."
+    },
+    {
+      "id": "module-05",
+      "title": "Phase 05: Power of Thor - 2D Vector Navigation",
+      "iconName": "Compass",
+      "badge": "Level 5",
+      "description": "Calculate 8-way compass direction vectors (N, S, E, W, NE, NW, SE, SW) to reach destination coordinates."
+    },
+    {
+      "id": "module-06",
+      "title": "Phase 06: OOPs & Mecha Squad - Classes, Objects & Inheritance",
+      "iconName": "Bot",
+      "badge": "Level 6",
+      "description": "Define MechaBot classes with constructors, attributes, and methods to instantiate hero bots and defeat boss titans."
+    },
+    {
+      "id": "module-07",
+      "title": "Phase 07: Energy Shield Buff - Decorators & Wrappers",
+      "iconName": "Shield",
+      "badge": "Level 7",
+      "description": "Wrap weapon actions with high-order decorators (@power_buff) to double laser damage and activate plasma shields."
+    },
+    {
+      "id": "module-08",
+      "title": "Phase 08: Autonomous AI Agent - Cyber Companion Loop",
+      "iconName": "Brain",
+      "badge": "Level 8",
+      "description": "Construct an autonomous AI Agent companion loop (Sense -> Think -> Act) to evaluate health/ammo and select tools dynamically."
+    }
+  ]
+}

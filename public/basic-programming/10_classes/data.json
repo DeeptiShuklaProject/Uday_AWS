@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "10_classes",
+  "title": "Classes & Object-Oriented Blueprint",
+  "description": "Classes define object blueprints encapsulating state attributes and behavior methods with inheritance and encapsulation.",
+  "category": "Structures",
+  "badge": "Level 10: Legend",
+  "tags": [
+    "Classes",
+    "OOP",
+    "Objects",
+    "Inheritance"
+  ],
+  "codeExamples": {
+    "python": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self._balance = balance\n    def deposit(self, amount):\n        self._balance += amount\n        return self._balance\n\nacc = BankAccount('Alice', 100)\nacc.deposit(50)\nprint(f'Account: {acc.owner}, Balance: ${acc._balance}')",
+    "java": "public class BankAccount {\n    private String owner;\n    private double balance;\n    public BankAccount(String owner, double balance) {\n        this.owner = owner; this.balance = balance;\n    }\n    public void deposit(double amount) { this.balance += amount; }\n    public double getBalance() { return this.balance; }\n    public static void main(String[] args) {\n        BankAccount acc = new BankAccount(\"Alice\", 100);\n        acc.deposit(50);\n        System.out.println(\"Balance: $\" + acc.getBalance());\n    }\n}",
+    "javascript": "class BankAccount {\n    constructor(owner, balance = 0) {\n        this.owner = owner;\n        this._balance = balance;\n    }\n    deposit(amount) {\n        this._balance += amount;\n        return this._balance;\n    }\n}\nlet acc = new BankAccount('Alice', 100);\nacc.deposit(50);\nconsole.log(`Account: ${acc.owner}, Balance: $${acc._balance}`);",
+    "cpp": "#include <iostream>\n#include <string>\nclass BankAccount {\nprivate:\n    std::string owner;\n    double balance;\npublic:\n    BankAccount(std::string o, double b) : owner(o), balance(b) {}\n    void deposit(double amt) { balance += amt; }\n    double getBalance() const { return balance; }\n};\nint main() {\n    BankAccount acc(\"Alice\", 100);\n    acc.deposit(50);\n    std::cout << \"Balance: $\" << acc.getBalance() << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What are the four core pillars of Object-Oriented Programming (OOP)?",
+      "options": [
+        "Encapsulation, Abstraction, Inheritance, and Polymorphism.",
+        "Compilation, Linking, Execution, and Garbage Collection.",
+        "Variables, Loops, Functions, and Arrays.",
+        "Bits, Bytes, Kilobytes, and Megabytes."
+      ],
+      "correctIndex": 0,
+      "explanation": "The 4 fundamental pillars of OOP are Encapsulation (bundling state/methods), Abstraction (hiding implementation details), Inheritance (reusing parent class code), and Polymorphism (overriding interface behavior)."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. What is the role of `self` in Python class methods?",
+      "a": "`self` is an explicit reference to the current instance object invoking the method. It binds instance attributes (`self.name = name`) to the specific Heap object."
+    },
+    {
+      "q": "02. What is the difference between `__init__()` vs `__new__()` in Python?",
+      "a": "`__new__()` is the actual constructor that instantiates and returns a new object instance in memory. `__init__()` is the initializer that sets up instance attributes."
+    },
+    {
+      "q": "03. What is the difference between Class Variables vs Instance Variables?",
+      "a": "Class variables are declared directly inside the class body and shared across ALL instances. Instance variables are defined inside `__init__()` using `self` and exist independently per instance."
+    },
+    {
+      "q": "04. What is Encapsulation and how are private attributes (`__private`) represented in Python?",
+      "a": "Encapsulation restricts direct access to internal object state. Double underscores (`__private`) trigger Name Mangling (`_ClassName__private`) to prevent accidental subclass overrides."
+    },
+    {
+      "q": "05. What is Method Overriding vs Method Overloading?",
+      "a": "Method Overriding replaces a parent class method in a subclass. Method Overloading defines multiple methods with the same name but different parameter signatures (supported natively in Java/C++, simulated via default args in Python)."
+    },
+    {
+      "q": "06. How does Multiple Inheritance work and what is Method Resolution Order (MRO)?",
+      "a": "Python allows a class to inherit from multiple parent classes. The C3 Linearization algorithm determines the exact search order (MRO) accessed via `ClassName.mro()` or `__mro__`."
+    },
+    {
+      "q": "07. What is `super()` and why should it be used in constructor inheritance?",
+      "a": "`super().__init__()` delegates constructor initialization to parent classes following the MRO chain without hardcoding parent class names."
+    },
+    {
+      "q": "08. What are Python Dunder (Magic) Methods (`__str__`, `__repr__`, `__len__`, `__eq__`)?",
+      "a": "Special double-underscore methods that hook custom class objects into Python operators and built-in functions (e.g. `__str__` for `print()`, `__eq__` for `==`)."
+    },
+    {
+      "q": "09. What is `@classmethod` vs `@staticmethod` in Python?",
+      "a": "`@classmethod` takes `cls` as first argument and can access class state (useful for factory constructors). `@staticmethod` takes no implicit first argument and acts as a plain function scoped inside the class namespace."
+    },
+    {
+      "q": "10. What is `@property` decorator (Getters & Setters) in Python?",
+      "a": "`@property` turns a method into a read-only attribute getter. `@var.setter` defines setter validation logic, enforcing encapsulation cleanly without changing caller syntax (`obj.var = val`)."
+    },
+    {
+      "q": "11. What is Abstract Base Class (ABC) in Python?",
+      "a": "Using `from abc import ABC, abstractmethod`, an Abstract Base Class defines mandatory interface methods that subclasses MUST implement, preventing direct instantiation of incomplete base classes."
+    },
+    {
+      "q": "12. What are Python `__slots__` and how do they optimize RAM memory?",
+      "a": "Defining `__slots__ = ('name', 'age')` replaces the dynamic instance dictionary `__dict__` with a fixed-size C array, saving up to 40-50% RAM memory per object instance."
+    },
+    {
+      "q": "13. What is Polymorphism and Duck Typing in Python?",
+      "a": "Polymorphism lets different objects respond to identical method calls. Python uses Duck Typing: 'If it walks like a duck and quacks like a duck, it's a duck' (focuses on object capability rather than explicit class type)."
+    },
+    {
+      "q": "14. What is Virtual Method Table (VTable) in C++ / Java OOP?",
+      "a": "A lookup table of function pointers used by object runtimes to dynamically dispatch overridden virtual methods at runtime."
+    },
+    {
+      "q": "15. What is Composition vs Inheritance ('Has-a' vs 'Is-a')?",
+      "a": "Inheritance ('Is-a') creates tight coupling between classes. Composition ('Has-a') combines decoupled object instances as fields, providing higher flexibility and easier maintenance."
+    },
+    {
+      "q": "16. What is the SOLID Principles of Object-Oriented Design?",
+      "a": "Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion principles guiding maintainable software architecture."
+    },
+    {
+      "q": "17. How does Python Garbage Collection (Reference Counting + Cyclic GC) manage object destruction?",
+      "a": "Python tracks reference counts per object. When reference count drops to 0, memory is immediately freed. A cyclic garbage collector periodically detects circular reference deadlocks."
+    },
+    {
+      "q": "18. What is `__del__()` destructor in Python and why is it unreliable?",
+      "a": "`__del__()` is called when an object is about to be garbage collected, but execution timing is not guaranteed. Use context managers (`with` statement) for reliable resource cleanup instead."
+    },
+    {
+      "q": "19. What is a Dataclass (`@dataclass`) in Python 3.7+?",
+      "a": "`@dataclass` automatically generates `__init__()`, `__repr__()`, and `__eq__()` methods for classes primarily holding data fields."
+    },
+    {
+      "q": "20. What are production best practices for Object-Oriented Design?",
+      "a": "Favor composition over inheritance, keep class responsibilities tightly focused, enforce private attributes with `@property`, and leverage dataclasses for clean data transfer objects."
+    }
+  ]
+}

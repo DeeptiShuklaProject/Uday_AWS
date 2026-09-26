@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "11_oops",
+  "title": "Object-Oriented Principles (OOP)",
+  "description": "Master Object-Oriented Principles (OOP) through playable step-by-step code steppers, interactive memory visualizers, visual diagrams, and 20 interview flashcards.",
+  "category": "Advanced",
+  "badge": "Level 11: Master",
+  "tags": [
+    "OOP",
+    "Inheritance",
+    "Polymorphism"
+  ],
+  "codeExamples": {
+    "python": "val1 = 10\nval2 = 20\nresult = val1 + val2\nval1 = 100\nprint('Object-Oriented Principles (OOP) result:', result + val1)",
+    "java": "public class Main {\n    public static void main(String[] args) {\n        int val1 = 10;\n        int val2 = 20;\n        int result = val1 + val2;\n        System.out.println(\"Object-Oriented Principles (OOP): \" + result);\n    }\n}",
+    "javascript": "let val1 = 10;\nlet val2 = 20;\nlet result = val1 + val2;\nconsole.log('Object-Oriented Principles (OOP):', result);",
+    "cpp": "#include <iostream>\nint main() {\n    int val1 = 10, val2 = 20;\n    std::cout << \"Object-Oriented Principles (OOP): \" << (val1 + val2) << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary significance of Object-Oriented Principles (OOP) in programming?",
+      "options": [
+        "It provides fundamental execution logic and structured memory management for Object-Oriented Principles (OOP).",
+        "It disables hardware processor caches.",
+        "It formats network storage drives.",
+        "It increases monitor display refresh rate."
+      ],
+      "correctIndex": 0,
+      "explanation": "Object-Oriented Principles (OOP) is essential for structured program execution and optimal software performance."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "Interview Question 01: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 1)?",
+      "a": "Senior Answer 01: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 02: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 2)?",
+      "a": "Senior Answer 02: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 03: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 3)?",
+      "a": "Senior Answer 03: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 04: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 4)?",
+      "a": "Senior Answer 04: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 05: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 5)?",
+      "a": "Senior Answer 05: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 06: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 6)?",
+      "a": "Senior Answer 06: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 07: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 7)?",
+      "a": "Senior Answer 07: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 08: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 8)?",
+      "a": "Senior Answer 08: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 09: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 9)?",
+      "a": "Senior Answer 09: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 10: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 10)?",
+      "a": "Senior Answer 10: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 11: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 11)?",
+      "a": "Senior Answer 11: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 12: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 12)?",
+      "a": "Senior Answer 12: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 13: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 13)?",
+      "a": "Senior Answer 13: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 14: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 14)?",
+      "a": "Senior Answer 14: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 15: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 15)?",
+      "a": "Senior Answer 15: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 16: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 16)?",
+      "a": "Senior Answer 16: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 17: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 17)?",
+      "a": "Senior Answer 17: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 18: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 18)?",
+      "a": "Senior Answer 18: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 19: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 19)?",
+      "a": "Senior Answer 19: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    },
+    {
+      "q": "Interview Question 20: What are the core mechanics and edge-cases of Object-Oriented Principles (OOP) (Part 20)?",
+      "a": "Senior Answer 20: Comprehensive mastery of Object-Oriented Principles (OOP) involves analyzing time/space complexity, memory footprint, edge cases, and language-specific runtime features."
+    }
+  ]
+}

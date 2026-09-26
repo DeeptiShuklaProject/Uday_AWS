@@ -1,4 +1,6 @@
+import { useNavigate } from 'react-router-dom';
 import { useCourse } from '../context/CourseContext';
+import CourseCard from './CourseCard';
 
 /**
  * LandingPage — course home: hero, learning journey, features, progress
@@ -7,10 +9,11 @@ import { useCourse } from '../context/CourseContext';
  * Fully prop/context-driven — `content` supplies all copy and lists, module
  * cards come from the registry, and stats from the progress model.
  */
-export default function LandingPage({ content, chapterBase = '/chapter' }) {
+export default function LandingPage({ content, categories = [] }) {
   const { modules, course, registry, progress, goToModule } = useCourse();
   const stats = progress.getStats();
   const c = content;
+  const navigate = useNavigate();
 
   // "Start Learning" opens the configured start module (module-04 in the
   // vanilla course); falls back to the first incomplete chapter.
@@ -118,47 +121,28 @@ export default function LandingPage({ content, chapterBase = '/chapter' }) {
         </div>
       </section>
 
-      {/* CHAPTERS */}
+      {/* CATEGORIES — one folder card per course collection (AWS, Bedrock…) */}
       <section className="page-section" id="chapters" style={{ background: 'var(--color-neutral-0)' }}>
         <div className="container">
           <div className="page-section-header">
-            <h2>{c.chapters.title}</h2>
-            <p>{c.chapters.subtitle}</p>
+            <h2>{c.categories.title}</h2>
+            <p>{c.categories.subtitle}</p>
           </div>
           <div className="module-grid stagger-children">
-            {modules.map(mod => {
-              const pct = progress.getModuleProgress(mod.id);
-              const complete = progress.isModuleComplete(mod.id);
+            {categories.map(cat => {
+              const itemCount = cat.items.length;
+              // Aggregate progress where the category tracks it (AWS modules).
+              const pct = cat.kind === 'module' ? stats.overallProgress : undefined;
+              const complete = pct === 100;
               return (
-                <button key={mod.id} type="button"
-                  className="card module-card hover-float"
-                  style={{ textDecoration: 'none', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer' }}
-                  onClick={() => goToModule(mod.id)}>
-                  <div className="card-body" style={{ padding: 24 }}>
-                    <div className="module-number">{mod.number}</div>
-                    <div className="module-icon" style={{ background: mod.colorBg, color: mod.color }}>
-                      {mod.icon}
-                    </div>
-                    <div className="module-title">{mod.title}</div>
-                    <div className="module-desc">{mod.productionStory || mod.description}</div>
-                    <div style={{ marginTop: 12 }}>
-                      <div className="progress-label">
-                        <span className="progress-label-title" style={{ fontSize: 12 }}>
-                          {complete ? '✅ Complete' : 'Progress'}
-                        </span>
-                        <span className="progress-label-value" style={{ fontSize: 12 }}>{pct}%</span>
-                      </div>
-                      <div className="progress-bar progress-bar-sm">
-                        <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
-                      </div>
-                    </div>
-                    <div className="module-meta" style={{ marginTop: 12 }}>
-                      <span className={`badge difficulty-${mod.difficulty}`}>{mod.difficulty}</span>
-                      <span>⏱ {mod.duration}</span>
-                      <span>📝 {mod.lessons?.length || 0} lessons</span>
-                    </div>
-                  </div>
-                </button>
+                <CourseCard key={cat.id}
+                  icon={cat.icon} iconBg={cat.colorBg} iconColor={cat.color}
+                  title={cat.title}
+                  description={cat.description}
+                  progress={pct !== undefined ? { pct, complete } : undefined}
+                  meta={[`📦 ${itemCount} ${cat.kind === 'module' ? 'chapters' : 'courses'}`]}
+                  onClick={() => navigate(`/courses/${cat.id}`)}
+                />
               );
             })}
           </div>

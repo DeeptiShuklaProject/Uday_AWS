@@ -30,7 +30,10 @@ export default function DetailedChapterModal({
       subtitle={currentModule ? `Chapter ${currentModule.number}: ${currentModule.title}` : ''}>
       {loading && <em>{loadingLabel}</em>}
       {error && <div className="lab-content-empty">{errorLabel}</div>}
-      {!loading && !error && <MarkdownRenderer markdown={chapterOnly} imageBaseUrl={config.chapterBaseUrl} />}
+      {!loading && !error && (
+        <MarkdownRenderer markdown={chapterOnly}
+          imageBaseUrl={currentModule?.imageBaseUrl || config.chapterBaseUrl} />
+      )}
     </Modal>
   );
 }

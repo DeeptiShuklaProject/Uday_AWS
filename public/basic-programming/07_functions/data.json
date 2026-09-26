@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "07_functions",
+  "title": "Functions & Scope Management",
+  "description": "Functions encapsulate reusable code blocks with input parameters, local call stack frames, and return values.",
+  "category": "Foundations",
+  "badge": "Level 7: Master",
+  "tags": [
+    "Functions",
+    "Scope",
+    "CallStack",
+    "Return"
+  ],
+  "codeExamples": {
+    "python": "def calculate_total(price, tax_rate=0.18):\n    tax = price * tax_rate\n    final_price = price + tax\n    return final_price\n\nitem_cost = 100\ntotal = calculate_total(item_cost)\nprint(f'Item: ${item_cost} -> Total with tax: ${total}')",
+    "java": "public class Main {\n    public static double calculateTotal(double price, double taxRate) {\n        double tax = price * taxRate;\n        return price + tax;\n    }\n    public static void main(String[] args) {\n        double itemCost = 100.0;\n        double total = calculateTotal(itemCost, 0.18);\n        System.out.println(\"Total: $\" + total);\n    }\n}",
+    "javascript": "function calculateTotal(price, taxRate = 0.18) {\n    let tax = price * taxRate;\n    return price + tax;\n}\nlet itemCost = 100;\nlet total = calculateTotal(itemCost);\nconsole.log(`Total: $${total}`);",
+    "cpp": "#include <iostream>\ndouble calculateTotal(double price, double taxRate = 0.18) {\n    return price + (price * taxRate);\n}\nint main() {\n    double itemCost = 100.0;\n    double total = calculateTotal(itemCost);\n    std::cout << \"Total: $\" << total << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the Call Stack in function execution?",
+      "options": [
+        "A LIFO (Last-In, First-Out) memory data structure that tracks active function calls, parameter values, and return addresses.",
+        "A CPU cache hardware component.",
+        "A hard drive partition.",
+        "A global database query queue."
+      ],
+      "correctIndex": 0,
+      "explanation": "The call stack manages active function execution frames. When a function is called, a frame is pushed; when it returns, the frame is popped."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. What is the difference between Pass-by-Value vs Pass-by-Reference in Python?",
+      "a": "Python uses 'Pass-by-Object-Reference' (Pass-by-Assignment). Immutable objects (ints, strings, tuples) behave like pass-by-value because they cannot be modified in-place. Mutable objects (lists, dicts) allow in-place mutations visible to the caller."
+    },
+    {
+      "q": "02. What is Python LEGB Scope resolution rule?",
+      "a": "LEGB defines the variable lookup order: Local scope -> Enclosing functions (nonlocal) -> Global scope -> Built-in namespace (`len`, `str`, `print`)."
+    },
+    {
+      "q": "03. Why is using Mutable Default Arguments (e.g. `def func(lst=[])`) a dangerous anti-pattern?",
+      "a": "Default parameter values are evaluated ONCE when the function is defined, not when called! `lst=[]` persists across calls, creating shared state bugs. Use `def func(lst=None): if lst is None: lst = []` instead."
+    },
+    {
+      "q": "04. What is a Closure in Python / JavaScript?",
+      "a": "A closure is an inner function that retains access to variables from its enclosing outer function's scope even after the outer function has finished executing."
+    },
+    {
+      "q": "05. What is a Decorator (`@decorator`) in Python and how does it work?",
+      "a": "A decorator is a higher-order function that takes another function as an argument, wraps it to add extra functionality (like logging or auth checks), and returns the new function."
+    },
+    {
+      "q": "06. How do `*args` and `**kwargs` work in Python function definitions?",
+      "a": "`*args` collects positional arguments into a tuple. `**kwargs` collects keyword arguments into a dictionary, enabling flexible dynamic signatures."
+    },
+    {
+      "q": "07. What is Recursion and what triggers a Stack Overflow Error?",
+      "a": "Recursion occurs when a function calls itself. Without a valid base case, calls continue indefinitely until maximum call stack limit is reached, raising `RecursionError`."
+    },
+    {
+      "q": "08. What is a Pure Function and what are Side Effects?",
+      "a": "A Pure Function always returns the exact same output for given inputs without modifying global state or external I/O (side effects), making code predictable and testable."
+    },
+    {
+      "q": "09. What is a Lambda Function and when should it be used?",
+      "a": "A lambda is a anonymous single-expression inline function (`lambda x, y: x + y`). Best used for short key functions in `map()`, `filter()`, or `sort()`."
+    },
+    {
+      "q": "10. How does the `global` keyword differ from `nonlocal` in Python?",
+      "a": "`global` grants write access to top-level module variables. `nonlocal` grants write access to variables in the nearest enclosing non-global function scope."
+    },
+    {
+      "q": "11. What is Generator Function (`yield`) vs standard Function (`return`)?",
+      "a": "`return` exits the function and destroys its frame. `yield` pauses the function state and returns a generator object, producing values lazily on-demand."
+    },
+    {
+      "q": "12. What is Type Hinting (`def func(a: int) -> str:`) and does Python enforce types at runtime?",
+      "a": "Type hints document expected input/output types for static type checkers like `mypy` and IDE autocompletion, but Python does NOT enforce them at runtime."
+    },
+    {
+      "q": "13. How does Function Currying work in functional programming?",
+      "a": "Currying transforms a multi-argument function into a sequence of single-argument functions (`add(x)(y)`)."
+    },
+    {
+      "q": "14. What is a Higher-Order Function?",
+      "a": "A function that accepts other functions as parameters, returns a function, or both (e.g. `map()`, `filter()`, `reduce()`)."
+    },
+    {
+      "q": "15. How does Memoization (`@functools.lru_cache`) optimize recursive call stacks?",
+      "a": "Memoization caches return values of expensive function calls based on input arguments, turning O(2ⁿ) exponential recursive algorithms into O(N) linear operations."
+    },
+    {
+      "q": "16. What is Docstring format and how is `__doc__` accessed?",
+      "a": "Docstrings are triple-quoted string literals immediately following function signatures. Accessible via `func.__doc__` or `help(func)`."
+    },
+    {
+      "q": "17. What is Positional-Only (`/`) and Keyword-Only (`*`) parameters in Python 3.8+?",
+      "a": "`def f(a, /, b, *, c):` forces `a` to be positional-only, `b` to be flexible, and `c` to be passed strictly as a keyword argument."
+    },
+    {
+      "q": "18. What is the execution overhead of function calls compared to inline code?",
+      "a": "Function calls incur slight overhead for pushing call stack frames and mapping arguments. In hot loops, micro-optimizations may inline small operations."
+    },
+    {
+      "q": "19. How do first-class functions work in Python?",
+      "a": "Functions are first-class objects: they can be assigned to variables, stored in data structures, passed as arguments, and returned from other functions."
+    },
+    {
+      "q": "20. What are production best practices for designing functions?",
+      "a": "Follow the Single Responsibility Principle (SRP), keep functions under 30 lines, avoid mutating input arguments directly, and use clear descriptive function names."
+    }
+  ]
+}

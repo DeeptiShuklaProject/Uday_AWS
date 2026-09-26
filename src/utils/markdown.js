@@ -53,10 +53,12 @@ export function resolveMediaUrls(html, baseUrl) {
   const doc = new DOMParser().parseFromString(`<div id="__wrap">${html}</div>`, 'text/html');
   const wrap = doc.getElementById('__wrap');
   if (!wrap) return html;
+  const origin = window.location.origin;
   const isRelative = v => v && !/^(https?:|\/|data:|blob:|#|mailto:)/i.test(v);
   wrap.querySelectorAll('img[src], source[src], video[src]').forEach(el => {
     const src = el.getAttribute('src');
-    if (isRelative(src)) el.setAttribute('src', base + src);
+    // URL() resolves ./ and ../ segments against the base.
+    if (isRelative(src)) el.setAttribute('src', new URL(src, origin + base).pathname);
   });
   return wrap.innerHTML;
 }

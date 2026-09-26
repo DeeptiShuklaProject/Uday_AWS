@@ -75,6 +75,11 @@ export const landingContent = {
     subtitle: '47 chapters following a real-world production architecture journey.',
   },
 
+  categories: {
+    title: 'Course Categories',
+    subtitle: 'Choose a track — the AWS Production Masterclass or the Bedrock workbooks.',
+  },
+
   achievements: {
     title: 'Achievements',
     subtitle: 'Professional badges earned through mastery.',

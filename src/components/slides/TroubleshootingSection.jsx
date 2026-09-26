@@ -10,6 +10,10 @@ export default function TroubleshootingSection({ content = {} }) {
 
   return (
     <div>
+      {content.intro && (
+        <div className="slide-html" style={{ marginBottom: 16 }}
+          dangerouslySetInnerHTML={{ __html: content.intro }} />
+      )}
       {items.map((item, i) => (
         <div key={i} className={`accordion-item${open[i] ? ' open' : ''}`}>
           <button type="button" className="accordion-header"

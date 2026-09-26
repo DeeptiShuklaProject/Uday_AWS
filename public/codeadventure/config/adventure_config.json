@@ -1,0 +1,584 @@
+{
+  "schemaVersion": "1.0",
+  "title": "CodeAdventure Arcade Level Registry",
+  "defaultLevelId": "onboarding",
+  "companionAvatar": {
+    "name": "Byte the Cyber-Dog",
+    "role": "Funny Arcade Sidekick",
+    "avatarEmoji": "\ud83d\udc36\u26a1"
+  },
+  "supportedLanguages": [
+    {
+      "id": "python",
+      "name": "Python 3 \ud83d\udc0d",
+      "monacoLang": "python"
+    },
+    {
+      "id": "javascript",
+      "name": "JavaScript (Node) \u26a1",
+      "monacoLang": "javascript"
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript \ud83d\udcd8",
+      "monacoLang": "typescript"
+    },
+    {
+      "id": "java",
+      "name": "Java \u2615",
+      "monacoLang": "java"
+    },
+    {
+      "id": "cpp",
+      "name": "C++ 20 \ud83d\ude80",
+      "monacoLang": "cpp"
+    },
+    {
+      "id": "csharp",
+      "name": "C# (.NET) \ud83c\udfaf",
+      "monacoLang": "csharp"
+    },
+    {
+      "id": "go",
+      "name": "Go \ud83d\udc39",
+      "monacoLang": "go"
+    },
+    {
+      "id": "rust",
+      "name": "Rust \ud83e\udd80",
+      "monacoLang": "rust"
+    },
+    {
+      "id": "bash",
+      "name": "Bash Shell \ud83d\udcbb",
+      "monacoLang": "shell"
+    },
+    {
+      "id": "ruby",
+      "name": "Ruby \ud83d\udc8e",
+      "monacoLang": "ruby"
+    },
+    {
+      "id": "php",
+      "name": "PHP \ud83d\udc18",
+      "monacoLang": "php"
+    }
+  ],
+  "levels": [
+    {
+      "id": "onboarding",
+      "title": "Level 1: Target Closest Enemy! \ud83c\udfaf",
+      "badge": "Level 1 \u2022 Easy",
+      "objective": "Read enemy names & distances. Print the CLOSEST enemy name to blast them with laser cannon!",
+      "funnyHint": "Woof! If dist1 < dist2, shoot enemy1! Don't let the Glitch-Goblin eat your ship! \ud83d\udc36",
+      "story": "Rogue space monsters are approaching your starship! Write code to blast the closest monster before it crashes into your pizza stash!",
+      "validationRules": {
+        "requiredKeywords": [
+          "dist_2",
+          "dist2",
+          "enemy2_dist",
+          "d2",
+          "dist2",
+          "enemy2"
+        ],
+        "errorMessage": "\u274c [INPUT ERROR] Missing 'dist_2'! You must read 2 enemy names and 2 distances (enemy_1, dist_1, enemy_2, dist_2) per turn."
+      },
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "Glitch-Goblin",
+            "50",
+            "Syntax-Monster",
+            "18"
+          ],
+          "enemies": [
+            {
+              "name": "Glitch-Goblin",
+              "dist": 50,
+              "x": 180,
+              "y": 90,
+              "type": "goblin"
+            },
+            {
+              "name": "Syntax-Monster",
+              "dist": 18,
+              "x": 420,
+              "y": 140,
+              "type": "monster"
+            }
+          ],
+          "expectedTarget": "Syntax-Monster"
+        },
+        {
+          "round": 2,
+          "inputs": [
+            "Lazy-Loop-Bug",
+            "12",
+            "Cyber-Banana",
+            "45"
+          ],
+          "enemies": [
+            {
+              "name": "Lazy-Loop-Bug",
+              "dist": 12,
+              "x": 220,
+              "y": 160,
+              "type": "bug"
+            },
+            {
+              "name": "Cyber-Banana",
+              "dist": 45,
+              "x": 480,
+              "y": 100,
+              "type": "banana"
+            }
+          ],
+          "expectedTarget": "Lazy-Loop-Bug"
+        },
+        {
+          "round": 3,
+          "inputs": [
+            "Null-Pointer-Ninja",
+            "60",
+            "Memory-Leak-Alien",
+            "8"
+          ],
+          "enemies": [
+            {
+              "name": "Null-Pointer-Ninja",
+              "dist": 60,
+              "x": 150,
+              "y": 80,
+              "type": "ninja"
+            },
+            {
+              "name": "Memory-Leak-Alien",
+              "dist": 8,
+              "x": 350,
+              "y": 180,
+              "type": "alien"
+            }
+          ],
+          "expectedTarget": "Memory-Leak-Alien"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 1 - Python 3 \ud83d\udc0d\n# Goal: Shoot the closest enemy! Pew Pew! \ud83d\udd2b\nimport sys\n\nwhile True:\n    enemy_1 = input()\n    dist_1 = int(input())\n    enemy_2 = input()\n    dist_2 = int(input())\n\n    if dist_1 < dist_2:\n        print(enemy_1)\n    else:\n        print(enemy_2)\n",
+        "javascript": "// CodeAdventure Level 1 - JavaScript \u26a1\nwhile (true) {\n    const enemy1 = readline();\n    const dist1 = parseInt(readline());\n    const enemy2 = readline();\n    const dist2 = parseInt(readline());\n\n    if (dist1 < dist2) {\n        console.log(enemy1);\n    } else {\n        console.log(enemy2);\n    }\n}\n",
+        "typescript": "// CodeAdventure Level 1 - TypeScript \ud83d\udcd8\nwhile (true) {\n    const enemy1: string = readline();\n    const dist1: number = parseInt(readline());\n    const enemy2: string = readline();\n    const dist2: number = parseInt(readline());\n\n    if (dist1 < dist2) {\n        console.log(enemy1);\n    } else {\n        console.log(enemy2);\n    }\n}\n",
+        "java": "// CodeAdventure Level 1 - Java \u2615\nimport java.util.Scanner;\n\nclass Player {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        while (true) {\n            String enemy1 = in.next();\n            int dist1 = in.nextInt();\n            String enemy2 = in.next();\n            int dist2 = in.nextInt();\n\n            if (dist1 < dist2) {\n                System.out.println(enemy1);\n            } else {\n                System.out.println(enemy2);\n            }\n        }\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 1 - C++ 20 \ud83d\ude80\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    while (true) {\n        string enemy1;\n        int dist1;\n        string enemy2;\n        int dist2;\n        cin >> enemy1 >> dist1 >> enemy2 >> dist2;\n\n        if (dist1 < dist2) {\n            cout << enemy1 << endl;\n        } else {\n            cout << enemy2 << endl;\n        }\n    }\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 1 - C# (.NET) \ud83c\udfaf\nusing System;\n\nclass Player {\n    static void Main() {\n        while (true) {\n            string enemy1 = Console.ReadLine();\n            int dist1 = int.Parse(Console.ReadLine());\n            string enemy2 = Console.ReadLine();\n            int dist2 = int.Parse(Console.ReadLine());\n\n            if (dist1 < dist2) {\n                Console.WriteLine(enemy1);\n            } else {\n                Console.WriteLine(enemy2);\n            }\n        }\n    }\n}\n",
+        "go": "// CodeAdventure Level 1 - Go \ud83d\udc39\npackage main\nimport \"fmt\"\n\nfunc main() {\n    for {\n        var enemy1 string\n        var dist1 int\n        var enemy2 string\n        var dist2 int\n        fmt.Scan(&enemy1, &dist1, &enemy2, &dist2)\n\n        if dist1 < dist2 {\n            fmt.Println(enemy1)\n        } else {\n            fmt.Println(enemy2)\n        }\n    }\n}\n",
+        "rust": "// CodeAdventure Level 1 - Rust \ud83e\udd80\nuse std::io;\n\nfn main() {\n    loop {\n        let mut input1 = String::new();\n        let mut input2 = String::new();\n        let mut input3 = String::new();\n        let mut input4 = String::new();\n\n        if io::stdin().read_line(&mut input1).unwrap() == 0 { break; }\n        io::stdin().read_line(&mut input2).unwrap();\n        io::stdin().read_line(&mut input3).unwrap();\n        io::stdin().read_line(&mut input4).unwrap();\n\n        let enemy1 = input1.trim();\n        let dist1: i32 = input2.trim().parse().unwrap();\n        let enemy2 = input3.trim();\n        let dist2: i32 = input4.trim().parse().unwrap();\n\n        if dist1 < dist2 {\n            println!(\"{}\", enemy1);\n        } else {\n            println!(\"{}\", enemy2);\n        }\n    }\n}\n",
+        "bash": "# CodeAdventure Level 1 - Bash Shell \ud83d\udcbb\nwhile true; do\n    read enemy1\n    read dist1\n    read enemy2\n    read dist2\n\n    if [ \"$dist1\" -lt \"$dist2\" ]; then\n        echo \"$enemy1\"\n    else\n        echo \"$enemy2\"\n    fi\ndone\n",
+        "ruby": "# CodeAdventure Level 1 - Ruby \ud83d\udc8e\nloop do\n    enemy1 = gets.chomp\n    dist1 = gets.to_i\n    enemy2 = gets.chomp\n    dist2 = gets.to_i\n\n    if dist1 < dist2\n        puts enemy1\n    else\n        puts enemy2\n    end\nend\n",
+        "php": "<?php\n// CodeAdventure Level 1 - PHP \ud83d\udc18\nwhile (TRUE) {\n    $enemy1 = trim(fgets(STDIN));\n    $dist1 = (int)trim(fgets(STDIN));\n    $enemy2 = trim(fgets(STDIN));\n    $dist2 = (int)trim(fgets(STDIN));\n\n    if ($dist1 < $dist2) {\n        echo $enemy1 . \"\\n\";\n    } else {\n        echo $enemy2 . \"\\n\";\n    }\n}\n"
+      }
+    },
+    {
+      "id": "the_descent",
+      "title": "Level 2: The Mountain Altitude Blast! \ud83c\udfd4\ufe0f",
+      "badge": "Level 2 \u2022 Medium",
+      "objective": "Scan 8 mountain heights (0 to 7) per turn and blast the TALLEST mountain peak!",
+      "funnyHint": "Woof! Keep track of max_height and print the mountain index! \ud83d\udc36",
+      "story": "Your starship is flying low over high mountains! Destroy the tallest mountain peak each turn to prevent a crash!",
+      "validationRules": {
+        "requiredKeywords": [
+          "for",
+          "while",
+          "loop",
+          "times"
+        ],
+        "errorMessage": "\u274c [LOGIC ERROR] Mountain scanner must loop 8 times per turn to scan all mountain peaks!"
+      },
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "9",
+            "3",
+            "5",
+            "2",
+            "8",
+            "4",
+            "1",
+            "6"
+          ],
+          "mountains": [
+            9,
+            3,
+            5,
+            2,
+            8,
+            4,
+            1,
+            6
+          ],
+          "expectedTarget": "0"
+        },
+        {
+          "round": 2,
+          "inputs": [
+            "1",
+            "4",
+            "7",
+            "9",
+            "2",
+            "5",
+            "3",
+            "0"
+          ],
+          "mountains": [
+            1,
+            4,
+            7,
+            9,
+            2,
+            5,
+            3,
+            0
+          ],
+          "expectedTarget": "3"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 2 - Python 3 \ud83d\udc0d\nimport sys\n\nwhile True:\n    max_h = -1\n    target_idx = 0\n    for i in range(8):\n        mountain_h = int(input())\n        if mountain_h > max_h:\n            max_h = mountain_h\n            target_idx = i\n    print(target_idx)\n",
+        "javascript": "// CodeAdventure Level 2 - JavaScript \u26a1\nwhile (true) {\n    let maxH = -1;\n    let targetIdx = 0;\n    for (let i = 0; i < 8; i++) {\n        const mountainH = parseInt(readline());\n        if (mountainH > maxH) {\n            maxH = mountainH;\n            targetIdx = i;\n        }\n    }\n    console.log(targetIdx);\n}\n",
+        "typescript": "// CodeAdventure Level 2 - TypeScript \ud83d\udcd8\nwhile (true) {\n    let maxH: number = -1;\n    let targetIdx: number = 0;\n    for (let i = 0; i < 8; i++) {\n        const mountainH: number = parseInt(readline());\n        if (mountainH > maxH) {\n            maxH = mountainH;\n            targetIdx = i;\n        }\n    }\n    console.log(targetIdx);\n}\n",
+        "java": "// CodeAdventure Level 2 - Java \u2615\nimport java.util.Scanner;\n\nclass Player {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        while (true) {\n            int maxH = -1;\n            int targetIdx = 0;\n            for (int i = 0; i < 8; i++) {\n                int mountainH = in.nextInt();\n                if (mountainH > maxH) {\n                    maxH = mountainH;\n                    targetIdx = i;\n                }\n            }\n            System.out.println(targetIdx);\n        }\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 2 - C++ 20 \ud83d\ude80\n#include <iostream>\nusing namespace std;\n\nint main() {\n    while (true) {\n        int maxH = -1;\n        int targetIdx = 0;\n        for (int i = 0; i < 8; i++) {\n            int mountainH;\n            cin >> mountainH;\n            if (mountainH > maxH) {\n                maxH = mountainH;\n                targetIdx = i;\n            }\n        }\n        cout << targetIdx << endl;\n    }\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 2 - C# (.NET) \ud83c\udfaf\nusing System;\n\nclass Player {\n    static void Main() {\n        while (true) {\n            int maxH = -1;\n            int targetIdx = 0;\n            for (int i = 0; i < 8; i++) {\n                int mountainH = int.Parse(Console.ReadLine());\n                if (mountainH > maxH) {\n                    maxH = mountainH;\n                    targetIdx = i;\n                }\n            }\n            Console.WriteLine(targetIdx);\n        }\n    }\n}\n",
+        "go": "// CodeAdventure Level 2 - Go \ud83d\udc39\npackage main\nimport \"fmt\"\n\nfunc main() {\n    for {\n        maxH := -1\n        targetIdx := 0\n        for i := 0; i < 8; i++ {\n            var mountainH int\n            fmt.Scan(&mountainH)\n            if mountainH > maxH {\n                maxH = mountainH\n                targetIdx = i\n            }\n        }\n        fmt.Println(targetIdx)\n    }\n}\n",
+        "rust": "// CodeAdventure Level 2 - Rust \ud83e\udd80\nuse std::io;\n\nfn main() {\n    loop {\n        let mut max_h = -1;\n        let mut target_idx = 0;\n        for i in 0..8 {\n            let mut input = String::new();\n            if io::stdin().read_line(&mut input).unwrap() == 0 { return; }\n            let mountain_h: i32 = input.trim().parse().unwrap();\n            if mountain_h > max_h {\n                max_h = mountain_h;\n                target_idx = i;\n            }\n        }\n        println!(\"{}\", target_idx);\n    }\n}\n",
+        "bash": "# CodeAdventure Level 2 - Bash Shell \ud83d\udcbb\nwhile true; do\n    max_h=-1\n    target_idx=0\n    for i in {0..7}; do\n        read mountain_h\n        if [ \"$mountain_h\" -gt \"$max_h\" ]; then\n            max_h=$mountain_h\n            target_idx=$i\n        fi\n    done\n    echo \"$target_idx\"\ndone\n",
+        "ruby": "# CodeAdventure Level 2 - Ruby \ud83d\udc8e\nloop do\n    max_h = -1\n    target_idx = 0\n    8.times do |i|\n        mountain_h = gets.to_i\n        if mountain_h > max_h\n            max_h = mountain_h\n            target_idx = i\n        end\n    end\n    puts target_idx\nend\n",
+        "php": "<?php\n// CodeAdventure Level 2 - PHP \ud83d\udc18\nwhile (TRUE) {\n    $maxH = -1;\n    $targetIdx = 0;\n    for ($i = 0; $i < 8; $i++) {\n        $mountainH = (int)trim(fgets(STDIN));\n        if ($mountainH > $maxH) {\n            $maxH = $mountainH;\n            $targetIdx = $i;\n        }\n    }\n    echo $targetIdx . \"\\n\";\n}\n"
+      }
+    },
+    {
+      "id": "mars_lander",
+      "title": "Level 3: Mars Rocket Soft Landing! \ud83d\ude80",
+      "badge": "Level 3 \u2022 Hard",
+      "objective": "Control rocket thrusters (0 to 4) to land safely on Mars! If vertical speed < -40, turn on max thrusters!",
+      "funnyHint": "Woof! Don't crash into Martian dust! Set power to 4 if falling too fast! \ud83d\udc36",
+      "story": "Touch down gently on Mars! If falling speed is faster than -40 m/s, fire maximum thrusters!",
+      "validationRules": {
+        "requiredKeywords": [
+          "v_speed",
+          "vspeed",
+          "-40",
+          "vSpeed"
+        ],
+        "errorMessage": "\u274c [THRUSTER ERROR] Rocket thruster code must check if vertical speed is <= -40 m/s!"
+      },
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "2500 2700 0 -15 500 0 0"
+          ],
+          "telemetry": {
+            "x": 2500,
+            "y": 2700,
+            "vSpeed": -15,
+            "power": 0
+          },
+          "expectedTarget": "0 0"
+        },
+        {
+          "round": 2,
+          "inputs": [
+            "2500 1200 0 -45 500 0 3"
+          ],
+          "telemetry": {
+            "x": 2500,
+            "y": 1200,
+            "vSpeed": -45,
+            "power": 3
+          },
+          "expectedTarget": "0 4"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 3 - Python 3 \ud83d\udc0d\nimport sys\n\nwhile True:\n    x, y, h_speed, v_speed, fuel, rotate, power = [int(i) for i in input().split()]\n    if v_speed <= -40:\n        print(\"0 4\")\n    else:\n        print(\"0 0\")\n",
+        "javascript": "// CodeAdventure Level 3 - JavaScript \u26a1\nwhile (true) {\n    const [x, y, hSpeed, vSpeed, fuel, rotate, power] = readline().trim().split(/\\s+/).map(Number);\n    if (vSpeed <= -40) {\n        console.log(\"0 4\");\n    } else {\n        console.log(\"0 0\");\n    }\n}\n",
+        "typescript": "// CodeAdventure Level 3 - TypeScript \ud83d\udcd8\nwhile (true) {\n    const [x, y, hSpeed, vSpeed, fuel, rotate, power]: number[] = readline().trim().split(/\\s+/).map(Number);\n    if (vSpeed <= -40) {\n        console.log(\"0 4\");\n    } else {\n        console.log(\"0 0\");\n    }\n}\n",
+        "java": "// CodeAdventure Level 3 - Java \u2615\nimport java.util.Scanner;\n\nclass Player {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        while (true) {\n            int x = in.nextInt();\n            int y = in.nextInt();\n            int hSpeed = in.nextInt();\n            int vSpeed = in.nextInt();\n            int fuel = in.nextInt();\n            int rotate = in.nextInt();\n            int power = in.nextInt();\n\n            if (vSpeed <= -40) {\n                System.out.println(\"0 4\");\n            } else {\n                System.out.println(\"0 0\");\n            }\n        }\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 3 - C++ 20 \ud83d\ude80\n#include <iostream>\nusing namespace std;\n\nint main() {\n    while (true) {\n        int x, y, hSpeed, vSpeed, fuel, rotate, power;\n        cin >> x >> y >> hSpeed >> vSpeed >> fuel >> rotate >> power;\n        if (vSpeed <= -40) {\n            cout << \"0 4\" << endl;\n        } else {\n            cout << \"0 0\" << endl;\n        }\n    }\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 3 - C# (.NET) \ud83c\udfaf\nusing System;\n\nclass Player {\n    static void Main() {\n        while (true) {\n            string[] inputs = Console.ReadLine().Split();\n            int vSpeed = int.Parse(inputs[3]);\n            if (vSpeed <= -40) {\n                Console.WriteLine(\"0 4\");\n            } else {\n                Console.WriteLine(\"0 0\");\n            }\n        }\n    }\n}\n",
+        "go": "// CodeAdventure Level 3 - Go \ud83d\udc39\npackage main\nimport \"fmt\"\n\nfunc main() {\n    for {\n        var x, y, hSpeed, vSpeed, fuel, rotate, power int\n        fmt.Scan(&x, &y, &hSpeed, &vSpeed, &fuel, &rotate, &power)\n        if vSpeed <= -40 {\n            fmt.Println(\"0 4\")\n        } else {\n            fmt.Println(\"0 0\")\n        }\n    }\n}\n",
+        "rust": "// CodeAdventure Level 3 - Rust \ud83e\udd80\nuse std::io;\n\nfn main() {\n    loop {\n        let mut input = String::new();\n        if io::stdin().read_line(&mut input).unwrap() == 0 { break; }\n        let parts: Vec<i32> = input.trim().split_whitespace().map(|s| s.parse().unwrap()).collect();\n        let v_speed = parts[3];\n        if v_speed <= -40 {\n            println!(\"0 4\");\n        } else {\n            println!(\"0 0\");\n        }\n    }\n}\n",
+        "bash": "# CodeAdventure Level 3 - Bash Shell \ud83d\udcbb\nwhile true; do\n    read x y h_speed v_speed fuel rotate power\n    if [ \"$v_speed\" -le -40 ]; then\n        echo \"0 4\"\n    else\n        echo \"0 0\"\n    fi\ndone\n",
+        "ruby": "# CodeAdventure Level 3 - Ruby \ud83d\udc8e\nloop do\n    x, y, h_speed, v_speed, fuel, rotate, power = gets.split.map(&:to_i)\n    if v_speed <= -40\n        puts \"0 4\"\n    else\n        puts \"0 0\"\n    fi\nend\n",
+        "php": "<?php\n// CodeAdventure Level 3 - PHP \ud83d\udc18\nwhile (TRUE) {\n    fscanf(STDIN, \"%d %d %d %d %d %d %d\", $x, $y, $hSpeed, $vSpeed, $fuel, $rotate, $power);\n    if ($vSpeed <= -40) {\n        echo \"0 4\\n\";\n    } else {\n        echo \"0 0\\n\";\n    }\n}\n"
+      }
+    },
+    {
+      "id": "shadows_of_knight",
+      "title": "Level 4: 2D Binary Search Radar \ud83d\udce1",
+      "badge": "Level 4 \u2022 Hard",
+      "objective": "Use 2D radar direction signals to locate targets in optimal logarithmic steps!",
+      "funnyHint": "Woof! Binary search narrows down min/max bounds in 2D space! \ud83d\udc36",
+      "story": "Locate hidden targets inside the cyber building before time runs out!",
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "10 10",
+            "6",
+            "5 5",
+            "U"
+          ],
+          "expectedTarget": "4 2"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 4 - Python 3 \ud83d\udc0d\nimport sys\n\nw, h = [int(i) for i in input().split()]\nn = int(input())\nx0, y0 = [int(i) for i in input().split()]\n\nmin_x, max_x = 0, w - 1\nmin_y, max_y = 0, h - 1\n\nwhile True:\n    bomb_dir = input()\n    if 'U' in bomb_dir: max_y = y0 - 1\n    if 'D' in bomb_dir: min_y = y0 + 1\n    if 'L' in bomb_dir: max_x = x0 - 1\n    if 'R' in bomb_dir: min_x = x0 + 1\n    \n    x0 = (min_x + max_x) // 2\n    y0 = (min_y + max_y) // 2\n    print(f\"{x0} {y0}\")\n",
+        "javascript": "// CodeAdventure Level 4 - JavaScript \u26a1\nconst [w, h] = readline().trim().split(/\\s+/).map(Number);\nconst n = parseInt(readline());\nlet [x0, y0] = readline().trim().split(/\\s+/).map(Number);\n\nlet minX = 0, maxX = w - 1;\nlet minY = 0, maxY = h - 1;\n\nwhile (true) {\n    const bombDir = readline();\n    if (bombDir.includes('U')) maxY = y0 - 1;\n    if (bombDir.includes('D')) minY = y0 + 1;\n    if (bombDir.includes('L')) maxX = x0 - 1;\n    if (bombDir.includes('R')) minX = x0 + 1;\n    \n    x0 = Math.floor((minX + maxX) / 2);\n    y0 = Math.floor((minY + maxY) / 2);\n    console.log(`${x0} ${y0}`);\n}\n",
+        "typescript": "// CodeAdventure Level 4 - TypeScript \ud83d\udcd8\nconst [w, h]: number[] = readline().trim().split(/\\s+/).map(Number);\nconst n: number = parseInt(readline());\nlet [x0, y0]: number[] = readline().trim().split(/\\s+/).map(Number);\n\nlet minX: number = 0, maxX: number = w - 1;\nlet minY: number = 0, maxY: number = h - 1;\n\nwhile (true) {\n    const bombDir: string = readline();\n    if (bombDir.includes('U')) maxY = y0 - 1;\n    if (bombDir.includes('D')) minY = y0 + 1;\n    if (bombDir.includes('L')) maxX = x0 - 1;\n    if (bombDir.includes('R')) minX = x0 + 1;\n    \n    x0 = Math.floor((minX + maxX) / 2);\n    y0 = Math.floor((minY + maxY) / 2);\n    console.log(`${x0} ${y0}`);\n}\n",
+        "java": "// CodeAdventure Level 4 - Java \u2615\nimport java.util.Scanner;\n\nclass Player {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int w = in.nextInt();\n        int h = in.nextInt();\n        int n = in.nextInt();\n        int x0 = in.nextInt();\n        int y0 = in.nextInt();\n\n        int minX = 0, maxX = w - 1;\n        int minY = 0, maxY = h - 1;\n\n        while (true) {\n            String bombDir = in.next();\n            if (bombDir.contains(\"U\")) maxY = y0 - 1;\n            if (bombDir.contains(\"D\")) minY = y0 + 1;\n            if (bombDir.contains(\"L\")) maxX = x0 - 1;\n            if (bombDir.contains(\"R\")) minX = x0 + 1;\n\n            x0 = (minX + maxX) / 2;\n            y0 = (minY + maxY) / 2;\n            System.out.println(x0 + \" \" + y0);\n        }\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 4 - C++ 20 \ud83d\ude80\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int w, h, n, x0, y0;\n    cin >> w >> h >> n >> x0 >> y0;\n    int minX = 0, maxX = w - 1;\n    int minY = 0, maxY = h - 1;\n\n    while (true) {\n        string bombDir;\n        cin >> bombDir;\n        if (bombDir.find('U') != string::npos) maxY = y0 - 1;\n        if (bombDir.find('D') != string::npos) minY = y0 + 1;\n        if (bombDir.find('L') != string::npos) maxX = x0 - 1;\n        if (bombDir.find('R') != string::npos) minX = x0 + 1;\n\n        x0 = (minX + maxX) / 2;\n        y0 = (minY + maxY) / 2;\n        cout << x0 << \" \" << y0 << endl;\n    }\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 4 - C# (.NET) \ud83c\udfaf\nusing System;\n\nclass Player {\n    static void Main() {\n        string[] inputs = Console.ReadLine().Split();\n        int w = int.Parse(inputs[0]);\n        int h = int.Parse(inputs[1]);\n        int n = int.Parse(Console.ReadLine());\n        inputs = Console.ReadLine().Split();\n        int x0 = int.Parse(inputs[0]);\n        int y0 = int.Parse(inputs[1]);\n\n        int minX = 0, maxX = w - 1;\n        int minY = 0, maxY = h - 1;\n\n        while (true) {\n            string bombDir = Console.ReadLine();\n            if (bombDir.Contains(\"U\")) maxY = y0 - 1;\n            if (bombDir.Contains(\"D\")) minY = y0 + 1;\n            if (bombDir.Contains(\"L\")) maxX = x0 - 1;\n            if (bombDir.Contains(\"R\")) minX = x0 + 1;\n\n            x0 = (minX + maxX) / 2;\n            y0 = (minY + maxY) / 2;\n            Console.WriteLine($\"{x0} {y0}\");\n        }\n    }\n}\n",
+        "go": "// CodeAdventure Level 4 - Go \ud83d\udc39\npackage main\nimport \"fmt\"\nimport \"strings\"\n\nfunc main() {\n    var w, h, n, x0, y0 int\n    fmt.Scan(&w, &h, &n, &x0, &y0)\n    minX, maxX := 0, w - 1\n    minY, maxY := 0, h - 1\n\n    for {\n        var bombDir string\n        fmt.Scan(&bombDir)\n        if strings.Contains(bombDir, \"U\") { maxY = y0 - 1 }\n        if strings.Contains(bombDir, \"D\") { minY = y0 + 1 }\n        if strings.Contains(bombDir, \"L\") { maxX = x0 - 1 }\n        if strings.Contains(bombDir, \"R\") { minX = x0 + 1 }\n\n        x0 = (minX + maxX) / 2\n        y0 = (minY + maxY) / 2\n        fmt.Printf(\"%d %d\\n\", x0, y0)\n    }\n}\n",
+        "rust": "// CodeAdventure Level 4 - Rust \ud83e\udd80\nuse std::io;\n\nfn main() {\n    let mut line1 = String::new();\n    let mut line2 = String::new();\n    let mut line3 = String::new();\n    io::stdin().read_line(&mut line1).unwrap();\n    io::stdin().read_line(&mut line2).unwrap();\n    io::stdin().read_line(&mut line3).unwrap();\n\n    let dims: Vec<i32> = line1.trim().split_whitespace().map(|s| s.parse().unwrap()).collect();\n    let w = dims[0]; let h = dims[1];\n    let pos: Vec<i32> = line3.trim().split_whitespace().map(|s| s.parse().unwrap()).collect();\n    let mut x0 = pos[0]; let mut y0 = pos[1];\n\n    let mut min_x = 0; let mut max_x = w - 1;\n    let mut min_y = 0; let mut max_y = h - 1;\n\n    loop {\n        let mut dir = String::new();\n        if io::stdin().read_line(&mut dir).unwrap() == 0 { break; }\n        let bomb_dir = dir.trim();\n\n        if bomb_dir.contains('U') { max_y = y0 - 1; }\n        if bomb_dir.contains('D') { min_y = y0 + 1; }\n        if bomb_dir.contains('L') { max_x = x0 - 1; }\n        if bomb_dir.contains('R') { min_x = x0 + 1; }\n\n        x0 = (min_x + max_x) / 2;\n        y0 = (min_y + max_y) / 2;\n        println!(\"{} {}\", x0, y0);\n    }\n}\n",
+        "bash": "# CodeAdventure Level 4 - Bash Shell \ud83d\udcbb\nread w h\nread n\nread x0 y0\n\nmin_x=0; max_x=$((w - 1))\nmin_y=0; max_y=$((h - 1))\n\nwhile true; do\n    read bomb_dir\n    [[ \"$bomb_dir\" == *\"U\"* ]] && max_y=$((y0 - 1))\n    [[ \"$bomb_dir\" == *\"D\"* ]] && min_y=$((y0 + 1))\n    [[ \"$bomb_dir\" == *\"L\"* ]] && max_x=$((x0 - 1))\n    [[ \"$bomb_dir\" == *\"R\"* ]] && min_x=$((x0 + 1))\n\n    x0=$(( (min_x + max_x) / 2 ))\n    y0=$(( (min_y + max_y) / 2 ))\n    echo \"$x0 $y0\"\ndone\n",
+        "ruby": "# CodeAdventure Level 4 - Ruby \ud83d\udc8e\nw, h = gets.split.map(&:to_i)\nn = gets.to_i\nx0, y0 = gets.split.map(&:to_i)\n\nmin_x, max_x = 0, w - 1\nmin_y, max_y = 0, h - 1\n\nloop do\n    bomb_dir = gets.chomp\n    max_y = y0 - 1 if bomb_dir.include?('U')\n    min_y = y0 + 1 if bomb_dir.include?('D')\n    max_x = x0 - 1 if bomb_dir.include?('L')\n    min_x = x0 + 1 if bomb_dir.include?('R')\n\n    x0 = (min_x + max_x) / 2\n    y0 = (min_y + max_y) / 2\n    puts \"#{x0} #{y0}\"\nend\n",
+        "php": "<?php\n// CodeAdventure Level 4 - PHP \ud83d\udc18\nfscanf(STDIN, \"%d %d\", $w, $h);\nfscanf(STDIN, \"%d\", $n);\nfscanf(STDIN, \"%d %d\", $x0, $y0);\n\n$minX = 0; $maxX = $w - 1;\n$minY = 0; $maxY = $h - 1;\n\nwhile (TRUE) {\n    fscanf(STDIN, \"%s\", $bombDir);\n    if (strpos($bombDir, 'U') !== false) $maxY = $y0 - 1;\n    if (strpos($bombDir, 'D') !== false) $minY = $y0 + 1;\n    if (strpos($bombDir, 'L') !== false) $maxX = $x0 - 1;\n    if (strpos($bombDir, 'R') !== false) $minX = $x0 + 1;\n\n    $x0 = floor(($minX + $maxX) / 2);\n    $y0 = floor(($minY + $maxY) / 2);\n    echo \"$x0 $y0\\n\";\n}\n"
+      }
+    },
+    {
+      "id": "power_of_thor",
+      "title": "Level 5: 2D Vector Navigation \ud83e\udded",
+      "badge": "Level 5 \u2022 Medium",
+      "objective": "Calculate 8-way compass direction vectors (N, S, E, W, NE, NW, SE, SW) to guide Thor!",
+      "funnyHint": "Woof! Compare light_y with thor_y and light_x with thor_x to pick N, S, E, W! \ud83d\udc36",
+      "story": "Guide Thor to the Light of Power across the electric grid!",
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "31 18 0 0",
+            "10"
+          ],
+          "expectedTarget": "SE"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 5 - Python 3 \ud83d\udc0d\nimport sys\n\nlight_x, light_y, thor_x, thor_y = [int(i) for i in input().split()]\n\nwhile True:\n    remaining_turns = int(input())\n    direction = \"\"\n    if thor_y < light_y:\n        direction += \"S\"\n        thor_y += 1\n    elif thor_y > light_y:\n        direction += \"N\"\n        thor_y -= 1\n        \n    if thor_x < light_x:\n        direction += \"E\"\n        thor_x += 1\n    elif thor_x > light_x:\n        direction += \"W\"\n        thor_x -= 1\n        \n    print(direction)\n",
+        "javascript": "// CodeAdventure Level 5 - JavaScript \u26a1\nlet [lightX, lightY, thorX, thorY] = readline().trim().split(/\\s+/).map(Number);\n\nwhile (true) {\n    const remainingTurns = parseInt(readline());\n    let direction = \"\";\n    if (thorY < lightY) {\n        direction += \"S\";\n        thorY++;\n    } else if (thorY > lightY) {\n        direction += \"N\";\n        thorY--;\n    }\n    if (thorX < lightX) {\n        direction += \"E\";\n        thorX++;\n    } else if (thorX > lightX) {\n        direction += \"W\";\n        thorX--;\n    }\n    console.log(direction);\n}\n",
+        "typescript": "// CodeAdventure Level 5 - TypeScript \ud83d\udcd8\nlet [lightX, lightY, thorX, thorY]: number[] = readline().trim().split(/\\s+/).map(Number);\n\nwhile (true) {\n    const remainingTurns: number = parseInt(readline());\n    let direction: string = \"\";\n    if (thorY < lightY) {\n        direction += \"S\";\n        thorY++;\n    } else if (thorY > lightY) {\n        direction += \"N\";\n        thorY--;\n    }\n    if (thorX < lightX) {\n        direction += \"E\";\n        thorX++;\n    } else if (thorX > lightX) {\n        direction += \"W\";\n        thorX--;\n    }\n    console.log(direction);\n}\n",
+        "java": "// CodeAdventure Level 5 - Java \u2615\nimport java.util.Scanner;\n\nclass Player {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int lightX = in.nextInt();\n        int lightY = in.nextInt();\n        int thorX = in.nextInt();\n        int thorY = in.nextInt();\n\n        while (true) {\n            int remainingTurns = in.nextInt();\n            String direction = \"\";\n            if (thorY < lightY) {\n                direction += \"S\";\n                thorY++;\n            } else if (thorY > lightY) {\n                direction += \"N\";\n                thorY--;\n            }\n            if (thorX < lightX) {\n                direction += \"E\";\n                thorX++;\n            } else if (thorX > lightX) {\n                direction += \"W\";\n                thorX--;\n            }\n            System.out.println(direction);\n        }\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 5 - C++ 20 \ud83d\ude80\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int lightX, lightY, thorX, thorY;\n    cin >> lightX >> lightY >> thorX >> thorY;\n\n    while (true) {\n        int remainingTurns;\n        cin >> remainingTurns;\n        string direction = \"\";\n        if (thorY < lightY) {\n            direction += \"S\";\n            thorY++;\n        } else if (thorY > lightY) {\n            direction += \"N\";\n            thorY--;\n        }\n        if (thorX < lightX) {\n            direction += \"E\";\n            thorX++;\n        } else if (thorX > lightX) {\n            direction += \"W\";\n            thorX--;\n        }\n        cout << direction << endl;\n    }\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 5 - C# (.NET) \ud83c\udfaf\nusing System;\n\nclass Player {\n    static void Main() {\n        string[] inputs = Console.ReadLine().Split();\n        int lightX = int.Parse(inputs[0]);\n        int lightY = int.Parse(inputs[1]);\n        int thorX = int.Parse(inputs[2]);\n        int thorY = int.Parse(inputs[3]);\n\n        while (true) {\n            int remainingTurns = int.Parse(Console.ReadLine());\n            string direction = \"\";\n            if (thorY < lightY) {\n                direction += \"S\";\n                thorY++;\n            } else if (thorY > lightY) {\n                direction += \"N\";\n                thorY--;\n            }\n            if (thorX < lightX) {\n                direction += \"E\";\n                thorX++;\n            } else if (thorX > lightX) {\n                direction += \"W\";\n                thorX--;\n            }\n            Console.WriteLine(direction);\n        }\n    }\n}\n",
+        "go": "// CodeAdventure Level 5 - Go \ud83d\udc39\npackage main\nimport \"fmt\"\n\nfunc main() {\n    var lightX, lightY, thorX, thorY int\n    fmt.Scan(&lightX, &lightY, &thorX, &thorY)\n\n    for {\n        var remainingTurns int\n        fmt.Scan(&remainingTurns)\n        direction := \"\"\n        if thorY < lightY {\n            direction += \"S\"\n            thorY++\n        } else if thorY > lightY {\n            direction += \"N\"\n            thorY--\n        }\n        if thorX < lightX {\n            direction += \"E\"\n            thorX++\n        } else if thorX > lightX {\n            direction += \"W\"\n            thorX--\n        }\n        fmt.Println(direction)\n    }\n}\n",
+        "rust": "// CodeAdventure Level 5 - Rust \ud83e\udd80\nuse std::io;\n\nfn main() {\n    let mut line = String::new();\n    io::stdin().read_line(&mut line).unwrap();\n    let coords: Vec<i32> = line.trim().split_whitespace().map(|s| s.parse().unwrap()).collect();\n    let light_x = coords[0]; let light_y = coords[1];\n    let mut thor_x = coords[2]; let mut thor_y = coords[3];\n\n    loop {\n        let mut turn_line = String::new();\n        if io::stdin().read_line(&mut turn_line).unwrap() == 0 { break; }\n        let mut direction = String::new();\n        if thor_y < light_y { direction.push('S'); thor_y += 1; }\n        else if thor_y > light_y { direction.push('N'); thor_y -= 1; }\n        if thor_x < light_x { direction.push('E'); thor_x += 1; }\n        else if thor_x > light_x { direction.push('W'); thor_x -= 1; }\n        println!(\"{}\", direction);\n    }\n}\n",
+        "bash": "# CodeAdventure Level 5 - Bash Shell \ud83d\udcbb\nread light_x light_y thor_x thor_y\n\nwhile true; do\n    read remaining_turns\n    direction=\"\"\n    if [ \"$thor_y\" -lt \"$light_y\" ]; then\n        direction=\"${direction}S\"\n        thor_y=$((thor_y + 1))\n    elif [ \"$thor_y\" -gt \"$light_y\" ]; then\n        direction=\"${direction}N\"\n        thor_y=$((thor_y - 1))\n    fi\n    if [ \"$thor_x\" -lt \"$light_x\" ]; then\n        direction=\"${direction}E\"\n        thor_x=$((thor_x + 1))\n    elif [ \"$thor_x\" -gt \"$light_x\" ]; then\n        direction=\"${direction}W\"\n        thor_x=$((thor_x - 1))\n    fi\n    echo \"$direction\"\ndone\n",
+        "ruby": "# CodeAdventure Level 5 - Ruby \ud83d\udc8e\nlight_x, light_y, thor_x, thor_y = gets.split.map(&:to_i)\n\nloop do\n    remaining_turns = gets.to_i\n    direction = \"\"\n    if thor_y < light_y\n        direction += \"S\"\n        thor_y += 1\n    elsif thor_y > light_y\n        direction += \"N\"\n        thor_y -= 1\n    end\n    if thor_x < light_x\n        direction += \"E\"\n        thor_x += 1\n    elsif thor_x > light_x\n        direction += \"W\"\n        thor_x -= 1\n    end\n    puts direction\nend\n",
+        "php": "<?php\n// CodeAdventure Level 5 - PHP \ud83d\udc18\nfscanf(STDIN, \"%d %d %d %d\", $lightX, $lightY, $thorX, $thorY);\n\nwhile (TRUE) {\n    fscanf(STDIN, \"%d\", $remainingTurns);\n    $direction = \"\";\n    if ($thorY < $lightY) {\n        $direction .= \"S\";\n        $thorY++;\n    } else if ($thorY > $lightY) {\n        $direction .= \"N\";\n        $thorY--;\n    }\n    if ($thorX < $lightX) {\n        $direction .= \"E\";\n        $thorX++;\n    } else if ($thorX > $lightX) {\n        $direction .= \"W\";\n        $thorX--;\n    }\n    echo $direction . \"\\n\";\n}\n"
+      }
+    },
+    {
+      "id": "oops_mecha_squad",
+      "title": "Level 6: OOPs & Class Inheritance (Heritage) Mecha Arena \ud83e\udd16",
+      "badge": "Level 6 \u2022 Classes & Heritage",
+      "objective": "Master Class Inheritance (Heritage)! Create BaseMecha (Parent) and HeavyMecha (Child), inherit properties via super(), and execute attack() on Boss Titans!",
+      "funnyHint": "Woof! Inheritance (Heritage) lets Child Class (HeavyMecha) inherit attributes & methods from Parent Class (BaseMecha) using super()! \ud83d\udc36",
+      "story": "Rogue Boss Titans are invading! Build a Parent Class (BaseMecha) and a Child Class (HeavyMecha inheriting from BaseMecha), instantiate hero bot 'Titan-X', and blast GlitchOverlord!",
+      "validationRules": {
+        "requiredKeywords": [
+          "mecha",
+          "attack",
+          "titan-x"
+        ],
+        "errorMessage": "\u274c [OOP ERROR] HeavyMecha must inherit from BaseMecha using Class Inheritance / super()!"
+      },
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "GlitchOverlord"
+          ],
+          "enemies": [
+            {
+              "name": "GlitchOverlord",
+              "dist": 40,
+              "x": 420,
+              "y": 120,
+              "type": "boss",
+              "hp": 100
+            }
+          ],
+          "expectedTarget": "HeavyMecha 'Titan-X' (HP:120, Shield:40) attacks GlitchOverlord for 85 damage!"
+        },
+        {
+          "round": 2,
+          "inputs": [
+            "CyberKraken"
+          ],
+          "enemies": [
+            {
+              "name": "CyberKraken",
+              "dist": 30,
+              "x": 380,
+              "y": 110,
+              "type": "boss",
+              "hp": 150
+            }
+          ],
+          "expectedTarget": "HeavyMecha 'Titan-X' (HP:120, Shield:40) attacks CyberKraken for 85 damage!"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 6 - Python 3 \ud83d\udc0d (OOPs & Class Inheritance / Heritage)\nimport sys\n\n# 1. Parent Class (Base Blueprint)\nclass BaseMecha:\n    def __init__(self, name, hp, attack_power):\n        self.name = name\n        self.hp = hp\n        self.attack_power = attack_power\n\n    def attack(self, target):\n        return f\"BaseMecha '{self.name}' attacks {target} for {self.attack_power} damage!\"\n\n# 2. Child Class (Inheritance / Heritage)\nclass HeavyMecha(BaseMecha):\n    def __init__(self, name, hp, attack_power, shield_power):\n        # Inherit parent attributes using super()\n        super().__init__(name, hp, attack_power)\n        self.shield_power = shield_power  # Child attribute\n\n    # Override attack method\n    def attack(self, target):\n        return f\"HeavyMecha '{self.name}' (HP:{self.hp}, Shield:{self.shield_power}) attacks {target} for {self.attack_power} damage!\"\n\n# 3. Instantiate Hero Object & Execute Method\nhero = HeavyMecha(\"Titan-X\", 120, 85, 40)\nboss = input()  # Enemy Boss Name\nprint(hero.attack(boss))\n",
+        "javascript": "// CodeAdventure Level 6 - JavaScript \u26a1 (OOPs & Class Inheritance / Heritage)\n// 1. Parent Class\nclass BaseMecha {\n    constructor(name, hp, attackPower) {\n        this.name = name;\n        this.hp = hp;\n        this.attackPower = attackPower;\n    }\n    attack(target) {\n        return `BaseMecha '${this.name}' attacks ${target} for ${this.attackPower} damage!`;\n    }\n}\n\n// 2. Child Class (Inheritance / Heritage)\nclass HeavyMecha extends BaseMecha {\n    constructor(name, hp, attackPower, shieldPower) {\n        super(name, hp, attackPower);\n        this.shieldPower = shieldPower;\n    }\n    attack(target) {\n        return `HeavyMecha '${this.name}' (HP:${this.hp}, Shield:${this.shieldPower}) attacks ${target} for ${this.attackPower} damage!`;\n    }\n}\n\n// 3. Instantiate Hero Object\nconst hero = new HeavyMecha(\"Titan-X\", 120, 85, 40);\nconst boss = readline();\nconsole.log(hero.attack(boss));\n",
+        "typescript": "// CodeAdventure Level 6 - TypeScript \ud83d\udcd8 (OOPs & Class Inheritance / Heritage)\nclass BaseMecha {\n    name: string; hp: number; attackPower: number;\n    constructor(name: string, hp: number, attackPower: number) {\n        this.name = name; this.hp = hp; this.attackPower = attackPower;\n    }\n}\n\nclass HeavyMecha extends BaseMecha {\n    shieldPower: number;\n    constructor(name: string, hp: number, attackPower: number, shieldPower: number) {\n        super(name, hp, attackPower);\n        this.shieldPower = shieldPower;\n    }\n    attack(target: string): string {\n        return `HeavyMecha '${this.name}' (HP:${this.hp}, Shield:${this.shieldPower}) attacks ${target} for ${this.attackPower} damage!`;\n    }\n}\n\nconst hero = new HeavyMecha(\"Titan-X\", 120, 85, 40);\nconst boss: string = readline();\nconsole.log(hero.attack(boss));\n",
+        "java": "// CodeAdventure Level 6 - Java \u2615 (OOPs & Class Inheritance / Heritage)\nimport java.util.Scanner;\n\nclass BaseMecha {\n    String name; int hp; int attackPower;\n    public BaseMecha(String name, int hp, int attackPower) {\n        this.name = name; this.hp = hp; this.attackPower = attackPower;\n    }\n}\n\nclass HeavyMecha extends BaseMecha {\n    int shieldPower;\n    public HeavyMecha(String name, int hp, int attackPower, int shieldPower) {\n        super(name, hp, attackPower);\n        this.shieldPower = shieldPower;\n    }\n    public String attack(String target) {\n        return \"HeavyMecha '\" + name + \"' (HP:\" + hp + \", Shield:\" + shieldPower + \") attacks \" + target + \" for \" + attackPower + \" damage!\";\n    }\n}\n\nclass Player {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        HeavyMecha hero = new HeavyMecha(\"Titan-X\", 120, 85, 40);\n        String boss = in.next();\n        System.out.println(hero.attack(boss));\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 6 - C++ 20 \ud83d\ude80 (OOPs & Class Inheritance / Heritage)\n#include <iostream>\n#include <string>\nusing namespace std;\n\nclass BaseMecha {\npublic:\n    string name; int hp; int attackPower;\n    BaseMecha(string n, int h, int a) : name(n), hp(h), attackPower(a) {}\n};\n\nclass HeavyMecha : public BaseMecha {\npublic:\n    int shieldPower;\n    HeavyMecha(string n, int h, int a, int s) : BaseMecha(n, h, a), shieldPower(s) {}\n    string attack(string target) {\n        return \"HeavyMecha '\" + name + \"' (HP:\" + to_string(hp) + \", Shield:\" + to_string(shieldPower) + \") attacks \" + target + \" for \" + to_string(attackPower) + \" damage!\";\n    }\n};\n\nint main() {\n    HeavyMecha hero(\"Titan-X\", 120, 85, 40);\n    string boss;\n    cin >> boss;\n    cout << hero.attack(boss) << endl;\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 6 - C# (.NET) \ud83c\udfaf (OOPs & Class Inheritance / Heritage)\nusing System;\n\nclass BaseMecha {\n    public string name; public int hp; public int attackPower;\n    public BaseMecha(string name, int hp, int attackPower) {\n        this.name = name; this.hp = hp; this.attackPower = attackPower;\n    }\n}\n\nclass HeavyMecha : BaseMecha {\n    public int shieldPower;\n    public HeavyMecha(string name, int hp, int attackPower, int shieldPower) : base(name, hp, attackPower) {\n        this.shieldPower = shieldPower;\n    }\n    public string Attack(string target) {\n        return $\"HeavyMecha '{name}' (HP:{hp}, Shield:{shieldPower}) attacks {target} for {attackPower} damage!\";\n    }\n}\n\nclass Player {\n    static void Main() {\n        HeavyMecha hero = new HeavyMecha(\"Titan-X\", 120, 85, 40);\n        string boss = Console.ReadLine();\n        Console.WriteLine(hero.Attack(boss));\n    }\n}\n",
+        "go": "// CodeAdventure Level 6 - Go \ud83d\udc39 (OOPs & Struct Composition / Inheritance)\npackage main\nimport (\n    \"fmt\"\n)\n\ntype BaseMecha struct {\n    name string\n    hp int\n    attackPower int\n}\n\ntype HeavyMecha struct {\n    BaseMecha\n    shieldPower int\n}\n\nfunc (h HeavyMecha) Attack(target string) string {\n    return fmt.Sprintf(\"HeavyMecha '%s' (HP:%d, Shield:%d) attacks %s for %d damage!\", h.name, h.hp, h.shieldPower, target, h.attackPower)\n}\n\nfunc main() {\n    hero := HeavyMecha{BaseMecha: BaseMecha{name: \"Titan-X\", hp: 120, attackPower: 85}, shieldPower: 40}\n    var boss string\n    fmt.Scan(&boss)\n    fmt.Println(hero.Attack(boss))\n}\n",
+        "rust": "// CodeAdventure Level 6 - Rust \ud83e\udd80 (OOP Struct & Implementation)\nuse std::io;\n\nstruct BaseMecha {\n    name: String,\n    hp: i32,\n    attack_power: i32,\n}\n\nstruct HeavyMecha {\n    base: BaseMecha,\n    shield_power: i32,\n}\n\nimpl HeavyMecha {\n    fn attack(&self, target: &str) -> String {\n        format!(\"HeavyMecha '{}' (HP:{}, Shield:{}) attacks {} for {} damage!\", self.base.name, self.base.hp, self.shield_power, target, self.base.attack_power)\n    }\n}\n\nfn main() {\n    let hero = HeavyMecha {\n        base: BaseMecha { name: \"Titan-X\".to_string(), hp: 120, attack_power: 85 },\n        shield_power: 40,\n    };\n    let mut boss = String::new();\n    io::stdin().read_line(&mut boss).unwrap();\n    println!(\"{}\", hero.attack(boss.trim()));\n}\n",
+        "bash": "# CodeAdventure Level 6 - Bash Shell \ud83d\udcbb\nread boss\necho \"HeavyMecha 'Titan-X' (HP:120, Shield:40) attacks $boss for 85 damage!\"\n",
+        "ruby": "# CodeAdventure Level 6 - Ruby \ud83d\udc8e (OOPs & Class Inheritance)\nclass BaseMecha\n    attr_accessor :name, :hp, :attack_power\n    def initialize(name, hp, attack_power)\n        @name = name; @hp = hp; @attack_power = attack_power\n    end\nend\n\nclass HeavyMecha < BaseMecha\n    attr_accessor :shield_power\n    def initialize(name, hp, attack_power, shield_power)\n        super(name, hp, attack_power)\n        @shield_power = shield_power\n    end\n    def attack(target)\n        \"HeavyMecha '#{@name}' (HP:#{@hp}, Shield:#{@shield_power}) attacks #{target} for #{@attack_power} damage!\"\n    end\nend\n\nhero = HeavyMecha.new(\"Titan-X\", 120, 85, 40)\nboss = gets.chomp\nputs hero.attack(boss)\n",
+        "php": "<?php\n// CodeAdventure Level 6 - PHP \ud83d\udc18 (OOPs & Class Inheritance)\nclass BaseMecha {\n    public $name; public $hp; public $attackPower;\n    public function __construct($name, $hp, $attackPower) {\n        $this->name = $name; $this->hp = $hp; $this->attackPower = $attackPower;\n    }\n}\n\nclass HeavyMecha extends BaseMecha {\n    public $shieldPower;\n    public function __construct($name, $hp, $attackPower, $shieldPower) {\n        parent::__construct($name, $hp, $attackPower);\n        $this->shieldPower = $shieldPower;\n    }\n    public function attack($target) {\n        return \"HeavyMecha '{$this->name}' (HP:{$this->hp}, Shield:{$this->shieldPower}) attacks {$target} for {$this.attackPower} damage!\";\n    }\n}\n\n$hero = new HeavyMecha(\"Titan-X\", 120, 85, 40);\n$boss = trim(fgets(STDIN));\necho $hero->attack($boss) . \"\\n\";\n"
+      }
+    },
+    {
+      "id": "decorator_energy_shield",
+      "title": "Level 7: Decorator & Shield Buff \ud83d\udee1\ufe0f\u2728",
+      "badge": "Level 7 \u2022 Decorators",
+      "objective": "Wrap actions with higher-order functions & decorators (@power_buff) to double laser power and activate energy shields!",
+      "funnyHint": "Woof! Decorators wrap a function without modifying it! @power_buff doubles damage and logs shield activation! \ud83d\udc36",
+      "story": "Supercharge your starship weapons! Use function decorators to wrap basic laser commands with 2x attack multipliers and auto-shield barriers!",
+      "validationRules": {
+        "requiredKeywords": [
+          "power",
+          "buff",
+          "laser"
+        ],
+        "errorMessage": "\u274c [DECORATOR ERROR] Function must be wrapped with power buff decorator!"
+      },
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "MegaDreadnought"
+          ],
+          "enemies": [
+            {
+              "name": "MegaDreadnought",
+              "dist": 35,
+              "x": 400,
+              "y": 130,
+              "type": "ship"
+            }
+          ],
+          "expectedTarget": "BUFFED [2x DAMAGE + SHIELD] Fired Laser at MegaDreadnought for 100 damage!"
+        },
+        {
+          "round": 2,
+          "inputs": [
+            "QuantumBeast"
+          ],
+          "enemies": [
+            {
+              "name": "QuantumBeast",
+              "dist": 25,
+              "x": 360,
+              "y": 140,
+              "type": "beast"
+            }
+          ],
+          "expectedTarget": "BUFFED [2x DAMAGE + SHIELD] Fired Laser at QuantumBeast for 100 damage!"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 7 - Python 3 \ud83d\udc0d (Decorators & High-Order Functions)\nimport sys\n\ndef power_buff(func):\n    def wrapper(target, damage):\n        buffed_damage = damage * 2\n        res = func(target, buffed_damage)\n        return f\"BUFFED [2x DAMAGE + SHIELD] {res}\"\n    return wrapper\n\n@power_buff\ndef fire_laser(target, damage):\n    return f\"Fired Laser at {target} for {damage} damage!\"\n\ntarget_enemy = input()\nprint(fire_laser(target_enemy, 50))\n",
+        "javascript": "// CodeAdventure Level 7 - JavaScript \u26a1 (Function Wrappers / Decorators)\nfunction powerBuff(fn) {\n    return function(target, damage) {\n        const buffed = damage * 2;\n        return `BUFFED [2x DAMAGE + SHIELD] ${fn(target, buffed)}`;\n    };\n}\n\nlet fireLaser = function(target, damage) {\n    return `Fired Laser at ${target} for ${damage} damage!`;\n};\n\nfireLaser = powerBuff(fireLaser);\nconst enemy = readline();\nconsole.log(fireLaser(enemy, 50));\n",
+        "typescript": "// CodeAdventure Level 7 - TypeScript \ud83d\udcd8 (Function Wrappers / Decorators)\nfunction powerBuff(fn: (t: string, d: number) => string) {\n    return function(target: string, damage: number): string {\n        const buffed: number = damage * 2;\n        return `BUFFED [2x DAMAGE + SHIELD] ${fn(target, buffed)}`;\n    };\n}\n\nlet fireLaser = function(target: string, damage: number): string {\n    return `Fired Laser at ${target} for ${damage} damage!`;\n};\n\nfireLaser = powerBuff(fireLaser);\nconst enemy: string = readline();\nconsole.log(fireLaser(enemy, 50));\n",
+        "java": "// CodeAdventure Level 7 - Java \u2615 (High-Order Functions & Lambda Decorators)\nimport java.util.Scanner;\nimport java.util.function.BiFunction;\n\nclass Player {\n    public static BiFunction<String, Integer, String> powerBuff(BiFunction<String, Integer, String> fn) {\n        return (target, damage) -> \"BUFFED [2x DAMAGE + SHIELD] \" + fn.apply(target, damage * 2);\n    }\n\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        BiFunction<String, Integer, String> fireLaser = (target, damage) -> \"Fired Laser at \" + target + \" for \" + damage + \" damage!\";\n        fireLaser = powerBuff(fireLaser);\n\n        String enemy = in.next();\n        System.out.println(fireLaser.apply(enemy, 50));\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 7 - C++ 20 \ud83d\ude80 (Higher-Order Lambdas & Wrappers)\n#include <iostream>\n#include <string>\n#include <functional>\nusing namespace std;\n\nauto powerBuff(function<string(string, int)> fn) {\n    return [fn](string target, int damage) {\n        int buffed = damage * 2;\n        return \"BUFFED [2x DAMAGE + SHIELD] \" + fn(target, buffed);\n    };\n}\n\nint main() {\n    function<string(string, int)> fireLaser = [](string target, int damage) {\n        return \"Fired Laser at \" + target + \" for \" + to_string(damage) + \" damage!\";\n    };\n    fireLaser = powerBuff(fireLaser);\n\n    string enemy;\n    cin >> enemy;\n    cout << fireLaser(enemy, 50) << endl;\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 7 - C# (.NET) \ud83c\udfaf (Func Delegates & Higher-Order Decorators)\nusing System;\n\nclass Player {\n    static Func<string, int, string> PowerBuff(Func<string, int, string> fn) {\n        return (target, damage) => $\"BUFFED [2x DAMAGE + SHIELD] {fn(target, damage * 2)}\";\n    }\n\n    static void Main() {\n        Func<string, int, string> fireLaser = (target, damage) => $\"Fired Laser at {target} for {damage} damage!\";\n        fireLaser = PowerBuff(fireLaser);\n\n        string enemy = Console.ReadLine();\n        Console.WriteLine(fireLaser(enemy, 50));\n    }\n}\n",
+        "go": "// CodeAdventure Level 7 - Go \ud83d\udc39 (First-Class Functions / Decorators)\npackage main\nimport \"fmt\"\n\ntype LaserFunc func(string, int) string\n\nfunc PowerBuff(fn LaserFunc) LaserFunc {\n    return func(target string, damage int) string {\n        return fmt.Sprintf(\"BUFFED [2x DAMAGE + SHIELD] %s\", fn(target, damage * 2))\n    }\n}\n\nfunc main() {\n    fireLaser := func(target string, damage int) string {\n        return fmt.Sprintf(\"Fired Laser at %s for %d damage!\", target, damage)\n    }\n    fireLaser = PowerBuff(fireLaser)\n\n    var enemy string\n    fmt.Scan(&enemy)\n    fmt.Println(fireLaser(enemy, 50))\n}\n",
+        "rust": "// CodeAdventure Level 7 - Rust \ud83e\udd80 (Closure Wrappers)\nuse std::io;\n\nfn power_buff<F>(func: F) -> impl Fn(&str, i32) -> String\nwhere F: Fn(&str, i32) -> String {\n    move |target, damage| {\n        format!(\"BUFFED [2x DAMAGE + SHIELD] {}\", func(target, damage * 2))\n    }\n}\n\nfn main() {\n    let fire_laser = |target: &str, damage: i32| -> String {\n        format!(\"Fired Laser at {} for {} damage!\", target, damage)\n    };\n    let buffed_laser = power_buff(fire_laser);\n\n    let mut enemy = String::new();\n    io::stdin().read_line(&mut enemy).unwrap();\n    println!(\"{}\", buffed_laser(enemy.trim(), 50));\n}\n",
+        "bash": "# CodeAdventure Level 7 - Bash Shell \ud83d\udcbb\nread enemy\necho \"BUFFED [2x DAMAGE + SHIELD] Fired Laser at $enemy for 100 damage!\"\n",
+        "ruby": "# CodeAdventure Level 7 - Ruby \ud83d\udc8e (Proc / Method Decorators)\ndef power_buff(fn)\n    lambda do |target, damage|\n        \"BUFFED [2x DAMAGE + SHIELD] #{fn.call(target, damage * 2)}\"\n    end\nend\n\nfire_laser = lambda do |target, damage|\n    \"Fired Laser at #{target} for #{damage} damage!\"\nend\n\nfire_laser = power_buff(fire_laser)\nenemy = gets.chomp\nputs fire_laser.call(enemy, 50)\n",
+        "php": "<?php\n// CodeAdventure Level 7 - PHP \ud83d\udc18 (Higher-Order Closure Decorator)\nfunction powerBuff($fn) {\n    return function($target, $damage) use ($fn) {\n        $buffed = $damage * 2;\n        return \"BUFFED [2x DAMAGE + SHIELD] \" . $fn($target, $buffed);\n    };\n}\n\n$fireLaser = function($target, $damage) {\n    return \"Fired Laser at {$target} for {$damage} damage!\";\n};\n\n$fireLaser = powerBuff($fireLaser);\n$enemy = trim(fgets(STDIN));\necho $fireLaser($enemy, 50) . \"\\n\";\n"
+      }
+    },
+    {
+      "id": "ai_agent_cyber_companion",
+      "title": "Level 8: Autonomous AI Agent Companion \ud83e\udde0\ud83e\udd16",
+      "badge": "Level 8 \u2022 AI Agent Loop",
+      "objective": "Build an autonomous AI Agent loop (Sense -> Think -> Act) that evaluates telemetry (health, ammo) to dynamically pick tools (REPAIR_SHIELD, RELOAD_AMMO, FIRE_WEAPON)!",
+      "funnyHint": "Woof! SENSE perceives state -> THINK picks tool (REPAIR/RELOAD/FIRE) -> ACT executes tool! Let the AI Agent think for itself! \ud83d\udc36",
+      "story": "Program an AI Cyber Companion! Implement sense(), think(), and act() methods to evaluate ship stats dynamically.",
+      "validationRules": {
+        "requiredKeywords": [
+          "sense",
+          "think",
+          "act"
+        ],
+        "errorMessage": "\u274c [AI AGENT ERROR] Autonomous companion must implement sense(), think(), and act() logic!"
+      },
+      "testRounds": [
+        {
+          "round": 1,
+          "inputs": [
+            "25",
+            "5",
+            "GlitchFiend"
+          ],
+          "telemetry": {
+            "health": 25,
+            "ammo": 5,
+            "enemy": "GlitchFiend"
+          },
+          "expectedTarget": "ACTION [REPAIR_SHIELD] - Restored 50 HP!"
+        },
+        {
+          "round": 2,
+          "inputs": [
+            "85",
+            "0",
+            "GlitchFiend"
+          ],
+          "telemetry": {
+            "health": 85,
+            "ammo": 0,
+            "enemy": "GlitchFiend"
+          },
+          "expectedTarget": "ACTION [RELOAD_AMMO] - Ammo Refilled!"
+        },
+        {
+          "round": 3,
+          "inputs": [
+            "90",
+            "10",
+            "GlitchFiend"
+          ],
+          "telemetry": {
+            "health": 90,
+            "ammo": 10,
+            "enemy": "GlitchFiend"
+          },
+          "expectedTarget": "ACTION [FIRE_WEAPON] - GlitchFiend BLASTED!"
+        }
+      ],
+      "templates": {
+        "python": "# CodeAdventure Level 8 - Python 3 \ud83d\udc0d (Autonomous AI Agent Loop)\nimport sys\n\nclass CyberAIAgent:\n    def __init__(self):\n        self.memory = []\n\n    def sense(self, health, ammo, enemy):\n        return {\"health\": health, \"ammo\": ammo, \"enemy\": enemy}\n\n    def think(self, state):\n        if state[\"health\"] < 30:\n            return \"REPAIR_SHIELD\"\n        elif state[\"ammo\"] == 0:\n            return \"RELOAD_AMMO\"\n        else:\n            return \"FIRE_WEAPON\"\n\n    def act(self, action, state):\n        if action == \"REPAIR_SHIELD\":\n            return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\"\n        elif action == \"RELOAD_AMMO\":\n            return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\"\n        else:\n            return f\"ACTION [FIRE_WEAPON] - {state['enemy']} BLASTED!\"\n\nagent = CyberAIAgent()\nhealth = int(input())\nammo = int(input())\nenemy = input()\n\nstate = agent.sense(health, ammo, enemy)\naction = agent.think(state)\nprint(agent.act(action, state))\n",
+        "javascript": "// CodeAdventure Level 8 - JavaScript \u26a1 (Autonomous AI Agent Loop)\nclass CyberAIAgent {\n    sense(health, ammo, enemy) {\n        return { health, ammo, enemy };\n    }\n    think(state) {\n        if (state.health < 30) return \"REPAIR_SHIELD\";\n        if (state.ammo === 0) return \"RELOAD_AMMO\";\n        return \"FIRE_WEAPON\";\n    }\n    act(action, state) {\n        if (action === \"REPAIR_SHIELD\") return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\";\n        if (action === \"RELOAD_AMMO\") return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\";\n        return `ACTION [FIRE_WEAPON] - ${state.enemy} BLASTED!`;\n    }\n}\n\nconst agent = new CyberAIAgent();\nconst health = parseInt(readline());\nconst ammo = parseInt(readline());\nconst enemy = readline();\n\nconst state = agent.sense(health, ammo, enemy);\nconst action = agent.think(state);\nconsole.log(agent.act(action, state));\n",
+        "typescript": "// CodeAdventure Level 8 - TypeScript \ud83d\udcd8 (Autonomous AI Agent Loop)\ninterface AgentState { health: number; ammo: number; enemy: string; }\n\nclass CyberAIAgent {\n    sense(health: number, ammo: number, enemy: string): AgentState {\n        return { health, ammo, enemy };\n    }\n    think(state: AgentState): string {\n        if (state.health < 30) return \"REPAIR_SHIELD\";\n        if (state.ammo === 0) return \"RELOAD_AMMO\";\n        return \"FIRE_WEAPON\";\n    }\n    act(action: string, state: AgentState): string {\n        if (action === \"REPAIR_SHIELD\") return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\";\n        if (action === \"RELOAD_AMMO\") return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\";\n        return `ACTION [FIRE_WEAPON] - ${state.enemy} BLASTED!`;\n    }\n}\n\nconst agent = new CyberAIAgent();\nconst health: number = parseInt(readline());\nconst ammo: number = parseInt(readline());\nconst enemy: string = readline();\n\nconst state: AgentState = agent.sense(health, ammo, enemy);\nconst action: string = agent.think(state);\nconsole.log(agent.act(action, state));\n",
+        "java": "// CodeAdventure Level 8 - Java \u2615 (Autonomous AI Agent Loop)\nimport java.util.Scanner;\n\nclass State {\n    int health; int ammo; String enemy;\n    State(int h, int a, String e) { health = h; ammo = a; enemy = e; }\n}\n\nclass CyberAIAgent {\n    State sense(int health, int ammo, String enemy) {\n        return new State(health, ammo, enemy);\n    }\n    String think(State state) {\n        if (state.health < 30) return \"REPAIR_SHIELD\";\n        if (state.ammo == 0) return \"RELOAD_AMMO\";\n        return \"FIRE_WEAPON\";\n    }\n    String act(String action, State state) {\n        if (action.equals(\"REPAIR_SHIELD\")) return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\";\n        if (action.equals(\"RELOAD_AMMO\")) return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\";\n        return \"ACTION [FIRE_WEAPON] - \" + state.enemy + \" BLASTED!\";\n    }\n}\n\nclass Player {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        CyberAIAgent agent = new CyberAIAgent();\n        int health = in.nextInt();\n        int ammo = in.nextInt();\n        String enemy = in.next();\n\n        State state = agent.sense(health, ammo, enemy);\n        String action = agent.think(state);\n        System.out.println(agent.act(action, state));\n    }\n}\n",
+        "cpp": "// CodeAdventure Level 8 - C++ 20 \ud83d\ude80 (Autonomous AI Agent Loop)\n#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct State { int health; int ammo; string enemy; };\n\nclass CyberAIAgent {\npublic:\n    State sense(int health, int ammo, string enemy) {\n        return { health, ammo, enemy };\n    }\n    string think(State state) {\n        if (state.health < 30) return \"REPAIR_SHIELD\";\n        if (state.ammo == 0) return \"RELOAD_AMMO\";\n        return \"FIRE_WEAPON\";\n    }\n    string act(string action, State state) {\n        if (action == \"REPAIR_SHIELD\") return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\";\n        if (action == \"RELOAD_AMMO\") return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\";\n        return \"ACTION [FIRE_WEAPON] - \" + state.enemy + \" BLASTED!\";\n    }\n};\n\nint main() {\n    CyberAIAgent agent;\n    int health, ammo;\n    string enemy;\n    cin >> health >> ammo >> enemy;\n\n    State state = agent.sense(health, ammo, enemy);\n    string action = agent.think(state);\n    cout << agent.act(action, state) << endl;\n    return 0;\n}\n",
+        "csharp": "// CodeAdventure Level 8 - C# (.NET) \ud83c\udfaf (Autonomous AI Agent Loop)\nusing System;\n\nclass State {\n    public int health; public int ammo; public string enemy;\n    public State(int h, int a, string e) { health = h; ammo = a; enemy = e; }\n}\n\nclass CyberAIAgent {\n    public State Sense(int health, int ammo, string enemy) { return new State(health, ammo, enemy); }\n    public string Think(State state) {\n        if (state.health < 30) return \"REPAIR_SHIELD\";\n        if (state.ammo == 0) return \"RELOAD_AMMO\";\n        return \"FIRE_WEAPON\";\n    }\n    public string Act(string action, State state) {\n        if (action == \"REPAIR_SHIELD\") return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\";\n        if (action == \"RELOAD_AMMO\") return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\";\n        return $\"ACTION [FIRE_WEAPON] - {state.enemy} BLASTED!\";\n    }\n}\n\nclass Player {\n    static void Main() {\n        CyberAIAgent agent = new CyberAIAgent();\n        int health = int.Parse(Console.ReadLine());\n        int ammo = int.Parse(Console.ReadLine());\n        string enemy = Console.ReadLine();\n\n        State state = agent.Sense(health, ammo, enemy);\n        string action = agent.Think(state);\n        Console.WriteLine(agent.Act(action, state));\n    }\n}\n",
+        "go": "// CodeAdventure Level 8 - Go \ud83d\udc39 (Autonomous AI Agent Loop)\npackage main\nimport \"fmt\"\n\ntype State struct {\n    health int\n    ammo int\n    enemy string\n}\n\ntype CyberAIAgent struct{}\n\nfunc (a CyberAIAgent) Sense(health int, ammo int, enemy string) State {\n    return State{health: health, ammo: ammo, enemy: enemy}\n}\n\nfunc (a CyberAIAgent) Think(state State) string {\n    if state.health < 30 { return \"REPAIR_SHIELD\" }\n    if state.ammo == 0 { return \"RELOAD_AMMO\" }\n    return \"FIRE_WEAPON\"\n}\n\nfunc (a CyberAIAgent) Act(action string, state State) string {\n    if action == \"REPAIR_SHIELD\" { return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\" }\n    if action == \"RELOAD_AMMO\" { return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\" }\n    return fmt.Sprintf(\"ACTION [FIRE_WEAPON] - %s BLASTED!\", state.enemy)\n}\n\nfunc main() {\n    agent := CyberAIAgent{}\n    var health, ammo int\n    var enemy string\n    fmt.Scan(&health, &ammo, &enemy)\n\n    state := agent.Sense(health, ammo, enemy)\n    action := agent.Think(state)\n    fmt.Println(agent.Act(action, state))\n}\n",
+        "rust": "// CodeAdventure Level 8 - Rust \ud83e\udd80 (Autonomous AI Agent Loop)\nuse std::io;\n\nstruct State { health: i32, ammo: i32, enemy: String }\nstruct CyberAIAgent;\n\nimpl CyberAIAgent {\n    fn sense(&self, health: i32, ammo: i32, enemy: String) -> State {\n        State { health, ammo, enemy }\n    }\n    fn think(&self, state: &State) -> &'static str {\n        if state.health < 30 { \"REPAIR_SHIELD\" }\n        else if state.ammo == 0 { \"RELOAD_AMMO\" }\n        else { \"FIRE_WEAPON\" }\n    }\n    fn act(&self, action: &str, state: &State) -> String {\n        if action == \"REPAIR_SHIELD\" { \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\".to_string() }\n        else if action == \"RELOAD_AMMO\" { \"ACTION [RELOAD_AMMO] - Ammo Refilled!\".to_string() }\n        else { format!(\"ACTION [FIRE_WEAPON] - {} BLASTED!\", state.enemy) }\n    }\n}\n\nfn main() {\n    let agent = CyberAIAgent;\n    let mut h_line = String::new();\n    let mut a_line = String::new();\n    let mut e_line = String::new();\n    io::stdin().read_line(&mut h_line).unwrap();\n    io::stdin().read_line(&mut a_line).unwrap();\n    io::stdin().read_line(&mut e_line).unwrap();\n\n    let health: i32 = h_line.trim().parse().unwrap();\n    let ammo: i32 = a_line.trim().parse().unwrap();\n    let enemy = e_line.trim().to_string();\n\n    let state = agent.sense(health, ammo, enemy);\n    let action = agent.think(&state);\n    println!(\"{}\", agent.act(action, &state));\n}\n",
+        "bash": "# CodeAdventure Level 8 - Bash Shell \ud83d\udcbb\nread health\nread ammo\nread enemy\n\nif [ \"$health\" -lt 30 ]; then\n    echo \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\"\nelif [ \"$ammo\" -eq 0 ]; then\n    echo \"ACTION [RELOAD_AMMO] - Ammo Refilled!\"\nelse\n    echo \"ACTION [FIRE_WEAPON] - $enemy BLASTED!\"\nfi\n",
+        "ruby": "# CodeAdventure Level 8 - Ruby \ud83d\udc8e (Autonomous AI Agent Loop)\nclass CyberAIAgent\n    def sense(health, ammo, enemy)\n        { health: health, ammo: ammo, enemy: enemy }\n    end\n    def think(state)\n        return \"REPAIR_SHIELD\" if state[:health] < 30\n        return \"RELOAD_AMMO\" if state[:ammo] == 0\n        \"FIRE_WEAPON\"\n    end\n    def act(action, state)\n        return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\" if action == \"REPAIR_SHIELD\"\n        return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\" if action == \"RELOAD_AMMO\"\n        \"ACTION [FIRE_WEAPON] - #{state[:enemy]} BLASTED!\"\n    end\nend\n\nagent = CyberAIAgent.new\nhealth = gets.to_i\nammo = gets.to_i\nenemy = gets.chomp\n\nstate = agent.sense(health, ammo, enemy)\naction = agent.think(state)\nputs agent.act(action, state)\n",
+        "php": "<?php\n// CodeAdventure Level 8 - PHP \ud83d\udc18 (Autonomous AI Agent Loop)\nclass CyberAIAgent {\n    public function sense($health, $ammo, $enemy) {\n        return [\"health\" => $health, \"ammo\" => $ammo, \"enemy\" => $enemy];\n    }\n    public function think($state) {\n        if ($state[\"health\"] < 30) return \"REPAIR_SHIELD\";\n        if ($state[\"ammo\"] == 0) return \"RELOAD_AMMO\";\n        return \"FIRE_WEAPON\";\n    }\n    public function act($action, $state) {\n        if ($action === \"REPAIR_SHIELD\") return \"ACTION [REPAIR_SHIELD] - Restored 50 HP!\";\n        if ($action === \"RELOAD_AMMO\") return \"ACTION [RELOAD_AMMO] - Ammo Refilled!\";\n        return \"ACTION [FIRE_WEAPON] - \" . $state[\"enemy\"] . \" BLASTED!\";\n    }\n}\n\n$agent = new CyberAIAgent();\n$health = (int)trim(fgets(STDIN));\n$ammo = (int)trim(fgets(STDIN));\n$enemy = trim(fgets(STDIN));\n\n$state = $agent->sense($health, $ammo, $enemy);\n$action = $agent->think($state);\necho $agent->act($action, $state) . \"\\n\";\n"
+      }
+    }
+  ]
+}

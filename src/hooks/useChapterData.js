@@ -16,7 +16,8 @@ export function useChapterData(module, baseUrl = '/chapters', enabled = true) {
     if (!enabled || !mdFile) return;
     let cancelled = false;
     setState({ markdown: null, loading: true, error: null });
-    fetch(`${baseUrl}/${mdFile}`)
+    // Absolute mdFile paths (e.g. /bedrock/…) bypass the base join.
+    fetch(mdFile.startsWith('/') ? mdFile : `${baseUrl}/${mdFile}`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();

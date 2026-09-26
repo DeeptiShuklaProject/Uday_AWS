@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "topic": "08_arrays",
+  "title": "Arrays & List Data Structures",
+  "description": "Arrays and lists store ordered elements in contiguous memory blocks with O(1) random index access.",
+  "category": "Structures",
+  "badge": "Level 8: Architect",
+  "tags": [
+    "Arrays",
+    "Lists",
+    "Memory",
+    "Indexing"
+  ],
+  "codeExamples": {
+    "python": "numbers = [10, 20, 30, 40, 50]\nnumbers.append(60)\nfirst_item = numbers[0]\nsub_slice = numbers[1:4]\nprint(f'First: {first_item}, Slice: {sub_slice}, Full List: {numbers}')",
+    "java": "import java.util.ArrayList;\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<Integer> numbers = new ArrayList<>();\n        numbers.add(10); numbers.add(20); numbers.add(30);\n        int firstItem = numbers.get(0);\n        System.out.println(\"First: \" + firstItem + \", Size: \" + numbers.size());\n    }\n}",
+    "javascript": "let numbers = [10, 20, 30, 40, 50];\nnumbers.push(60);\nlet firstItem = numbers[0];\nlet subSlice = numbers.slice(1, 4);\nconsole.log(`First: ${firstItem}, Slice: ${subSlice}, Full Array: ${numbers}`);",
+    "cpp": "#include <iostream>\n#include <vector>\nint main() {\n    std::vector<int> numbers = {10, 20, 30, 40, 50};\n    numbers.push_back(60);\n    std::cout << \"First: \" << numbers[0] << \", Size: \" << numbers.size() << std::endl;\n    return 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the time complexity of accessing an element by index in a contiguous array?",
+      "options": [
+        "O(1) constant time because element memory address is directly computed using base_address + index * element_size.",
+        "O(N) linear time scanning from index 0.",
+        "O(log N) logarithmic time.",
+        "O(N^2) quadratic time."
+      ],
+      "correctIndex": 0,
+      "explanation": "Arrays provide O(1) random access by computing pointer offsets directly from index multiplication."
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "q": "01. What is the difference between a Dynamic Array (Python list / C++ vector) vs Fixed-Size Array?",
+      "a": "Fixed-size arrays allocate a permanent memory block at creation. Dynamic arrays allocate an initial capacity; when full, they automatically allocate a double-sized memory block and copy existing elements over (Amortized O(1) append time)."
+    },
+    {
+      "q": "02. How is a Python list implemented internally in CPython?",
+      "a": "CPython lists are variable-length array of 64-bit memory pointers (PyObject*) stored in a contiguous C array block on the Heap, not contiguous raw primitive values."
+    },
+    {
+      "q": "03. What is the time complexity of array operations (Access, Search, Insert at Start, Insert at End)?",
+      "a": "Access: O(1). Search: O(N). Insert at End (Append): Amortized O(1). Insert at Start (Prepend): O(N) because all N existing elements must shift right in memory."
+    },
+    {
+      "q": "04. What is the difference between Shallow Copy vs Deep Copy of a list in Python?",
+      "a": "Shallow copy (`copy.copy(lst)` or `lst[:]`) creates a new list container pointing to the SAME nested objects in memory. Deep copy (`copy.deepcopy(lst)`) recursively duplicates all nested objects."
+    },
+    {
+      "q": "05. Why is deleting an element from the middle of an array an O(N) operation?",
+      "a": "Deleting an element leaves an empty slot; all subsequent elements past the deleted index must shift left by 1 position in memory to maintain contiguous layout."
+    },
+    {
+      "q": "06. How does Python Slicing (`list[start:stop:step]`) work under the hood?",
+      "a": "Slicing constructs a new list object containing references to the selected element range. `step = -1` reverses the array (`list[::-1]`)."
+    },
+    {
+      "q": "07. What is CPU Cache L1/L2 Locality of Reference (Spatial Locality) in contiguous arrays?",
+      "a": "Because array elements sit adjacent in RAM, loading one element fetches an entire 64-byte Cache Line into CPU L1 cache, making sequential array processing significantly faster than linked lists."
+    },
+    {
+      "q": "08. What is the difference between `append()` vs `extend()` in Python lists?",
+      "a": "`append(x)` adds `x` as a SINGLE element at the end of the list. `extend(iterable)` iterates through `iterable` and appends EACH element individually."
+    },
+    {
+      "q": "09. How does Two Pointer Technique optimize array search problems from O(N²) to O(N)?",
+      "a": "By initializing left (0) and right (N-1) pointers moving inward on sorted arrays, two pointers eliminate unnecessary nested loop iterations (e.g. Container With Most Water, Two Sum)."
+    },
+    {
+      "q": "10. What is Sliding Window Technique on arrays?",
+      "a": "Sliding Window maintains a running window (sub-segment) across an array to solve sub-array sum or maximum problems in O(N) linear time instead of recalculating overlapping sub-arrays."
+    },
+    {
+      "q": "11. What is the difference between `list.sort()` vs `sorted()` in Python?",
+      "a": "`list.sort()` sorts the list in-place (mutating original list) returning `None`. `sorted(list)` returns a BRAND NEW sorted list leaving the original list unchanged."
+    },
+    {
+      "q": "12. What sorting algorithm is used by Python's `sort()` method?",
+      "a": "Python uses **Timsort**, a hybrid adaptive algorithm derived from Merge Sort and Insertion Sort with O(N log N) worst-case and O(N) best-case performance."
+    },
+    {
+      "q": "13. What is a Matrix (2D Array) and how is Row-Major vs Column-Major ordering stored in memory?",
+      "a": "2D arrays are stored in 1D contiguous RAM. Row-Major (C/Python) stores elements row-by-row (`index = row * cols + col`). Column-Major (Fortran/MATLAB) stores column-by-column."
+    },
+    {
+      "q": "14. What is Array Resizing Factor and Over-allocation in dynamic arrays?",
+      "a": "To avoid resizing on every `append()`, dynamic arrays allocate extra spare capacity using growth factors (CPython uses growth factor ~1.125 + 6, C++ std::vector uses 2.0 or 1.5)."
+    },
+    {
+      "q": "15. What is the difference between Python `array` module vs standard `list`?",
+      "a": "The `array` module stores compact homogeneous primitive C-types directly in memory without pointer wrapping, consuming 4-8x less RAM memory."
+    },
+    {
+      "q": "16. What is NumPy ndarray and why is it preferred for data science?",
+      "a": "NumPy arrays store fixed-type contiguous binary data blocks executed via SIMD C/Fortran vector operations, running up to 100x faster than standard Python list loops."
+    },
+    {
+      "q": "17. How does Binary Search on a sorted array achieve O(log N) complexity?",
+      "a": "By halving the search space at every step (`mid = (low + high) // 2`), binary search finds targets in O(log N) time instead of linear O(N) scanning."
+    },
+    {
+      "q": "18. What is In-Place Array Reversal algorithm?",
+      "a": "Swap elements from opposite ends (`arr[left]`, `arr[right]`) moving inward until `left >= right`, modifying array in O(1) auxiliary space."
+    },
+    {
+      "q": "19. How to find Duplicate Elements in an array in O(N) time and O(1) extra space?",
+      "a": "Floyd's Tortoise and Hare Cycle Detection algorithm treats array values as pointer indices to locate duplicate entry cycles."
+    },
+    {
+      "q": "20. What are production best practices when working with Lists and Arrays?",
+      "a": "Pre-allocate array capacity when size is known, avoid `insert(0, val)` on large lists (use `collections.deque` for O(1) prepends), and leverage vectorized NumPy operations for mathematical processing."
+    }
+  ]
+}

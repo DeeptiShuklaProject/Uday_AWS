@@ -15,7 +15,7 @@ export default function ContextPanel({ sections = [], currentIndex = 0, onSelect
             <li key={s.id || i} className="toc-item">
               <a
                 className={`toc-link${i === currentIndex ? ' active' : ''}`}
-                href={`#slide-${i + 1}`}
+                href={`#${s.id}`}
                 onClick={e => { e.preventDefault(); onSelect?.(i); }}
               >{s.title}</a>
             </li>

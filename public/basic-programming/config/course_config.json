@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "kbId": "doc_basic_of_programming",
+  "portalBadge": "Visual Programming Engine",
+  "portalTitle": "Basics of Programming",
+  "portalSubtitle": "Language-Independent Visual & Interactive Foundations",
+  "portalDescription": "Master core programming concepts using live Monaco playgrounds, stack/heap memory visualizers, variable animations, and multi-language comparisons.",
+  "modules": [
+    {
+      "id": "foundations",
+      "title": "Phase 01: Core Foundations",
+      "iconName": "BookOpen",
+      "badge": "Foundations",
+      "description": "Variables, Data Types, Operators, Input/Output, Conditions, and Loops."
+    },
+    {
+      "id": "structures",
+      "title": "Phase 02: Functions & Data Structures",
+      "iconName": "Zap",
+      "badge": "Intermediate",
+      "description": "Functions, Arrays, Strings, Collections, and Recursion."
+    },
+    {
+      "id": "advanced",
+      "title": "Phase 03: OOP & Memory Architecture",
+      "iconName": "Cpu",
+      "badge": "Advanced",
+      "description": "Classes, OOP, Exception Handling, Memory, References, Pointers, and Complexity."
+    }
+  ]
+}

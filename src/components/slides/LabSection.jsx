@@ -2,56 +2,86 @@ import { useEffect, useRef, useState } from 'react';
 import { useCourse } from '../../context/CourseContext';
 
 /**
- * LabSection — step-by-step hands-on lab checklist.
- * content: { title, description, difficulty, steps: [{id,title,instruction,expectedResult,hint}] }
+ * LabSection — hands-on lab checklist card (reference-style):
+ * bordered card with header (icon + title + difficulty/duration badges),
+ * a Lab Progress bar, then step cards each with a numbered indicator and
+ * a "Mark Complete" toggle. Completing every step records the lab.
+ *
+ * content: { title, description, difficulty, duration?, steps: [{id,title,instruction,expectedResult,hint}] }
  */
 export default function LabSection({ content = {}, sectionId, hintsLabel = 'Hint' }) {
-  const { progress, currentModuleId } = useCourse();
+  const { progress, currentModule } = useCourse();
+  const moduleId = currentModule?.id;
   const steps = content.steps || [];
   const [done, setDone] = useState({});
   const [openHint, setOpenHint] = useState({});
   const recorded = useRef(false);
   const doneCount = Object.values(done).filter(Boolean).length;
+  const pct = steps.length ? Math.round((doneCount / steps.length) * 100) : 0;
 
   // Count the lab as completed once every step is checked off.
   useEffect(() => {
     if (steps.length > 0 && doneCount === steps.length && !recorded.current) {
       recorded.current = true;
-      progress.markLabComplete(currentModuleId, sectionId || 'lab');
+      progress.markLabComplete(moduleId, sectionId || 'lab');
     }
-  }, [doneCount, steps.length, progress, currentModuleId, sectionId]);
+  }, [doneCount, steps.length, progress, moduleId, sectionId]);
+
+  const toggle = (key) => setDone(d => ({ ...d, [key]: !d[key] }));
+  const nextOpen = steps.findIndex((s, i) => !done[s.id || i]);
 
   return (
-    <div>
+    <div className="lab-card">
       {(content.title || content.description) && (
-        <div className="alert alert-tip">
-          <span className="alert-icon">🔬</span>
-          <div className="alert-content">
-            {content.title && <div className="alert-title">{content.title}</div>}
-            {content.description && <div className="alert-text">{content.description}</div>}
+        <div className="lab-card-head">
+          <div className="lab-card-icon">🧪</div>
+          <div className="lab-card-head-main">
+            <div className="lab-card-badges">
+              <span className={`badge difficulty-${content.difficulty || 'beginner'}`}>
+                {content.difficulty || 'beginner'}
+              </span>
+              {content.duration && (
+                <span className="badge badge-neutral">⏱ {content.duration}</span>
+              )}
+            </div>
+            {content.title && <div className="lab-card-title">{content.title}</div>}
+            {content.description && <p className="lab-card-desc">{content.description}</p>}
           </div>
         </div>
       )}
-      <div className="steps">
+
+      {steps.length > 0 && (
+        <div className="lab-progress">
+          <div className="progress-label">
+            <span className="progress-label-title">Lab Progress</span>
+            <span className="progress-label-value">{pct}%</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
+          </div>
+        </div>
+      )}
+
+      <div className="lab-steps">
         {steps.map((step, i) => {
-          const complete = !!done[step.id || i];
+          const key = step.id || i;
+          const complete = !!done[key];
+          const isCurrent = i === nextOpen;
           return (
-            <div key={step.id || i} className="step-item">
-              <div className="step-indicator">
-                <button
-                  type="button"
-                  className={`step-circle ${complete ? 'step-circle-complete' : 'step-circle-pending'}`}
-                  onClick={() => setDone(d => ({ ...d, [step.id || i]: !complete }))}
-                  title={complete ? 'Mark incomplete' : 'Mark complete'}
-                  style={{ border: 'none', cursor: 'pointer' }}
-                >
-                  {complete ? '✓' : i + 1}
-                </button>
-                {i < steps.length - 1 && <div className={`step-line${complete ? ' step-line-complete' : ''}`} />}
-              </div>
-              <div className="step-content">
-                <div className="step-title">{step.title}</div>
-                {step.instruction && <p className="step-desc">{step.instruction}</p>}
+            <div key={key} className={`lab-step${complete ? ' done' : ''}${isCurrent ? ' current' : ''}`}>
+              <div className="lab-step-num">{complete ? '✓' : i + 1}</div>
+              <div className="lab-step-body">
+                <div className="lab-step-top">
+                  <span className="lab-step-title">{step.title}</span>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${complete ? 'lab-step-btn-done' : 'btn-success'}`}
+                    onClick={() => toggle(key)}
+                  >{complete ? '✓ Completed' : '✓ Mark Complete'}</button>
+                </div>
+                {step.html
+                  ? <div className="slide-html step-html" dangerouslySetInnerHTML={{ __html: step.html }} />
+                  : step.instruction && <p className="step-desc">{step.instruction}</p>}
                 {step.expectedResult && (
                   <p className="step-desc"><strong>Expected:</strong> {step.expectedResult}</p>
                 )}
@@ -60,9 +90,9 @@ export default function LabSection({ content = {}, sectionId, hintsLabel = 'Hint
                     <button
                       type="button"
                       className="btn btn-xs btn-ghost"
-                      onClick={() => setOpenHint(h => ({ ...h, [step.id || i]: !h[step.id || i] }))}
+                      onClick={() => setOpenHint(h => ({ ...h, [key]: !h[key] }))}
                     >💡 {hintsLabel}</button>
-                    {openHint[step.id || i] && (
+                    {openHint[key] && (
                       <div className="alert alert-warning" style={{ marginTop: 8, marginBottom: 0 }}>
                         <span className="alert-icon">💡</span>
                         <div className="alert-content"><div className="alert-text">{step.hint}</div></div>
