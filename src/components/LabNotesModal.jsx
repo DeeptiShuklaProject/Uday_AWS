@@ -56,10 +56,13 @@ export default function LabNotesModal({
   }, [open, markdown]);
 
   // Load saved notes when the modal opens / chapter changes.
+  // initialNotes is reset to null first so the editor unmounts and
+  // remounts with the freshly loaded content (it sets innerHTML on mount).
   useEffect(() => {
     if (!open || !moduleId) return;
     let cancelled = false;
     setStatus('loading');
+    setInitialNotes(null);
     load().then(content => {
       if (cancelled) return;
       setInitialNotes(content);
