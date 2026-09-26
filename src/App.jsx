@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { CourseProvider, useCourse } from './context/CourseContext';
 import Layout from './components/Layout';
@@ -13,53 +13,58 @@ const FIRST_MODULE = registry.modules[0]?.id;
 
 /**
  * ChapterPage — /chapter/:moduleId
- * The route param is the single source of truth for the current chapter;
- * CourseContext.currentModuleId stays in sync in both directions.
+ * The route param is the single source of truth for the current chapter.
+ * Context follows the route (route → context). Components that jump
+ * chapters call `goToModule`, which sets context and navigates atomically —
+ * there is intentionally NO context → route sync effect (it ping-pongs).
  */
 function ChapterPage() {
   const { moduleId } = useParams();
-  const navigate = useNavigate();
   const { modules, currentModuleId, setCurrentModuleId, activeModal, closeModal } = useCourse();
   const { data: lesson, loading, error } = useModuleSlides(moduleId);
   const [slideIndex, setSlideIndex] = useState(0);
 
   const valid = modules.some(m => m.id === moduleId);
 
-  // Route → context
+  // Route → context (one direction only)
   useEffect(() => {
     if (valid && moduleId !== currentModuleId) setCurrentModuleId(moduleId);
   }, [moduleId, valid, currentModuleId, setCurrentModuleId]);
 
-  // Context → route (covers in-app jumps like NextSection)
+  // Reset the slide pointer when the chapter changes. Instant scroll —
+  // the design system sets `scroll-behavior: smooth`, which would otherwise
+  // animate the jump and look like flickering on every chapter switch.
   useEffect(() => {
-    if (currentModuleId && currentModuleId !== moduleId && modules.some(m => m.id === currentModuleId)) {
-      navigate(`/chapter/${currentModuleId}`);
-    }
-  }, [currentModuleId, moduleId, modules, navigate]);
-
-  // Reset the slide pointer when the chapter changes.
-  useEffect(() => { setSlideIndex(0); window.scrollTo(0, 0); }, [moduleId]);
+    setSlideIndex(0);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [moduleId]);
 
   if (!valid) return <Navigate to={`/chapter/${FIRST_MODULE}`} replace />;
+
+  // Never paint the previous chapter's slides while the next chunk loads —
+  // stale data + the spinner mounting/unmounting is what causes the flicker.
+  const current = lesson && lesson.moduleId === moduleId ? lesson : null;
 
   return (
     <Layout
       contextPanel={
-        lesson && (
+        current && (
           <ContextPanel
-            sections={lesson.sections || []}
+            sections={current.sections || []}
             currentIndex={slideIndex}
             onSelect={setSlideIndex}
           />
         )
       }
     >
-      {loading && <div className="empty-state"><div className="empty-state-icon">⏳</div><p>Loading chapter…</p></div>}
+      {!current && !error && (
+        <div className="empty-state"><div className="empty-state-icon">⏳</div><p>Loading chapter…</p></div>
+      )}
       {error && <div className="empty-state"><div className="empty-state-icon">⚠️</div><p>Failed to load chapter data.</p></div>}
-      {lesson && (
+      {current && (
         <LessonViewer
           key={moduleId}
-          lesson={lesson}
+          lesson={current}
           slideIndex={slideIndex}
           onSlideChange={setSlideIndex}
           modalOpen={!!activeModal}
@@ -71,21 +76,36 @@ function ChapterPage() {
   );
 }
 
+/**
+ * RoutedCourseProvider — lives inside BrowserRouter so goToModule can
+ * navigate client-side. The provider itself stays router-agnostic.
+ */
+function RoutedCourseProvider({ children }) {
+  const navigate = useNavigate();
+  const onModuleSelect = useCallback(id => navigate(`/chapter/${id}`), [navigate]);
+  return (
+    <CourseProvider
+      registry={registry}
+      progressStorageKey="aws-masterclass-progress"
+      themeStorageKey="masterclass-theme"
+      config={{ notesEndpoint: '/api/lab', chapterBaseUrl: '/chapters' }}
+      onModuleSelect={onModuleSelect}
+    >
+      {children}
+    </CourseProvider>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <CourseProvider
-        registry={registry}
-        progressStorageKey="aws-masterclass-progress"
-        themeStorageKey="masterclass-theme"
-        config={{ notesEndpoint: '/api/lab', chapterBaseUrl: '/chapters' }}
-      >
+      <RoutedCourseProvider>
         <Routes>
           <Route path="/" element={<Navigate to={`/chapter/${FIRST_MODULE}`} replace />} />
           <Route path="/chapter/:moduleId" element={<ChapterPage />} />
           <Route path="*" element={<Navigate to={`/chapter/${FIRST_MODULE}`} replace />} />
         </Routes>
-      </CourseProvider>
+      </RoutedCourseProvider>
     </BrowserRouter>
   );
 }

@@ -5,10 +5,10 @@ import { useCourse } from '../context/CourseContext';
  * All data comes from CourseContext / props; no content is hardcoded.
  */
 export default function Sidebar({ open, onClose, sectionTitle = 'Modules', footer }) {
-  const { modules, currentModuleId, setCurrentModuleId, progress } = useCourse();
+  const { modules, currentModuleId, goToModule, progress } = useCourse();
 
   const select = (id) => {
-    setCurrentModuleId(id);
+    goToModule(id);
     onClose?.();
   };
 

@@ -33,13 +33,25 @@ export function CourseProvider({
   progressStorageKey = 'course-progress',
   themeStorageKey = 'course-theme',
   config = {},
+  onModuleSelect, // optional callback: fired with moduleId when a component jumps chapters
   children,
 }) {
   const modules = registry?.modules || [];
 
-  // ── Current chapter (driven by the router, consumed everywhere) ──
+  // ── Current chapter (route-driven; components jump via goToModule) ──
   const [currentModuleId, setCurrentModuleId] = useState(modules[0]?.id || null);
   const currentModule = modules.find(m => m.id === currentModuleId) || null;
+
+  /**
+   * goToModule — chapter switch used by Sidebar / NextSection.
+   * Sets context AND fires onModuleSelect (wired to router navigation in
+   * the app shell) atomically — never a separate sync effect, which would
+   * ping-pong route<->context.
+   */
+  const goToModule = useCallback((id) => {
+    setCurrentModuleId(id);
+    onModuleSelect?.(id);
+  }, [onModuleSelect]);
 
   // ── Modal coordination ──
   const [activeModal, setActiveModal] = useState(null); // 'details' | 'labs' | null
@@ -113,6 +125,7 @@ export function CourseProvider({
     currentModuleId,
     currentModule,
     setCurrentModuleId,
+    goToModule,
     activeModal,
     openModal,
     closeModal,
@@ -122,8 +135,8 @@ export function CourseProvider({
     toggleTheme,
     progress,
     config: { notesEndpoint: '/api/lab', chapterBaseUrl: '/chapters', ...config },
-  }), [registry, modules, currentModuleId, currentModule, activeModal, openModal, closeModal,
-       notesStatus, reportNotesStatus, theme, toggleTheme, progress, config]);
+  }), [registry, modules, currentModuleId, currentModule, goToModule, activeModal, openModal,
+       closeModal, notesStatus, reportNotesStatus, theme, toggleTheme, progress, config]);
 
   return <CourseContext.Provider value={value}>{children}</CourseContext.Provider>;
 }

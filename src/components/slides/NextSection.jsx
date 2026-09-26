@@ -6,7 +6,7 @@ import { useCourse } from '../../context/CourseContext';
  * onto React Router chapter routes via CourseContext.
  */
 export default function NextSection({ content = {} }) {
-  const { modules, setCurrentModuleId } = useCourse();
+  const { modules, goToModule } = useCourse();
 
   const toModuleId = (url) => {
     if (!url) return null;
@@ -16,7 +16,7 @@ export default function NextSection({ content = {} }) {
 
   const target = (entry) => {
     const id = toModuleId(entry?.url || entry?.href);
-    if (id && modules.some(m => m.id === id)) return () => setCurrentModuleId(id);
+    if (id && modules.some(m => m.id === id)) return () => goToModule(id);
     return null;
   };
 

@@ -21,8 +21,16 @@
   --surface-page:      #0f172a;
 }
 
+/* Always reserve the scrollbar gutter — without it, the scrollbar
+   vanishing during chapter loads shifts the whole page sideways. */
+html { scrollbar-gutter: stable; }
+
 body { font-family: var(--font-sans); }
 body.modal-open { overflow: hidden; }
+
+/* Keep the lesson area at a stable height while a chapter chunk loads so
+   the content swap doesn't cause a layout jump. */
+.lesson-container { min-height: 70vh; }
 
 /* ============================================================
    MODAL
