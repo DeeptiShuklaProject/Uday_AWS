@@ -1,0 +1,247 @@
+{
+  "project": "AuraDocs Enterprise Documentation & Code Sandbox Portal",
+  "version": "5.0.0",
+  "description": "Complete Knowledge Graph mapping full Frontend components, Backend API endpoints, REST connectivity links, language registry, ALL 4 Dockerfiles, 3 Docker compose services, and ALL 12 Knowledge Base courses.",
+  "text_architecture_document": ".agents/ARCHITECTURE.md",
+  "dockerfiles": [
+    {
+      "id": "dockerfile_root_prod",
+      "path": "Dockerfile",
+      "base_images": ["node:20-slim", "quay.io/centos/centos:stream9"],
+      "type": "Production Multi-Stage Build",
+      "description": "Builds React static bundle and packages FastAPI backend with Python 3.11, Node, Java 17, Go, C++, and all 12 KB courses into unified production container."
+    },
+    {
+      "id": "dockerfile_fedora_sandbox",
+      "path": "Dockerfile.fedora",
+      "base_image": "quay.io/centos/centos:stream9",
+      "type": "Interactive Linux Sandbox",
+      "description": "Builds isolated CentOS Stream 9 container for terminal execution and bash/VIM learning."
+    },
+    {
+      "id": "dockerfile_backend_dev",
+      "path": "aura_docs/backend/Dockerfile",
+      "base_image": "quay.io/centos/centos:stream9",
+      "type": "Backend Dev Service",
+      "description": "Builds backend dev container with Python 3.11, Node, Java 17, Go, SQLite, GCC, and Uvicorn server."
+    },
+    {
+      "id": "dockerfile_frontend_dev",
+      "path": "aura_docs/frontend/Dockerfile",
+      "base_image": "node:20-alpine",
+      "type": "Frontend Dev Service",
+      "description": "Builds frontend dev container running Vite hot-reload server."
+    }
+  ],
+  "frontend_to_backend_api_matrix": [
+    {
+      "frontend_component": "App.jsx & Navbar.jsx",
+      "api_endpoint": "GET /api/kbs",
+      "backend_handler": "app.py -> list_knowledge_bases()",
+      "purpose": "Populates Knowledge Base dropdown list by scanning doc_* folders."
+    },
+    {
+      "frontend_component": "App.jsx & Sidebar.jsx",
+      "api_endpoint": "GET /api/kbs/{kb_id}/navigation",
+      "backend_handler": "app.py -> get_kb_navigation()",
+      "purpose": "Generates collapsible directory navigation tree for sidebar."
+    },
+    {
+      "frontend_component": "App.jsx & HeroLandingPage.jsx",
+      "api_endpoint": "GET /api/kbs/{kb_id}/course_data",
+      "backend_handler": "app.py -> get_course_data()",
+      "purpose": "Fetches course metadata, quizzes, modules, and code templates."
+    },
+    {
+      "frontend_component": "DocReader.jsx",
+      "api_endpoint": "GET /api/kbs/{kb_id}/document?path=...",
+      "backend_handler": "app.py -> get_kb_document()",
+      "purpose": "Serves raw markdown document content with LFI security checks."
+    },
+    {
+      "frontend_component": "ChatPanel.jsx",
+      "api_endpoint": "POST /api/kbs/{kb_id}/chat",
+      "backend_handler": "app.py -> chat_with_kb() -> rag_engine.py",
+      "purpose": "Executes vector search & generates grounded AI answers with source citations."
+    },
+    {
+      "frontend_component": "FedoraPlayground.jsx, CodePlaygroundModal.jsx & InteractiveCodeBlock.jsx",
+      "api_endpoint": "POST /api/playground/run-code",
+      "backend_handler": "app.py -> run_code_playground() -> execution_engine.py",
+      "purpose": "Executes code/bash in Docker container and returns stdout/stderr."
+    },
+    {
+      "frontend_component": "FedoraPlayground.jsx",
+      "api_endpoint": "POST /api/playground/autocomplete",
+      "backend_handler": "app.py -> autocomplete_playground() -> execution_engine.py",
+      "purpose": "Returns tab autocomplete suggestions for shell commands and paths."
+    },
+    {
+      "frontend_component": "CodePlaygroundModal.jsx",
+      "api_endpoint": "GET /api/playground/languages",
+      "backend_handler": "app.py -> get_playground_languages() -> language_registry.py",
+      "purpose": "Retrieves registered execution languages and runtime health status."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "fe_app",
+      "category": "frontend_core",
+      "name": "App.jsx",
+      "path": "aura_docs/frontend/src/App.jsx",
+      "description": "Root React application managing state, routing, reading progress, and modal dialogs."
+    },
+    {
+      "id": "fe_navbar",
+      "category": "frontend_core",
+      "name": "Navbar.jsx",
+      "path": "aura_docs/frontend/src/components/Navbar.jsx",
+      "description": "Top navigation bar containing KB selector, theme toggle, search trigger, and terminal button."
+    },
+    {
+      "id": "fe_sidebar",
+      "category": "frontend_core",
+      "name": "Sidebar.jsx",
+      "path": "aura_docs/frontend/src/components/Sidebar.jsx",
+      "description": "Collapsible file tree explorer for browsing documentation files."
+    },
+    {
+      "id": "fe_doc_reader",
+      "category": "frontend_core",
+      "name": "DocReader.jsx",
+      "path": "aura_docs/frontend/src/components/DocReader.jsx",
+      "description": "Markdown document viewer with syntax highlighting, heading extraction, and run triggers."
+    },
+    {
+      "id": "fe_table_of_contents",
+      "category": "frontend_core",
+      "name": "TableOfContents.jsx",
+      "path": "aura_docs/frontend/src/components/TableOfContents.jsx",
+      "description": "Right-hand sticky Table of Contents highlighting active headings during scroll."
+    },
+    {
+      "id": "fe_translate_widget",
+      "category": "frontend_learning",
+      "name": "GoogleTranslateWidget.jsx",
+      "path": "aura_docs/frontend/src/components/learning/GoogleTranslateWidget.jsx",
+      "description": "Multi-language UI translation dropdown supporting 11+ languages."
+    },
+    {
+      "id": "fe_fedora_playground",
+      "category": "frontend_learning",
+      "name": "FedoraPlayground.jsx",
+      "path": "aura_docs/frontend/src/components/FedoraPlayground.jsx",
+      "description": "Interactive CentOS Stream 9 terminal UI with tab autocomplete and VIM editor."
+    },
+    {
+      "id": "fe_code_playground_modal",
+      "category": "frontend_learning",
+      "name": "CodePlaygroundModal.jsx",
+      "path": "aura_docs/frontend/src/components/CodePlaygroundModal.jsx",
+      "description": "Code execution pop-up modal supporting multi-language templates."
+    },
+    {
+      "id": "be_app",
+      "category": "backend_core",
+      "name": "app.py",
+      "path": "aura_docs/backend/app.py",
+      "description": "FastAPI web server handling REST endpoints, routing, and static SPA serving."
+    },
+    {
+      "id": "be_rag_engine",
+      "category": "backend_core",
+      "name": "rag_engine.py",
+      "path": "aura_docs/backend/rag_engine.py",
+      "description": "RAG engine computing vector embeddings (Google GenAI / Bedrock) and context retrieval."
+    },
+    {
+      "id": "be_execution_engine",
+      "category": "backend_core",
+      "name": "execution_engine.py",
+      "path": "aura_docs/backend/execution_engine.py",
+      "description": "Code execution engine coordinating process execution and terminal output cleaning."
+    },
+    {
+      "id": "be_language_registry",
+      "category": "backend_core",
+      "name": "language_registry.py",
+      "path": "aura_docs/backend/language_registry.py",
+      "description": "Extensible registry defining compilers, commands, timeouts, and handlers for supported languages."
+    },
+    {
+      "id": "docker_frontend",
+      "category": "infrastructure",
+      "name": "docker_service_frontend",
+      "context": "./aura_docs/frontend",
+      "port": "8888:8888",
+      "description": "Container serving React + Vite app."
+    },
+    {
+      "id": "docker_backend",
+      "category": "infrastructure",
+      "name": "docker_service_backend",
+      "context": "./aura_docs/backend",
+      "port": "8000:8000",
+      "description": "Container running FastAPI server."
+    },
+    {
+      "id": "docker_fedora",
+      "category": "infrastructure",
+      "name": "aura_fedora_playground",
+      "dockerfile": "Dockerfile.fedora",
+      "description": "Isolated CentOS/Fedora Linux container sandbox."
+    }
+  ],
+  "relationships": [
+    {
+      "source": "dockerfile_root_prod",
+      "relation": "BUILDS_PRODUCTION_IMAGE",
+      "target": "be_app"
+    },
+    {
+      "source": "dockerfile_fedora_sandbox",
+      "relation": "BUILDS_SANDBOX_IMAGE",
+      "target": "docker_fedora"
+    },
+    {
+      "source": "docker_frontend",
+      "relation": "DEPENDS_ON",
+      "target": "docker_backend"
+    },
+    {
+      "source": "fe_translate_widget",
+      "relation": "TRANSLATES_UI",
+      "target": "fe_doc_reader"
+    },
+    {
+      "source": "fe_fedora_playground",
+      "relation": "CALLS",
+      "target": "be_app"
+    },
+    {
+      "source": "fe_chat_panel",
+      "relation": "CALLS",
+      "target": "be_app"
+    },
+    {
+      "source": "be_app",
+      "relation": "USES",
+      "target": "be_rag_engine"
+    },
+    {
+      "source": "be_app",
+      "relation": "USES",
+      "target": "be_execution_engine"
+    },
+    {
+      "source": "be_execution_engine",
+      "relation": "CONFIGURED_BY",
+      "target": "be_language_registry"
+    },
+    {
+      "source": "be_execution_engine",
+      "relation": "RUNS_IN",
+      "target": "docker_fedora"
+    }
+  ]
+}
