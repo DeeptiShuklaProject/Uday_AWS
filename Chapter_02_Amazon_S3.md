@@ -1204,56 +1204,79 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 ## Business Scenario
 > Your company wants to host a highly available, blazingly fast frontend SPA (React/Angular) or a static marketing website. It must be served over HTTPS using a custom domain name, and the S3 bucket itself must remain completely private to the public internet to adhere to security best practices.
 
-### Step 1 — Request an SSL/TLS Certificate (ACM)
+### Step 1 — Create a Route 53 Hosted Zone
+1. Go to **Route 53** → **Hosted zones** → **Create hosted zone**.
+2. **Domain name**: Enter your registered domain name (e.g., `example.com`).
+3. **Type**: Select **Public hosted zone**.
+4. Click **Create hosted zone**.
+![alt text](image-3.png)
+
+### Step 2 — Request an SSL/TLS Certificate (ACM)
 > **CRITICAL**: CloudFront requires the certificate to be requested in the **us-east-1 (N. Virginia)** region, regardless of where your S3 bucket is located.
 
 1. Switch your AWS Console region to **N. Virginia (us-east-1)**.
 2. Go to **AWS Certificate Manager (ACM)** → **Request a certificate**.
+![alt text](image.png)
 3. Select **Request a public certificate**.
 4. **Fully qualified domain name**: Enter your domain (e.g., `example.com`) and click **Add another name to this certificate** to add `*.example.com`.
 5. **Validation method**: Choose **DNS validation**.
+![alt text](image-1.png)
 6. Click **Request**.
+![alt text](image-2.png)
 7. Once requested, click into the certificate and click **Create records in Route 53**. This automatically creates the CNAME records to prove you own the domain.
+![alt text](image-4.png)
 8. Wait for the status to change to **Issued** (usually takes a few minutes).
+![alt text](image-8.png)
 
-### Step 2 — Create a Private S3 Bucket
+### Step 3 — Create a Private S3 Bucket
 1. Go to **S3** → **Create bucket**.
 2. **Bucket name**: e.g., `my-secure-frontend-bucket` (can be any region).
+![alt text](image-6.png)
 3. **Block Public Access settings**: Leave this **ON** (Block all public access). We want to keep the bucket private.
 4. **Bucket Versioning**: Enable (best practice for websites).
 5. Click **Create bucket**.
+![alt text](image-7.png)
 
-### Step 3 — Upload Website Files
+### Step 4 — Upload Website Files
 1. Open your bucket and click **Upload**.
+![alt text](image-9.png)
 2. Upload a simple `index.html` (and optionally an `error.html`).
    ```html
    <!-- index.html -->
    <h1>Welcome to my secure CloudFront website!</h1>
    ```
+   ![alt text](image-10.png)
 3. Click **Upload**.
+![alt text](image-11.png)
 
-### Step 4 — Create a CloudFront Distribution
+### Step 5 — Create a CloudFront Distribution
 1. Go to **CloudFront** → **Create Distribution**.
+![alt text](image-12.png)
 2. **Origin domain**: Select your S3 bucket from the dropdown.
+
 3. **Origin access**: Select **Origin access control settings (recommended)**.
    - Click **Create control setting** and save the default configuration.
 4. **Viewer protocol policy**: Select **Redirect HTTP to HTTPS**.
 5. **Web Application Firewall (WAF)**: Select **Do not enable security protections** (to save costs for this lab).
 6. **Alternate domain name (CNAME)**: Enter your custom domain (e.g., `www.example.com`).
-7. **Custom SSL certificate**: Select the certificate you created in Step 1.
+7. **Custom SSL certificate**: Select the certificate you created in Step 2.
 8. **Default root object**: Type `index.html`.
 9. Click **Create distribution**.
+![alt text](image-13.png)
 10. **IMPORTANT**: At the top of the screen, you will see a banner saying you must update the S3 bucket policy. Click **Copy policy**.
 
-### Step 5 — Update S3 Bucket Policy
+### Step 6 — Update S3 Bucket Policy
 1. Go back to your **S3 Bucket** → **Permissions** tab.
 2. Scroll to **Bucket policy** and click **Edit**.
 3. Paste the policy copied from CloudFront. It allows CloudFront (using the Origin Access Control) to read the bucket, while keeping it blocked from the public internet.
+
 4. Click **Save changes**.
 
-### Step 6 — Point Route 53 to CloudFront
+### Step 7 — Point Route 53 to CloudFront
 1. Go to **Route 53** → **Hosted zones** → Click your domain.
+![alt text](image-14.png)
 2. Click **Create record**.
+![alt text](image-15.png)
 3. **Record name**: Enter the subdomain (e.g., `www`) or leave blank for the root domain.
 4. **Record type**: `A - Routes traffic to an IPv4 address and some AWS resources`.
 5. Turn on the **Alias** toggle.
@@ -1261,12 +1284,13 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
    - Select **Alias to CloudFront distribution**.
    - Paste the CloudFront Distribution domain name (e.g., `d111111abcdef8.cloudfront.net`).
 7. Click **Create records**.
+![alt text](image-16.png)
 
-### Step 7 — Verify the Setup
+### Step 8 — Verify the Setup
 1. Wait for the CloudFront distribution status to show as **Deployed** (can take 5-10 minutes).
 2. Open your browser and navigate to `https://www.example.com` (your custom domain).
 3. You should see your `index.html` file loaded securely with a padlock icon!
-
+![alt text](image-17.png)
 🎯 **Interview Insight**: "Why use CloudFront with S3 instead of just S3 Static Website Hosting?"
 > **Strong answer**: "Using CloudFront allows you to attach a custom SSL certificate (HTTPS), caches content at edge locations for faster global load times, and allows you to keep the S3 bucket entirely private via Origin Access Control (OAC), satisfying strict security and compliance requirements."
 
@@ -1444,4 +1468,4 @@ aws s3api get-bucket-replication \
 > **Strong answer**: "CRR automatically replicates every new object from a source bucket to a destination bucket in a different AWS region. Both buckets must have versioning enabled. It requires an IAM role granting S3 permission to replicate. Replication is asynchronous — typically seconds to minutes. It only applies to new objects; existing objects require S3 Batch Replication. Key use cases are disaster recovery, compliance (data residency), and latency reduction. For SLA-guaranteed replication, enable Replication Time Control (RTC) which ensures 99.99% of objects are replicated within 15 minutes."
 
 ---
-
+

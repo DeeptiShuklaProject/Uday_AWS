@@ -42,6 +42,26 @@ export function extractPracticalLabs(md) {
 }
 
 /**
+ * Rewrite relative media URLs in rendered HTML against a base URL.
+ * `<img src="image-3.png">` inside markdown resolves against the page
+ * URL by default — chapter assets live under the chapters base URL
+ * (e.g. /chapters/), so relative src/href values are prefixed.
+ */
+export function resolveMediaUrls(html, baseUrl) {
+  if (!html || !baseUrl) return html;
+  const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+  const doc = new DOMParser().parseFromString(`<div id="__wrap">${html}</div>`, 'text/html');
+  const wrap = doc.getElementById('__wrap');
+  if (!wrap) return html;
+  const isRelative = v => v && !/^(https?:|\/|data:|blob:|#|mailto:)/i.test(v);
+  wrap.querySelectorAll('img[src], source[src], video[src]').forEach(el => {
+    const src = el.getAttribute('src');
+    if (isRelative(src)) el.setAttribute('src', base + src);
+  });
+  return wrap.innerHTML;
+}
+
+/**
  * Split rendered lab HTML into accordion sections grouped by
  * top-level <h1> elements.
  *

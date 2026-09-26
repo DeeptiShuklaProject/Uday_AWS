@@ -6,7 +6,7 @@ import RichTextEditor from './RichTextEditor';
 import { useChapterData } from '../hooks/useChapterData';
 import { useLabNotes } from '../hooks/useLabNotes';
 import { useCourse } from '../context/CourseContext';
-import { extractPracticalLabs, splitLabsIntoSections } from '../utils/markdown';
+import { extractPracticalLabs, splitLabsIntoSections, resolveMediaUrls } from '../utils/markdown';
 
 const AUTOSAVE_MS = 3000;
 
@@ -52,7 +52,7 @@ export default function LabNotesModal({
   useEffect(() => {
     if (!open || !markdown) { if (!open) setLabsHtml(''); return; }
     const labMd = extractPracticalLabs(markdown);
-    setLabsHtml(labMd ? marked.parse(labMd) : '');
+    setLabsHtml(labMd ? resolveMediaUrls(marked.parse(labMd), config.chapterBaseUrl) : '');
   }, [open, markdown]);
 
   // Load saved notes when the modal opens / chapter changes.
