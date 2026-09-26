@@ -25,12 +25,12 @@ export default function SlideRenderer({ section }) {
     if (HTML_TYPES.has(section.type)) return <HtmlSection content={c} />;
     switch (section.type) {
       case 'architecture':    return <DiagramSection content={c} />;
-      case 'quiz':            return <QuizSection content={c} />;
+      case 'quiz':            return <QuizSection content={c} sectionId={section.id} />;
       case 'command':         return <CommandSection content={c} />;
       case 'terminal':        return <TerminalSection content={c} />;
       case 'code':            return <CodeSection content={c} />;
-      case 'lab':             return <LabSection content={c} />;
-      case 'challenge':       return <ChallengeSection content={c} />;
+      case 'lab':             return <LabSection content={c} sectionId={section.id} />;
+      case 'challenge':       return <ChallengeSection content={c} sectionId={section.id} />;
       case 'troubleshooting': return <TroubleshootingSection content={c} />;
       case 'interview':       return <InterviewSection content={c} />;
       case 'next':            return <NextSection content={c} />;

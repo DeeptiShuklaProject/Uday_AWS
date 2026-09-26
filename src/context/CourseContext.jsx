@@ -3,7 +3,16 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 const CourseContext = createContext(null);
 
 function freshProgress() {
-  return { version: 1, startedAt: new Date().toISOString(), modules: {} };
+  return {
+    version: 1,
+    startedAt: new Date().toISOString(),
+    modules: {},
+    quizScores: {},
+    challengeScores: {},
+    commandsExecuted: 0,
+    labsCompleted: [],
+    achievements: [],
+  };
 }
 
 function loadProgress(storageKey) {
@@ -94,9 +103,63 @@ export function CourseProvider({
     });
   }, []);
 
+  // ── Stat recorders (vanilla ProgressEngine parity) ──
+  const recordQuizScore = useCallback((moduleId, quizId, score, total) => {
+    setProgressData(d => ({
+      ...d,
+      quizScores: {
+        ...d.quizScores,
+        [`${moduleId}:${quizId}`]: {
+          score, total,
+          percentage: Math.round((score / total) * 100),
+          timestamp: new Date().toISOString(),
+        },
+      },
+    }));
+  }, []);
+
+  const recordChallengeScore = useCallback((moduleId, challengeId, score, maxScore) => {
+    setProgressData(d => ({
+      ...d,
+      challengeScores: {
+        ...d.challengeScores,
+        [`${moduleId}:${challengeId}`]: {
+          score, maxScore,
+          percentage: Math.round((score / maxScore) * 100),
+          timestamp: new Date().toISOString(),
+        },
+      },
+    }));
+  }, []);
+
+  const incrementCommands = useCallback(() => {
+    setProgressData(d => ({ ...d, commandsExecuted: (d.commandsExecuted || 0) + 1 }));
+  }, []);
+
+  const markLabComplete = useCallback((moduleId, sectionId) => {
+    const key = `${moduleId}:${sectionId}`;
+    setProgressData(d =>
+      d.labsCompleted.includes(key) ? d : { ...d, labsCompleted: [...d.labsCompleted, key] });
+  }, []);
+
+  const grantAchievement = useCallback((achievementId) => {
+    setProgressData(d =>
+      d.achievements.includes(achievementId)
+        ? d : { ...d, achievements: [...d.achievements, achievementId] });
+  }, []);
+
+  const resetProgress = useCallback(() => setProgressData(freshProgress()), []);
+
   const progress = useMemo(() => {
     const sectionTotal = id => modules.find(m => m.id === id)?.sectionCount || 0;
     const completedCount = id => progressData.modules[id]?.completed?.length || 0;
+    const getOverallProgress = () => {
+      const total = modules.reduce((s, m) => s + (m.sectionCount || 0), 0);
+      if (total === 0) return 0;
+      const done = modules.reduce((s, m) => s + Math.min(completedCount(m.id), m.sectionCount || 0), 0);
+      return Math.round((done / total) * 100);
+    };
+    const overall = getOverallProgress();
     return {
       isSectionComplete: (moduleId, sectionId) =>
         !!progressData.modules[moduleId]?.completed?.includes(sectionId),
@@ -109,14 +172,31 @@ export function CourseProvider({
         const total = sectionTotal(moduleId);
         return total > 0 && completedCount(moduleId) >= total;
       },
-      getOverallProgress: () => {
-        const total = modules.reduce((s, m) => s + (m.sectionCount || 0), 0);
-        if (total === 0) return 0;
-        const done = modules.reduce((s, m) => s + Math.min(completedCount(m.id), m.sectionCount || 0), 0);
-        return Math.round((done / total) * 100);
-      },
+      getOverallProgress: () => overall,
+      // ── stats + recorders ──
+      recordQuizScore,
+      getQuizScore: (moduleId, quizId) => progressData.quizScores[`${moduleId}:${quizId}`] || null,
+      recordChallengeScore,
+      incrementCommands,
+      markLabComplete,
+      grantAchievement,
+      hasAchievement: id => progressData.achievements.includes(id),
+      getMasteryLevel: () =>
+        overall >= 90 ? 'production-ready'
+        : overall >= 70 ? 'advanced'
+        : overall >= 40 ? 'intermediate' : 'beginner',
+      getStats: () => ({
+        overallProgress: overall,
+        commandsExecuted: progressData.commandsExecuted,
+        labsCompleted: progressData.labsCompleted.length,
+        achievementCount: progressData.achievements.length,
+        quizzesTaken: Object.keys(progressData.quizScores).length,
+        challengesSolved: Object.keys(progressData.challengeScores).length,
+      }),
+      reset: resetProgress,
     };
-  }, [progressData, modules, markSectionComplete]);
+  }, [progressData, modules, markSectionComplete, recordQuizScore, recordChallengeScore,
+      incrementCommands, markLabComplete, grantAchievement, resetProgress]);
 
   const value = useMemo(() => ({
     registry,

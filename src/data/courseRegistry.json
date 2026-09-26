@@ -2053,5 +2053,30 @@
       "sectionCount": 14
     }
   ],
-  "achievements": []
+  "achievements": [],
+  "stats": {
+    "chapters": 47,
+    "sections": 617,
+    "labs": 47,
+    "quizzes": 47,
+    "quizQuestions": 124,
+    "challenges": 47,
+    "sectionTypes": {
+      "why": 47,
+      "architecture": 48,
+      "concept": 48,
+      "code": 48,
+      "command": 47,
+      "terminal": 47,
+      "troubleshooting": 47,
+      "quiz": 47,
+      "challenge": 47,
+      "lab": 47,
+      "interview": 47,
+      "cleanup": 47,
+      "next": 47,
+      "what-happened": 1,
+      "text": 2
+    }
+  }
 }

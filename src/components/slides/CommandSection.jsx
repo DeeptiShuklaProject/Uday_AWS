@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useCourse } from '../../context/CourseContext';
 
 function CommandBlock({ cmd, runLabel = 'Run', copyLabel = 'Copy' }) {
+  const { progress } = useCourse();
   const [copied, setCopied] = useState(false);
   const [output, setOutput] = useState(null);
   const [showExpected, setShowExpected] = useState(false);
@@ -15,6 +17,7 @@ function CommandBlock({ cmd, runLabel = 'Run', copyLabel = 'Copy' }) {
   };
 
   const run = () => {
+    progress.incrementCommands();
     if (typeof cmd.onRun === 'function') {
       try { setOutput(String(cmd.onRun())); } catch (e) { setOutput(`Error: ${e.message}`); }
     } else if (cmd.expectedOutput) {

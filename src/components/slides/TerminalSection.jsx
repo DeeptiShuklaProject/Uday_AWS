@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { useCourse } from '../../context/CourseContext';
 
 /**
  * TerminalSection — simulated CLI terminal.
  * Looks up submitted commands in content.commands { cmd: { text, type } }.
  */
 export default function TerminalSection({ content = {}, promptLabel = '›' }) {
+  const { progress } = useCourse();
   const commands = content.commands || {};
   const [lines, setLines] = useState(() =>
     content.initialText ? [{ kind: 'output', text: content.initialText }] : []
@@ -27,6 +29,7 @@ export default function TerminalSection({ content = {}, promptLabel = '›' }) {
       next.push({ kind: 'output', text: 'Available commands:\n' + Object.keys(commands).join('\n') });
       setLines(next);
     } else if (commands[cmd]) {
+      progress.incrementCommands();
       const resp = commands[cmd];
       next.push({ kind: resp.type === 'error' ? 'error' : resp.type === 'success' ? 'success' : 'output', text: resp.text });
       if (resp.explanation) next.push({ kind: 'output', text: `ℹ ${resp.explanation}` });

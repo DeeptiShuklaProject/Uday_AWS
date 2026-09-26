@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useCourse } from '../../context/CourseContext';
 
 function QuizQuestion({ q, index, onAnswered }) {
   const [selected, setSelected] = useState(null);
@@ -50,13 +51,23 @@ function QuizQuestion({ q, index, onAnswered }) {
 }
 
 /** QuizSection — knowledge-check question cards with instant feedback. */
-export default function QuizSection({ content = {}, completeLabel = 'Quiz complete' }) {
+export default function QuizSection({ content = {}, sectionId, completeLabel = 'Quiz complete' }) {
+  const { progress, currentModuleId } = useCourse();
   const questions = content.questions || [];
   const [answers, setAnswers] = useState({});
+  const recorded = useRef(false);
 
   const record = (qid, ok) => setAnswers(a => ({ ...a, [qid]: ok }));
   const answeredCount = Object.keys(answers).length;
   const correctCount = Object.values(answers).filter(Boolean).length;
+
+  // Record the score once all questions are answered (ProgressEngine parity).
+  useEffect(() => {
+    if (questions.length > 0 && answeredCount === questions.length && !recorded.current) {
+      recorded.current = true;
+      progress.recordQuizScore(currentModuleId, sectionId || 'quiz', correctCount, questions.length);
+    }
+  }, [answeredCount, correctCount, questions.length, progress, currentModuleId, sectionId]);
 
   return (
     <div>

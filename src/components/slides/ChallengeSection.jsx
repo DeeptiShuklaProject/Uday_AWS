@@ -1,20 +1,25 @@
 import { useState } from 'react';
+import { useCourse } from '../../context/CourseContext';
 
 /**
  * ChallengeSection — coding challenge with requirements, hints, starter code
  * and keyword-based test-case checks against the user's attempt.
  */
-export default function ChallengeSection({ content = {}, checkLabel = 'Run checks' }) {
+export default function ChallengeSection({ content = {}, sectionId, checkLabel = 'Run checks' }) {
+  const { progress, currentModuleId } = useCourse();
   const [attempt, setAttempt] = useState(content.starterCode || '');
   const [results, setResults] = useState(null);
   const [hintsOpen, setHintsOpen] = useState(false);
   const testCases = content.testCases || [];
 
   const runChecks = () => {
-    setResults(testCases.map(tc => ({
+    const res = testCases.map(tc => ({
       ...tc,
       pass: (tc.keywords || []).every(k => attempt.includes(k)),
-    })));
+    }));
+    setResults(res);
+    progress.recordChallengeScore(
+      currentModuleId, sectionId || 'challenge', res.filter(r => r.pass).length, res.length);
   };
 
   return (

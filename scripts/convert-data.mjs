@@ -48,6 +48,8 @@ fs.mkdirSync(MODULES_OUT, { recursive: true });
 
 const moduleIndex = {}; // moduleId -> dataFile basename
 const moduleMeta = {};  // moduleId -> { sectionCount }
+const typeStats = {};   // section type -> total count across all modules
+let quizQuestionCount = 0;
 for (const file of moduleFiles) {
   const src = fs.readFileSync(path.join(DATA_DIR, file), 'utf8');
 
@@ -82,6 +84,10 @@ for (const file of moduleFiles) {
   const moduleId = data?.moduleId || file.match(/^module-\d+/)?.[0];
   moduleIndex[moduleId] = outName.replace(/\.js$/, '');
   moduleMeta[moduleId] = { sectionCount: Array.isArray(data?.sections) ? data.sections.length : 0 };
+  for (const s of data?.sections || []) {
+    typeStats[s.type] = (typeStats[s.type] || 0) + 1;
+    if (s.type === 'quiz') quizQuestionCount += (s.content?.questions || []).length;
+  }
   console.log(`  ✓ ${file} → src/data/modules/${outName} (${moduleId}, ${moduleMeta[moduleId].sectionCount} sections)`);
 }
 
@@ -118,6 +124,15 @@ const registry = {
     sectionCount: moduleMeta[m.id]?.sectionCount ?? 0,
   })),
   achievements: COURSE_REGISTRY.achievements || [],
+  stats: {
+    chapters: (COURSE_REGISTRY.modules || []).length,
+    sections: Object.values(moduleMeta).reduce((s, m) => s + m.sectionCount, 0),
+    labs: typeStats.lab || 0,
+    quizzes: typeStats.quiz || 0,
+    quizQuestions: quizQuestionCount,
+    challenges: typeStats.challenge || 0,
+    sectionTypes: typeStats,
+  },
 };
 
 // Sanity: every module must resolve a chapter file

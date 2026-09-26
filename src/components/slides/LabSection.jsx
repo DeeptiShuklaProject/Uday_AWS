@@ -1,13 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useCourse } from '../../context/CourseContext';
 
 /**
  * LabSection — step-by-step hands-on lab checklist.
  * content: { title, description, difficulty, steps: [{id,title,instruction,expectedResult,hint}] }
  */
-export default function LabSection({ content = {}, hintsLabel = 'Hint' }) {
+export default function LabSection({ content = {}, sectionId, hintsLabel = 'Hint' }) {
+  const { progress, currentModuleId } = useCourse();
   const steps = content.steps || [];
   const [done, setDone] = useState({});
   const [openHint, setOpenHint] = useState({});
+  const recorded = useRef(false);
+  const doneCount = Object.values(done).filter(Boolean).length;
+
+  // Count the lab as completed once every step is checked off.
+  useEffect(() => {
+    if (steps.length > 0 && doneCount === steps.length && !recorded.current) {
+      recorded.current = true;
+      progress.markLabComplete(currentModuleId, sectionId || 'lab');
+    }
+  }, [doneCount, steps.length, progress, currentModuleId, sectionId]);
 
   return (
     <div>

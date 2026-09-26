@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { BrowserRouter, Link, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { CourseProvider, useCourse } from './context/CourseContext';
 import Layout from './components/Layout';
 import LessonViewer from './components/LessonViewer';
 import ContextPanel from './components/ContextPanel';
 import DetailedChapterModal from './components/DetailedChapterModal';
 import LabNotesModal from './components/LabNotesModal';
+import LandingPage from './components/LandingPage';
 import { useModuleSlides } from './hooks/useModuleSlides';
 import registry from './data/courseRegistry.json';
+import { landingContent } from './data/landingContent';
 
 const FIRST_MODULE = registry.modules[0]?.id;
 
@@ -20,6 +22,7 @@ const FIRST_MODULE = registry.modules[0]?.id;
  */
 function ChapterPage() {
   const { moduleId } = useParams();
+  const navigate = useNavigate();
   const { modules, currentModuleId, setCurrentModuleId, activeModal, closeModal } = useCourse();
   const { data: lesson, loading, error } = useModuleSlides(moduleId);
   const [slideIndex, setSlideIndex] = useState(0);
@@ -47,6 +50,15 @@ function ChapterPage() {
 
   return (
     <Layout
+      topBarProps={{ onLogoClick: () => navigate('/') }}
+      sideBarProps={{
+        footer: (
+          <Link to="/" className="btn btn-sm btn-ghost"
+            style={{ width: '100%', textDecoration: 'none', color: 'var(--color-neutral-400)' }}>
+            ← Back to Course
+          </Link>
+        ),
+      }}
       contextPanel={
         current && (
           <ContextPanel
@@ -101,9 +113,9 @@ export default function App() {
     <BrowserRouter>
       <RoutedCourseProvider>
         <Routes>
-          <Route path="/" element={<Navigate to={`/chapter/${FIRST_MODULE}`} replace />} />
+          <Route path="/" element={<LandingPage content={landingContent} />} />
           <Route path="/chapter/:moduleId" element={<ChapterPage />} />
-          <Route path="*" element={<Navigate to={`/chapter/${FIRST_MODULE}`} replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </RoutedCourseProvider>
     </BrowserRouter>
