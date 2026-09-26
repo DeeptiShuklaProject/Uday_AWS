@@ -732,6 +732,11 @@ function mermaidToDiagram(body) {
   Object.entries(level).forEach(([id, l]) => (byLevel[l] ||= []).push(id));
 
   const GX = 200, GY = 110, PAD = 50;
+  const maxL = Math.max(...Object.values(level));
+  const maxN = Math.max(...Object.values(byLevel).map(a => a.length));
+  // Center each level's nodes along the cross axis so lone nodes
+  // sit centered against tall fan-out levels (AWS-style balance).
+  const centerOff = l => ((maxN - byLevel[l].length) * GY) / 2;
   const out = [...nodes.values()].map(n => {
     const l = level[n.id];
     const type = NODE_STYLE(`${tiers.get(n.id) || ''} ${n.label}`);
@@ -740,12 +745,10 @@ function mermaidToDiagram(body) {
       icon: NODE_ICON[type] || '☁️',
       label: clean(n.label),
       description: tiers.get(n.id) || undefined,
-      x: horizontal ? PAD + l * GX : PAD + byLevel[l].indexOf(n.id) * GX,
-      y: horizontal ? PAD + byLevel[l].indexOf(n.id) * GY : PAD + l * GY,
+      x: horizontal ? PAD + l * GX : PAD + byLevel[l].indexOf(n.id) * GX + centerOff(l),
+      y: horizontal ? PAD + byLevel[l].indexOf(n.id) * GY + centerOff(l) : PAD + l * GY,
     };
   });
-  const maxL = Math.max(...Object.values(level));
-  const maxN = Math.max(...Object.values(byLevel).map(a => a.length));
   return {
     block: m[0],
     content: {

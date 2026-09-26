@@ -8,12 +8,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "start": "node server/index.cjs",
     "convert:data": "node scripts/convert-data.mjs",
     "lab-server": "node aws-lambda-masterclass/lab-server.cjs"
   },
   "dependencies": {
     "marked": "^15.0.0",
     "mermaid": "^11.4.0",
+    "pg": "^8.13.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"
