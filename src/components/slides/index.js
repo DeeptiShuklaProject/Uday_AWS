@@ -1,0 +1,11 @@
+export { default as HtmlSection } from './HtmlSection';
+export { default as DiagramSection } from './DiagramSection';
+export { default as QuizSection } from './QuizSection';
+export { default as CommandSection } from './CommandSection';
+export { default as TerminalSection } from './TerminalSection';
+export { default as CodeSection } from './CodeSection';
+export { default as LabSection } from './LabSection';
+export { default as ChallengeSection } from './ChallengeSection';
+export { default as TroubleshootingSection } from './TroubleshootingSection';
+export { default as InterviewSection } from './InterviewSection';
+export { default as NextSection } from './NextSection';

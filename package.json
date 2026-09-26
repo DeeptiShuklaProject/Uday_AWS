@@ -1,0 +1,25 @@
+{
+  "name": "aws-production-masterclass-react",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "React + Vite rebuild of the AWS Production Masterclass course application",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "convert:data": "node scripts/convert-data.mjs",
+    "lab-server": "node aws-lambda-masterclass/lab-server.cjs"
+  },
+  "dependencies": {
+    "marked": "^15.0.0",
+    "mermaid": "^11.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}
