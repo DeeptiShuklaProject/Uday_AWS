@@ -401,8 +401,8 @@ function tryCommands(body, hTitle) {
   return cmds.length ? cmds : null;
 }
 
-/** Companion simulated terminal for command sections (commands map → canned outputs). */
-function terminalFor(cmds, hTitle, idBase) {
+/** Simulated terminal from command blocks (first cmd line → canned output). */
+function terminalFor(cmds, hTitle, idBase, min = 1) {
   const commands = {};
   cmds.forEach(c => {
     const key = (c.command.split('\n').find(l => l.trim() && !/^\s*#/.test(l)) || '')
@@ -412,7 +412,7 @@ function terminalFor(cmds, hTitle, idBase) {
     }
   });
   const keys = Object.keys(commands);
-  if (keys.length < 2) return null;
+  if (keys.length < min) return null;
   return {
     id: `${idBase}-terminal`, type: 'terminal', icon: '💻', title: 'Interactive Terminal',
     content: {
@@ -561,12 +561,7 @@ function classifyChunk(hTitle, body, render, idBase) {
   }
   if (/commands?|cli|terminal|kubectl|shell/i.test(t)) {
     const w = tryCommands(body, hTitle);
-    if (w) {
-      const secs = one('command', hTitle, w);
-      const term = terminalFor(w, hTitle, idBase);
-      if (term) secs.push(term);
-      return secs;
-    }
+    if (w) return one('command', hTitle, w);
     return null;
   }
   return null;
@@ -939,6 +934,12 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
       },
     });
   }
+
+  // Chapter-wide Interactive Terminal — every chapter that contains any
+  // shell commands gets a sandbox preloaded with them (commands → canned
+  // output from expected-output fences, or the surrounding explanation).
+  const chapterTerm = terminalFor(tryCommands(md, title) || [], `${title} Lab`, id);
+  if (chapterTerm) sections.push(chapterTerm);
 
   return {
     id, moduleId: id, title, description, objectives,
