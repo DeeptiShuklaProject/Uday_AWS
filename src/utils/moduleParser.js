@@ -456,6 +456,19 @@ function tryQuiz(body) {
   };
 }
 
+/** Keyword heuristic → AWS-style difficulty bucket, so every interview
+ *  section renders the grouped Beginner/Intermediate/Advanced/Scenario/
+ *  Troubleshooting layout. Order matters: "your app is failing" is
+ *  scenario, not troubleshooting. */
+function classifyDifficulty(q) {
+  const t = q.toLowerCase();
+  if (/^(what is|what are|what does|what do|define|list|name the|how is .+ (priced|billed)|difference between|which of|when to use|key (components|features|benefits))/i.test(t)) return 'beginner';
+  if (/\byou(r| are|'re| need| have| team| build| deploy| run)?\b|\bmigrat|across \d+|real[- ]world scenario/i.test(t)) return 'scenario';
+  if (/throttl|latency|cannot|can't|failing|failed|fail\b|error|issue|missing|broken|debug|diagnos|troubleshoot|not working|timeout|denied|crash|stuck|slow|intermittent|high cpu|memory leak/i.test(t)) return 'troubleshooting';
+  if (/design|architect|disaster|recover|optimiz|cost|compliance|infrastructure as code|scalab|multi-?account|production|high availab|enterprise|hardening|capacity|at scale|integrat|automat|pipeline|rollback|zero-?downtime|secur|encrypt|iam|governance/i.test(t)) return 'advanced';
+  return 'intermediate';
+}
+
 /** `###/#### Q…: …?` + `**Answer**:` items (or inline `Q? (answer)` lists) → interview questions[] */
 function tryInterview(body) {
   const qs = [];
@@ -475,7 +488,7 @@ function tryInterview(body) {
       question: q,
       shortAnswer: stripMd(paras[0] || '').slice(0, 600) || undefined,
       deepExplanation: stripMd(paras.slice(1).join(' ')).slice(0, 1200) || undefined,
-      difficulty: diff,
+      difficulty: diff || classifyDifficulty(q),
     });
   });
   if (qs.length) return { questions: qs };
@@ -483,7 +496,7 @@ function tryInterview(body) {
   const inline = [];
   body.split('\n').forEach(l => {
     const m = l.match(/^\s*(?:[-*+]|\d+[.)])\s*(?:\*\*[^*]{1,60}\*\*\s*[.:]\s*)?(.{10,}?\?)\s*\((.{2,200}?)\)\s*\.?\s*$/);
-    if (m) inline.push({ question: stripMd(m[1]), shortAnswer: stripMd(m[2]) });
+    if (m) inline.push({ question: stripMd(m[1]), shortAnswer: stripMd(m[2]), difficulty: classifyDifficulty(m[1]) });
   });
   return inline.length ? { questions: inline } : null;
 }
@@ -864,21 +877,57 @@ function autoLab(md, title, render) {
   } : null;
 }
 
-/** Auto Interview Preparation — mined direct Q&As first, then term-defs
- *  rephrased as "Explain X" questions. */
-function autoInterview(md) {
-  const pairs = minePairs(md);
-  if (pairs.length < 3) return null;
-  const questions = [];
-  pairs.filter(p => p.direct).slice(0, 4).forEach(p => questions.push({
-    id: `iq${questions.length}`, question: p.term,
-    shortAnswer: p.def, difficulty: 'intermediate',
+/** Mine the most relevant paragraph for a keyword — used as the
+ *  shortAnswer source for templated interview questions. */
+function mineAnswer(md, kw) {
+  const paras = md.split(/\n\s*\n/).map(p => stripMd(p).replace(/\*\*/g, '')
+    .replace(/\s+/g, ' ').trim()).filter(p => p.length > 50);
+  return (paras.find(p => kw.test(p)) || paras[0] || '').slice(0, 400) || undefined;
+}
+
+/** AWS-style templated interview questions, parameterized by course
+ *  topic — the same shape authored AWS modules use (Beginner →
+ *  Troubleshooting groups). Answers are mined from the chapter text. */
+function templateInterview(topic, md) {
+  const T = topic;
+  const tpl = [
+    // 🌱 Beginner
+    { difficulty: 'beginner', q: `What is ${T} and what problem does it solve?`, kw: /definition|is a|is an|provides|purpose/i },
+    { difficulty: 'beginner', q: `What are the key components of ${T}?`, kw: /component|consist|architecture|part/i },
+    { difficulty: 'beginner', q: `What are the key benefits of ${T}?`, kw: /benefit|advantage|why/i },
+    { difficulty: 'beginner', q: `What are the security best practices for ${T}?`, kw: /security|best practice|harden/i },
+    { difficulty: 'beginner', q: `How do you monitor ${T}?`, kw: /monitor|metric|log|observ/i },
+    // 📈 Intermediate
+    { difficulty: 'intermediate', q: `How does ${T} achieve high availability?`, kw: /availab|failover|redundan|replica/i },
+    { difficulty: 'intermediate', q: `Explain the ${T} scaling strategy.`, kw: /scal|horizontal|vertical/i },
+    { difficulty: 'intermediate', q: `How does ${T} handle security and encryption?`, kw: /encrypt|secur|auth/i },
+    { difficulty: 'intermediate', q: `What are the limits and quotas for ${T}?`, kw: /limit|quota|maximum|constraint/i },
+    { difficulty: 'intermediate', q: `How do you implement ${T} across multiple environments?`, kw: /environment|staging|multi/i },
+    // 🚀 Advanced
+    { difficulty: 'advanced', q: `Design a production-grade ${T} architecture.`, kw: /architecture|production|design/i },
+    { difficulty: 'advanced', q: `How do you optimize ${T} costs and performance?`, kw: /optimi|cost|performance|tun/i },
+    { difficulty: 'advanced', q: `What is the disaster recovery strategy for ${T}?`, kw: /disaster|backup|recover|restore/i },
+    { difficulty: 'advanced', q: `How do you implement ${T} using Infrastructure as Code?`, kw: /terraform|cloudformation|infrastructure|automat/i },
+    { difficulty: 'advanced', q: `What compliance frameworks does ${T} support?`, kw: /compliance|gdpr|hipaa|soc|audit/i },
+    // 🎯 Scenario-Based
+    { difficulty: 'scenario', q: `Your ${T} is experiencing intermittent errors. How do you diagnose?`, kw: /debug|diagnos|error|investigat/i },
+    { difficulty: 'scenario', q: `Migrate ${T} from one environment to another.`, kw: /migrat|move|transfer/i },
+    { difficulty: 'scenario', q: `${T} costs have doubled unexpectedly. Investigate.`, kw: /cost|billing|expense/i },
+    { difficulty: 'scenario', q: `Design a zero-downtime update strategy for ${T}.`, kw: /downtime|rolling|deploy|update/i },
+    { difficulty: 'scenario', q: `Your team needs to access ${T} across multiple accounts. Design the access pattern.`, kw: /access|permission|iam|account/i },
+    // 🔧 Troubleshooting
+    { difficulty: 'troubleshooting', q: `${T} requests are being throttled or failing.`, kw: /throttl|fail|error|rate limit/i },
+    { difficulty: 'troubleshooting', q: `${T} has high latency. Investigate.`, kw: /latency|slow|performance|bottleneck/i },
+    { difficulty: 'troubleshooting', q: `Cannot connect to ${T}. What do you check first?`, kw: /connect|network|timeout|reach/i },
+    { difficulty: 'troubleshooting', q: `${T} security checks are failing.`, kw: /secur|encrypt|certificate|auth/i },
+    { difficulty: 'troubleshooting', q: `Metrics and logs for ${T} are missing.`, kw: /metric|log|monitor|missing/i },
+  ];
+  return tpl.map(t => ({
+    id: `tq-${t.difficulty}-${t.q.length}`,
+    question: t.q,
+    shortAnswer: mineAnswer(md, t.kw),
+    difficulty: t.difficulty,
   }));
-  pairs.filter(p => !p.direct).slice(0, Math.max(0, 6 - questions.length)).forEach(p => questions.push({
-    id: `iq${questions.length}`, question: `Explain ${p.term} — what it is and why it matters.`,
-    shortAnswer: p.def, difficulty: 'beginner',
-  }));
-  return questions.length >= 3 ? { questions } : null;
 }
 
 /**
@@ -889,7 +938,7 @@ function autoInterview(md) {
  * @param {string} [opts.title]       - override title (default: first H1)
  */
 export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverride,
-  codeExamples, quiz, interview } = {}) {
+  codeExamples, quiz, interview, topic } = {}) {
   if (!md) return null;
   const lines = md.split('\n');
   const render = chunk => alerts(wrapMermaid(resolveMediaUrls(marked.parse(chunk.trim()), imageBaseUrl)));
@@ -1044,7 +1093,7 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
           question: stripMd(q.q || q.question || ''),
           shortAnswer: stripMd(q.a || q.answer || q.shortAnswer || ''),
           deepExplanation: stripMd(q.explanation || q.deepExplanation || '') || undefined,
-          difficulty: q.difficulty,
+          difficulty: q.difficulty || classifyDifficulty(stripMd(q.q || q.question || '')),
         })).filter(q => q.question),
       },
     });
@@ -1078,11 +1127,28 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
     const lab = autoLab(md, title, render);
     if (lab) sections.push({ id: 'sec-auto-lab', type: 'lab', icon: '🧪', title: 'Practical Lab', content: lab });
   }
-  sections.push(...interviews);
-  if (!interviews.length) {
-    const iv = autoInterview(md);
-    if (iv) sections.push({ id: 'sec-auto-interview', type: 'interview', icon: '🎙️', title: 'Interview Preparation', content: iv });
-  }
+
+  // Single grouped Interview Preparation (AWS look): authored/mined
+  // questions first (classified), then templated questions fill each
+  // difficulty group to >= 3 so every chapter shows all five groups.
+  const ivQs = [];
+  interviews.forEach(s => (s.content?.questions || []).forEach(q =>
+    ivQs.push({ ...q, difficulty: (q.difficulty || classifyDifficulty(q.question || '')).toLowerCase() })));
+  minePairs(md).forEach(p => {
+    const question = p.direct ? p.term : `Explain ${p.term} — what it is and why it matters.`;
+    const difficulty = p.direct ? classifyDifficulty(p.term) : 'beginner';
+    if (ivQs.filter(q => q.difficulty === difficulty).length >= 5) return;
+    if (!ivQs.some(q => q.question === question || q.question === p.term))
+      ivQs.push({ id: `iq${ivQs.length}`, question, shortAnswer: p.def, difficulty });
+  });
+  templateInterview(topic || title, md).forEach(t => {
+    if (ivQs.filter(q => q.difficulty === t.difficulty).length < 3
+        && !ivQs.some(q => q.question === t.question)) ivQs.push(t);
+  });
+  sections.push({
+    id: 'sec-interview-prep', type: 'interview', icon: '🎙️',
+    title: 'Interview Preparation', content: { questions: ivQs.slice(0, 30) },
+  });
 
   return {
     id, moduleId: id, title, description, objectives,
