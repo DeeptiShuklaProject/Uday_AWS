@@ -555,9 +555,10 @@ function classifyChunk(hTitle, body, render, idBase) {
     const w = tryChallenge(body, hTitle);
     return w ? one('challenge', hTitle, w) : null;
   }
-  if (/hands?-?on|labs?|exercises?|practice|try this|projects?|sandbox|playground/i.test(t)) {
+  if (/hands?-?on|labs?|exercises?|practical|try this|projects?|sandbox|playground/i.test(t)) {
     const w = tryLab(body, render, hTitle);
-    return w ? one('lab', hTitle, w) : null;
+    // no parseable steps → not a lab card, fall through to text section
+    return w && w.steps && w.steps.length ? one('lab', hTitle, w) : null;
   }
   if (/commands?|cli|terminal|kubectl|shell/i.test(t)) {
     const w = tryCommands(body, hTitle);
@@ -766,6 +767,63 @@ function mermaidToDiagram(body) {
   };
 }
 
+/** Auto-generate MCQs from term/definition pairs mined across the doc
+ * taxonomy: "- **Term**: def" bullets, "**Technical Term: X**" +
+ * "Simple Explanation" pairs, and "### Q: …?" + "**Answer**:" items
+ * (those become direct questions). 4 defs per question — one correct +
+ * 3 distractors, deterministically arranged so the correct position
+ * varies between questions. */
+function genKnowledgeCheck(md) {
+  const pairs = [];
+  const add = (term, def, direct) => {
+    term = stripMd(term).replace(/\*\*/g, '').trim();
+    def = stripMd(def).replace(/\*\*/g, '').trim().slice(0, 200);
+    if (term && term.length <= 120 && def.length > 15 && !pairs.some(p => p.term === term)) {
+      pairs.push({ term, def, direct: !!direct });
+    }
+  };
+  const lines = md.split('\n');
+  let pendingTerm = null;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    let m;
+    // "- **Term**: definition" bullets
+    if ((m = l.match(/^\s*[-*]\s+\*\*([^*]{2,60})\*\*\s*[:：–-]\s*(\S.{10,220}?)\s*$/))) {
+      add(m[1], m[2]); continue;
+    }
+    // "**📦 Technical Term: X**" — remember until its explanation bullet
+    if ((m = l.match(/^\s*\*\*(?:[\p{Emoji}\w]+\s+)?(?:technical\s+term|term|concept|component|service|feature)\s*[:：]\s*([^*]+?)\s*\*\*\s*$/iu))) {
+      pendingTerm = m[1]; continue;
+    }
+    if (pendingTerm && (m = l.match(/^\s*[-*]\s+\*\*(?:simple\s+explanation|definition|what\s+it\s+is)[^*]*\*?\*?\s*[:：]?\s*(.+)$/i))) {
+      add(pendingTerm, m[1]); pendingTerm = null; continue;
+    }
+    // "### Q: …?" or "Q: …?" followed within a few lines by "**Answer**: …"
+    if ((m = l.match(/^\s*(?:#{2,4}\s+|\*\*)?Q\d*\s*[:.)-]\s*(.+\?)\s*\*?\s*$/))) {
+      for (let j = i + 1; j < Math.min(i + 8, lines.length); j++) {
+        const a = lines[j].match(/\*\*answer\b[^*]*\*\*\s*[:：]?\s*(.+)/i);
+        if (a) { add(m[1], a[1], true); break; }
+        if (/^#{2,4}\s|^---/.test(lines[j])) break;
+      }
+    }
+  }
+  const qCount = Math.floor(pairs.length / 4);
+  if (!qCount) return null;
+  const ORDERS = [[1, 3, 0, 2], [2, 0, 3, 1], [3, 1, 2, 0]];
+  const questions = [];
+  for (let qi = 0; qi < Math.min(qCount, 3); qi++) {
+    const group = pairs.slice(qi * 4, qi * 4 + 4);
+    const order = ORDERS[qi % ORDERS.length];
+    questions.push({
+      id: `q${qi}`,
+      question: group[0].direct ? group[0].term : `Which description best matches ${group[0].term}?`,
+      options: order.map(i => group[i].def).map((text, i) => ({ id: `o${i}`, text })),
+      correctId: `o${order.indexOf(0)}`,
+    });
+  }
+  return questions.length ? { title: 'Knowledge Check', questions } : null;
+}
+
 /**
  * @param {string} md - raw markdown
  * @param {object} opts
@@ -940,6 +998,16 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
   // output from expected-output fences, or the surrounding explanation).
   const chapterTerm = terminalFor(tryCommands(md, title) || [], `${title} Lab`, id);
   if (chapterTerm) sections.push(chapterTerm);
+
+  // Auto Knowledge Check — "- **Term**: definition" bullets become MCQs
+  // (correct definition + 3 distractors from other terms). Placed after
+  // the terminal so every chapter ends with a quiz even when the source
+  // didn't author one.
+  const kc = genKnowledgeCheck(md);
+  if (kc) sections.push({
+    id: 'sec-knowledge-check-auto', type: 'quiz', icon: '🧠',
+    title: 'Knowledge Check', content: kc,
+  });
 
   return {
     id, moduleId: id, title, description, objectives,
