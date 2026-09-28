@@ -881,16 +881,49 @@ function autoLab(md, title, render) {
  *  shortAnswer source for templated interview questions. */
 function mineAnswer(md, kw) {
   const paras = md.split(/\n\s*\n/).map(p => stripMd(p).replace(/\*\*/g, '')
-    .replace(/\s+/g, ' ').trim()).filter(p => p.length > 50);
+    .replace(/^>\s?/gm, '').replace(/\s+/g, ' ').trim()).filter(p => p.length > 50);
   return (paras.find(p => kw.test(p)) || paras[0] || '').slice(0, 400) || undefined;
 }
 
 /** AWS-style templated interview questions, parameterized by course
  *  topic — the same shape authored AWS modules use (Beginner →
- *  Troubleshooting groups). Answers are mined from the chapter text. */
-function templateInterview(topic, md) {
+ *  Troubleshooting groups). Answers are mined from the chapter text.
+ *  Programming-fundamentals courses get a concept/coding template bank
+ *  instead of infrastructure operations questions. */
+function templateInterview(topic, md, isProg) {
   const T = topic;
-  const tpl = [
+  const tpl = isProg ? [
+    // 🌱 Beginner
+    { difficulty: 'beginner', q: `What is ${T} and why does it matter?`, kw: /definition|is a|is an|concept|purpose/i },
+    { difficulty: 'beginner', q: `What are the core concepts of ${T}?`, kw: /concept|component|element|syntax|basic/i },
+    { difficulty: 'beginner', q: `What are common mistakes beginners make with ${T}?`, kw: /mistake|pitfall|error|wrong|avoid/i },
+    { difficulty: 'beginner', q: `What is the basic syntax of ${T}?`, kw: /syntax|keyword|declare|write/i },
+    { difficulty: 'beginner', q: `What are the best practices for writing ${T}?`, kw: /best practice|style|clean|convention/i },
+    // 📈 Intermediate
+    { difficulty: 'intermediate', q: `How does ${T} work internally?`, kw: /intern|under the hood|memory|stack|heap|runtime/i },
+    { difficulty: 'intermediate', q: `Explain the execution flow of ${T}.`, kw: /execution|flow|order|step/i },
+    { difficulty: 'intermediate', q: `When should you use ${T} vs alternatives?`, kw: /versus|vs\.|alternative|compare|when to/i },
+    { difficulty: 'intermediate', q: `What are the performance characteristics of ${T}?`, kw: /performance|complexity|big.?o|efficien/i },
+    { difficulty: 'intermediate', q: `How do you debug ${T} code?`, kw: /debug|trace|breakpoint|inspect|print/i },
+    // 🚀 Advanced
+    { difficulty: 'advanced', q: `Design an efficient solution using ${T}.`, kw: /algorithm|complexity|efficien|design/i },
+    { difficulty: 'advanced', q: `How do you optimize ${T} code for performance?`, kw: /optimi|performance|profil|faster/i },
+    { difficulty: 'advanced', q: `Explain the memory model behind ${T}.`, kw: /memory|stack|heap|allocation|reference/i },
+    { difficulty: 'advanced', q: `What are the edge cases of ${T}?`, kw: /edge|boundary|overflow|limit|corner/i },
+    { difficulty: 'advanced', q: `How would you implement ${T} from scratch?`, kw: /implement|build|scratch|create/i },
+    // 🎯 Scenario-Based
+    { difficulty: 'scenario', q: `Your ${T} code throws a runtime error in production. How do you debug it?`, kw: /error|debug|exception|traceback|crash/i },
+    { difficulty: 'scenario', q: `Refactor legacy code that misuses ${T}.`, kw: /refactor|legacy|misuse|anti|improve/i },
+    { difficulty: 'scenario', q: `Your ${T} logic produces wrong output for edge inputs. Investigate.`, kw: /edge|input|bug|wrong|output/i },
+    { difficulty: 'scenario', q: `Design a solution under strict memory limits using ${T}.`, kw: /memory|limit|constraint|resource/i },
+    { difficulty: 'scenario', q: `Your teammate's ${T} code is unreadable. How do you improve it?`, kw: /readab|clean|style|refactor|review/i },
+    // 🔧 Troubleshooting
+    { difficulty: 'troubleshooting', q: `${T} code compiles but produces incorrect output.`, kw: /output|bug|incorrect|wrong|logic/i },
+    { difficulty: 'troubleshooting', q: `${T} throws a syntax or parse error.`, kw: /syntax|parse|error|compile/i },
+    { difficulty: 'troubleshooting', q: `Off-by-one or boundary errors in ${T}.`, kw: /boundary|off.by.one|index|range|loop/i },
+    { difficulty: 'troubleshooting', q: `${T} code runs but is extremely slow.`, kw: /slow|performance|complexity|timeout|loop/i },
+    { difficulty: 'troubleshooting', q: `Unexpected type or null errors in ${T}.`, kw: /type|null|undefined|none|nan/i },
+  ] : [
     // 🌱 Beginner
     { difficulty: 'beginner', q: `What is ${T} and what problem does it solve?`, kw: /definition|is a|is an|provides|purpose/i },
     { difficulty: 'beginner', q: `What are the key components of ${T}?`, kw: /component|consist|architecture|part/i },
@@ -938,7 +971,7 @@ function templateInterview(topic, md) {
  * @param {string} [opts.title]       - override title (default: first H1)
  */
 export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverride,
-  codeExamples, quiz, interview, topic } = {}) {
+  codeExamples, quiz, interview, topic, prog } = {}) {
   if (!md) return null;
   const lines = md.split('\n');
   const render = chunk => alerts(wrapMermaid(resolveMediaUrls(marked.parse(chunk.trim()), imageBaseUrl)));
@@ -1099,6 +1132,10 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
     });
   }
 
+  // Mining runs on tag-transformed markdown — raw <Component> attrs
+  // would otherwise leak into mined answers/questions.
+  const mineMd = transformCustomTags(md).md;
+
   // Chapter-wide Interactive Terminal — every chapter that contains any
   // shell commands gets a sandbox preloaded with them (commands → canned
   // output from expected-output fences, or the surrounding explanation).
@@ -1109,7 +1146,7 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
   // (correct definition + 3 distractors from other terms). Placed after
   // the terminal so every chapter ends with a quiz even when the source
   // didn't author one.
-  const kc = genKnowledgeCheck(md);
+  const kc = genKnowledgeCheck(mineMd);
   if (kc) sections.push({
     id: 'sec-knowledge-check-auto', type: 'quiz', icon: '🧠',
     title: 'Knowledge Check', content: kc,
@@ -1124,7 +1161,7 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
   sections.length = 0;
   sections.push(...rest, ...labs);
   if (!labs.length) {
-    const lab = autoLab(md, title, render);
+    const lab = autoLab(mineMd, title, render);
     if (lab) sections.push({ id: 'sec-auto-lab', type: 'lab', icon: '🧪', title: 'Practical Lab', content: lab });
   }
 
@@ -1134,14 +1171,14 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
   const ivQs = [];
   interviews.forEach(s => (s.content?.questions || []).forEach(q =>
     ivQs.push({ ...q, difficulty: (q.difficulty || classifyDifficulty(q.question || '')).toLowerCase() })));
-  minePairs(md).forEach(p => {
+  minePairs(mineMd).forEach(p => {
     const question = p.direct ? p.term : `Explain ${p.term} — what it is and why it matters.`;
     const difficulty = p.direct ? classifyDifficulty(p.term) : 'beginner';
     if (ivQs.filter(q => q.difficulty === difficulty).length >= 5) return;
     if (!ivQs.some(q => q.question === question || q.question === p.term))
       ivQs.push({ id: `iq${ivQs.length}`, question, shortAnswer: p.def, difficulty });
   });
-  templateInterview(topic || title, md).forEach(t => {
+  templateInterview(topic || title, mineMd, prog).forEach(t => {
     if (ivQs.filter(q => q.difficulty === t.difficulty).length < 3
         && !ivQs.some(q => q.question === t.question)) ivQs.push(t);
   });

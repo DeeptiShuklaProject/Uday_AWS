@@ -84,7 +84,8 @@ export default function DocChapterPage() {
       codeExamples: chapter.codeExamples,
       quiz: chapter.quiz,
       interview: chapter.interviewQuestions,
-      topic: course?.title,
+      topic: bareTitle(chapter.title),
+      prog: /program|adventure/i.test(categoryId),
     }) : null),
     [markdown, progressId, chapter, base, course]
   );
