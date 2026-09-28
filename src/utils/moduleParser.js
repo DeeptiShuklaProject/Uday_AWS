@@ -767,18 +767,16 @@ function mermaidToDiagram(body) {
   };
 }
 
-/** Auto-generate MCQs from term/definition pairs mined across the doc
- * taxonomy: "- **Term**: def" bullets, "**Technical Term: X**" +
- * "Simple Explanation" pairs, and "### Q: …?" + "**Answer**:" items
- * (those become direct questions). 4 defs per question — one correct +
- * 3 distractors, deterministically arranged so the correct position
- * varies between questions. */
-function genKnowledgeCheck(md) {
+/** Mine term/definition pairs across the doc taxonomy:
+ *  "- **Term**: def" bullets, "**Technical Term: X**" +
+ *  "Simple Explanation" pairs, and "### Q: …?" + "**Answer**:" items
+ *  (marked `direct` — usable as standalone questions). */
+function minePairs(md) {
   const pairs = [];
   const add = (term, def, direct) => {
     term = stripMd(term).replace(/\*\*/g, '').trim();
-    def = stripMd(def).replace(/\*\*/g, '').trim().slice(0, 200);
-    if (term && term.length <= 120 && def.length > 15 && !pairs.some(p => p.term === term)) {
+    def = stripMd(def).replace(/\*\*/g, '').trim().slice(0, 400);
+    if (term && term.length <= 200 && def.length > 15 && !pairs.some(p => p.term === term)) {
       pairs.push({ term, def, direct: !!direct });
     }
   };
@@ -807,6 +805,13 @@ function genKnowledgeCheck(md) {
       }
     }
   }
+  return pairs;
+}
+
+/** Auto-generate MCQs from mined pairs — 4 defs per question (one
+ * correct + 3 distractors), correct position varies deterministically. */
+function genKnowledgeCheck(md) {
+  const pairs = minePairs(md).map(p => ({ ...p, def: p.def.slice(0, 200) }));
   const qCount = Math.floor(pairs.length / 4);
   if (!qCount) return null;
   const ORDERS = [[1, 3, 0, 2], [2, 0, 3, 1], [3, 1, 2, 0]];
@@ -822,6 +827,58 @@ function genKnowledgeCheck(md) {
     });
   }
   return questions.length ? { title: 'Knowledge Check', questions } : null;
+}
+
+/** Auto Practical Lab — a guided "run the chapter's commands" lab when
+ *  no authored lab exists. Steps = shell commands with expected output;
+ *  chapters without commands get a self-review checklist instead. */
+function autoLab(md, title, render) {
+  const cmds = tryCommands(md, title) || [];
+  let steps;
+  if (cmds.length) {
+    steps = cmds.slice(0, 6).map((c, i) => {
+      const firstLine = (c.command.split('\n').find(l => l.trim() && !/^\s*#/.test(l)) || '').replace(/^\s*[$>]\s*/, '').trim();
+      return {
+        id: `step-${i + 1}`,
+        title: `Run: ${firstLine.length > 60 ? firstLine.slice(0, 57) + '…' : firstLine}`,
+        html: render(`\`\`\`bash\n${c.command}\n\`\`\``),
+        expectedResult: (c.expectedOutput || '').slice(0, 200) || undefined,
+        hint: c.explanation ? c.explanation.slice(0, 200) : undefined,
+      };
+    });
+  } else {
+    // Review checklist from the chapter's H2 concept sections.
+    const heads = [...md.matchAll(/^##\s+(.+)$/gm)]
+      .map(m => stripMd(m[1])).filter(h => /concept|overview|architecture|core|component|how|internal|security|monitor/i.test(h));
+    if (!heads.length) return null;
+    steps = heads.slice(0, 5).map((h, i) => ({
+      id: `step-${i + 1}`,
+      title: `Review: ${h.replace(/^\d+\.\s*/, '')}`,
+      html: `<p>Summarise the key points of this section in your own words.</p>`,
+    }));
+  }
+  return steps.length ? {
+    title: `${title} — Hands-On Lab`,
+    description: 'Practice the key techniques from this chapter.',
+    difficulty: 'intermediate', steps,
+  } : null;
+}
+
+/** Auto Interview Preparation — mined direct Q&As first, then term-defs
+ *  rephrased as "Explain X" questions. */
+function autoInterview(md) {
+  const pairs = minePairs(md);
+  if (pairs.length < 3) return null;
+  const questions = [];
+  pairs.filter(p => p.direct).slice(0, 4).forEach(p => questions.push({
+    id: `iq${questions.length}`, question: p.term,
+    shortAnswer: p.def, difficulty: 'intermediate',
+  }));
+  pairs.filter(p => !p.direct).slice(0, Math.max(0, 6 - questions.length)).forEach(p => questions.push({
+    id: `iq${questions.length}`, question: `Explain ${p.term} — what it is and why it matters.`,
+    shortAnswer: p.def, difficulty: 'beginner',
+  }));
+  return questions.length >= 3 ? { questions } : null;
 }
 
 /**
@@ -1008,6 +1065,24 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
     id: 'sec-knowledge-check-auto', type: 'quiz', icon: '🧠',
     title: 'Knowledge Check', content: kc,
   });
+
+  // AWS end-of-chapter sequence: Interactive Terminal → Knowledge Check →
+  // Practical Lab → Interview Preparation. Authored lab/interview
+  // sections are pulled to the tail; missing ones are auto-generated.
+  const labs = sections.filter(s => s.type === 'lab');
+  const interviews = sections.filter(s => s.type === 'interview');
+  const rest = sections.filter(s => s.type !== 'lab' && s.type !== 'interview');
+  sections.length = 0;
+  sections.push(...rest, ...labs);
+  if (!labs.length) {
+    const lab = autoLab(md, title, render);
+    if (lab) sections.push({ id: 'sec-auto-lab', type: 'lab', icon: '🧪', title: 'Practical Lab', content: lab });
+  }
+  sections.push(...interviews);
+  if (!interviews.length) {
+    const iv = autoInterview(md);
+    if (iv) sections.push({ id: 'sec-auto-interview', type: 'interview', icon: '🎙️', title: 'Interview Preparation', content: iv });
+  }
 
   return {
     id, moduleId: id, title, description, objectives,
