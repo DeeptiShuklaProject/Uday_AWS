@@ -592,9 +592,12 @@ function alerts(html) {
   return html.replace(/<blockquote>([\s\S]*?)<\/blockquote>/g, (_, inner) => {
     let t = inner.trim();
     let title = '';
+    // GitHub-style admonition marker: `> [!TIP]` / `> [!WARNING]` etc.
+    const adm = t.match(/^<p>\s*\[!(\w+)\]\s*(?:<br\s*\/?>)?/);
+    if (adm) t = `<p>${t.slice(adm[0].length)}`;
     const strong = t.match(/^<p>\s*<strong>([^<]{1,80}?)<\/strong>\s*:?\.?\s*([\s\S]*)$/s);
     if (strong) { title = strong[1].replace(/[:.]\s*$/, ''); t = `<p>${strong[2]}`; }
-    const probe = `${title} ${t}`.toLowerCase();
+    const probe = `${adm ? adm[1] : ''} ${title} ${t}`.toLowerCase();
     let kind = 'info', icon = 'ℹ️';
     if (/warn|important|caution|danger|never\b|avoid|mistake|security|error|watch out|critical|do not/i.test(probe)) {
       kind = 'warning'; icon = '⚠️';
@@ -605,7 +608,7 @@ function alerts(html) {
     }
     return `<div class="alert alert-${kind}"><span class="alert-icon">${icon}</span>` +
       `<div class="alert-content">${title ? `<div class="alert-title">${title}</div>` : ''}` +
-      `<div class="alert-text">${t}</div></div>`;
+      `<div class="alert-text">${t}</div></div></div>`;
   });
 }
 
