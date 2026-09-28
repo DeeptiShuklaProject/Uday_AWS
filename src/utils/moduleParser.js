@@ -717,18 +717,26 @@ function mermaidToDiagram(body) {
 
   if (nodes.size < 2 || !edges.length) return null;
 
-  // Longest-path level layout (L→R or T→B), grouped within subgraphs.
+  // BFS level layout (L→R or T→B). First-visit shortest distance —
+  // back-edges in cycles are ignored for leveling (they still render
+  // as arrows), so cyclic flows can't blow the canvas height up.
   const indeg = Object.fromEntries([...nodes.keys()].map(id => [id, 0]));
   edges.forEach(e => { if (indeg[e.to] != null) indeg[e.to]++; });
+  const adj = {};
+  edges.forEach(e => (adj[e.from] ||= []).push(e.to));
   const level = {};
-  [...nodes.keys()].filter(id => !indeg[id]).forEach(id => { level[id] = 0; });
-  for (let pass = 0; pass < 30; pass++) {
-    let changed = false;
-    edges.forEach(e => {
-      const lf = level[e.from] ?? 0;
-      if ((level[e.to] ?? -1) < lf + 1) { level[e.to] = lf + 1; changed = true; }
-    });
-    if (!changed) break;
+  const queue = [...nodes.keys()].filter(id => !indeg[id]);
+  queue.forEach(id => { level[id] = 0; });
+  if (!queue.length && nodes.size) { // pure cycle: seed the first node
+    const first = [...nodes.keys()][0];
+    level[first] = 0;
+    queue.push(first);
+  }
+  while (queue.length) {
+    const u = queue.shift();
+    for (const v of adj[u] || []) {
+      if (level[v] == null) { level[v] = level[u] + 1; queue.push(v); }
+    }
   }
   nodes.forEach((n, id) => { if (level[id] == null) level[id] = 0; });
   const byLevel = {};
