@@ -84,10 +84,8 @@ export default function DocChapterPage() {
       codeExamples: chapter.codeExamples,
       quiz: chapter.quiz,
       interview: chapter.interviewQuestions,
-      topic: bareTitle(chapter.title),
-      prog: /program|adventure/i.test(categoryId),
     }) : null),
-    [markdown, progressId, chapter, base, course]
+    [markdown, progressId, chapter, base]
   );
 
   // Expose the chapter as the "current module" while this page is mounted —
