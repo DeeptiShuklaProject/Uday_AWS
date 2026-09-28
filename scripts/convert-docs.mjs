@@ -240,74 +240,6 @@ function discoverK8s(src, base) {
   }] : [];
 }
 
-// Basic Programming — NN_topic/ dirs each holding index.md + data.json
-// (data.json carries codeExamples / quiz / interviewQuestions extras that
-// become widget sections at parse time).
-function discoverBOP(src, base) {
-  const chapters = readdirSync(src, { withFileTypes: true })
-    .filter(e => e.isDirectory() && /^\d+[_-]/.test(e.name))
-    .map(e => e.name).sort()
-    .flatMap(dirName => {
-      const dir = path.join(src, dirName);
-      const mdFile = path.join(dir, 'index.md');
-      if (!existsSync(mdFile)) return [];
-      let extras = {};
-      const dataFile = path.join(dir, 'data.json');
-      if (existsSync(dataFile)) {
-        try {
-          const d = JSON.parse(readFileSync(dataFile, 'utf8'));
-          extras = {
-            codeExamples: d.codeExamples,
-            quiz: d.quiz,
-            interviewQuestions: d.interviewQuestions,
-          };
-        } catch { /* keep chapter without extras */ }
-      }
-      const n = num(dirName);
-      const label = pretty(dirName.replace(/^\d+_?/, ''));
-      return [{
-        id: slugify(dirName),
-        title: n ? `${n.padStart(2, '0')} — ${label}` : label,
-        file: `${dirName}/index.md`,
-        sectionCount: countSections(readFileSync(mdFile, 'utf8')),
-        ...extras,
-      }];
-    });
-  return chapters.length ? [{
-    id: 'basic-programming',
-    title: courseTitle(src, 'Basic Programming'),
-    description: 'Programming fundamentals — variables through algorithms — with multi-language examples.',
-    icon: '💻', contentBase: base, chapters,
-  }] : [];
-}
-
-// CodeAdventure — NN_level/ dirs with index.md (+ engine tags handled by
-// the parser's custom-tag transform).
-function discoverCA(src, base) {
-  const chapters = readdirSync(src, { withFileTypes: true })
-    .filter(e => e.isDirectory() && /^\d+[_-]/.test(e.name))
-    .map(e => e.name).sort()
-    .flatMap(dirName => {
-      const dir = path.join(src, dirName);
-      return readdirSync(dir).filter(f => /\.md$/i.test(f)).map(f => {
-        const n = num(dirName);
-        const label = pretty(dirName.replace(/^\d+_?/, ''));
-        return {
-          id: slugify(dirName),
-          title: n ? `${n.padStart(2, '0')} — ${label}` : label,
-          file: `${dirName}/${f}`,
-          sectionCount: countSections(readFileSync(path.join(dir, f), 'utf8')),
-        };
-      });
-    });
-  return chapters.length ? [{
-    id: 'codeadventure',
-    title: courseTitle(src, 'CodeAdventure'),
-    description: 'Game-driven coding challenges — write logic, run levels, earn XP.',
-    icon: '🎮', contentBase: base, chapters,
-  }] : [];
-}
-
 /* ─────────────────────────────── run ─────────────────────────────── */
 
 const CATS = [
@@ -323,10 +255,6 @@ const CATS = [
     subtitle: 'Python programming for DevOps and automation' },
   { id: 'kubernetes',        title: 'Kubernetes',        icon: '☸️', src: path.join(WSCS, 'doc_kubernetes'),                discover: discoverK8s,
     subtitle: 'Kubernetes architecture, objects and production labs' },
-  { id: 'basic-programming', title: 'Basic Programming', icon: '💻', src: path.join(WSCS, 'doc_basic_of_programming'),      discover: discoverBOP,
-    subtitle: 'Programming fundamentals with multi-language examples' },
-  { id: 'codeadventure',     title: 'CodeAdventure',     icon: '🎮', src: path.join(WSCS, 'doc_CodeAdventure'),             discover: discoverCA,
-    subtitle: 'Game-driven coding levels and challenges' },
 ];
 
 const registry = { categories: [] };

@@ -75,16 +75,40 @@ function tagEnd(str, from) {
   return -1;
 }
 
-// Parse JSX-ish attrs: key="v" | key='v' | key={…} | key=[…] | key={…}
+// Parse JSX-ish attrs: key="v" | key='v' | key={…} | key=[…] | bare.
+// {…}/[…] values are scanned with balanced brackets + quote awareness —
+// codeExamples={{…}} contains braces inside string literals that a
+// flat regex can't span.
 function parseAttrs(str = '') {
   const attrs = {};
-  const re = /(\w+)\s*=\s*("(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'|\{(?:[^{}]|\{[^{}]*\})*\}|\[(?:[^\[\]]|\[[^\]]*\])*\])/g;
+  const re = /(\w+)\s*=\s*/g;
   let m;
   while ((m = re.exec(str))) {
-    let raw = m[2];
-    if (raw[0] === '"' || raw[0] === "'") raw = raw.slice(1, -1);
-    else if (raw[0] === '{') raw = raw.slice(1, -1); // {expr} → keep inner
-    attrs[m[1]] = raw;
+    const i = re.lastIndex, c = str[i];
+    let val, end;
+    if (c === '"' || c === "'") {
+      let j = i + 1;
+      while (j < str.length && (str[j] !== c || str[j - 1] === '\\')) j++;
+      val = str.slice(i + 1, j); end = j + 1;
+    } else if (c === '{' || c === '[') {
+      const open = c, close = c === '{' ? '}' : ']';
+      let depth = 0, j = i, quote = null;
+      for (; j < str.length; j++) {
+        const ch = str[j];
+        if (quote) { if (ch === quote && str[j - 1] !== '\\') quote = null; continue; }
+        if (ch === '"' || ch === "'") quote = ch;
+        else if (ch === open) depth++;
+        else if (ch === close) { depth--; if (!depth) break; }
+      }
+      // {expr} → inner expression; […] → keep brackets for evalLiteral.
+      val = open === '{' ? str.slice(i + 1, j) : str.slice(i, j + 1);
+      end = j + 1;
+    } else {
+      const um = /^[^\s/>]+/.exec(str.slice(i));
+      val = um ? um[0] : ''; end = i + val.length;
+    }
+    attrs[m[1]] = val;
+    re.lastIndex = end;
   }
   return attrs;
 }
@@ -98,7 +122,7 @@ function evalLiteral(s) {
 const unescapeCode = s => (s || '').replace(/\\n/g, '\n').replace(/\\t/g, '\t')
   .replace(/\\"/g, '"').replace(/\\'/g, "'");
 
-const CARD_TAGS = 'InfoCard|TipCard|KeyTakeaways|WarningCard|SuccessCard|NoteCard|ConceptCard|SectionCard';
+const CARD_TAGS = 'InfoCard|TipCard|KeyTakeaways|WarningCard|SuccessCard|NoteCard|ConceptCard|SectionCard|WhyItMatters|GoalCard|OutcomeCard';
 
 const quoteBlock = (title, body) => {
   const lines = [];
@@ -126,18 +150,35 @@ function attrsToCallout(tag, attrs, icon = 'ℹ️') {
 }
 
 /**
- * Replace custom tags in a chunk body. Returns { md, quizzes } where
- * quizzes is an array of quiz-section content objects.
- */
 /**
- * Replace custom tags in a chunk body. Returns { md, quizzes } where
- * quizzes is an array of quiz-section content objects.
+ * Replace custom tags in a chunk body. Returns { md, extras } where
+ * extras is an array of typed widget sections (quiz/code/interview)
+ * mined from <Quiz>, <FlashCard>, <LanguageComparison> etc.
  *
  * Tags are matched with a quote-aware scanner (attr values legitimately
  * contain '>' characters, so `[^>]*` regexes would truncate them).
  */
+// codeExamples={{py:"…", java:"…"}} attr → {type:'code'} extra section.
+// BOP ships the same examples in LanguageComparison AND MonacoPlayground —
+// dedupe identical language sets within a chunk.
+function codePlayground(attrStr, extras) {
+  const a = parseAttrs(attrStr);
+  const ex = evalLiteral(a.codeExamples) || {};
+  const languages = Object.entries(ex).map(([lang, code], li) => ({
+    id: `l${li}`, label: lang, code: unescapeCode(String(code)),
+  })).filter(l => l.code.trim());
+  const fp = JSON.stringify(languages.map(l => l.code));
+  if (extras.some(x => x.type === 'code' && x.fp === fp)) return '\n\n';
+  if (languages.length) extras.push({ fp,
+    type: 'code', icon: '👨‍💻',
+    title: unescapeCode(a.title || 'Code Playground'),
+    content: { title: unescapeCode(a.title || 'Code Playground'), languages },
+  });
+  return '\n\n';
+}
+
 function transformCustomTags(body) {
-  const quizzes = [];
+  const extras = []; // typed widget sections pushed after the chunk
   let out = '';
   let i = 0;
 
@@ -146,17 +187,49 @@ function transformCustomTags(body) {
       const a = parseAttrs(attrStr);
       const options = evalLiteral(a.options) || [];
       const correct = Number(evalLiteral(a.answerIndex ?? a.correctIndex ?? '0'));
-      quizzes.push({
-        title: 'Knowledge Check',
-        questions: [{
-          id: `q${quizzes.length}`,
-          question: unescapeCode(a.question || ''),
-          options: options.map((t, oi) => ({ id: `o${oi}`, text: String(t) })),
-          correctId: `o${correct}`,
-          explanation: unescapeCode(a.explanation || ''),
-        }],
+      extras.push({
+        type: 'quiz', icon: '🧠', title: 'Knowledge Check',
+        content: {
+          questions: [{
+            id: `q${extras.length}`,
+            question: unescapeCode(a.question || ''),
+            options: options.map((t, oi) => ({ id: `o${oi}`, text: String(t) })),
+            correctId: `o${correct}`,
+            explanation: unescapeCode(a.explanation || ''),
+          }],
+        },
       });
       return '\n\n';
+    },
+    // <LanguageComparison>/<MonacoPlayground> codeExamples={{py:…, java:…}}
+    // → real multi-tab code widget instead of a prose callout.
+    LanguageComparison: () => codePlayground(attrStr, extras),
+    MonacoPlayground: () => codePlayground(attrStr, extras),
+    // 20 flip-cards → real interview accordion questions.
+    FlashCard: () => {
+      const a = parseAttrs(attrStr);
+      const cards = evalLiteral(a.cards) || [];
+      const questions = cards.map((c, ci) => ({
+        id: `fc${ci}`,
+        question: unescapeCode(c.q || '').replace(/^interview question\s*\d+\s*:\s*/i, ''),
+        shortAnswer: unescapeCode(c.a || '').replace(/^senior answer\s*\d+\s*:\s*/i, ''),
+        difficulty: 'intermediate',
+      })).filter(q => q.question);
+      if (questions.length) extras.push({
+        type: 'interview', icon: '🃏',
+        title: unescapeCode(a.title || 'Interview Flashcards'),
+        content: { questions },
+      });
+      return '\n\n';
+    },
+    // Concept overview card — keep difficulty/time/tags as a meta line.
+    InteractiveConceptCard: () => {
+      const a = parseAttrs(attrStr);
+      const meta = [a.difficulty, a.estimatedTime].filter(Boolean).join(' · ');
+      const tags = (a.tags || '').replace(/[\[\]"]/g, '').split(',').map(s => s.trim()).filter(Boolean);
+      const bits = [unescapeCode(a.subtitle || ''), meta && `**${meta}**`,
+        tags.length ? `Tags: ${tags.join(', ')}` : ''].filter(Boolean);
+      return `\n\n${quoteBlock(`🧩 ${unescapeCode(a.title || 'Concept')}`, bits.join('\n\n'))}\n\n`;
     },
     ImageGallery: () => {
       const a = parseAttrs(attrStr);
@@ -241,7 +314,7 @@ function transformCustomTags(body) {
 
   // Orphaned closing component tags → drop.
   out = out.replace(/<\/[A-Z]\w*\s*>/g, '');
-  return { md: out, quizzes };
+  return { md: out, extras };
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -323,8 +396,10 @@ function tryLab(body, render, hTitle) {
     });
   });
   if (!steps.length) {
-    if (!body.trim()) return null;
     const { md: clean, hints } = extractDetails(body);
+    // Thin prose isn't a lab — a leftover tag description becomes a junk
+    // 1-step card. Only wrap when there's real instructional content.
+    if (!clean.trim() || (clean.length < 400 && !/```|^\s*(?:[-*+]|\d+\.)\s/m.test(clean))) return null;
     return {
       title: hTitle, difficulty: 'intermediate',
       steps: [{ id: 'step-1', title: 'Complete the exercise', html: render(clean), hint: hints.join('\n') || undefined }],
@@ -1008,7 +1083,7 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
       // first non-empty paragraph becomes the header description
       const para = body.split(/\n\s*\n/).map(p => p.trim()).filter(p => p && !/^---+$/.test(p));
       description = stripMd(para[0] || '');
-      const { md: tmd, quizzes } = transformCustomTags(body);
+      const { md: tmd, extras } = transformCustomTags(body);
       const html = render(tmd);
       if (html.trim()) {
         sections.push({
@@ -1016,10 +1091,10 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
           content: html,
         });
       }
-      quizzes.forEach((q, qi) => {
+      extras.forEach((x, xi) => {
         sections.push({
-          id: `sec-${i}-overview-quiz-${qi}`,
-          type: 'quiz', icon: '🧠', title: 'Knowledge Check', content: q,
+          id: `sec-${i}-overview-${x.type}-${xi}`,
+          type: x.type, icon: x.icon, title: x.title, content: x.content,
         });
       });
       return;
@@ -1037,9 +1112,10 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
       return;
     }
 
-    // Transform engine-specific <Component> tags; <Quiz> tags become real
-    // quiz slides placed right after the section they appeared in.
-    const { md: tmd, quizzes } = transformCustomTags(body);
+    // Transform engine-specific <Component> tags; widget-bearing tags
+    // (Quiz, FlashCard, LanguageComparison, MonacoPlayground) become
+    // typed sections placed right after the section they appeared in.
+    const { md: tmd, extras } = transformCustomTags(body);
     const idBase = `sec-${i}-${slug(hTitle)}`;
     // Content → widget classification (lab/quiz/interview/troubleshooting/
     // command+terminal/challenge/code). Falls back to a styled HTML section.
@@ -1077,13 +1153,13 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
         }
       }
     }
-    quizzes.forEach((q, qi) => {
+    extras.forEach((x, xi) => {
       sections.push({
-        id: `sec-${i}-quiz-${qi}`,
-        type: 'quiz',
-        icon: '🧠',
-        title: 'Knowledge Check',
-        content: q,
+        id: `sec-${i}-${x.type}-${xi}`,
+        type: x.type,
+        icon: x.icon,
+        title: x.title,
+        content: x.content,
       });
     });
   });
