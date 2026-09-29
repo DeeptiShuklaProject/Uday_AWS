@@ -224,6 +224,18 @@ function discoverFlat(src, base, { id, title, icon, description }) {
   return chapters.length ? [{ id, title, description, icon, contentBase: base, chapters }] : [];
 }
 
+// Bedrock by Deepti — only the root Chapter_*.md files form the course
+// ("Core Chapters"). The NN_* unit dirs are intentionally not registered.
+function discoverDeepti(src, base) {
+  const rootChapters = mdChapters(src, '');
+  return rootChapters.length ? [{
+    id: 'core-chapters',
+    title: 'Core Chapters',
+    description: 'Main guided chapters of the Bedrock by Deepti course.',
+    icon: '🤖', contentBase: base, chapters: rootChapters,
+  }] : [];
+}
+
 // Kubernetes — chapters/Level-NN-*.md + the root curriculum doc appended.
 function discoverK8s(src, base) {
   const dir = path.join(src, 'chapters');
@@ -255,6 +267,8 @@ const CATS = [
     subtitle: 'Python programming for DevOps and automation' },
   { id: 'kubernetes',        title: 'Kubernetes',        icon: '☸️', src: path.join(WSCS, 'doc_kubernetes'),                discover: discoverK8s,
     subtitle: 'Kubernetes architecture, objects and production labs' },
+  { id: 'bedrock-deepti',    title: 'Bedrock by Deepti', icon: '🚀', src: path.join(WSCS, 'doc_aws_bedrock_production by Deepti'), discover: discoverDeepti,
+    subtitle: 'Amazon Bedrock production course — GenAI foundations to AgentCore' },
 ];
 
 const registry = { categories: [] };

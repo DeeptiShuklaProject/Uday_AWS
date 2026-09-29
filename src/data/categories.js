@@ -18,6 +18,7 @@ const CAT_COLORS = {
   docker:             { color: '#0284c7', colorBg: '#e0f2fe' },
   'python-devops':    { color: '#16a34a', colorBg: '#dcfce7' },
   kubernetes:         { color: '#6366f1', colorBg: '#eef2ff' },
+  'bedrock-deepti':   { color: '#db2777', colorBg: '#fce7f3' },
 
 };
 

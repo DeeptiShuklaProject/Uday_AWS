@@ -2390,6 +2390,36 @@
           ]
         }
       ]
+    },
+    {
+      "id": "bedrock-deepti",
+      "title": "Bedrock by Deepti",
+      "icon": "🚀",
+      "subtitle": "Amazon Bedrock production course — GenAI foundations to AgentCore",
+      "contentBase": "/bedrock-deepti/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Main guided chapters of the Bedrock by Deepti course.",
+          "icon": "🤖",
+          "contentBase": "/bedrock-deepti/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Introduction_to_Amazon_Bedrock",
+              "title": "01 — Introduction To Amazon Bedrock",
+              "file": "Chapter_01_Introduction_to_Amazon_Bedrock.md",
+              "sectionCount": 13
+            },
+            {
+              "id": "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents",
+              "title": "02 — Bedrock AgentCore Production Ready Agents",
+              "file": "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents.md",
+              "sectionCount": 22
+            }
+          ]
+        }
+      ]
     }
   ]
 }
