@@ -19,7 +19,6 @@ const CAT_COLORS = {
   'python-devops':    { color: '#16a34a', colorBg: '#dcfce7' },
   kubernetes:         { color: '#6366f1', colorBg: '#eef2ff' },
   'bedrock-deepti':   { color: '#db2777', colorBg: '#fce7f3' },
-
 };
 
 export const categories = [
