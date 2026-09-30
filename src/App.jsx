@@ -10,6 +10,7 @@ import LandingPage from './components/LandingPage';
 import CategoryPage from './components/CategoryPage';
 import DocCoursePage from './components/DocCoursePage';
 import DocChapterPage from './components/DocChapterPage';
+import ConceptCodePage from './components/ConceptCodePage';
 import { useModuleSlides } from './hooks/useModuleSlides';
 import registry from './data/courseRegistry.json';
 import { categories } from './data/categories';
@@ -121,6 +122,7 @@ export default function App() {
           <Route path="/" element={<LandingPage content={landingContent} categories={categories} />} />
           <Route path="/courses/:categoryId" element={<CategoryPage categories={categories} />} />
           <Route path="/courses/:categoryId/:courseId" element={<DocCoursePage />} />
+          <Route path="/courses/:categoryId/:courseId/concept-code" element={<ConceptCodePage />} />
           <Route path="/courses/:categoryId/:courseId/:chapterId" element={<DocChapterPage />} />
           <Route path="/chapter/:moduleId" element={<ChapterPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

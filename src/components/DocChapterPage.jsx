@@ -6,6 +6,7 @@ import LessonViewer from './LessonViewer';
 import ContextPanel from './ContextPanel';
 import DetailedChapterModal from './DetailedChapterModal';
 import LabNotesModal from './LabNotesModal';
+import { resolveReferenceViewer } from '../utils/referenceViewers';
 import docsRegistry from '../data/docsRegistry.json';
 import { markdownToModule } from '../utils/moduleParser';
 
@@ -48,6 +49,17 @@ export default function DocChapterPage() {
   const progressId = chapter ? docProgressId(categoryId, courseId, chapter.id) : null;
 
   const [markdown, setMarkdown] = useState(null);
+  // Reference links (GitHub now; docker/k8s/terraform viewers can register
+  // in referenceViewers.js) open an in-app preview instead of navigating.
+  const [refLink, setRefLink] = useState(null); // { url, Viewer }
+  const onContentClick = (e) => {
+    const a = e.target.closest?.('a[href]');
+    if (!a) return;
+    const Viewer = resolveReferenceViewer(a.href);
+    if (!Viewer) return;
+    e.preventDefault();
+    setRefLink({ url: a.href, Viewer });
+  };
   const [error, setError] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -133,10 +145,17 @@ export default function DocChapterPage() {
         activeId: chapterId,
         onSelectItem: id => navigate(`/courses/${categoryId}/${courseId}/${id}`),
         footer: (
-          <Link to={`/courses/${categoryId}`} className="btn btn-sm btn-ghost"
-            style={{ width: '100%', textDecoration: 'none', color: 'var(--color-neutral-400)' }}>
-            ← Back to {category.title}
-          </Link>
+          <>
+            <Link to={`/courses/${categoryId}/${courseId}/concept-code`}
+              className="btn btn-sm btn-ghost"
+              style={{ width: '100%', textDecoration: 'none', color: 'var(--color-primary-500)', fontWeight: 700 }}>
+              🧩 Concept & Code
+            </Link>
+            <Link to={`/courses/${categoryId}`} className="btn btn-sm btn-ghost"
+              style={{ width: '100%', textDecoration: 'none', color: 'var(--color-neutral-400)' }}>
+              ← Back to {category.title}
+            </Link>
+          </>
         ),
       }}
       contextPanel={
@@ -152,21 +171,26 @@ export default function DocChapterPage() {
         )
       }
     >
-      {!lesson && !error && (
-        <div className="empty-state"><div className="empty-state-icon">⏳</div><p>Loading chapter…</p></div>
+      <div style={{ display: 'contents' }} onClick={onContentClick}>
+        {!lesson && !error && (
+          <div className="empty-state"><div className="empty-state-icon">⏳</div><p>Loading chapter…</p></div>
+        )}
+        {error && <div className="empty-state"><div className="empty-state-icon">⚠️</div><p>Failed to load chapter.</p></div>}
+        {lesson && (
+          <LessonViewer
+            key={progressId}
+            lesson={lesson}
+            onActiveSection={setActiveIndex}
+            moduleId={progressId}
+            compact
+          />
+        )}
+        <DetailedChapterModal open={activeModal === 'details'} onClose={closeModal} />
+        <LabNotesModal open={activeModal === 'labs'} onClose={closeModal} />
+      </div>
+      {refLink && (
+        <refLink.Viewer open url={refLink.url} onClose={() => setRefLink(null)} />
       )}
-      {error && <div className="empty-state"><div className="empty-state-icon">⚠️</div><p>Failed to load chapter.</p></div>}
-      {lesson && (
-        <LessonViewer
-          key={progressId}
-          lesson={lesson}
-          onActiveSection={setActiveIndex}
-          moduleId={progressId}
-          compact
-        />
-      )}
-      <DetailedChapterModal open={activeModal === 'details'} onClose={closeModal} />
-      <LabNotesModal open={activeModal === 'labs'} onClose={closeModal} />
     </Layout>
   );
 }
