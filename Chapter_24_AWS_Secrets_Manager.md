@@ -435,3 +435,87 @@ secret = json.loads(client.get_secret_value(SecretId='prod/db/credentials')['Sec
 
 🎯 **Interview Insight**: "How do you manage database credentials?"
 > **Strong answer**: "Store in Secrets Manager, not in code/config files. Enable automatic rotation (30-90 days). Application retrieves at runtime via SDK. IAM role on EC2/Lambda grants secretsmanager:GetSecretValue. Secrets Manager handles the rotation Lambda and database password update."
+
+---
+
+# 🔬 Practical Lab 19 — Secure Patching with ASM (Systems Manager) & Secrets Manager
+
+## Lab Overview
+| Item | Detail |
+|------|--------|
+| **Difficulty** | Intermediate |
+| **Duration** | 30 minutes |
+| **Cost** | $0.40/secret/month |
+| **Prerequisites** | EC2 Instance with SSM Agent installed |
+| **Lab Environment** | Environment 5 — Operations |
+
+## Business Scenario
+> You are using AWS Systems Manager (ASM/SSM) to patch your EC2 instances. During the patching process, the instances need to download proprietary patches from a third-party private repository that requires authentication. You need to store the repository credentials securely in AWS Secrets Manager and retrieve them dynamically using an SSM Run Command during the patching cycle.
+
+### Step 1 — Store Repository Credentials in Secrets Manager
+1. Go to **AWS Secrets Manager** → **Store a new secret**.
+2. **Secret type**: Other type of secret (e.g., API key, custom text).
+3. **Key/Value pairs**:
+   - Key: `repo_username` | Value: `patchadmin`
+   - Key: `repo_password` | Value: `SuperSecretPatchPass123!`
+4. **Secret name**: `prod/patching/repo-creds`
+5. Click **Next** and **Store**.
+
+📸 **Screenshot 01** — Patching Secret Created
+> **What you should see**: Secret `prod/patching/repo-creds` successfully created.
+
+### Step 2 — Configure IAM Role for the EC2 Instance
+The EC2 instance needs permission to read the secret from Secrets Manager during the SSM patching process.
+1. Go to **IAM** → **Roles** and find your EC2 Instance Profile role (e.g., `SSMInstanceProfile`).
+2. Attach an inline policy:
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "secretsmanager:GetSecretValue",
+            "Resource": "arn:aws:secretsmanager:REGION:ACCOUNT:secret:prod/patching/repo-creds-XXXXXX"
+        }
+    ]
+}
+```
+3. Save the policy.
+
+### Step 3 — Create an SSM Document for Patching
+1. Go to **AWS Systems Manager (ASM)** → **Documents** → **Create document** → **Command or Session**.
+2. **Name**: `SecurePatchingDocument`
+3. **Content**:
+```yaml
+schemaVersion: '2.2'
+description: "Download secure patches using Secrets Manager credentials"
+mainSteps:
+- action: "aws:runShellScript"
+  name: "SecurePatch"
+  inputs:
+    runCommand:
+    - "#!/bin/bash"
+    - "echo 'Retrieving credentials from Secrets Manager...'"
+    - "SECRET=$(aws secretsmanager get-secret-value --secret-id prod/patching/repo-creds --query SecretString --output text --region us-east-1)"
+    - "USERNAME=$(echo $SECRET | jq -r .repo_username)"
+    - "PASSWORD=$(echo $SECRET | jq -r .repo_password)"
+    - "echo 'Authenticating to private repo and starting patch process...'"
+    - "# Simulated patch command:"
+    - "# curl -u $USERNAME:$PASSWORD https://private-repo.example.com/patches/download"
+    - "yum update -y"
+    - "echo 'Patching completed successfully.'"
+```
+4. **Create document**.
+
+### Step 4 — Run the Patching Command
+1. Go to **Systems Manager** → **Run Command**.
+2. Select your new document: `SecurePatchingDocument`.
+3. Select your target EC2 instance(s).
+4. Click **Run**.
+5. Once completed, view the **Output**.
+
+📸 **Screenshot 02** — SSM Run Command Output
+> **Verify**: The output should indicate that the script successfully retrieved the credentials and executed the update.
+
+🎯 **Interview Insight**: "How do you securely handle sensitive data during automated SSM operations?"
+> **Strong answer**: "Instead of passing plain-text parameters to SSM Run Command, I store sensitive data in AWS Secrets Manager or SSM Parameter Store SecureString. The SSM document executes a script that calls the Secrets Manager API dynamically at runtime, ensuring credentials are never logged in Systems Manager history or CloudTrail."

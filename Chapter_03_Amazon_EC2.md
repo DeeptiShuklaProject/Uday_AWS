@@ -805,11 +805,11 @@ EC2 is where your applications run. Master instance types, security, and operati
 
 ```mermaid
 flowchart TD
-    Internet[Internet] -->|HTTP :80| SG[Security Group<br>prod-ec2-sg<br>Allow 80]
-    SG --> EC2[EC2 t2.micro<br>Amazon Linux 2023<br>Nginx Web Server]
-    EC2 --> EBS[EBS gp3 8 GB<br>Encrypted]
-    EC2 -->|Session Manager| SSM[AWS SSM<br>No SSH Needed]
-    EC2 -->|Instance Profile| Role[IAM Role<br>SSM + CloudWatch]
+    Internet["Internet"] -->|HTTP :80| SG["Security Group (prod-ec2-sg, Allow 80)"]
+    SG --> EC2["EC2 t2.micro (Amazon Linux 2023, Nginx Web Server)"]
+    EC2 --> EBS["EBS gp3 8 GB (Encrypted)"]
+    EC2 -->|Session Manager| SSM["AWS SSM (No SSH Needed)"]
+    EC2 -->|Instance Profile| Role["IAM Role (SSM + CloudWatch)"]
 ```
 
 ## What You Will Learn
