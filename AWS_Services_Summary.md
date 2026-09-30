@@ -83,3 +83,9 @@ flowchart TD
 - **[Chapter 35 — AWS Step Functions](file:///c:/Users/nishu/workspace/wscs_bedrock/Uday_AWS_Services_notes/Phase_06_Additional_and_Emerging_AWS_Services/Chapter_35_AWS_Step_Functions.md)**
 - **[Chapter 36 — AWS IAM Identity Center](file:///c:/Users/nishu/workspace/wscs_bedrock/Uday_AWS_Services_notes/Phase_06_Additional_and_Emerging_AWS_Services/Chapter_36_AWS_IAM_Identity_Center.md)**
 - **[Chapter 37 — Amazon Bedrock & Generative AI](file:///c:/Users/nishu/workspace/wscs_bedrock/Uday_AWS_Services_notes/Phase_06_Additional_and_Emerging_AWS_Services/Chapter_37_Amazon_Bedrock_and_GenAI.md)**
+
+---
+
+### 📁 Phase 7 – Capstone Projects
+- **[Chapter 48 — Capstone Practical (Flagship Architecture)](Chapter_48_Capstone_Practical_Flagship_Architecture.md)**
+- **[Chapter 49 � Capstone Practical (Internal Corporate Architecture)](Chapter_49_Capstone_Practical_Internal_Architecture.md)**
