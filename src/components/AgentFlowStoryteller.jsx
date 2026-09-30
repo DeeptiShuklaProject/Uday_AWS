@@ -12,26 +12,30 @@ import { useEffect, useRef, useState } from 'react';
 const defaultSteps = [
   {
     id: "step-1",
+    eyebrow: "AGENT = CODE + LLM",
     heading: "What is an Agent?",
-    text: "An AI Agent is simply a piece of code with an LLM inside. The code orchestrates the work; the model gives it the ability to understand language and reason.",
+    text: "An agent is just a piece of code. Add a large language model and it can understand natural language and reason — at this point, it's basically a chatbot.",
     state: { showAgent: true, showLLM: true, showTools: false, showQuery: false, showLoop: false, showTemplates: false, centerLabel: "Agent" }
   },
   {
     id: "step-2",
-    heading: "Agents Need Tools",
-    text: "Alone, the agent can only think. Give it knowledge of Tools — functions and APIs it can call — and it can act: fetch data, send emails, answer real queries.",
+    eyebrow: "TOOLS = AGENCY",
+    heading: "Give It Agency",
+    text: "To affect the outside world, connect Tools — code that calls external systems to send emails, book flights or fetch live data. Now it's not a chatbot — it's an agentic system.",
     state: { showAgent: true, showLLM: true, showTools: true, showQuery: true, showLoop: false, showTemplates: false, centerLabel: "Agent" }
   },
   {
     id: "step-3",
-    heading: "The Agentic Loop — Old Way",
-    text: "To decide which tool to use and when, the agent loops: read the query → think → call a tool → check the result → repeat. Older frameworks managed this loop with heavy prompt templates.",
+    eyebrow: "THE LOOP — AND THE OLD WAY",
+    heading: "The Agentic Loop",
+    text: "The loop is what makes it an agent, not a workflow: it decides which tools to use, reads the results, and iterates until done. Older frameworks drove this with stacks of prompt templates.",
     state: { showAgent: true, showLLM: true, showTools: true, showQuery: true, showLoop: true, showTemplates: true, centerLabel: "Agent" }
   },
   {
     id: "step-4",
-    heading: "Meet Strands Agents SDK",
-    text: "New era: the LLM is smart enough to drive the loop itself — no templates needed. Strands Agents SDK is one such agent framework: a few lines of code, and the model does the rest — running on Bedrock models. We build with it next.",
+    eyebrow: "MODEL-FIRST = STRANDS",
+    heading: "Strands Agents SDK",
+    text: "Modern LLMs are fine-tuned for reasoning and tool use — the templates retire. Strands Agents SDK puts the model first: lightweight code where the model's own capability drives the loop.",
     state: { showAgent: true, showLLM: true, showTools: true, showQuery: true, showLoop: true, showTemplates: false, centerLabel: "Strands Agents SDK" }
   }
 ];
@@ -223,7 +227,7 @@ export default function AgentFlowStoryteller({ steps = defaultSteps, autoPlayInt
         <div className="afs-caption">
           {/* key remount → narration re-animates on every slide change */}
           <div className="afs-caption-text" key={activeStepIndex}>
-            <div className="afs-label">{title || 'Overview'}</div>
+            <div className="afs-label">{currentStep.eyebrow || title || 'Overview'}</div>
             {currentStep.heading && <div className="afs-step-heading">{currentStep.heading}</div>}
             <p className="afs-step-text" aria-live="polite">&ldquo;{currentStep.text}&rdquo;</p>
           </div>
