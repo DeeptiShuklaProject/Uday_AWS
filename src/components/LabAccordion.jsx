@@ -35,7 +35,7 @@ export default function LabAccordion({ sections = [], emptyMessage = 'No practic
             onClick={() => setOpenIndex(openIndex === i ? -1 : i)}
             aria-expanded={openIndex === i}
           >
-            <span className="lab-accordion-title">🔬 {s.title.replace(/^🔬\s*/, '')}</span>
+            <span className="lab-accordion-title">🔬 {s.title.replace(/🔬\s*/g, '')}</span>
             <span className="lab-accordion-arrow">▶</span>
           </button>
           {openIndex === i && (

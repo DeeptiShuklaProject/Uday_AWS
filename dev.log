@@ -1,0 +1,25 @@
+
+> aws-production-masterclass-react@1.0.0 dev
+> vite
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m2448[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5177[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m3:50:55 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m3:50:55 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m3:51:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m4:06:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m4:07:58 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m4:14:09 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m5:47:49 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m5:53:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m6:02:44 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m6:02:44 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m6:10:27 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m6:11:41 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m

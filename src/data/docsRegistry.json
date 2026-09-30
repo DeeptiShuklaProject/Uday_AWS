@@ -2416,6 +2416,12 @@
               "title": "02 — Bedrock AgentCore Production Ready Agents",
               "file": "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents.md",
               "sectionCount": 22
+            },
+            {
+              "id": "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP",
+              "title": "03 — Building Agentic AI Applications With Strands Agents And MCP",
+              "file": "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP.md",
+              "sectionCount": 27
             }
           ]
         }

@@ -928,41 +928,6 @@ function genKnowledgeCheck(md) {
   return questions.length ? { title: 'Knowledge Check', questions } : null;
 }
 
-/** Auto Practical Lab — a guided "run the chapter's commands" lab when
- *  no authored lab exists. Steps = shell commands with expected output;
- *  chapters without commands get a self-review checklist instead. */
-function autoLab(md, title, render) {
-  const cmds = tryCommands(md, title) || [];
-  let steps;
-  if (cmds.length) {
-    steps = cmds.slice(0, 6).map((c, i) => {
-      const firstLine = (c.command.split('\n').find(l => l.trim() && !/^\s*#/.test(l)) || '').replace(/^\s*[$>]\s*/, '').trim();
-      return {
-        id: `step-${i + 1}`,
-        title: `Run: ${firstLine.length > 60 ? firstLine.slice(0, 57) + '…' : firstLine}`,
-        html: render(`\`\`\`bash\n${c.command}\n\`\`\``),
-        expectedResult: (c.expectedOutput || '').slice(0, 200) || undefined,
-        hint: c.explanation ? c.explanation.slice(0, 200) : undefined,
-      };
-    });
-  } else {
-    // Review checklist from the chapter's H2 concept sections.
-    const heads = [...md.matchAll(/^##\s+(.+)$/gm)]
-      .map(m => stripMd(m[1])).filter(h => /concept|overview|architecture|core|component|how|internal|security|monitor/i.test(h));
-    if (!heads.length) return null;
-    steps = heads.slice(0, 5).map((h, i) => ({
-      id: `step-${i + 1}`,
-      title: `Review: ${h.replace(/^\d+\.\s*/, '')}`,
-      html: `<p>Summarise the key points of this section in your own words.</p>`,
-    }));
-  }
-  return steps.length ? {
-    title: `${title} — Hands-On Lab`,
-    description: 'Practice the key techniques from this chapter.',
-    difficulty: 'intermediate', steps,
-  } : null;
-}
-
 /** Mine the most relevant paragraph for a keyword — used as the
  *  shortAnswer source for templated interview questions. */
 function mineAnswer(md, kw) {
@@ -1155,7 +1120,11 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
         }
         sections.push({
           id: `${idBase}-architecture`, type: 'architecture', icon: '📐',
-          title: restHtml.trim() ? `${hTitle} — Diagram` : hTitle,
+          // Drop the duplicated "N.N" section number from the diagram
+          // title — the text section above already carries it.
+          title: restHtml.trim()
+            ? `${hTitle.replace(/^\d+(?:\.\d+)*\s*[-—:.]?\s*/, '')} — Diagram`
+            : hTitle,
           content: { ...dia.content, title: hTitle },
         });
       } else {
@@ -1246,18 +1215,14 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
     title: 'Knowledge Check', content: kc,
   });
 
-  // AWS end-of-chapter sequence: Interactive Terminal → Knowledge Check →
-  // Practical Lab → Interview Preparation. Authored lab/interview
-  // sections are pulled to the tail; missing ones are auto-generated.
-  const labs = sections.filter(s => s.type === 'lab');
+  // Practical Labs live in the Lab Notes modal — LabNotesModal extracts
+  // them from the raw markdown (extractPracticalLabs), so lab sections are
+  // stripped from the inline section flow entirely. Authored interview
+  // questions still merge into the grouped tail widget below.
   const interviews = sections.filter(s => s.type === 'interview');
-  const rest = sections.filter(s => s.type !== 'lab' && s.type !== 'interview');
+  const rest = sections.filter(s => s.type !== 'interview' && s.type !== 'lab');
   sections.length = 0;
-  sections.push(...rest, ...labs);
-  if (!labs.length) {
-    const lab = autoLab(mineMd, title, render);
-    if (lab) sections.push({ id: 'sec-auto-lab', type: 'lab', icon: '🧪', title: 'Practical Lab', content: lab });
-  }
+  sections.push(...rest);
 
   // Single grouped Interview Preparation (AWS look): authored/mined
   // questions first (classified), then templated questions fill each

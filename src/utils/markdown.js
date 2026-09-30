@@ -8,6 +8,9 @@
  */
 
 const LAB_HEADING_RE = /^#\s+.*Practical\s+Lab\s/i;
+// Doc chapters author labs as "## N.N … Lab …" (H2+). \blab\b is
+// word-bounded so "collaboration"/"elaborate" can't false-match.
+const LAB_SECTION_RE = /^#{2,6}\s+.*\b(?:labs?|hands?-?on)\b/i;
 
 /**
  * Strip the Practical Lab sections from chapter markdown.
@@ -38,7 +41,27 @@ export function extractPracticalLabs(md) {
   if (!md) return '';
   const lines = md.split('\n');
   const startIdx = lines.findIndex(l => LAB_HEADING_RE.test(l.trim()));
-  return startIdx === -1 ? '' : lines.slice(startIdx).join('\n');
+  if (startIdx !== -1) return lines.slice(startIdx).join('\n');
+
+  // H2+ lab sections (numbered doc chapters). Collect each lab heading
+  // plus its body, stopping at the next same-or-higher-level heading.
+  // Heading lines inside fenced code blocks (e.g. bash `# comments`)
+  // must not count as boundaries.
+  const chunks = [];
+  let cur = null;
+  let inFence = false;
+  for (const line of lines) {
+    const isFence = /^(```|~~~)/.test(line.trim());
+    const h = (!inFence && !isFence) ? line.match(/^(#{1,6})\s/) : null;
+    if (h) {
+      if (cur && h[1].length <= cur.level) { chunks.push(cur.lines.join('\n')); cur = null; }
+      if (!cur && LAB_SECTION_RE.test(line.trim())) cur = { level: h[1].length, lines: [line] };
+      else if (cur) cur.lines.push(line);
+    } else if (cur) cur.lines.push(line);
+    if (isFence) inFence = !inFence;
+  }
+  if (cur) chunks.push(cur.lines.join('\n'));
+  return chunks.join('\n\n');
 }
 
 /**
@@ -83,7 +106,7 @@ export function splitLabsIntoSections(html) {
   const groups = [];
   let current = null;
   for (const node of Array.from(wrap.childNodes)) {
-    if (node.nodeType === 1 && node.tagName === 'H1') {
+    if (node.nodeType === 1 && /^H[12]$/.test(node.tagName)) {
       current = { title: node.textContent.trim(), html: '' };
       groups.push(current);
     } else if (current) {

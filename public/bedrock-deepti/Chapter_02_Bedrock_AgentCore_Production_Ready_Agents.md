@@ -342,6 +342,14 @@ flowchart LR
 
 From the demo: the project directory is zipped → uploaded to an S3 artifact bucket → **CodeBuild** builds the Docker image → pushed to **ECR** → the **Runtime Agent** process starts and an **endpoint** is established. Multiple users can now hit it concurrently — *secure and scalable, all the joys of AgentCore*.
 
+### 💻 Chapter 02 Git Repository
+
+All the code in this chapter lives in open-source AWS repositories — clone them to follow along and run the Customer Support Assistant yourself:
+
+- 🧩 **Samples** — [github.com/awslabs/amazon-bedrock-agentcore-samples](https://github.com/awslabs/amazon-bedrock-agentcore-samples) — includes the complete **Customer Support Assistant** this chapter builds step by step
+- ⚙️ **Starter Toolkit** — [github.com/aws/bedrock-agentcore-starter-toolkit](https://github.com/aws/bedrock-agentcore-starter-toolkit) — the `agentcore` CLI used for `configure`, `launch` and `invoke`
+- 📦 **Strands SDK** — [github.com/strands-agents/sdk-python](https://github.com/strands-agents/sdk-python) — the agent framework this chapter productionizes
+
 ---
 
 ## 2.10 📡 Invoking the Deployed Agent
