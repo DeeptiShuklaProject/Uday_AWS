@@ -319,8 +319,25 @@
   /* badges hug the top-right corner instead of claiming a full line */
   justify-content: flex-end;
 }
-.lesson-header-compact .lesson-objectives {
-  margin-top: var(--space-4);
+/* Objectives chip — sits in the meta row (top-right on compact headers)
+   and toggles the objectives card below. */
+.badge-objectives {
+  cursor: pointer;
+  border: var(--border-width) solid var(--color-accent-300, #c4b5fd);
+  background: var(--color-accent-50);
+  color: var(--color-accent-700);
+  font-weight: var(--weight-semibold);
+  transition: background var(--duration-fast, 150ms) ease;
+}
+.badge-objectives:hover {
+  background: var(--color-accent-100, #ede9fe);
+}
+.badge-objectives[aria-expanded="true"] {
+  background: var(--color-accent-600, #7c3aed);
+  color: var(--color-neutral-0, #fff);
+}
+.lesson-objectives-pop {
+  margin-top: var(--space-3);
 }
 .lesson-header-meta {
   display: flex;

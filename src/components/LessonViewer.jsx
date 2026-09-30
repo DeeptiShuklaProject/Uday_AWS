@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCourse } from '../context/CourseContext';
 import SlideRenderer from './SlideRenderer';
 
@@ -23,6 +23,7 @@ export default function LessonViewer({
   const { progress, currentModuleId } = useCourse();
   const modId = moduleIdProp || currentModuleId;
   const rootRef = useRef(null);
+  const [objectivesOpen, setObjectivesOpen] = useState(false);
   const sections = lesson?.sections || [];
 
   // Scroll-spy + auto-read marking. Re-binds when the section list changes.
@@ -76,14 +77,34 @@ export default function LessonViewer({
           {lesson.prerequisites?.length > 0 && (
             <span className="badge badge-accent">Requires: {lesson.prerequisites.join(', ')}</span>
           )}
+          {compact && lesson.objectives?.length > 0 && (
+            <button
+              type="button"
+              className="badge badge-objectives"
+              onClick={() => setObjectivesOpen(o => !o)}
+              aria-expanded={objectivesOpen}
+            >
+              🎯 Objectives · {lesson.objectives.length} {objectivesOpen ? '▾' : '▸'}
+            </button>
+          )}
         </div>
         {!compact && <h1>{lesson.title}</h1>}
         {!compact && lesson.description && <p className="lesson-header-desc">{lesson.description}</p>}
         {lesson.objectives?.length > 0 && (
-          <div className="lesson-objectives">
-            <h4>🎯 Learning Objectives</h4>
-            <ul>{lesson.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul>
-          </div>
+          compact ? (
+            // Doc chapters: hidden until the 🎯 Objectives chip in the
+            // meta row is clicked.
+            objectivesOpen && (
+              <div className="lesson-objectives lesson-objectives-pop">
+                <ul>{lesson.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul>
+              </div>
+            )
+          ) : (
+            <div className="lesson-objectives">
+              <h4>🎯 Learning Objectives</h4>
+              <ul>{lesson.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul>
+            </div>
+          )
         )}
       </div>
 

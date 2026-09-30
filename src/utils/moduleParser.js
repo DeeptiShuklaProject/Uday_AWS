@@ -274,7 +274,7 @@ function transformCustomTags(body) {
     AgentFlowStoryteller: () => {
       const a = parseAttrs(attrStr);
       extras.push({
-        type: 'storyteller', icon: '🎬', title: 'How an Agent Works — Animated',
+        type: 'storyteller', icon: '🎬', title: 'Watch an Agent Come Alive',
         content: { title: unescapeCode(a.title || '') || undefined },
       });
       return '\n\n';

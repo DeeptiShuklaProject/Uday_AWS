@@ -2,7 +2,7 @@
 
 # 🚀 Introduction to Amazon Bedrock: Your First Step into Generative AI
 
-<AgentFlowStoryteller title="How an Agent Works" />
+<AgentFlowStoryteller title="From Agent to Strands" />
 
 ## Chapter Goal
 
