@@ -2,6 +2,8 @@
 
 # 🚀 Introduction to Amazon Bedrock: Your First Step into Generative AI
 
+<AgentFlowStoryteller title="How an Agent Works" />
+
 ## Chapter Goal
 
 By the end of this chapter, the learner will be able to:
@@ -63,8 +65,6 @@ Customer Question ──► AI Understands Intent & Context ──► AI Synthes
 > 💡 **Think About It**: If you want to build a smart customer support chatbot that answers queries naturally, do you need to spend millions of dollars training an AI model from scratch?
 > 
 > **No.** And that is precisely where **Amazon Bedrock** comes into play.
-
-<AgentFlowStoryteller title="How an Agent Works" />
 
 ---
 
