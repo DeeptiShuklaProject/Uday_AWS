@@ -307,6 +307,21 @@
   padding-bottom: var(--space-6);
   border-bottom: 2px solid var(--color-neutral-200);
 }
+/* Compact variant (doc chapters): the route's own top bar already shows
+   the chapter title, so the in-page header stays a slim meta strip. */
+.lesson-header-compact {
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom-width: 1px;
+}
+.lesson-header-compact .lesson-header-meta {
+  margin-bottom: 0;
+  /* badges hug the top-right corner instead of claiming a full line */
+  justify-content: flex-end;
+}
+.lesson-header-compact .lesson-objectives {
+  margin-top: var(--space-4);
+}
 .lesson-header-meta {
   display: flex;
   align-items: center;

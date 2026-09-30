@@ -162,6 +162,7 @@ export default function DocChapterPage() {
           lesson={lesson}
           onActiveSection={setActiveIndex}
           moduleId={progressId}
+          compact
         />
       )}
       <DetailedChapterModal open={activeModal === 'details'} onClose={closeModal} />

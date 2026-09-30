@@ -268,6 +268,17 @@ function transformCustomTags(body) {
         'This level ships as an interactive coding game in the CodeAdventure engine. ' +
         'Use the mission description above to write your solution, then check the quiz below.')}\n\n`;
     },
+    // <AgentFlowStoryteller /> — animated slide-deck widget (Agent +
+    // LLM + Tools diagram → Strands SDK). Mounted as a real React
+    // component by SlideRenderer via the 'storyteller' section type.
+    AgentFlowStoryteller: () => {
+      const a = parseAttrs(attrStr);
+      extras.push({
+        type: 'storyteller', icon: '🎬', title: 'How an Agent Works — Animated',
+        content: { title: unescapeCode(a.title || '') || undefined },
+      });
+      return '\n\n';
+    },
   });
 
   const cardRe = new RegExp(`^(${CARD_TAGS})$`);
@@ -1064,6 +1075,10 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
   const chunks = [];
   let cur = { heading: null, lines: [] };
   for (let i = bodyStart; i < lines.length; i++) {
+    // Stray single-# lines inside the body are duplicate doc titles —
+    // the first H1 already became the lesson title; drop the rest so
+    // they don't re-render as literal "# Title" text in Overview.
+    if (/^#\s+/.test(lines[i].trim())) continue;
     if (/^##\s+/.test(lines[i].trim())) {
       if (cur.heading !== null || cur.lines.join('').trim()) chunks.push(cur);
       cur = { heading: lines[i].trim().replace(/^##\s+/, ''), lines: [] };
@@ -1101,8 +1116,11 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
     }
 
     const hTitle = stripMd(chunk.heading);
-    // Learning Objectives → lesson header card (not a slide).
-    if (/learning\s+objectives/i.test(hTitle)) {
+    // Learning Objectives / Chapter Goal → lesson header card (not a
+    // slide). Deepti chapters label the same objectives list "Chapter
+    // Goal" — folding it into the header card removes a redundant bold
+    // section heading that only repeats "by the end of this chapter…".
+    if (/learning\s+objectives|chapter\s+goal/i.test(hTitle)) {
       const items = body.split('\n')
         .map(l => l.match(/^\s*(?:[-*+]|\d+\.)\s+(.*)/)?.[1])
         .filter(Boolean)

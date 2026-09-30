@@ -18,6 +18,7 @@ export default function LessonViewer({
   lesson,
   onActiveSection,
   moduleId: moduleIdProp,
+  compact = false,
 }) {
   const { progress, currentModuleId } = useCourse();
   const modId = moduleIdProp || currentModuleId;
@@ -61,19 +62,23 @@ export default function LessonViewer({
 
   return (
     <div ref={rootRef}>
-      <div className="lesson-header">
-        <div className="breadcrumbs">
-          <span className="current">{lesson.title}</span>
-        </div>
+      <div className={`lesson-header${compact ? ' lesson-header-compact' : ''}`}>
+        {!compact && (
+          <>
+            <div className="breadcrumbs">
+              <span className="current">{lesson.title}</span>
+            </div>
+          </>
+        )}
         <div className="lesson-header-meta">
           <span className={`badge difficulty-${lesson.difficulty || 'beginner'}`}>{lesson.difficulty || 'beginner'}</span>
-          <span className="badge badge-neutral">⏱ {lesson.duration || ''}</span>
+          {lesson.duration && <span className="badge badge-neutral">⏱ {lesson.duration}</span>}
           {lesson.prerequisites?.length > 0 && (
             <span className="badge badge-accent">Requires: {lesson.prerequisites.join(', ')}</span>
           )}
         </div>
-        <h1>{lesson.title}</h1>
-        {lesson.description && <p className="lesson-header-desc">{lesson.description}</p>}
+        {!compact && <h1>{lesson.title}</h1>}
+        {!compact && lesson.description && <p className="lesson-header-desc">{lesson.description}</p>}
         {lesson.objectives?.length > 0 && (
           <div className="lesson-objectives">
             <h4>🎯 Learning Objectives</h4>

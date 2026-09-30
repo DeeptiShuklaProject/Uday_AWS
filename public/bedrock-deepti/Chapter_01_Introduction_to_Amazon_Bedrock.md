@@ -64,6 +64,8 @@ Customer Question ──► AI Understands Intent & Context ──► AI Synthes
 > 
 > **No.** And that is precisely where **Amazon Bedrock** comes into play.
 
+<AgentFlowStoryteller title="How an Agent Works" />
+
 ---
 
 ## 1.2 ☁️ What is Amazon Bedrock?

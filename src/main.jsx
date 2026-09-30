@@ -7,6 +7,7 @@ import './css/design-system.css';
 import './css/components.css';
 import './css/layout.css';
 import './css/animations.css';
+import './css/agentflow.css';
 import './css/app.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

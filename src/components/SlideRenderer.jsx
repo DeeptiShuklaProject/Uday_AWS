@@ -3,12 +3,13 @@ import {
   CodeSection, LabSection, ChallengeSection, TroubleshootingSection,
   InterviewSection, NextSection,
 } from './slides';
+import AgentFlowStoryteller from './AgentFlowStoryteller';
 
 const SECTION_ICONS = {
   why: '💡', architecture: '📐', concept: '📖', lab: '🔬', console: '🖥️',
   terminal: '💻', code: '👨‍💻', command: '⌨️', 'expected-output': '📤',
   'what-happened': '🔍', troubleshooting: '🔧', quiz: '🧠', challenge: '🏆',
-  cleanup: '🧹', next: '➡️', text: '📝', interview: '🎙️',
+  cleanup: '🧹', next: '➡️', text: '📝', interview: '🎙️', storyteller: '🎬',
 };
 
 const HTML_TYPES = new Set(['text', 'why', 'concept', 'expected-output', 'what-happened', 'cleanup']);
@@ -32,6 +33,7 @@ export default function SlideRenderer({ section }) {
       case 'lab':             return <LabSection content={c} sectionId={section.id} />;
       case 'challenge':       return <ChallengeSection content={c} sectionId={section.id} />;
       case 'troubleshooting': return <TroubleshootingSection content={c} />;
+      case 'storyteller':     return <AgentFlowStoryteller title={c?.title} />;
       case 'interview':       return <InterviewSection content={c} />;
       case 'next':            return <NextSection content={c} />;
       default:                return <HtmlSection content={c} />;

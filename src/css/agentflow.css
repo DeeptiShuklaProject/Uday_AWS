@@ -1,0 +1,129 @@
+/* ============================================================
+   AgentFlowStoryteller — scoped styles for the <AgentFlowStoryteller />
+   doc-tag widget (ported from the aura_docs engine; replaces its
+   Tailwind utilities). All selectors are prefixed .afs-*.
+   ============================================================ */
+
+.afs-root {
+  width: 100%;
+  margin: 24px 0;
+  color: var(--color-neutral-900);
+  user-select: none;
+}
+
+.afs-stage {
+  position: relative;
+  width: 100%;
+  background: var(--color-neutral-50);
+  border: 2px solid var(--color-neutral-300);
+  border-radius: 16px;
+  padding: 20px 56px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
+
+.afs-badge {
+  position: absolute; top: 16px; right: 16px; z-index: 20;
+  background: var(--color-neutral-0); border: 2px solid var(--color-neutral-300);
+  padding: 5px 14px; border-radius: 10px;
+  font-size: 12px; font-weight: 900; color: var(--color-neutral-800);
+  box-shadow: 0 1px 3px rgba(15,23,42,.1);
+}
+.afs-badge-num { color: var(--color-accent-600); }
+
+.afs-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--color-neutral-300);
+  background: var(--color-neutral-0); color: var(--color-neutral-900);
+  box-shadow: 0 2px 6px rgba(15,23,42,.12); cursor: pointer;
+  transition: transform .15s, background .15s;
+}
+.afs-arrow svg { width: 20px; height: 20px; }
+.afs-arrow:hover:not(:disabled) { background: var(--color-neutral-100); transform: translateY(-50%) scale(1.05); }
+.afs-arrow:active:not(:disabled) { transform: translateY(-50%) scale(0.95); }
+.afs-arrow-left { left: 12px; }
+.afs-arrow-right { right: 12px; }
+.afs-arrow-disabled { opacity: .35; cursor: not-allowed; color: var(--color-neutral-300); background: var(--color-neutral-100); }
+
+.afs-grid {
+  width: 100%; min-height: 420px;
+  display: flex; flex-direction: row; gap: 24px; align-items: stretch;
+}
+
+.afs-text-card {
+  width: 42%;
+  background: var(--color-neutral-0); border: 2px solid var(--color-neutral-300);
+  border-radius: 12px; padding: 24px;
+  display: flex; flex-direction: column; justify-content: center;
+  box-shadow: 0 2px 8px rgba(15,23,42,.08);
+}
+.afs-label {
+  font-size: 12px; font-weight: 900; color: var(--color-accent-600);
+  text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px;
+}
+.afs-step-text {
+  font-size: 15px; font-weight: 600; line-height: 1.65; color: var(--color-neutral-800); margin: 0;
+}
+
+.afs-diagram { flex: 1; display: flex; }
+
+.afs-svg-wrap {
+  width: 100%; height: 100%;
+  background: var(--color-neutral-100); border: 1px solid var(--color-neutral-200);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  padding: 12px; overflow: hidden;
+}
+.afs-svg { width: 100%; height: 100%; max-width: 760px; max-height: 360px; }
+
+/* fade transitions for svg groups */
+.afs-fade { transition: opacity .3s ease; }
+.afs-show { opacity: 1; }
+.afs-hide { opacity: 0; pointer-events: none; }
+.afs-dim  { opacity: .25; }
+
+/* ---------- control dock ---------- */
+.afs-dock {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin: 14px auto 0; width: max-content; max-width: 100%;
+  background: var(--color-neutral-0); color: var(--color-neutral-800);
+  padding: 8px 20px; border-radius: 12px;
+  border: 2px solid var(--color-neutral-300);
+  box-shadow: 0 2px 8px rgba(15,23,42,.1);
+  flex-wrap: wrap;
+}
+.afs-dock-play {
+  padding: 6px 14px; border-radius: 10px;
+  background: var(--color-neutral-100); color: var(--color-neutral-900);
+  border: 1px solid var(--color-neutral-300);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: background .15s;
+}
+.afs-dock-play:hover { background: var(--color-neutral-200); }
+
+.afs-dock-pages { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.afs-dock-page {
+  padding: 4px 10px; font-size: 12px; font-weight: 900; border-radius: 8px;
+  border: 1px solid var(--color-neutral-300);
+  background: var(--color-neutral-100); color: var(--color-neutral-600);
+  cursor: pointer; transition: background .15s;
+}
+.afs-dock-page:hover { background: var(--color-neutral-200); }
+.afs-dock-page-active {
+  background: var(--color-neutral-900); color: #fff; border-color: var(--color-neutral-900);
+}
+
+.afs-dock-count {
+  padding-left: 10px; border-left: 2px solid var(--color-neutral-200);
+  font-size: 12px; font-weight: 800; color: var(--color-neutral-600);
+}
+
+@media (max-width: 768px) {
+  .afs-stage { padding: 48px 14px 20px; }
+  .afs-grid { flex-direction: column; min-height: 0; }
+  .afs-text-card { width: 100%; }
+  .afs-arrow { display: none; }
+  .afs-svg { max-height: 260px; }
+}
