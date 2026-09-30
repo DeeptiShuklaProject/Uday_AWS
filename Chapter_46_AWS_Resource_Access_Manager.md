@@ -103,22 +103,22 @@ If sharing outside Organization:
 flowchart TD
     subgraph Network["Network Account (Owner)"]
         VPC[VPC 10.0.0.0/16]
-        SubA[Subnet AZ-A<br>10.0.1.0/24]
-        SubB[Subnet AZ-B<br>10.0.2.0/24]
+        SubA["Subnet AZ-A, 10.0.1.0/24"]
+        SubB["Subnet AZ-B, 10.0.2.0/24"]
         NAT[NAT Gateway]
         TGW[Transit Gateway]
     end
     
-    RAM[AWS RAM<br>Share Subnets + TGW]
+    RAM["AWS RAM, Share Subnets + TGW"]
     
     subgraph Prod["Production Account"]
         EC2_P[EC2 Instances]
-        RDS_P[(RDS Database)]
+        RDS_P["(RDS Database)"]
     end
     
     subgraph Dev["Development Account"]
         EC2_D[EC2 Instances]
-        RDS_D[(RDS Database)]
+        RDS_D["(RDS Database)"]
     end
     
     Network -->|Share via RAM| RAM

@@ -158,16 +158,16 @@ flowchart TD
     end
     
     subgraph CostMgmt["Cost Management"]
-        CE[Cost Explorer<br>Analysis & Trends]
-        Budget[AWS Budgets<br>Alerts & Limits]
-        CO[Compute Optimizer<br>Rightsizing]
-        CUR[Cost & Usage Report<br>Detailed Data]
+        CE["Cost Explorer, Analysis & Trends"]
+        Budget["AWS Budgets, Alerts & Limits"]
+        CO["Compute Optimizer, Rightsizing"]
+        CUR["Cost & Usage Report, Detailed Data"]
     end
     
     subgraph Actions["Actions"]
-        Alert[SNS Alerts<br>Budget Threshold]
-        Lambda_Action[Lambda<br>Stop Idle Resources]
-        Report[S3 → Athena<br>Cost Reports]
+        Alert["SNS Alerts, Budget Threshold"]
+        Lambda_Action["Lambda, Stop Idle Resources"]
+        Report["S3 → Athena, Cost Reports"]
     end
     
     AWS --> CE

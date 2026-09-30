@@ -181,7 +181,7 @@ flowchart LR
     end
     
     subgraph AccountB["Account B (Production)"]
-        DeployRole[Deploy Role<br>Trust: Account A]
+        DeployRole["Deploy Role, Trust: Account A"]
         Resources[EC2, RDS, S3]
     end
     
@@ -444,15 +444,15 @@ STS is how AWS does identity federation and cross-account access. Key takeaways:
 ```mermaid
 flowchart LR
     subgraph AccountA["Account A (Development)"]
-        DevOps[IAM User: devops-engineer<br>Policy: Allow sts:AssumeRole]
+        DevOps["IAM User: devops-engineer, Policy: Allow sts:AssumeRole"]
     end
 
     subgraph STS_Service["AWS STS"]
-        STS[AssumeRole<br>Returns temp credentials]
+        STS["AssumeRole, Returns temp credentials"]
     end
 
     subgraph AccountB["Account B (Production)"]
-        Role[IAM Role: CrossAccountDeployRole<br>Trust: Account A<br>Permissions: S3 + EC2]
+        Role["IAM Role: CrossAccountDeployRole, Trust: Account A, Permissions: S3 + EC2"]
         S3[S3 Bucket]
         EC2[EC2 Instances]
     end

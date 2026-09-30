@@ -150,8 +150,8 @@ Use cases:
 flowchart LR
     Client[Client] --> APIGW[API Gateway]
     APIGW --> Lambda[Lambda]
-    Lambda --> DDB[(DynamoDB<br>Users Table)]
-    DDB -->|Streams| StreamLambda[Lambda<br>Stream Processor]
+    Lambda --> DDB["(DynamoDB, Users Table)"]
+    DDB -->|Streams| StreamLambda["Lambda, Stream Processor"]
     StreamLambda --> SQS[SQS]
     StreamLambda --> SNS[SNS]
 ```
@@ -353,7 +353,7 @@ flowchart LR
     APIGW -->|GET| Read[Lambda: read]
     APIGW -->|PUT| Update[Lambda: update]
     APIGW -->|DELETE| Delete[Lambda: delete]
-    Create & Read & Update & Delete --> DDB[(DynamoDB<br>prod-items)]
+    Create & Read & Update & Delete --> DDB["(DynamoDB, prod-items)"]
 ```
 
 ### Step 1 — Create DynamoDB Table

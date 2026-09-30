@@ -278,15 +278,15 @@ flowchart TD
     
     subgraph VPC["VPC 10.0.0.0/16"]
         subgraph AZA["AZ-A"]
-            PubA[Public Subnet<br>10.0.1.0/24]
-            PrivA[Private Subnet<br>10.0.3.0/24]
-            DataA[Data Subnet<br>10.0.5.0/24]
+            PubA["Public Subnet, 10.0.1.0/24"]
+            PrivA["Private Subnet, 10.0.3.0/24"]
+            DataA["Data Subnet, 10.0.5.0/24"]
         end
         
         subgraph AZB["AZ-B"]
-            PubB[Public Subnet<br>10.0.2.0/24]
-            PrivB[Private Subnet<br>10.0.4.0/24]
-            DataB[Data Subnet<br>10.0.6.0/24]
+            PubB["Public Subnet, 10.0.2.0/24"]
+            PrivB["Private Subnet, 10.0.4.0/24"]
+            DataB["Data Subnet, 10.0.6.0/24"]
         end
         
         IGW <--> PubA
@@ -303,10 +303,10 @@ flowchart TD
         PrivA -->|Outbound| NATGW_A
         PrivB -->|Outbound| NATGW_B
         
-        RDS_A[(RDS Primary)] --> DataA
-        RDS_B[(RDS Standby)] --> DataB
+        RDS_A["(RDS Primary)"] --> DataA
+        RDS_B["(RDS Standby)"] --> DataB
         
-        S3EP[S3 Gateway<br>Endpoint]
+        S3EP["S3 Gateway, Endpoint"]
     end
 ```
 
@@ -815,14 +815,14 @@ flowchart TD
     IGW[Internet Gateway] --- VPC
     subgraph VPC["prod-vpc 10.0.0.0/16"]
         subgraph AZ1["AZ-1 (ap-south-1a)"]
-            PubA[Public Subnet<br>10.0.1.0/24]
-            PrivA[Private Subnet<br>10.0.3.0/24]
+            PubA["Public Subnet, 10.0.1.0/24"]
+            PrivA["Private Subnet, 10.0.3.0/24"]
         end
         subgraph AZ2["AZ-2 (ap-south-1b)"]
-            PubB[Public Subnet<br>10.0.2.0/24]
-            PrivB[Private Subnet<br>10.0.4.0/24]
+            PubB["Public Subnet, 10.0.2.0/24"]
+            PrivB["Private Subnet, 10.0.4.0/24"]
         end
-        NAT[NAT Gateway<br>in Public Subnet AZ-1]
+        NAT["NAT Gateway, in Public Subnet AZ-1"]
     end
     IGW --> PubA & PubB
     PrivA & PrivB --> NAT --> IGW
@@ -1188,8 +1188,8 @@ aws ec2 release-address --allocation-id $EIP_ALLOC
 
 ```mermaid
 flowchart LR
-    Internet[Internet] --> PubEC2[EC2 in Public Subnet<br>Direct Internet Access<br>⚠️ Exposed]
-    Internet --> ALB[ALB in Public Subnet] --> PrivEC2[EC2 in Private Subnet<br>Protected ✅]
+    Internet[Internet] --> PubEC2["EC2 in Public Subnet, Direct Internet Access, ⚠️ Exposed"]
+    Internet --> ALB[ALB in Public Subnet] --> PrivEC2["EC2 in Private Subnet, Protected ✅"]
 ```
 
 ---
@@ -1316,10 +1316,10 @@ curl -s --connect-timeout 5 http://10.0.3.x  # Timeout — can't reach private I
 ```mermaid
 flowchart LR
     subgraph VPC_A["prod-vpc (10.0.0.0/16)"]
-        EC2_A[EC2 Instance A<br>10.0.3.x]
+        EC2_A["EC2 Instance A, 10.0.3.x"]
     end
     subgraph VPC_B["shared-vpc (10.1.0.0/16)"]
-        EC2_B[EC2 Instance B<br>10.1.1.x]
+        EC2_B["EC2 Instance B, 10.1.1.x"]
     end
     VPC_A <-->|VPC Peering<br>Private Connection| VPC_B
 ```

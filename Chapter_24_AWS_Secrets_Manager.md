@@ -149,10 +149,10 @@ If any step fails → rotation fails → old password still works
 
 ```mermaid
 flowchart LR
-    App[Application<br>EC2/ECS/Lambda] -->|GetSecretValue| SM[Secrets Manager<br>Encrypted with KMS]
-    SM -->|Rotation Schedule| Lambda[Lambda<br>Rotation Function]
-    Lambda -->|Update Password| RDS[(RDS Database)]
-    SM -.->|Replicate| SM_DR[Secrets Manager<br>DR Region]
+    App["Application, EC2/ECS/Lambda"] -->|GetSecretValue| SM["Secrets Manager, Encrypted with KMS"]
+    SM -->|Rotation Schedule| Lambda["Lambda, Rotation Function"]
+    Lambda -->|Update Password| RDS["(RDS Database)"]
+    SM -.->|Replicate| SM_DR["Secrets Manager, DR Region"]
     CT[CloudTrail] -.->|Audit| SM
 ```
 

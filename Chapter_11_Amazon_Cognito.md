@@ -154,11 +154,11 @@ Don't use for: Highly branded consumer apps (build custom UI)
 
 ```mermaid
 flowchart LR
-    User[User<br>Web/Mobile] -->|Sign In| Cognito[Cognito<br>User Pool]
+    User["User, Web/Mobile"] -->|Sign In| Cognito["Cognito, User Pool"]
     Cognito -->|JWT Tokens| User
-    User -->|JWT in Header| APIGW[API Gateway<br>Cognito Authorizer]
-    APIGW --> Lambda[Lambda<br>Backend]
-    Lambda --> DDB[(DynamoDB)]
+    User -->|JWT in Header| APIGW["API Gateway, Cognito Authorizer"]
+    APIGW --> Lambda["Lambda, Backend"]
+    Lambda --> DDB["(DynamoDB)"]
     
     User -->|JWT → AWS Creds| IdPool[Identity Pool]
     IdPool -->|Temp Credentials| S3[S3 Direct Upload]

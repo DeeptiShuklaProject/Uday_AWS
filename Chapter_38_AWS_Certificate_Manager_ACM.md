@@ -143,14 +143,14 @@ PCI DSS, HIPAA, SOC 2 all require encryption in transit. ACM is the easiest way 
 
 ```mermaid
 flowchart TD
-    User[User Browser] -->|HTTPS| R53[Route 53<br>DNS Resolution]
-    R53 -->|A/Alias Record| CF[CloudFront<br>ACM Certificate<br>us-east-1]
-    CF -->|HTTPS| WAF[AWS WAF<br>Request Filtering]
-    WAF -->|HTTPS| ALB[Application Load Balancer<br>ACM Certificate<br>Regional]
-    ALB -->|HTTP| EC2[EC2 Instances<br>Private Subnet]
+    User[User Browser] -->|HTTPS| R53["Route 53, DNS Resolution"]
+    R53 -->|A/Alias Record| CF["CloudFront, ACM Certificate, us-east-1"]
+    CF -->|HTTPS| WAF["AWS WAF, Request Filtering"]
+    WAF -->|HTTPS| ALB["Application Load Balancer, ACM Certificate, Regional"]
+    ALB -->|HTTP| EC2["EC2 Instances, Private Subnet"]
     
-    ACM1[ACM Certificate<br>us-east-1<br>*.example.com] -.->|Attached to| CF
-    ACM2[ACM Certificate<br>ap-south-1<br>*.example.com] -.->|Attached to| ALB
+    ACM1["ACM Certificate, us-east-1, *.example.com"] -.->|Attached to| CF
+    ACM2["ACM Certificate, ap-south-1, *.example.com"] -.->|Attached to| ALB
 ```
 
 ### Request Flow
@@ -398,7 +398,7 @@ Your company is launching a customer-facing web application at `app.example.com`
 ```mermaid
 flowchart LR
     User[User] -->|HTTPS| R53[Route 53]
-    R53 -->|Alias| ALB[ALB<br>HTTPS:443<br>ACM Certificate]
+    R53 -->|Alias| ALB["ALB, HTTPS:443, ACM Certificate"]
     ALB -->|HTTP:80| TG[Target Group]
     TG --> EC2A[EC2-A]
     TG --> EC2B[EC2-B]
@@ -516,21 +516,21 @@ flowchart TD
     end
     
     subgraph AWS["AWS Cloud"]
-        R53[Route 53<br>DNS]
+        R53["Route 53, DNS"]
         
         subgraph Edge["Edge Layer"]
-            CF[CloudFront<br>ACM Cert us-east-1]
+            CF["CloudFront, ACM Cert us-east-1"]
             WAF[AWS WAF]
         end
         
         subgraph Region["Regional - ap-south-1"]
-            ALB[ALB<br>ACM Cert ap-south-1<br>HTTPS Listener]
+            ALB["ALB, ACM Cert ap-south-1, HTTPS Listener"]
             
             subgraph Private["Private Subnets"]
                 ASG[Auto Scaling Group]
                 EC2A[EC2-A]
                 EC2B[EC2-B]
-                RDS[(RDS)]
+                RDS["(RDS)"]
             end
         end
     end
@@ -1055,8 +1055,8 @@ ACM is a foundational service in any production AWS architecture. Every internet
 ```mermaid
 flowchart LR
     User[User] -->|HTTPS :443| Route53[Route 53]
-    Route53 --> ALB[ALB<br>ACM Certificate<br>SSL Termination]
-    ALB -->|HTTP :80| EC2[EC2<br>Private Subnet]
+    Route53 --> ALB["ALB, ACM Certificate, SSL Termination"]
+    ALB -->|HTTP :80| EC2["EC2, Private Subnet"]
 ```
 
 ### Step 1 — Request ACM Certificate

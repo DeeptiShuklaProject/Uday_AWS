@@ -653,8 +653,8 @@ Amazon CloudFront is an essential service for any web application requiring high
 ## Architecture
 ```mermaid
 flowchart LR
-    User[User] --> CF[CloudFront<br>Edge Locations]
-    CF -->|OAC| S3[S3 Bucket<br>Private]
+    User[User] --> CF["CloudFront, Edge Locations"]
+    CF -->|OAC| S3["S3 Bucket, Private"]
 ```
 
 ### Step 1 — Create CloudFront Distribution

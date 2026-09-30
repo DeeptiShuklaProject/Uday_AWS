@@ -217,18 +217,18 @@ flowchart TD
     subgraph VPC["Production VPC"]
         subgraph Public["Public Subnets"]
             ALB[ALB]
-            Bastion[Bastion Host<br>or SSM]
+            Bastion["Bastion Host, or SSM"]
         end
         subgraph Private["Private Subnets"]
             subgraph AZA["AZ-A"]
-                EC2A[EC2-A<br>m5.large<br>Web App]
+                EC2A["EC2-A, m5.large, Web App"]
             end
             subgraph AZB["AZ-B"]
-                EC2B[EC2-B<br>m5.large<br>Web App]
+                EC2B["EC2-B, m5.large, Web App"]
             end
         end
         subgraph Data["Data Subnets"]
-            RDS[(RDS<br>Multi-AZ)]
+            RDS["(RDS, Multi-AZ)"]
         end
     end
     

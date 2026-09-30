@@ -121,16 +121,16 @@ Production:
 
 ```mermaid
 flowchart TD
-    Internet[Internet] --> ALB[ALB<br>Public Subnets]
+    Internet[Internet] --> ALB["ALB, Public Subnets"]
     subgraph VPC["Production VPC"]
         subgraph Private["Private Subnets"]
-            Task1[Fargate Task 1<br>0.5 vCPU / 1 GB]
-            Task2[Fargate Task 2<br>0.5 vCPU / 1 GB]
-            Task3[Fargate Task 3<br>0.5 vCPU / 1 GB]
+            Task1["Fargate Task 1, 0.5 vCPU / 1 GB"]
+            Task2["Fargate Task 2, 0.5 vCPU / 1 GB"]
+            Task3["Fargate Task 3, 0.5 vCPU / 1 GB"]
         end
     end
     ALB --> Task1 & Task2 & Task3
-    Task1 & Task2 & Task3 --> RDS[(RDS)]
+    Task1 & Task2 & Task3 --> RDS["(RDS)"]
 ```
 
 ---

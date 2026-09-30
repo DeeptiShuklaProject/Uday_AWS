@@ -207,27 +207,27 @@ Use case: Allow EC2 to use the key only for encrypting EBS volumes
 ```mermaid
 flowchart TD
     subgraph Apps["Applications"]
-        EC2[EC2<br>App Server]
-        Lambda[Lambda<br>Function]
-        ECS[ECS<br>Container]
+        EC2["EC2, App Server"]
+        Lambda["Lambda, Function"]
+        ECS["ECS, Container"]
     end
     
     subgraph KMS_Service["AWS KMS"]
-        CMK[Customer Managed Key<br>$1/month + API calls]
+        CMK["Customer Managed Key, $1/month + API calls"]
     end
     
     subgraph Encrypted["Encrypted Services"]
-        S3[S3<br>SSE-KMS]
-        EBS[EBS<br>Encrypted Volumes]
-        RDS[RDS<br>Encrypted at Rest]
-        SM[Secrets Manager<br>Encrypted Secrets]
+        S3["S3, SSE-KMS"]
+        EBS["EBS, Encrypted Volumes"]
+        RDS["RDS, Encrypted at Rest"]
+        SM["Secrets Manager, Encrypted Secrets"]
     end
     
     Apps -->|kms:GenerateDataKey| CMK
     CMK -->|Data Key| Apps
     Apps -->|Encrypt data| Encrypted
     
-    CloudTrail[CloudTrail<br>Key Usage Audit]
+    CloudTrail["CloudTrail, Key Usage Audit"]
     CMK -->|Log every call| CloudTrail
 ```
 

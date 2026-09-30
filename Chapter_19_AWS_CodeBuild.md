@@ -198,10 +198,10 @@ CODEBUILD_BUILD_ARN             — build ARN
 ```mermaid
 flowchart LR
     Git[GitHub/CodeCommit] -->|Source| CP[CodePipeline]
-    CP -->|Build| CB[CodeBuild<br>Test + Build + Docker]
+    CP -->|Build| CB["CodeBuild, Test + Build + Docker"]
     CB -->|Image| ECR[ECR]
     CB -->|Artifact| S3[S3]
-    CP -->|Deploy| CD[CodeDeploy<br>or ECS Deploy]
+    CP -->|Deploy| CD["CodeDeploy, or ECS Deploy"]
 ```
 
 ### Docker Build Flow

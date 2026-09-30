@@ -158,22 +158,22 @@ GuardDuty findings are categorized by:
 ```mermaid
 flowchart TD
     subgraph Sources["Data Sources"]
-        CT[CloudTrail<br>Management + S3 Events]
+        CT["CloudTrail, Management + S3 Events"]
         VPC[VPC Flow Logs]
         DNS[DNS Query Logs]
     end
     
     subgraph GD["Amazon GuardDuty"]
-        ML[Machine Learning<br>Anomaly Detection]
-        TI[Threat Intelligence<br>AWS + 3rd Party]
+        ML["Machine Learning, Anomaly Detection"]
+        TI["Threat Intelligence, AWS + 3rd Party"]
         Rules[Detection Rules]
     end
     
     subgraph Response["Automated Response"]
         EB[EventBridge Rule]
-        Lambda[Lambda<br>Auto-Remediation]
-        SNS[SNS<br>Alert Notification]
-        SH[Security Hub<br>Centralized View]
+        Lambda["Lambda, Auto-Remediation"]
+        SNS["SNS, Alert Notification"]
+        SH["Security Hub, Centralized View"]
     end
     
     Sources --> GD
@@ -352,8 +352,8 @@ Enable GuardDuty and configure automated response to automatically disable compr
 ```mermaid
 flowchart LR
     GD[GuardDuty] -->|Finding| EB[EventBridge]
-    EB -->|High Severity| Lambda[Lambda<br>Auto-Remediate]
-    EB -->|All Findings| SNS[SNS<br>Security Team]
+    EB -->|High Severity| Lambda["Lambda, Auto-Remediate"]
+    EB -->|All Findings| SNS["SNS, Security Team"]
     Lambda -->|Disable Key| IAM[IAM]
 ```
 
@@ -438,15 +438,15 @@ flowchart TD
     end
     
     subgraph Security["Security Account (GuardDuty Admin)"]
-        GD[GuardDuty<br>Aggregated Findings]
+        GD["GuardDuty, Aggregated Findings"]
         SH[Security Hub]
         Dashboard[Security Dashboard]
     end
     
     subgraph Response["Incident Response"]
         EB[EventBridge]
-        Lambda_Remediate[Lambda<br>Auto-Remediate]
-        Lambda_Ticket[Lambda<br>Create Ticket]
+        Lambda_Remediate["Lambda, Auto-Remediate"]
+        Lambda_Ticket["Lambda, Create Ticket"]
         SNS_PD[SNS → PagerDuty]
     end
     

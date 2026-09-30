@@ -98,23 +98,23 @@ Overall security score: weighted average across all standards
 ```mermaid
 flowchart TD
     subgraph Sources["Finding Sources"]
-        GD[GuardDuty<br>Threats]
-        INS[Inspector<br>Vulnerabilities]
-        Config[Config<br>Compliance]
-        IAM[IAM Access<br>Analyzer]
+        GD["GuardDuty, Threats"]
+        INS["Inspector, Vulnerabilities"]
+        Config["Config, Compliance"]
+        IAM["IAM Access, Analyzer"]
     end
     
     subgraph SH["AWS Security Hub"]
-        Findings[Aggregated<br>Findings]
-        Standards[Security<br>Standards]
-        Score[Compliance<br>Score]
+        Findings["Aggregated, Findings"]
+        Standards["Security, Standards"]
+        Score["Compliance, Score"]
     end
     
     subgraph Actions["Automated Response"]
         EB[EventBridge]
-        Lambda[Lambda<br>Remediation]
-        SNS[SNS<br>Alerting]
-        Jira[Jira<br>Ticketing]
+        Lambda["Lambda, Remediation"]
+        SNS["SNS, Alerting"]
+        Jira["Jira, Ticketing"]
     end
     
     Sources --> SH

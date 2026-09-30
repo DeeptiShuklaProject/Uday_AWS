@@ -259,14 +259,14 @@ aws ssm create-document \
 ### Production SSM Architecture
 ```mermaid
 flowchart TD
-    Admin[Admin / DevOps] -->|Session Manager| EC2[EC2 Instances<br>SSM Agent]
+    Admin[Admin / DevOps] -->|Session Manager| EC2["EC2 Instances, SSM Agent"]
     Admin -->|Run Command| EC2
     Admin -->|Patch Manager| EC2
     
-    EC2 -->|Read Config| PS[Parameter Store<br>/app/prod/*]
+    EC2 -->|Read Config| PS["Parameter Store, /app/prod/*"]
     EC2 -->|Report Inventory| Inventory[SSM Inventory]
     
-    PM[Patch Manager] -->|Scheduled| MW[Maintenance Window<br>Sunday 3-5 AM]
+    PM[Patch Manager] -->|Scheduled| MW["Maintenance Window, Sunday 3-5 AM"]
     MW --> EC2
 ```
 

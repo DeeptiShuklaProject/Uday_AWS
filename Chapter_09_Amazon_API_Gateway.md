@@ -204,13 +204,13 @@ Cache responses to reduce Lambda invocations:
 
 ```mermaid
 flowchart LR
-    Client[Client<br>Web/Mobile] -->|HTTPS| APIGW[API Gateway<br>REST API]
-    APIGW -->|Authorize| Cognito[Cognito<br>JWT Validation]
-    APIGW -->|GET /users| Lambda1[Lambda<br>listUsers]
-    APIGW -->|POST /orders| Lambda2[Lambda<br>createOrder]
-    Lambda1 --> DDB[(DynamoDB)]
+    Client["Client, Web/Mobile"] -->|HTTPS| APIGW["API Gateway, REST API"]
+    APIGW -->|Authorize| Cognito["Cognito, JWT Validation"]
+    APIGW -->|GET /users| Lambda1["Lambda, listUsers"]
+    APIGW -->|POST /orders| Lambda2["Lambda, createOrder"]
+    Lambda1 --> DDB["(DynamoDB)"]
     Lambda2 --> DDB
-    Lambda2 --> SQS[SQS<br>Order Queue]
+    Lambda2 --> SQS["SQS, Order Queue"]
 ```
 
 ---
@@ -425,9 +425,9 @@ A: For Lambda Proxy: return CORS headers (Access-Control-Allow-Origin) from Lamb
 ## Architecture
 ```mermaid
 flowchart LR
-    Client[Client] --> APIGW[API Gateway<br>REST API]
-    APIGW -->|GET /items| Lambda[Lambda<br>get-items]
-    APIGW -->|POST /items| Lambda2[Lambda<br>create-item]
+    Client[Client] --> APIGW["API Gateway, REST API"]
+    APIGW -->|GET /items| Lambda["Lambda, get-items"]
+    APIGW -->|POST /items| Lambda2["Lambda, create-item"]
 ```
 
 ### Step 1 — Create REST API

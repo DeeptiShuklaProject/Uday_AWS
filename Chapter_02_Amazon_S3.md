@@ -554,11 +554,11 @@ Create a production S3 bucket with versioning, encryption, lifecycle rules, even
 #### Architecture
 ```mermaid
 flowchart LR
-    App[Application] -->|Upload| Bucket[S3 Bucket<br>ap-south-1<br>Versioned + Encrypted]
-    Bucket -->|Event| Lambda[Lambda<br>Process Upload]
-    Bucket -->|Lifecycle| IA[Standard-IA<br>30 days]
-    IA --> Glacier[Glacier<br>90 days]
-    Bucket -->|CRR| DR[DR Bucket<br>us-west-2]
+    App[Application] -->|Upload| Bucket["S3 Bucket, ap-south-1, Versioned + Encrypted"]
+    Bucket -->|Event| Lambda["Lambda, Process Upload"]
+    Bucket -->|Lifecycle| IA["Standard-IA, 30 days"]
+    IA --> Glacier["Glacier, 90 days"]
+    Bucket -->|CRR| DR["DR Bucket, us-west-2"]
 ```
 
 #### Step 1 — Create Production Bucket

@@ -165,18 +165,18 @@ Apply to instance (some require reboot)
 
 ```mermaid
 flowchart TD
-    ALB[ALB<br>Public Subnets] --> EC2A[EC2 AZ-A]
+    ALB["ALB, Public Subnets"] --> EC2A[EC2 AZ-A]
     ALB --> EC2B[EC2 AZ-B]
     
-    EC2A --> Primary[RDS Primary<br>Private Subnet AZ-A]
+    EC2A --> Primary["RDS Primary, Private Subnet AZ-A"]
     EC2B --> Primary
     
-    Primary -->|Synchronous| Standby[RDS Standby<br>Private Subnet AZ-B]
-    Primary -->|Asynchronous| Replica[Read Replica<br>Private Subnet AZ-B]
+    Primary -->|Synchronous| Standby["RDS Standby, Private Subnet AZ-B"]
+    Primary -->|Asynchronous| Replica["Read Replica, Private Subnet AZ-B"]
     
-    SM[Secrets Manager<br>Auto-Rotation] --> EC2A & EC2B
+    SM["Secrets Manager, Auto-Rotation"] --> EC2A & EC2B
     Primary -.->|Encrypted| KMS[KMS CMK]
-    Primary -.->|Backups| Backup[Automated Backups<br>35 days retention]
+    Primary -.->|Backups| Backup["Automated Backups, 35 days retention"]
 ```
 
 ---
@@ -315,8 +315,8 @@ aws rds reboot-db-instance --db-instance-identifier prod-db --force-failover
 #### Architecture
 ```mermaid
 flowchart LR
-    EC2[EC2 App Server] -->|Port 5432| RDS[RDS PostgreSQL<br>Multi-AZ<br>Private Subnet]
-    EC2 -->|GetSecretValue| SM[Secrets Manager<br>Auto-Rotation 30 days]
+    EC2[EC2 App Server] -->|Port 5432| RDS["RDS PostgreSQL, Multi-AZ, Private Subnet"]
+    EC2 -->|GetSecretValue| SM["Secrets Manager, Auto-Rotation 30 days"]
 ```
 
 #### Step 1 — Create RDS with Managed Password
@@ -691,9 +691,9 @@ A: 1) RDS status: "available"? 2) Security group: app SG allowed on port? 3) Cor
 ## Architecture
 ```mermaid
 flowchart TD
-    ALB[ALB] --> EC2[EC2<br>Private Subnet]
-    EC2 -->|Port 5432| RDS[(RDS PostgreSQL<br>Private Subnet<br>Encrypted + Multi-AZ)]
-    RDS --> Standby[(Standby<br>AZ-2)]
+    ALB[ALB] --> EC2["EC2, Private Subnet"]
+    EC2 -->|Port 5432| RDS["(RDS PostgreSQL, Private Subnet, Encrypted + Multi-AZ)"]
+    RDS --> Standby["(Standby, AZ-2)"]
 ```
 
 ### Step 1 — Create DB Subnet Group

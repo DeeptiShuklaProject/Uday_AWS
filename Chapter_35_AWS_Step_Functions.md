@@ -1781,12 +1781,12 @@ AWS Step Functions is the AWS-native workflow orchestration service for coordina
 ## Architecture
 ```mermaid
 flowchart TD
-    Start[Start] --> Validate[Validate Order<br>Lambda]
-    Validate -->|Valid| Payment[Process Payment<br>Lambda]
+    Start[Start] --> Validate["Validate Order, Lambda"]
+    Validate -->|Valid| Payment["Process Payment, Lambda"]
     Validate -->|Invalid| Reject[Reject Order]
-    Payment -->|Success| Inventory[Update Inventory<br>Lambda]
-    Payment -->|Failed| Retry[Retry Payment<br>3 attempts]
-    Inventory --> Notify[Send Notification<br>SNS]
+    Payment -->|Success| Inventory["Update Inventory, Lambda"]
+    Payment -->|Failed| Retry["Retry Payment, 3 attempts"]
+    Inventory --> Notify["Send Notification, SNS"]
     Notify --> End[End]
 ```
 

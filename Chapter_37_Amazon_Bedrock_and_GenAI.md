@@ -538,7 +538,7 @@ Amazon Bedrock is the fastest, most secure way to bring Generative AI into enter
 flowchart LR
     User[User] --> APIGW[API Gateway]
     APIGW --> Lambda[Lambda]
-    Lambda --> Bedrock[Amazon Bedrock<br>Claude / Titan]
+    Lambda --> Bedrock["Amazon Bedrock, Claude / Titan"]
 ```
 
 ### Step 1 — Enable Model Access

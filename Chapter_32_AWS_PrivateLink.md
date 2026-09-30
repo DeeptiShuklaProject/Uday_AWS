@@ -155,8 +155,8 @@ flowchart TD
         end
         
         subgraph Endpoints["VPC Endpoints"]
-            GW_S3[Gateway: S3<br>FREE]
-            GW_DDB[Gateway: DynamoDB<br>FREE]
+            GW_S3["Gateway: S3, FREE"]
+            GW_DDB["Gateway: DynamoDB, FREE"]
             IF_ECR[Interface: ECR]
             IF_SM[Interface: Secrets Manager]
             IF_LOGS[Interface: CloudWatch Logs]

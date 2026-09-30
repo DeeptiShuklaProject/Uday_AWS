@@ -102,19 +102,19 @@ DatabaseAdmin:
 ```mermaid
 flowchart LR
     subgraph IdP["Identity Provider"]
-        AD[Active Directory<br>OR Okta / Azure AD]
+        AD["Active Directory, OR Okta / Azure AD"]
     end
     
     subgraph IC["IAM Identity Center"]
-        Portal[SSO Portal<br>portal.aws.example.com]
+        Portal["SSO Portal, portal.aws.example.com"]
         PS[Permission Sets]
     end
     
     subgraph Accounts["AWS Accounts"]
-        Prod[Production<br>Admin, ReadOnly]
-        Dev[Development<br>Developer, Admin]
-        Shared[Shared Services<br>Admin]
-        Security[Security<br>SecurityAudit]
+        Prod["Production, Admin, ReadOnly"]
+        Dev["Development, Developer, Admin"]
+        Shared["Shared Services, Admin"]
+        Security["Security, SecurityAudit"]
     end
     
     AD --> Portal
@@ -352,8 +352,8 @@ A: Create fine-grained permission sets per function (DeveloperAccess, DBAAccess,
 ## Architecture
 ```mermaid
 flowchart LR
-    User[Engineer] --> SSO[IAM Identity Center<br>SSO Portal]
-    SSO --> PS[Permission Set<br>AdministratorAccess]
+    User[Engineer] --> SSO["IAM Identity Center, SSO Portal"]
+    SSO --> PS["Permission Set, AdministratorAccess"]
     PS --> Prod[Production Account]
     PS --> Dev[Development Account]
 ```

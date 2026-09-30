@@ -89,17 +89,17 @@ No manual scan scheduling needed
 ```mermaid
 flowchart LR
     subgraph Sources["Scan Targets"]
-        EC2[EC2 Instances<br>SSM Agent]
-        ECR[ECR Images<br>Container Scan]
-        Lambda[Lambda<br>Functions]
+        EC2["EC2 Instances, SSM Agent"]
+        ECR["ECR Images, Container Scan"]
+        Lambda["Lambda, Functions"]
     end
     
-    Inspector[Amazon Inspector<br>Continuous Scanning] --> Findings[Findings<br>CVE + Severity]
+    Inspector["Amazon Inspector, Continuous Scanning"] --> Findings["Findings, CVE + Severity"]
     Sources --> Inspector
     
-    Findings --> SecHub[Security Hub<br>Centralized]
-    Findings --> EB[EventBridge<br>Automation]
-    EB --> Lambda_Fix[Lambda<br>Auto-Remediate]
+    Findings --> SecHub["Security Hub, Centralized"]
+    Findings --> EB["EventBridge, Automation"]
+    EB --> Lambda_Fix["Lambda, Auto-Remediate"]
     EB --> SNS_Alert[SNS → Slack]
 ```
 
