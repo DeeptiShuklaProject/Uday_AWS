@@ -182,3 +182,63 @@ Port 5176 is in use, trying another one...
 [2m10:51:32 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
 [2m10:51:33 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
 [2m10:51:45 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
+[2m4:29:10 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m4:29:10 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m4:29:10 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m7:02:48 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
+[2m7:02:48 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
+[2m7:02:58 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
+[2m7:03:21 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
+[2m7:03:21 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
+[2m7:03:22 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx[22m
+[2m7:03:27 AM[22m [36m[1m[vite][22m[39m [32m✨ new dependencies optimized: [33m@monaco-editor/react, monaco-editor[32m[39m
+[2m7:03:27 AM[22m [36m[1m[vite][22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[2m7:03:42 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m7:03:42 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m7:03:42 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m7:04:05 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m7:04:05 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m7:04:30 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/app.css[22m
+[2m7:10:01 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:10:01 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:12:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:13:59 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:13:59 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:13:59 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:23:56 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:23:57 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:23:57 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:24:12 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:24:12 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:26:37 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:28:15 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:29:40 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:30:36 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:39:07 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:39:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:39:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:39:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:39:29 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:39:30 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/app.css[22m
+[2m7:46:45 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:46:45 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m Could not Fast Refresh (export removed)
+[2m7:46:45 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx, /src/components/CodeExplorerSection.jsx[22m
+[2m7:46:45 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:47:17 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:47:17 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m Could not Fast Refresh (new export)
+[2m7:47:17 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ConceptCodePage.jsx, /src/components/CodeExplorerSection.jsx[22m
+[2m7:47:32 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/CodeExplorerSection.jsx[22m
+[2m7:47:32 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/app.css[22m
+[2m7:53:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m7:53:34 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m7:53:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m7:53:35 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:53:47 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:53:47 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/GitHubPreciseCodeExplorerModal.jsx[22m
+[2m7:53:48 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/CodeExplorerSection.jsx[22m
+[2m7:56:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/CodeExplorerSection.jsx[22m
+[2m7:56:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/app.css[22m
+[2m7:56:45 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/CodeExplorerSection.jsx[22m
+[2m8:07:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m8:07:34 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m8:07:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
