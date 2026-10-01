@@ -59,9 +59,11 @@ Markdown-driven courses rendered by the shared lesson engine (`moduleParser.js` 
 |---|---|---|---|---|
 | `bedrock-to-production` | Bedrock to Production | `wscs_bedrock/doc_aws_bedrock_production by Deepti` (**STALE — see warning**) | `public/bedrock-deepti/` | `/courses/bedrock-to-production/core-chapters/<ch>` |
 | `strands-agents` | Strands Agents | `doc_strands_agents/` (in-repo, true source) | `public/strands-agents/` | `/courses/strands-agents/core-chapters/<ch>` |
+| `agentcore-production-agent` | AgentCore — Production-Ready Agents | `doc_agentcore_production_agent/` (in-repo, true source) | `public/agentcore-production-agent/` | `/courses/agentcore-production-agent/core-chapters/<ch>` |
 
 - bedrock-to-production was renamed from `bedrock-deepti`; the physical asset dir stays `bedrock-deepti` (dev-server lock prevented rename). `convert-docs.mjs` supports a `dir` override decoupling route id ↔ on-disk dir.
-- Course source assets: `strands_agentic_app/` holds transcripts (`agentcore_gateway_transcript.txt`, `strands_first_agentic_app_transcript.txt`), downloaded video, extracted `frames/`, and `repo_ref/` copies of GitHub files used for explorer highlight mapping.
+- Course source assets: `strands_agentic_app/` holds transcripts (`agentcore_gateway_transcript.txt`, `strands_first_agentic_app_transcript.txt`), downloaded video, extracted `frames/`, and `repo_ref/` copies of GitHub files used for explorer highlight mapping. Newer work stages per-video under `.course-src/<youtubeId>/` (gitignored) — e.g. `.course-src/wzIQDPFQx30/` for the AgentCore ep-01 build (transcript, video, frames, repo_ref).
+- `agentcore-production-agent` is built from the AWS Show & Tell ep-01 video `wzIQDPFQx30` (transcript also in `doc_uday_bedrock_notes/aws_employee_video_playlist/transcripts/01_*.txt`); the repo it demos was renamed `amazon-bedrock-agentcore-samples` → `awslabs/agentcore-samples`, and `bedrock-agentcore-starter-toolkit` is legacy → `aws/agentcore-cli`.
 
 ### ⚠️ convert-docs.mjs hazard
 

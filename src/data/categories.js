@@ -20,6 +20,7 @@ const CAT_COLORS = {
   kubernetes:         { color: '#6366f1', colorBg: '#eef2ff' },
   'bedrock-to-production':   { color: '#db2777', colorBg: '#fce7f3' },
   'strands-agents':          { color: '#0d9488', colorBg: '#ccfbf1' },
+  'agentcore-production-agent': { color: '#7c3aed', colorBg: '#ede9fe' },
 };
 
 export const categories = [

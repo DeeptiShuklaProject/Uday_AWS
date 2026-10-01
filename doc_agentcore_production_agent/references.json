@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "comment": "AgentCore Production Agent course — concept → source references. Key format: <chapterId>#<sec>. Refs: {kind: repo|file|commit, repo, path, sha, url, title}.",
+  "concepts": {
+    "Chapter_01_Prototype_to_Production_Gap#1-4": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples", "title": "awslabs/agentcore-samples — tutorials, use-cases, the demo code" },
+        { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-sdk-python", "title": "aws/bedrock-agentcore-sdk-python — the SDK" },
+        { "kind": "repo", "url": "https://github.com/aws/agentcore-cli", "title": "aws/agentcore-cli — successor to the starter toolkit" }
+      ]
+    },
+    "Chapter_02_Runtime_Local_to_Cloud#2-2": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/agent.py", "title": "agent.py — BedrockAgentCoreApp + @app.entrypoint" },
+        { "kind": "file", "repo": "aws/bedrock-agentcore-sdk-python", "path": "src/bedrock_agentcore/runtime/app.py", "title": "SDK — BedrockAgentCoreApp implementation" }
+      ]
+    },
+    "Chapter_02_Runtime_Local_to_Cloud#2-6": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/invoke.py", "title": "invoke.py — invoke_runtime_agent data-plane call" }
+      ]
+    },
+    "Chapter_03_Gateway_Tools_as_MCP#3-2": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/03-connect-your-agent-to-anything/03-web-search/utils/gateway_setup.py", "title": "gateway_setup.py — create_gateway + create_gateway_target" }
+      ]
+    },
+    "Chapter_04_Memory_Identity_Observability#4-2": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/04-manage-context-of-your-agent/memory/02-long-term-memory/examples/single-agent/with-strands-agent/02-custom-hook/customer-support/customer-support-override-strategy.py", "title": "Memory hooks example — MemorySessionManager + HookProvider" }
+      ]
+    }
+  }
+}

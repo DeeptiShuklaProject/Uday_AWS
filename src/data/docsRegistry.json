@@ -2480,6 +2480,48 @@
           ]
         }
       ]
+    },
+    {
+      "id": "agentcore-production-agent",
+      "title": "AgentCore — Production-Ready Agents",
+      "icon": "🛡️",
+      "subtitle": "Build your first production-ready AI agent — Runtime, Gateway, Memory, Identity and Observability",
+      "contentBase": "/agentcore-production-agent/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Interactive chapter-by-chapter notes for the AWS Show & Tell Bedrock AgentCore episode.",
+          "icon": "🛡️",
+          "contentBase": "/agentcore-production-agent/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Prototype_to_Production_Gap",
+              "title": "01 — The Prototype to Production Gap",
+              "file": "Chapter_01_Prototype_to_Production_Gap.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_02_Runtime_Local_to_Cloud",
+              "title": "02 — Runtime: Local to Cloud",
+              "file": "Chapter_02_Runtime_Local_to_Cloud.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_03_Gateway_Tools_as_MCP",
+              "title": "03 — Gateway: Tools as MCP",
+              "file": "Chapter_03_Gateway_Tools_as_MCP.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_04_Memory_Identity_Observability",
+              "title": "04 — Memory, Identity & Observability",
+              "file": "Chapter_04_Memory_Identity_Observability.md",
+              "sectionCount": 9
+            }
+          ]
+        }
+      ]
     }
   ]
 }

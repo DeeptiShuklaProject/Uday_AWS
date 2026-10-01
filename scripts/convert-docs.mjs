@@ -274,6 +274,12 @@ const CATS = [
     id: 'core-chapters', title: 'Core Chapters', icon: '🧬',
     description: 'Interactive chapter-by-chapter notes for the AWS Show & Tell Strands Agents episode.' }),
     subtitle: 'Build your first agentic AI app — Strands Agents SDK, tools, MCP and multi-agent orchestration' },
+
+  // AgentCore Production Agent — authored in-repo (video notes course; source of truth is doc_agentcore_production_agent/).
+  { id: 'agentcore-production-agent', title: 'AgentCore — Production-Ready Agents', icon: '🛡️', dir: 'agentcore-production-agent', src: path.join(ROOT, 'doc_agentcore_production_agent'), discover: (s, b) => discoverFlat(s, b, {
+    id: 'core-chapters', title: 'Core Chapters', icon: '🛡️',
+    description: 'Interactive chapter-by-chapter notes for the AWS Show & Tell Bedrock AgentCore episode.' }),
+    subtitle: 'Build your first production-ready AI agent — Runtime, Gateway, Memory, Identity and Observability' },
 ];
 
 const registry = { categories: [] };
