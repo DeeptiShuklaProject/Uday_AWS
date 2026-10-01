@@ -279,6 +279,7 @@ function transformCustomTags(body) {
         type: 'codeexplorer', icon: '🧭',
         title: unescapeCode(a.title || 'Code Walkthrough'),
         content: {
+          expanded: a.expanded === 'true' || evalLiteral(a.expanded) === true,
           spec: {
             repo: unescapeCode(a.repo), ref: unescapeCode(a.ref || '') || undefined,
             title: unescapeCode(a.title || ''), files,

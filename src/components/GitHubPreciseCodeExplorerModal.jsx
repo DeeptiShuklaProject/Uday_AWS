@@ -35,6 +35,10 @@ const langFor = (path) =>
   LANG_BY_EXT[(path.split('/').pop().split('.').pop() || '').toLowerCase()]
   || (/dockerfile$/i.test(path) ? 'dockerfile' : 'plaintext');
 
+/* Which explorer instance currently owns ← → key nav (last mounted or
+   last interacted). Module-scoped — one owner at a time. */
+let activeExplorer = null;
+
 /* Collapse the files[] paths into a folder tree (view of the same data). */
 function treeFromPaths(files) {
   const root = { name: '', dirs: new Map(), files: [] };
@@ -119,12 +123,19 @@ export function PreciseCodeExplorer({
   useEffect(() => { sessionStorage.setItem(memKey, String(idx)); }, [idx]);
 
   // ← → arrow keys move through the authored file order (wraps around).
-  // Skipped when focus is inside Monaco or an editable field so cursor
-  // keys keep working there.
+  // Only the "active" explorer instance responds — claimed on mount or
+  // on first interaction — so multiple expanded explorers don't
+  // double-step. Skipped inside Monaco/editable fields.
+  const rootRef = useRef(null);
+  const keyId = useRef(Symbol('ghpx'));
+  useEffect(() => {
+    if (keysActive) activeExplorer = keyId.current;
+    return () => { if (activeExplorer === keyId.current) activeExplorer = null; };
+  }, [keysActive]);
   useEffect(() => {
     if (!keysActive || files.length < 2) return;
     const onKey = (e) => {
-      if (e.defaultPrevented) return;
+      if (e.defaultPrevented || activeExplorer !== keyId.current) return;
       if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
       if (e.target?.closest?.('input, textarea, [contenteditable="true"], .monaco-editor')) return;
       e.preventDefault();
@@ -176,7 +187,8 @@ export function PreciseCodeExplorer({
   const pick = (i) => setIdx(((i % files.length) + files.length) % files.length);
 
   return (
-    <div className="ghpx-wrap">
+    <div className="ghpx-wrap" ref={rootRef}
+      onPointerDown={() => { activeExplorer = keyId.current; }}>
       {/* Left — file tree derived from the curated paths */}
       <div className="ghpx-tree">
         <TreeNode node={tree} depth={0} active={idx} onPick={pick} />

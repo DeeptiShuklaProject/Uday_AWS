@@ -14,7 +14,7 @@ export default function CodeExplorerSection({
 }) {
   const spec = content?.spec;
   const [open, setOpen] = useState(false);       // modal
-  const [expanded, setExpanded] = useState(false); // inline
+  const [expanded, setExpanded] = useState(!!content?.expanded); // inline — optionally open by default
   if (!spec?.files?.length) return null;
   return (
     <div className="ghpx-card">
