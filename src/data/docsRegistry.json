@@ -2438,6 +2438,48 @@
           ]
         }
       ]
+    },
+    {
+      "id": "strands-agents",
+      "title": "Strands Agents",
+      "icon": "🧬",
+      "subtitle": "Build your first agentic AI app — Strands Agents SDK, tools, MCP and multi-agent orchestration",
+      "contentBase": "/strands-agents/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Interactive chapter-by-chapter notes for the AWS Show & Tell Strands Agents episode.",
+          "icon": "🧬",
+          "contentBase": "/strands-agents/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Why_Strands_Agents",
+              "title": "01 — Why Strands Agents",
+              "file": "Chapter_01_Why_Strands_Agents.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_Strands_SDK_and_the_App_Blueprint",
+              "title": "02 — Strands SDK And The App Blueprint",
+              "file": "Chapter_02_Strands_SDK_and_the_App_Blueprint.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_03_Agents_Tools_and_MCP_Hands_On",
+              "title": "03 — Agents Tools And MCP Hands On",
+              "file": "Chapter_03_Agents_Tools_and_MCP_Hands_On.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_04_Multi_Agent_Orchestration",
+              "title": "04 — Multi Agent Orchestration",
+              "file": "Chapter_04_Multi_Agent_Orchestration.md",
+              "sectionCount": 10
+            }
+          ]
+        }
+      ]
     }
   ]
 }

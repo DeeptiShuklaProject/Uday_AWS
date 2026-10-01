@@ -19,6 +19,7 @@ const CAT_COLORS = {
   'python-devops':    { color: '#16a34a', colorBg: '#dcfce7' },
   kubernetes:         { color: '#6366f1', colorBg: '#eef2ff' },
   'bedrock-to-production':   { color: '#db2777', colorBg: '#fce7f3' },
+  'strands-agents':          { color: '#0d9488', colorBg: '#ccfbf1' },
 };
 
 export const categories = [

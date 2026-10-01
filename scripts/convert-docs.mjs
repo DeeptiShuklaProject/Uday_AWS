@@ -269,6 +269,11 @@ const CATS = [
     subtitle: 'Kubernetes architecture, objects and production labs' },
   { id: 'bedrock-to-production',    title: 'Bedrock to Production', icon: '🚀', dir: 'bedrock-deepti', src: path.join(WSCS, 'doc_aws_bedrock_production by Deepti'), discover: discoverDeepti,
     subtitle: 'Amazon Bedrock production course — GenAI foundations to AgentCore' },
+  // Strands Agents — authored in-repo (video notes course; source of truth is doc_strands_agents/).
+  { id: 'strands-agents',           title: 'Strands Agents',        icon: '🧬', dir: 'strands-agents', src: path.join(ROOT, 'doc_strands_agents'), discover: (s, b) => discoverFlat(s, b, {
+    id: 'core-chapters', title: 'Core Chapters', icon: '🧬',
+    description: 'Interactive chapter-by-chapter notes for the AWS Show & Tell Strands Agents episode.' }),
+    subtitle: 'Build your first agentic AI app — Strands Agents SDK, tools, MCP and multi-agent orchestration' },
 ];
 
 const registry = { categories: [] };

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "comment": "Strands Agents course — concept → source references. Key format: <chapterId>#<section>. Refs: {kind: repo|file|commit, repo, path, sha, url, title}.",
+  "concepts": {
+    "Chapter_02_Strands_SDK_and_the_App_Blueprint#2-3": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python", "title": "strands-agents/sdk-python — the SDK" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/tools", "title": "strands-agents/tools — 20+ built-in tools (incl. swarm)" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/samples", "title": "strands-agents/samples — all demo code" }
+      ]
+    },
+    "Chapter_03_Agents_Tools_and_MCP_Hands_On#3-2": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/04-industry-use-cases/productivity/personal-assistant/calendar_assistant.py", "title": "calendar_assistant.py — custom tools + SQLite agent" }
+      ]
+    },
+    "Chapter_03_Agents_Tools_and_MCP_Hands_On#3-4": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/04-industry-use-cases/productivity/personal-assistant/search_assistant.py", "title": "search_assistant.py — MCPClient + list_tools_sync" },
+        { "kind": "file", "repo": "strands-agents/sdk-python", "path": "src/strands/tools/mcp/mcp_client.py", "title": "sdk-python — MCPClient implementation" }
+      ]
+    },
+    "Chapter_03_Agents_Tools_and_MCP_Hands_On#3-5": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/04-industry-use-cases/productivity/personal-assistant/code_assistant.py", "title": "code_assistant.py — built-ins only" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/tools", "title": "strands_tools — python_repl · editor · shell · journal · swarm" }
+      ]
+    },
+    "Chapter_04_Multi_Agent_Orchestration#4-2": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/04-industry-use-cases/productivity/personal-assistant/personal_assistant.py", "title": "personal_assistant.py — supervisor, agents-as-tools" }
+      ]
+    },
+    "Chapter_04_Multi_Agent_Orchestration#4-3": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/tools", "path": "src/strands_tools/swarm.py", "title": "swarm.py — multi-agent swarm as a built-in tool" },
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/11-swarm/swarm.ipynb", "title": "swarm.ipynb — swarm walkthrough" }
+      ]
+    }
+  }
+}
