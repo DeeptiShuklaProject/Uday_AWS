@@ -8,6 +8,7 @@ import { extractConcepts } from '../utils/conceptIndex';
 import { fetchRepoBundle, fetchText, parseGitHubUrl, matchConceptToRepo } from '../utils/github';
 import { buildReferenceGraph, refId } from '../utils/referenceGraph';
 import { highlightLine } from '../utils/syntaxHighlight';
+import GitHubPreciseCodeExplorerModal from './GitHubPreciseCodeExplorerModal';
 
 /**
  * ConceptCodePage — /courses/:categoryId/:courseId/concept-code
@@ -38,6 +39,7 @@ export default function ConceptCodePage({
   const [repoData, setRepoData] = useState({}); // url -> {owner,repo,branch,paths,commits,error}
   const [manifest, setManifest] = useState(null); // references.json — authored concept↔ref edges
   const [selFile, setSelFile] = useState(null); // {repoUrl,path,text,loading,conceptId}
+  const [explorerSpec, setExplorerSpec] = useState(null); // code-explorer ref spec → precise modal
   const detailRef = useRef(null);
   const activeRef = useRef(activeId);
   const pendingScroll = useRef(searchParams.get('c')); // deep-link target
@@ -334,6 +336,13 @@ export default function ConceptCodePage({
                                 🕓 {r.sha.slice(0, 7)} · {(r.title || r.msg || '').slice(0, 34)}
                               </button>
                             );
+                            if (r.kind === 'code-explorer') return (
+                              <button key={r.id} type="button" className="cc-repo-chip cc-xplr-chip"
+                                title={`${r.spec.files.length} curated files @ ${r.spec.ref || 'HEAD'}`}
+                                onClick={() => setExplorerSpec(r.spec)}>
+                                🧭 {r.title || 'Code walkthrough'} <em className="cc-shared">{r.spec.files.length} files</em>
+                              </button>
+                            );
                             return (
                               <a key={r.id} className="ghx-concept-file" href={r.url}
                                 target="_blank" rel="noreferrer"
@@ -472,6 +481,9 @@ export default function ConceptCodePage({
 
       {refLink && (
         <refLink.Viewer open url={refLink.url} initialSha={refLink.sha} onClose={() => setRefLink(null)} />
+      )}
+      {explorerSpec && (
+        <GitHubPreciseCodeExplorerModal open spec={explorerSpec} onClose={() => setExplorerSpec(null)} />
       )}
     </Layout>
   );

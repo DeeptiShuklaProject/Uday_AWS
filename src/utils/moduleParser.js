@@ -268,6 +268,25 @@ function transformCustomTags(body) {
         'This level ships as an interactive coding game in the CodeAdventure engine. ' +
         'Use the mission description above to write your solution, then check the quiz below.')}\n\n`;
     },
+    // <GitHubExplorer repo="o/r" ref="main" title="…" files=[{path,label,…}] />
+    // → curated multi-file code walkthrough card (opens the precise
+    // explorer modal). files accepts a JS-ish array literal.
+    GitHubExplorer: () => {
+      const a = parseAttrs(attrStr);
+      const files = evalLiteral(a.files) || [];
+      if (!a.repo || !files.length) return '\n\n';
+      extras.push({
+        type: 'codeexplorer', icon: '🧭',
+        title: unescapeCode(a.title || 'Code Walkthrough'),
+        content: {
+          spec: {
+            repo: unescapeCode(a.repo), ref: unescapeCode(a.ref || '') || undefined,
+            title: unescapeCode(a.title || ''), files,
+          },
+        },
+      });
+      return '\n\n';
+    },
     // <AgentFlowStoryteller /> — animated slide-deck widget (Agent +
     // LLM + Tools diagram → Strands SDK). Mounted as a real React
     // component by SlideRenderer via the 'storyteller' section type.

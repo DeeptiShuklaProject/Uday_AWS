@@ -4,6 +4,7 @@ import {
   InterviewSection, NextSection,
 } from './slides';
 import AgentFlowStoryteller from './AgentFlowStoryteller';
+import CodeExplorerSection from './CodeExplorerSection';
 
 const SECTION_ICONS = {
   why: '💡', architecture: '📐', concept: '📖', lab: '🔬', console: '🖥️',
@@ -35,6 +36,7 @@ export default function SlideRenderer({ section }) {
       case 'troubleshooting': return <TroubleshootingSection content={c} />;
       case 'storyteller':     return <AgentFlowStoryteller title={c?.title} />;
       case 'interview':       return <InterviewSection content={c} />;
+      case 'codeexplorer':    return <CodeExplorerSection content={c} />;
       case 'next':            return <NextSection content={c} />;
       default:                return <HtmlSection content={c} />;
     }

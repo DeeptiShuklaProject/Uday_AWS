@@ -62,6 +62,11 @@ export function buildReferenceGraph(concepts, repoData = {}, manifest = null) {
       } else if (r.kind === 'commit' && r.repo && r.sha) {
         const p = parseRepo(r.repo);
         if (p) edge(c.id, { id: refId.commit(p.owner, p.repo, r.sha), kind: 'commit', sha: r.sha, msg: r.title || r.sha, repoUrl: p.url, authored: true });
+      } else if (r.kind === 'code-explorer' && r.repo && r.files?.length) {
+        // Curated multi-file walkthrough — the whole spec rides on the
+        // edge so any surface can open the precise explorer with it.
+        edge(c.id, { id: `xplr:${r.repo}@${r.ref || 'HEAD'}:${r.files.map(f => f.path).join('|')}`,
+          kind: 'code-explorer', spec: r, title: r.title, authored: true });
       } else if (r.url) {
         edge(c.id, { id: refId.link(r.url), kind: r.kind || 'link', url: r.url, title: r.title, authored: true });
       }

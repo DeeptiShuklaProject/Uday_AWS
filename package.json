@@ -13,8 +13,10 @@
     "lab-server": "node aws-lambda-masterclass/lab-server.cjs"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "marked": "^15.0.0",
     "mermaid": "^11.4.0",
+    "monaco-editor": "^0.55.1",
     "pg": "^8.13.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
