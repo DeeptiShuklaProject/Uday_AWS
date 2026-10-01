@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from './Layout';
 import { useCourse } from '../context/CourseContext';
 import { findDocCourse, docProgressId } from './DocChapterPage';
 import { resolveReferenceViewer } from '../utils/referenceViewers';
 import { extractConcepts } from '../utils/conceptIndex';
 import { fetchRepoBundle, fetchText, parseGitHubUrl, matchConceptToRepo } from '../utils/github';
+import { buildReferenceGraph, refId } from '../utils/referenceGraph';
 import { highlightLine } from '../utils/syntaxHighlight';
 
 /**
@@ -29,12 +30,17 @@ export default function ConceptCodePage({
   const { category, course } = findDocCourse(categoryId, courseId);
   const base = course?.contentBase || category?.contentBase || '/';
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [concepts, setConcepts] = useState(null);
-  const [activeId, setActiveId] = useState(null);
+  const [activeId, setActiveId] = useState(searchParams.get('c'));
   const [filter, setFilter] = useState('');
   const [refLink, setRefLink] = useState(null); // { url, Viewer, sha? }
   const [repoData, setRepoData] = useState({}); // url -> {owner,repo,branch,paths,commits,error}
-  const [selFile, setSelFile] = useState(null); // {repoUrl,path,text,loading}
+  const [manifest, setManifest] = useState(null); // references.json — authored concept↔ref edges
+  const [selFile, setSelFile] = useState(null); // {repoUrl,path,text,loading,conceptId}
+  const detailRef = useRef(null);
+  const activeRef = useRef(activeId);
+  const pendingScroll = useRef(searchParams.get('c')); // deep-link target
 
   // This page has no chapter module — clear any stale one so the TopBar
   // shows its defaults instead of a leftover chapter title.
@@ -48,6 +54,13 @@ export default function ConceptCodePage({
     if (!course) return;
     let cancelled = false;
     setConcepts(null);
+    // Authored reference manifest — the many-to-many map keyed by
+    // concept id (missing file is fine; auto-matching still runs).
+    fetch(`${base}references.json`)
+      .then(r => (r.ok ? r.json() : null))
+      .then(m => { if (!cancelled) setManifest(m); })
+      .catch(() => {});
+
     Promise.all(course.chapters.map((ch, i) =>
       fetch(`${base}${ch.file}`)
         .then(r => (r.ok ? r.text() : ''))
@@ -60,11 +73,37 @@ export default function ConceptCodePage({
       if (cancelled) return;
       const flat = all.flat();
       setConcepts(flat);
-      const first = flat.find(c => c.codes.length) || flat[0];
+      // Deep-link ?c=<conceptId> wins; else first concept with code.
+      const fromUrl = flat.find(c => c.id === searchParams.get('c'));
+      const first = fromUrl || flat.find(c => c.codes.length) || flat[0];
       if (first) setActiveId(first.id);
     });
     return () => { cancelled = true; };
   }, [course, base]);
+
+  // Prefetch bundles for every repo referenced anywhere — concept links
+  // AND manifest refs — needed for the many-to-many backlink counts.
+  useEffect(() => {
+    if (!concepts) return;
+    const urls = new Set(concepts.flatMap(c => c.repos));
+    for (const mc of Object.values(manifest?.concepts || {})) {
+      for (const r of mc.refs || []) {
+        const repo = r.kind === 'repo' ? (r.url || r.repo) : (r.repo || null);
+        if (repo) urls.add(/^https?:/.test(repo) ? repo : `https://github.com/${repo}`);
+      }
+    }
+    urls.forEach(async (u) => {
+      if (repoData[u]) return;
+      const r = parseGitHubUrl(u);
+      if (!r) return;
+      try {
+        const bundle = await fetchRepoBundle(r.owner, r.repo);
+        setRepoData(d => ({ ...d, [u]: { ...r, url: u, ...bundle } }));
+      } catch (e) {
+        setRepoData(d => ({ ...d, [u]: { ...r, url: u, error: e.message } }));
+      }
+    });
+  }, [concepts, manifest, repoData]);
 
   const visible = useMemo(() => {
     if (!concepts) return [];
@@ -72,30 +111,71 @@ export default function ConceptCodePage({
     return q ? concepts.filter(c => c.title.toLowerCase().includes(q)) : concepts;
   }, [concepts, filter]);
 
-  const active = useMemo(() =>
-    (concepts || []).find(c => c.id === activeId) || null, [concepts, activeId]);
+  // The many-to-many index — rebuilt when concepts, repo data or the
+  // authored manifest arrive.
+  const graph = useMemo(() => buildReferenceGraph(concepts, repoData, manifest), [concepts, repoData, manifest]);
 
-  // When a concept links a repo, fetch its bundle and map the concept
-  // title's keywords to the most relevant files and commits.
+  // Scroll-spy: the detail pane is a continuous scroll of every visible
+  // concept — the URL bookmark (?c=) and tree highlight follow the
+  // section currently at the top of the viewport.
   useEffect(() => {
-    if (!active?.repos?.length) { setSelFile(null); return; }
-    let cancelled = false;
-    setSelFile(null);
-    active.repos.forEach(async (url) => {
-      if (repoData[url]) return;
-      const r = parseGitHubUrl(url);
-      if (!r) return;
-      try {
-        const bundle = await fetchRepoBundle(r.owner, r.repo);
-        if (!cancelled) setRepoData(d => ({ ...d, [url]: { ...r, ...bundle } }));
-      } catch (e) {
-        if (!cancelled) setRepoData(d => ({ ...d, [url]: { ...r, error: e.message } }));
-      }
-    });
-    return () => { cancelled = true; };
-  }, [active]);
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const secs = detailRef.current?.querySelectorAll('[data-cid]');
+        if (!secs?.length) return;
+        let cur = secs[0];
+        for (const s of secs) {
+          if (s.getBoundingClientRect().top <= 150) cur = s;
+          else break;
+        }
+        const id = cur.dataset.cid;
+        if (id && id !== activeRef.current) {
+          activeRef.current = id;
+          setActiveId(id);
+          setSearchParams({ c: id }, { replace: true });
+        }
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  }, [setSearchParams]);
+
+  // Deep-link: scroll to the ?c= target once concepts render. Lazy images
+  // shift layout as they load, so retry the scroll a few times to settle.
+  useEffect(() => {
+    if (!concepts || !pendingScroll.current) return;
+    const el = document.getElementById(pendingScroll.current);
+    if (el) {
+      pendingScroll.current = null;
+      [80, 400, 1200].forEach(ms =>
+        setTimeout(() => el.scrollIntoView({ block: 'start' }), ms));
+    }
+  }, [concepts]);
+
+  // Keep the tree item for the active concept inside the list viewport.
+  useEffect(() => {
+    const item = document.querySelector('.cc-item.active');
+    const box = item?.closest('.cc-items');
+    if (!item || !box) return;
+    if (item.offsetTop < box.scrollTop || item.offsetTop + item.offsetHeight > box.scrollTop + box.clientHeight) {
+      box.scrollTop = item.offsetTop - box.clientHeight / 2;
+    }
+  }, [activeId]);
+
+  // Filtering changes the stack — restart at the top.
+  useEffect(() => { window.scrollTo(0, 0); }, [filter]);
 
   if (!course) return <Navigate to={`/courses/${categoryId}`} replace />;
+
+  const selectConcept = (id) => {
+    activeRef.current = id;
+    setActiveId(id);
+    setSearchParams({ c: id }, { replace: true }); // bookmarkable
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const openRef = (url, sha = null) => {
     const Viewer = resolveReferenceViewer(url);
@@ -103,8 +183,8 @@ export default function ConceptCodePage({
     else window.open(url, '_blank', 'noopener');
   };
 
-  const openRepoFile = async (repoInfo, path) => {
-    setSelFile({ repoUrl: repoInfo.url || `${repoInfo.owner}/${repoInfo.repo}`, path, text: null, loading: true });
+  const openRepoFile = async (repoInfo, path, conceptId) => {
+    setSelFile({ repoUrl: repoInfo.url || `${repoInfo.owner}/${repoInfo.repo}`, path, text: null, loading: true, conceptId });
     try {
       const text = await fetchText(
         `https://raw.githubusercontent.com/${repoInfo.owner}/${repoInfo.repo}/${repoInfo.branch}/${path}`,
@@ -164,55 +244,117 @@ export default function ConceptCodePage({
             <div className="cc-items">
               {!concepts && <div className="cc-empty">Loading concepts…</div>}
               {concepts && visible.length === 0 && <div className="cc-empty">No matching concepts.</div>}
-              {visible.map(c => (
-                <button key={c.id} type="button"
-                  className={`cc-item${c.id === activeId ? ' active' : ''}`}
-                  onClick={() => setActiveId(c.id)}>
-                  <span className="cc-item-ch">{c.chapterLabel}</span>
-                  <span className="cc-item-title">{c.title}</span>
-                  <span className="cc-item-meta">
-                    {c.codes.length > 0 && <span className="cc-tag">{c.codes.length} code</span>}
-                    {c.repos.length > 0 && <span className="cc-tag repo">⌥ repo</span>}
-                  </span>
-                </button>
-              ))}
+              {visible.map((c, i) => {
+                const showGroup = i === 0 || visible[i - 1].chapterLabel !== c.chapterLabel;
+                return (
+                  <div key={c.id}>
+                    {showGroup && <div className="cc-group">Chapter {c.chapterLabel}</div>}
+                    <button type="button"
+                      className={`cc-item${c.id === activeId ? ' active' : ''}${c.level === 3 ? ' cc-child' : ''}`}
+                      onClick={() => selectConcept(c.id)}
+                      title={`id: ${c.id}`}>
+                      <span className="cc-item-ch">{c.chapterLabel}</span>
+                      <span className="cc-item-title">{c.title}</span>
+                      <span className="cc-item-meta">
+                        {c.codes.length > 0 && <span className="cc-tag">{c.codes.length} code</span>}
+                        {c.repos.length > 0 && <span className="cc-tag repo">⌥ repo</span>}
+                        {c.images.length > 0 && <span className="cc-tag">🖼 {c.images.length}</span>}
+                        {c.diagrams > 0 && <span className="cc-tag">◈ {c.diagrams} diagram{c.diagrams > 1 ? 's' : ''}</span>}
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* concept detail + code viewer */}
-          <div className="cc-detail">
-            {!active && <div className="cc-empty">Select a concept on the left.</div>}
-            {active && (
-              <>
+          {/* concept detail + code viewer — continuous scroll, every
+              visible concept is a bookmarkable section (id = concept id) */}
+          <div className="cc-detail" ref={detailRef}>
+            {!concepts && <div className="cc-empty">Loading concepts…</div>}
+            {concepts && visible.map(c => (
+              <section key={c.id} id={c.id} data-cid={c.id}
+                className={`cc-sec${c.id === activeId ? ' active' : ''}`}>
                 <div className="cc-detail-head">
-                  <span className="cc-detail-ch">Chapter {active.chapterLabel}</span>
-                  <h2 className="cc-detail-title">{active.title}</h2>
-                  {active.summary && <p className="cc-detail-summary">{active.summary}</p>}
+                  <span className="cc-detail-ch">Chapter {c.chapterLabel}</span>
+                  <h2 className="cc-detail-title">{c.title}</h2>
+                  {c.summary && <p className="cc-detail-summary">{c.summary}</p>}
                   <Link className="cc-open-chapter"
-                    to={`/courses/${categoryId}/${courseId}/${active.chapterId}`}>
+                    to={`/courses/${categoryId}/${courseId}/${c.chapterId}`}>
                     Open full chapter →
                   </Link>
                 </div>
 
-                {active.repos.length > 0 && (
+                {c.repos.length > 0 && (
                   <div className="cc-repos">
                     <div className="cc-repos-title">📚 Linked references</div>
-                    {active.repos.map(u => (
-                      <button key={u} type="button" className="cc-repo-chip" onClick={() => openRef(u)}>
-                        🐙 {u.replace(/^https?:\/\/(www\.)?github\.com\//, '')}
-                      </button>
-                    ))}
+                    {c.repos.map(u => {
+                      const sharers = graph.conceptsFor(refId.repo(u)).filter(n => n.id !== c.id);
+                      return (
+                        <button key={u} type="button" className="cc-repo-chip"
+                          title={sharers.length ? `Also referenced by: ${sharers.map(n => `${n.chapterLabel} · ${n.title}`).join(', ')}` : u}
+                          onClick={() => openRef(u)}>
+                          🐙 {u.replace(/^https?:\/\/(www\.)?github\.com\//, '')}
+                          {sharers.length > 0 && <em className="cc-shared">⇄{sharers.length + 1}</em>}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
 
+                {/* authored manifest refs (references.json) — the precise
+                    concept ↔ knowledge-base mapping */}
+                {(() => {
+                  const authored = graph.refsFor(c.id).filter(r => r.authored);
+                  if (!authored.length) return null;
+                  return (
+                    <div className="cc-mapped cc-authored">
+                      <div className="cc-mapped-repo">📌 Mapped references</div>
+                      <div className="cc-mapped-row">
+                        <span className="cc-mapped-chips">
+                          {authored.map(r => {
+                            if (r.kind === 'repo') return (
+                              <button key={r.id} type="button" className="cc-repo-chip"
+                                title={r.title || r.url} onClick={() => openRef(r.url)}>🐙 {r.label}</button>
+                            );
+                            if (r.kind === 'file') return (
+                              <button key={r.id} type="button"
+                                className={`ghx-concept-file${selFile?.path === r.path ? ' cc-sel' : ''}`}
+                                title={`${r.repo}: ${r.path}`}
+                                onClick={() => openRepoFile(
+                                  { owner: r.owner, repo: r.repo, url: r.repoUrl, branch: repoData[r.repoUrl]?.branch || 'main' },
+                                  r.path, c.id)}>
+                                📄 {r.title || r.path.split('/').pop()}
+                              </button>
+                            );
+                            if (r.kind === 'commit') return (
+                              <button key={r.id} type="button" className="ghx-concept-commit"
+                                title={r.title || r.sha}
+                                onClick={() => openRef(r.repoUrl, r.sha)}>
+                                🕓 {r.sha.slice(0, 7)} · {(r.title || r.msg || '').slice(0, 34)}
+                              </button>
+                            );
+                            return (
+                              <a key={r.id} className="ghx-concept-file" href={r.url}
+                                target="_blank" rel="noreferrer"
+                                onClick={e => { if (resolveReferenceViewer(r.url)) { e.preventDefault(); openRef(r.url); } }}>
+                                🔗 {r.title || r.url}
+                              </a>
+                            );
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* concept → repo mapping: only the files & commits that
                     match THIS concept's keywords */}
-                {active.repos.map(u => {
+                {c.repos.map(u => {
                   const rd = repoData[u];
-                  const m = rd?.paths ? matchConceptToRepo(active.title, rd.paths, rd.commits) : null;
+                  const m = rd?.paths ? matchConceptToRepo(c.title, rd.paths, rd.commits) : null;
                   const repoName = u.replace(/^https?:\/\/(www\.)?github\.com\//, '');
-                  if (!rd) return null;
-                  if (rd.error) return null;
+                  if (!rd || rd.error) return null;
                   return (
                     <div key={u} className="cc-mapped">
                       <div className="cc-mapped-repo">🐙 {repoName}</div>
@@ -220,11 +362,18 @@ export default function ConceptCodePage({
                         <div className="cc-mapped-row">
                             <span className="cc-mapped-label">📄 Relevant files</span>
                           <span className="cc-mapped-chips">
-                            {m.files.map(f => (
-                              <button key={f} type="button"
-                                className={`ghx-concept-file${selFile?.path === f ? ' cc-sel' : ''}`}
-                                onClick={() => openRepoFile(rd, f)}>{f.split('/').pop()}</button>
-                            ))}
+                            {m.files.map(f => {
+                              const sharers = graph.conceptsFor(refId.file(rd.owner, rd.repo, f)).filter(n => n.id !== c.id);
+                              return (
+                                <button key={f} type="button"
+                                  className={`ghx-concept-file${selFile?.path === f ? ' cc-sel' : ''}`}
+                                  title={sharers.length ? `Also referenced by: ${sharers.map(n => n.title).join(', ')}` : f}
+                                  onClick={() => openRepoFile(rd, f, c.id)}>
+                                  {f.split('/').pop()}
+                                  {sharers.length > 0 && <em className="cc-shared">⇄{sharers.length + 1}</em>}
+                                </button>
+                              );
+                            })}
                           </span>
                         </div>
                       )}
@@ -232,13 +381,17 @@ export default function ConceptCodePage({
                         <div className="cc-mapped-row">
                           <span className="cc-mapped-label">🕓 Related commits</span>
                           <span className="cc-mapped-chips">
-                            {m.commits.map(cm => (
-                              <button key={cm.sha} type="button" className="ghx-concept-commit"
-                                title={cm.commit?.message?.split('\n')[0]}
-                                onClick={() => openRef(u, cm.sha)}>
-                                {cm.sha.slice(0, 7)} · {(cm.commit?.message || '').split('\n')[0].slice(0, 32)}
-                              </button>
-                            ))}
+                            {m.commits.map(cm => {
+                              const sharers = graph.conceptsFor(refId.commit(rd.owner, rd.repo, cm.sha)).filter(n => n.id !== c.id);
+                              return (
+                                <button key={cm.sha} type="button" className="ghx-concept-commit"
+                                  title={`${cm.commit?.message?.split('\n')[0]}${sharers.length ? `\nAlso referenced by: ${sharers.map(n => n.title).join(', ')}` : ''}`}
+                                  onClick={() => openRef(u, cm.sha)}>
+                                  {cm.sha.slice(0, 7)} · {(cm.commit?.message || '').split('\n')[0].slice(0, 32)}
+                                  {sharers.length > 0 && <em className="cc-shared">⇄{sharers.length + 1}</em>}
+                                </button>
+                              );
+                            })}
                           </span>
                         </div>
                       )}
@@ -249,8 +402,8 @@ export default function ConceptCodePage({
                   );
                 })}
 
-                {/* inline repo file viewer */}
-                {selFile && (
+                {/* inline repo file viewer — anchored to this section */}
+                {selFile && selFile.conceptId === c.id && (
                   <div className="code-block cc-code">
                     <div className="code-block-header">
                       <span className="code-block-lang">{selFile.path}</span>
@@ -275,14 +428,28 @@ export default function ConceptCodePage({
                   </div>
                 )}
 
-                {active.codes.length === 0 && (
+                {/* diagram/screenshot references — part of the concept's
+                    knowledge base, rendered inline without leaving the page */}
+                {c.images.length > 0 && (
+                  <div className="cc-images">
+                    {c.images.map(im => (
+                      <img key={im.id} id={im.id} src={`${base}${im.path}`} alt={c.title}
+                        loading="lazy" className="cc-img" />
+                    ))}
+                  </div>
+                )}
+
+                {c.codes.length === 0 && c.images.length === 0 && c.repos.length === 0 && (
                   <div className="cc-empty">This concept has no code snippet — see the chapter for diagrams.</div>
                 )}
-                {active.codes.map((blk, i) => (
-                  <div key={i} className="code-block cc-code">
+                {c.codes.map((blk, i) => (
+                  <div key={blk.id} id={blk.id} className="code-block cc-code">
                     <div className="code-block-header">
                       <span className="code-block-lang">{blk.lang || 'text'}</span>
                       <div className="code-block-actions">
+                        <button type="button" className="ghx-mini-btn" title="Copy link to this block"
+                          onClick={() => navigator.clipboard?.writeText(
+                            `${location.origin}${location.pathname}?c=${encodeURIComponent(blk.id)}`)}>🔗</button>
                         <button type="button" className="ghx-mini-btn"
                           onClick={() => navigator.clipboard?.writeText(blk.code)}>Copy</button>
                       </div>
@@ -297,8 +464,8 @@ export default function ConceptCodePage({
                     </pre>
                   </div>
                 ))}
-              </>
-            )}
+              </section>
+            ))}
           </div>
         </div>
       </div>

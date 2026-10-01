@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "comment": "Concept → reference manifest. Key = concept bookmark id ({chapterId}#{slug}). Each ref has a kind so new knowledge-base types (docker, kubectl, terraform…) slot in without schema changes. Repo may be a full URL or owner/repo.",
+  "concepts": {
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-4": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/01-first-agent/recipe-bot-cli/recipe_bot.py", "title": "recipe_bot.py — your first agent" },
+        { "kind": "commit", "repo": "strands-agents/samples", "sha": "abd96ba4af", "title": "Fix recipe_bot.py by specifying model explicitly" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-6": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/strands-agents/tools", "title": "strands-agents/tools — 20+ built-in tools" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-9": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/02-tools-and-mcp/01-using-mcp-tools/mcp-agent.ipynb", "title": "mcp-agent.ipynb — MCP tools walkthrough" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-12": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/11-swarm/swarm.ipynb", "title": "swarm.ipynb — multi-agent swarm" },
+        { "kind": "commit", "repo": "strands-agents/samples", "sha": "47af0dbd72", "title": "Fix: make the graph lab's first example genuinely sequential" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-17": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/06-memory/personal_agent_with_memory.py", "title": "personal_agent_with_memory.py — memory in code" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-19": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/18-self-improving-agents/code/step-05-deploy/agent.py", "title": "agent.py — deployable agent" },
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/18-self-improving-agents/code/step-05-deploy/deploy.sh", "title": "deploy.sh — ship it" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-20": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/08-observability/Observability-and-Evaluation-sample.ipynb", "title": "Observability & Evaluation sample" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-21": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/strands-agents/samples" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/tools" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#where-strands-fits": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python", "title": "The SDK that implements everything in this section" }
+      ]
+    },
+    "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#chapter-02-git-repository": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/amazon-bedrock-agentcore-samples" },
+        { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-starter-toolkit" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python" }
+      ]
+    },
+    "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#2-13": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/06-memory/personal_agent_with_memory.py", "title": "Memory in practice (Strands side)" }
+      ]
+    },
+    "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#2-16": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/08-observability/Observability-and-Evaluation-sample.ipynb", "title": "Observability & Evaluation sample" }
+      ]
+    }
+  }
+}

@@ -6,6 +6,10 @@
  */
 
 const GH_CACHE_TTL = 10 * 60 * 1000; // 10 min
+// Optional PAT — set VITE_GITHUB_TOKEN in .env (never committed) to raise
+// the 60 req/hr unauthenticated ceiling during heavy reference prefetching.
+const GH_TOKEN = import.meta?.env?.VITE_GITHUB_TOKEN || null;
+const GH_HEADERS = GH_TOKEN ? { Authorization: `Bearer ${GH_TOKEN}` } : undefined;
 
 export function parseGitHubUrl(url, hostRe = /(^|\.)github\.com$/) {
   try {
@@ -39,7 +43,7 @@ const cacheSet = (key, data) => {
 export async function ghFetch(url, cacheKey) {
   const hit = cacheGet(cacheKey ?? url);
   if (hit) return hit;
-  const res = await fetch(url);
+  const res = await fetch(url, GH_HEADERS ? { headers: GH_HEADERS } : undefined);
   if (!res.ok) {
     const err = new Error(res.status === 403 ? 'rate-limit' : `HTTP ${res.status}`);
     err.status = res.status;
@@ -53,7 +57,7 @@ export async function ghFetch(url, cacheKey) {
 export async function fetchText(url, cacheKey) {
   const hit = cacheGet(cacheKey ?? url);
   if (hit != null) return hit;
-  const res = await fetch(url);
+  const res = await fetch(url, GH_HEADERS ? { headers: GH_HEADERS } : undefined);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const text = await res.text();
   cacheSet(cacheKey ?? url, text);
@@ -96,7 +100,15 @@ export function conceptKeywords(title) {
  */
 export function matchConceptToRepo(title, paths, commits, { maxFiles = 8, maxCommits = 5 } = {}) {
   const kws = conceptKeywords(title);
-  if (!kws.length) return { files: [], commits: [] };
+  // No usable keywords (generic titles like "Git Repository") → fall back
+  // to the repo's top-level files + most recent commits so the concept
+  // still shows *something* relevant rather than an empty row.
+  if (!kws.length) {
+    return {
+      files: (paths || []).filter(p => !p.includes('/') || p.split('/').length <= 2).slice(0, maxFiles),
+      commits: (commits || []).slice(0, maxCommits),
+    };
+  }
   const score = (text) => {
     const t = text.toLowerCase();
     return kws.reduce((n, k) => n + (t.includes(k) ? 1 : 0), 0);
@@ -105,9 +117,15 @@ export function matchConceptToRepo(title, paths, commits, { maxFiles = 8, maxCom
     .filter(p => score(p) > 0 && /\.(py|js|ts|jsx|tsx|mjs|sh|yaml|yml|json|toml|md|Dockerfile)$/i.test(p))
     .sort((a, b) => score(b) - score(a) || a.length - b.length)
     .slice(0, maxFiles);
-  const matchedCommits = (commits || [])
+  let matchedCommits = (commits || [])
     .filter(c => score(c.commit?.message || '') > 0)
     .sort((a, b) => score(b.commit?.message) - score(a.commit?.message))
     .slice(0, maxCommits);
+  // A keyword-poor title can legitimately match nothing — fall back to
+  // root-level files + recent commits instead of an empty mapping.
+  if (!files.length) {
+    const roots = (paths || []).filter(p => p.split('/').length <= 2).slice(0, maxFiles);
+    return { files: roots, commits: matchedCommits.length ? matchedCommits : (commits || []).slice(0, maxCommits) };
+  }
   return { files, commits: matchedCommits };
 }

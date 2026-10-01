@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useCourse } from '../context/CourseContext';
 import Layout from './Layout';
@@ -62,6 +62,8 @@ export default function DocChapterPage() {
   };
   const [error, setError] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  // Deep-linked section anchor from the URL fragment (#<sectionId>).
+  const pendingAnchor = useRef(window.location.hash.slice(1));
 
   // Fetch the chapter markdown (path is relative to the content base).
   useEffect(() => {
@@ -117,10 +119,37 @@ export default function DocChapterPage() {
     return () => setExternalModule(null);
   }, [chapter, index, progressId, base, lesson, setExternalModule]);
 
+  // Scroll-spy → URL bookmark: as the reader scrolls, the fragment keeps
+  // pointing at the section in view so a copied URL restores position.
+  const handleActiveSection = useCallback((i) => {
+    setActiveIndex(i);
+    const sid = lesson?.sections?.[i]?.id;
+    if (sid && window.location.hash !== `#${sid}`) {
+      window.history.replaceState(null, '', `#${sid}`);
+    }
+  }, [lesson]);
+
+  // Restore a #section deep-link once the lesson renders. Retry while
+  // lazy images/markdown settle the layout.
+  useEffect(() => {
+    if (!lesson || !pendingAnchor.current) return;
+    const el = document.getElementById(pendingAnchor.current);
+    if (!el) return;
+    pendingAnchor.current = null;
+    [80, 400, 1200].forEach(ms =>
+      setTimeout(() => el.scrollIntoView({ block: 'start' }), ms));
+  }, [lesson]);
+
   // Jump to top on chapter switch (instant — global smooth-scroll would
-  // animate and look like flicker).
+  // animate and look like flicker). Drop the previous chapter's hash —
+  // but keep it on first mount so a deep-linked section survives.
+  const didMount = useRef(false);
   useEffect(() => {
     setActiveIndex(0);
+    if (didMount.current && window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+    didMount.current = true;
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [chapterId, courseId]);
 
@@ -180,7 +209,7 @@ export default function DocChapterPage() {
           <LessonViewer
             key={progressId}
             lesson={lesson}
-            onActiveSection={setActiveIndex}
+            onActiveSection={handleActiveSection}
             moduleId={progressId}
             compact
           />
