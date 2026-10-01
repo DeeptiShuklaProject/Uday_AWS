@@ -1073,6 +1073,13 @@ button.module-card { font: inherit; width: 100%; }
   display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-4) 0;
 }
 .ghpx-card-head { display: flex; gap: var(--space-3); align-items: flex-start; }
+.ghpx-card-toggle { cursor: pointer; user-select: none; border-radius: var(--radius-md); margin: -6px; padding: 6px; }
+.ghpx-card-toggle:hover .ghpx-card-title { color: var(--color-primary-700); }
+.ghpx-chevron {
+  color: var(--color-neutral-500); font-size: var(--text-sm);
+  transition: transform .18s ease; align-self: center;
+}
+.ghpx-chevron.up { transform: rotate(180deg); }
 .ghpx-card-head-main { flex: 1; min-width: 0; }
 .ghpx-card-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
 .ghpx-card-btn {

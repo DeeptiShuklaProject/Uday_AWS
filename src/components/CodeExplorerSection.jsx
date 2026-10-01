@@ -18,7 +18,10 @@ export default function CodeExplorerSection({
   if (!spec?.files?.length) return null;
   return (
     <div className="ghpx-card">
-      <div className="ghpx-card-head">
+      <div className="ghpx-card-head ghpx-card-toggle" role="button" tabIndex={0}
+        aria-expanded={expanded}
+        onClick={() => setExpanded(x => !x)}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(x => !x); } }}>
         <span className="ghpx-card-ico">🧭</span>
         <div className="ghpx-card-head-main">
           <div className="ghpx-card-title">{spec.title || 'Code Walkthrough'}</div>
@@ -28,12 +31,9 @@ export default function CodeExplorerSection({
           </div>
         </div>
         <div className="ghpx-card-actions">
-          <button type="button" className="ghpx-card-btn" title={expandLabel}
-            aria-expanded={expanded} onClick={() => setExpanded(x => !x)}>
-            {expanded ? '▴' : '▾'}
-          </button>
-          <button type="button" className="ghpx-card-btn" title={`${openLabel} (modal)`}
-            onClick={() => setOpen(true)}>⤢</button>
+          <button type="button" className="ghpx-card-btn" title={`${openLabel} (fullscreen)`}
+            onClick={e => { e.stopPropagation(); setOpen(true); }}>⛶</button>
+          <span className={`ghpx-chevron${expanded ? ' up' : ''}`} aria-hidden="true">▾</span>
         </div>
       </div>
       <div className="ghpx-card-files">
@@ -43,11 +43,6 @@ export default function CodeExplorerSection({
           </span>
         ))}
       </div>
-      {!expanded && (
-        <button type="button" className="lab-btn lab-btn-primary" onClick={() => setOpen(true)}>
-          {openLabel} ▸
-        </button>
-      )}
       {expanded && (
         <PreciseCodeExplorer spec={spec} keysActive={!open} />
       )}
