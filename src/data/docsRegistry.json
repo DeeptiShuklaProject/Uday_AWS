@@ -2422,6 +2422,12 @@
               "title": "03 — Building Agentic AI Applications With Strands Agents And MCP",
               "file": "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP.md",
               "sectionCount": 27
+            },
+            {
+              "id": "Chapter_04_AgentCore_Runtime_Prototype_to_Production",
+              "title": "04 — AgentCore Runtime From Prototype To Production",
+              "file": "Chapter_04_AgentCore_Runtime_Prototype_to_Production.md",
+              "sectionCount": 24
             }
           ]
         }

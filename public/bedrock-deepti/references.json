@@ -68,6 +68,30 @@
       "refs": [
         { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/08-observability/Observability-and-Evaluation-sample.ipynb", "title": "Observability & Evaluation sample" }
       ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-7": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/agent.py", "title": "agent.py — Strands agent on Runtime" },
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/deploy.py", "title": "deploy.py — programmatic deploy" },
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/invoke.py", "title": "invoke.py — boto3 invocation" }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-13": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/mcp_server.py", "title": "mcp_server.py — MCP server on Runtime" },
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/deploy.py", "title": "deploy.py — MCP deploy" }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-17": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/02-a2a-protocol/agent.py", "title": "agent.py — custom protocol on Runtime" }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-19": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples" },
+        { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-starter-toolkit" }
+      ]
     }
   }
 }
