@@ -2392,8 +2392,8 @@
       ]
     },
     {
-      "id": "bedrock-deepti",
-      "title": "Bedrock by Deepti",
+      "id": "bedrock-to-production",
+      "title": "Bedrock to Production",
       "icon": "🚀",
       "subtitle": "Amazon Bedrock production course — GenAI foundations to AgentCore",
       "contentBase": "/bedrock-deepti/",
@@ -2401,7 +2401,7 @@
         {
           "id": "core-chapters",
           "title": "Core Chapters",
-          "description": "Main guided chapters of the Bedrock by Deepti course.",
+          "description": "Main guided chapters of the Bedrock to Production course.",
           "icon": "🤖",
           "contentBase": "/bedrock-deepti/",
           "chapters": [

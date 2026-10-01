@@ -2,7 +2,15 @@
 
 # 🚀 Introduction to Amazon Bedrock: Your First Step into Generative AI
 
-<AgentFlowStoryteller title="From Agent to Strands" />
+## 🎬 About This Course — The Source Video
+
+This course is built as **interactive, chapter-by-chapter notes** for the **Amazon Bedrock AgentCore Deep dive series** from **AWS Show & Tell** (AWS Events on YouTube). Each chapter takes one video from the series and turns it into a guided learning experience — with architecture diagrams, real code, console walkthroughs, and knowledge checks.
+
+The video below is the opener of the series: a complete, end-to-end walkthrough of building your first production-ready AI agent with Amazon Bedrock AgentCore. Watch it first if you want the big picture — the chapters that follow break every piece of it down step by step.
+
+<VideoSection youtubeId="wzIQDPFQx30" title="Building your first production-ready AI agent with Amazon Bedrock AgentCore | AWS Show & Tell" />
+
+---
 
 ## Chapter Goal
 
@@ -343,3 +351,11 @@ In this chapter, we learned:
 2. **Foundation Model (FM)**: A large pre-trained AI model capable of executing multiple tasks out of the box.
 3. **Amazon Bedrock**: A serverless AWS service enabling developers to access and orchestrate leading Foundation Models securely using unified APIs.
 4. **The Golden Rule**: You do NOT start by building an AI model from scratch. You start by building an **AI APPLICATION**.
+
+---
+
+## 🎬 Where This Course Goes Next
+
+You now know *what* Bedrock is. The rest of this course is about *what you build on top of it* — AI agents that can call tools, access data, and act in the real world. Press play below to watch an agent come alive: an LLM alone can only talk, but connect it to **tools** and it becomes an **agentic system**.
+
+<AgentFlowStoryteller title="From Agent to Strands" />

@@ -267,7 +267,7 @@ const CATS = [
     subtitle: 'Python programming for DevOps and automation' },
   { id: 'kubernetes',        title: 'Kubernetes',        icon: '☸️', src: path.join(WSCS, 'doc_kubernetes'),                discover: discoverK8s,
     subtitle: 'Kubernetes architecture, objects and production labs' },
-  { id: 'bedrock-deepti',    title: 'Bedrock by Deepti', icon: '🚀', src: path.join(WSCS, 'doc_aws_bedrock_production by Deepti'), discover: discoverDeepti,
+  { id: 'bedrock-to-production',    title: 'Bedrock to Production', icon: '🚀', dir: 'bedrock-deepti', src: path.join(WSCS, 'doc_aws_bedrock_production by Deepti'), discover: discoverDeepti,
     subtitle: 'Amazon Bedrock production course — GenAI foundations to AgentCore' },
 ];
 
@@ -277,9 +277,10 @@ for (const cat of CATS) {
     console.warn(`⚠️  ${cat.id}: source not found — ${cat.src}`);
     continue;
   }
-  const base = `/${cat.id}/`;
+  const dir = cat.dir || cat.id;   // on-disk/contentBase dir may differ from the route id
+  const base = `/${dir}/`;
   const courses = cat.discover(cat.src, base);
-  mirrorDocs(cat.src, path.join(ROOT, 'public', cat.id));
+  mirrorDocs(cat.src, path.join(ROOT, 'public', dir));
   registry.categories.push({
     id: cat.id, title: cat.title, icon: cat.icon,
     subtitle: cat.subtitle, contentBase: base, courses,
