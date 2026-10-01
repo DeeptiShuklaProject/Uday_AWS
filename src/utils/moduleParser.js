@@ -276,8 +276,9 @@ function transformCustomTags(body) {
       const files = evalLiteral(a.files) || [];
       if (!a.repo || !files.length) return '\n\n';
       extras.push({
+        // No section title — the card renders its own header, a section
+        // header would duplicate it.
         type: 'codeexplorer', icon: '🧭',
-        title: unescapeCode(a.title || 'Code Walkthrough'),
         content: {
           expanded: a.expanded === 'true' || evalLiteral(a.expanded) === true,
           spec: {
