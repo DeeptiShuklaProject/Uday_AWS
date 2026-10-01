@@ -696,6 +696,60 @@ flowchart TD
     RDS --> Standby["(Standby, AZ-2)"]
 ```
 
+### Step 0 — Pre-requisite Infrastructure Setup
+Before configuring RDS, you must set up the networking and compute environments.
+
+#### A. Create VPC and Subnets
+1. Navigate to the **VPC Console** → **Your VPCs** → **Create VPC**.
+2. **Resources to create**: Select **VPC only**.
+3. **Name tag**: Enter `prod-vpc`.
+4. **IPv4 CIDR block**: Enter `10.0.0.0/16` and click **Create VPC**.
+5. On the left navigation pane, click **Subnets** → **Create subnet**.
+6. **VPC ID**: Select `prod-vpc`.
+7. **Private Subnet 1**:
+   - Name: `prod-private-subnet-1`, AZ: Choose your first AZ (e.g., `us-east-1a`), CIDR: `10.0.1.0/24`
+8. Click **Add new subnet**.
+9. **Private Subnet 2**:
+   - Name: `prod-private-subnet-2`, AZ: Choose a different AZ (e.g., `us-east-1b`), CIDR: `10.0.2.0/24`
+10. Click **Add new subnet**.
+11. **Public Subnet** *(Required for NAT Gateway)*:
+    - Name: `prod-public-subnet`, AZ: Choose any AZ, CIDR: `10.0.3.0/24`
+12. Click **Create subnet**.
+
+#### B. Configure Internet Access (IGW & NAT Gateway)
+*SSM requires the EC2 instance to have outbound internet access. We will provide this securely via a NAT Gateway.*
+1. **Internet Gateway (IGW)**:
+   - Go to **Internet Gateways** → **Create internet gateway**. Name it `prod-igw`.
+   - Select it → **Actions** → **Attach to VPC** → select `prod-vpc`.
+2. **Public Route Table**:
+   - Go to **Route Tables** → **Create route table**. Name it `prod-public-rt`, select `prod-vpc`.
+   - Select `prod-public-rt` → **Routes** tab → **Edit routes** → Add `0.0.0.0/0` targeting `Internet Gateway` (`prod-igw`).
+   - **Subnet associations** tab → **Edit subnet associations** → Select `prod-public-subnet` → **Save**.
+3. **NAT Gateway**:
+   - Go to **NAT Gateways** → **Create NAT gateway**.
+   - Name it `prod-nat`, select `prod-public-subnet`.
+   - Click **Allocate Elastic IP** and click **Create NAT gateway** (wait for it to become available).
+4. **Private Route Table**:
+   - Go to **Route Tables**. Find the default main route table for `prod-vpc` and rename it to `prod-private-rt`.
+   - Select it → **Routes** tab → **Edit routes** → Add `0.0.0.0/0` targeting `NAT Gateway` (`prod-nat`).
+   - *(Since this is the main route table, the private subnets are automatically associated with it).*
+
+#### C. Launch EC2 Instance with SSM Access
+1. **EC2 Console** → **Launch instance**
+2. **Name**: `db-client-ec2`
+3. **AMI**: Amazon Linux 2023
+4. **Network settings**:
+   - **VPC**: `prod-vpc`
+   - **Subnet**: Select one of the private subnets
+   - **Auto-assign public IP**: Disable
+5. **Advanced details** → **IAM instance profile**: Attach a role with the `AmazonSSMManagedInstanceCore` policy.
+6. Click **Launch instance**.
+
+#### C. Connect via SSM Session Manager
+1. In the **EC2 Console**, select the instance.
+2. Click **Connect** → choose the **Session Manager** tab.
+3. Click **Connect** to open a browser-based terminal.
+
 ### Step 1 — Create DB Subnet Group
 1. **RDS Console** → **Subnet groups** → **Create DB subnet group**
    - **Name**: `prod-db-subnet-group`
