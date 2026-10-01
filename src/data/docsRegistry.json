@@ -2428,6 +2428,12 @@
               "title": "04 — AgentCore Runtime From Prototype To Production",
               "file": "Chapter_04_AgentCore_Runtime_Prototype_to_Production.md",
               "sectionCount": 24
+            },
+            {
+              "id": "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools",
+              "title": "05 — AgentCore Gateway Connecting Agents To Tools",
+              "file": "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools.md",
+              "sectionCount": 19
             }
           ]
         }

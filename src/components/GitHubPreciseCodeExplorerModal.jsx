@@ -129,9 +129,9 @@ export function PreciseCodeExplorer({
   const rootRef = useRef(null);
   const keyId = useRef(Symbol('ghpx'));
   useEffect(() => {
-    if (keysActive) activeExplorer = keyId.current;
+    if (keysActive && files.length > 1) activeExplorer = keyId.current;
     return () => { if (activeExplorer === keyId.current) activeExplorer = null; };
-  }, [keysActive]);
+  }, [keysActive, files.length]);
   useEffect(() => {
     if (!keysActive || files.length < 2) return;
     const onKey = (e) => {

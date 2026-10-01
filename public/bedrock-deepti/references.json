@@ -190,6 +190,62 @@
         { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples" },
         { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-starter-toolkit" }
       ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-9": {
+      "refs": [
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "Lambda targets — the function and the tool schema",
+          "files": [
+            { "path": "lambda_weather_tool.py", "src": "/bedrock-deepti/code/lambda_weather_tool.py", "label": "Default Lambda", "highlights": [[8, 8], [10, 18]], "note": "The toolkit's generated test Lambda — the Gateway passes which tool was invoked via client_context.bedrockAgentCoreToolName." },
+            { "path": "lambda_function_code.py", "src": "/bedrock-deepti/code/lambda_function_code.py", "label": "Your Lambda", "highlights": [[7, 13], [15, 18]], "note": "Bring-your-own Lambda from the workshop samples — strips the {TargetName}___ prefix. Ships as lambda_function_code.zip." },
+            { "path": "gateway_lambda_target.py", "src": "/bedrock-deepti/code/gateway_lambda_target.py", "label": "Target Payload", "highlights": [[5, 7], [10, 36]], "note": "lambdaArn + toolSchema — Gateway does the MCP→Lambda schema conversion." }
+          ]
+        }
+      ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-10": {
+      "refs": [
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "OpenAPI target — NASA Mars API via boto3",
+          "files": [
+            { "path": "gateway_boto3_openapi.py", "src": "/bedrock-deepti/code/gateway_boto3_openapi.py", "label": "boto3 OpenAPI Target", "highlights": [[17, 20], [29, 37], [43, 56], [58, 65]], "note": "create_api_key_credential_provider → openApiSchema S3 URI → API_KEY credential config → create_gateway_target." }
+          ]
+        }
+      ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-13": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-starter-toolkit", "title": "bedrock-agentcore-starter-toolkit — the GatewayClient used in the demo" },
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "Starter toolkit — authorizer, gateway and Lambda target",
+          "files": [
+            { "path": "gateway_starter_toolkit.py", "src": "/bedrock-deepti/code/gateway_starter_toolkit.py", "label": "Toolkit Setup", "highlights": [[12, 13], [18, 19], [24, 28], [35, 39]], "note": "Extracted from the workshop notebooks (06-workshops/02-AgentCore-gateway)." }
+          ]
+        }
+      ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-17": {
+      "refs": [
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "Data plane — a Strands agent calling the Gateway",
+          "files": [
+            { "path": "gateway_mcp_client.py", "src": "/bedrock-deepti/code/gateway_mcp_client.py", "label": "MCP Client + Agent", "highlights": [[11, 15], [18, 29], [40, 48], [52, 55]], "note": "streamablehttp_client + Bearer token → MCPClient → tools/list → a normal Strands Agent. Just MCP + OAuth on the data plane." }
+          ]
+        },
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/06-workshops/02-AgentCore-gateway", "title": "Gateway workshop — Lambda/OpenAPI/Smithy notebooks and specs" }
+      ]
     }
   }
 }
