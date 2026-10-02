@@ -348,6 +348,21 @@
               "sectionCount": 8
             }
           ]
+        },
+        {
+          "id": "nishant-notes",
+          "title": "Nishant's Notes",
+          "icon": "✍️",
+          "description": "Personal working notes — drop any .md into doc_nishant_notes/.",
+          "contentBase": "/nishant-notes/",
+          "chapters": [
+            {
+              "id": "welcome",
+              "title": "Welcome",
+              "file": "welcome.md",
+              "sectionCount": 1
+            }
+          ]
         }
       ]
     },
