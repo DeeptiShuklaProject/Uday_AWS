@@ -18,6 +18,11 @@
  *   doc_kubernetes/                → kubernetes     (chapters/Level-*.md)
  *   doc_bedrock_production/        → bedrock-deepti (Bedrock to Production)
  *   doc_strands_agents/ + doc_agentcore_* dirs  → the video-notes courses
+ *   doc_agentcore_playlist/        → agentcore-playlist (series intro + summary)
+ *
+ * Categories marked `hidden` mirror their content but emit no landing card —
+ * the 12-episode AWS Show & Tell playlist is merged into the composite
+ * 'aws-agentcore' category (one card, one section per episode).
  *
  * Run: node scripts/convert-docs.mjs
  * ============================================================
@@ -273,53 +278,62 @@ const CATS = [
   { id: 'bedrock-to-production',    title: 'Bedrock to Production', icon: '🚀', dir: 'bedrock-deepti', src: path.join(ROOT, 'doc_bedrock_production'), discover: discoverDeepti,
     subtitle: 'Amazon Bedrock production course — GenAI foundations to AgentCore' },
   // Strands Agents — authored in-repo (video notes course; source of truth is doc_strands_agents/).
-  { id: 'strands-agents',           title: 'Strands Agents',        icon: '🧬', dir: 'strands-agents', src: path.join(ROOT, 'doc_strands_agents'), discover: (s, b) => discoverFlat(s, b, {
+  // hidden: content still mirrors to public/, but the landing card is merged into the
+  // composite 'aws-agentcore' playlist category assembled below.
+  { id: 'strands-agents',           title: 'Strands Agents',        icon: '🧬', dir: 'strands-agents', hidden: true, src: path.join(ROOT, 'doc_strands_agents'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '🧬',
     description: 'Interactive chapter-by-chapter notes for the AWS Show & Tell Strands Agents episode.' }),
     subtitle: 'Build your first agentic AI app — Strands Agents SDK, tools, MCP and multi-agent orchestration' },
 
   // AgentCore Production Agent — authored in-repo (video notes course; source of truth is doc_agentcore_production_agent/).
-  { id: 'agentcore-production-agent', title: 'AgentCore — Production-Ready Agents', icon: '🛡️', dir: 'agentcore-production-agent', src: path.join(ROOT, 'doc_agentcore_production_agent'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-production-agent', title: 'AgentCore — Production-Ready Agents', icon: '🛡️', dir: 'agentcore-production-agent', hidden: true, src: path.join(ROOT, 'doc_agentcore_production_agent'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '🛡️',
     description: 'Interactive chapter-by-chapter notes for the AWS Show & Tell Bedrock AgentCore episode.' }),
     subtitle: 'Build your first production-ready AI agent — Runtime, Gateway, Memory, Identity and Observability' },
 
   // AgentCore playlist courses (eps 05–12) — authored in-repo; source of truth is each doc_*/ dir.
-  { id: 'agentcore-security',    title: 'AgentCore — Secure Agent Workflows', icon: '🔐', dir: 'agentcore-security', src: path.join(ROOT, 'doc_agentcore_security'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-security',    title: 'AgentCore — Secure Agent Workflows', icon: '🔐', dir: 'agentcore-security', hidden: true, src: path.join(ROOT, 'doc_agentcore_security'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '🔐',
     description: 'Identity model, credential providers, OAuth and Gateway+Identity — from the AWS Show & Tell episode.' }),
     subtitle: 'Secure your agent workflows — inbound/outbound identity, token vault, OAuth, Gateway auth' },
-  { id: 'agentcore-tools',       title: 'AgentCore — Built-in Tools', icon: '🧰', dir: 'agentcore-tools', src: path.join(ROOT, 'doc_agentcore_tools'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-tools',       title: 'AgentCore — Built-in Tools', icon: '🧰', dir: 'agentcore-tools', hidden: true, src: path.join(ROOT, 'doc_agentcore_tools'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '🧰',
     description: 'Browser Tool and Code Interpreter — managed first-party tools for agents.' }),
     subtitle: 'Browser Tool + Code Interpreter — managed headless Chromium and sandboxed Python' },
-  { id: 'agentcore-memory',      title: 'AgentCore — Memory Deep Dive', icon: '🧠', dir: 'agentcore-memory', src: path.join(ROOT, 'doc_agentcore_memory'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-memory',      title: 'AgentCore — Memory Deep Dive', icon: '🧠', dir: 'agentcore-memory', hidden: true, src: path.join(ROOT, 'doc_agentcore_memory'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '🧠',
     description: 'Short-term vs long-term memory, strategies, namespaces, hooks and the memory browser.' }),
     subtitle: 'AgentCore Memory — STM vs LTM, extraction strategies, namespaces and hooks' },
-  { id: 'agentcore-prod-deploy', title: 'AgentCore — Prototype to Production', icon: '🏭', dir: 'agentcore-prod-deploy', src: path.join(ROOT, 'doc_agentcore_prod_deploy'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-prod-deploy', title: 'AgentCore — Prototype to Production', icon: '🏭', dir: 'agentcore-prod-deploy', hidden: true, src: path.join(ROOT, 'doc_agentcore_prod_deploy'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '🏭',
     description: 'The full deployment lifecycle — CodeBuild→ECR→Runtime, MCP servers on Runtime, end-to-end.' }),
     subtitle: 'Move agents from prototype to production — CI/CD pipeline, MCP on Runtime, full walkthrough' },
-  { id: 'agentcore-observability', title: 'AgentCore — Observability', icon: '📡', dir: 'agentcore-observability', src: path.join(ROOT, 'doc_agentcore_observability'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-observability', title: 'AgentCore — Observability', icon: '📡', dir: 'agentcore-observability', hidden: true, src: path.join(ROOT, 'doc_agentcore_observability'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '📡',
     description: 'OpenTelemetry spans and traces, CloudWatch GenAI dashboards, third-party APM export.' }),
     subtitle: 'Observability — OTel traces, CloudWatch GenAI dashboard, third-party APM' },
-  { id: 'agentcore-evaluations', title: 'AgentCore — Evaluations', icon: '✅', dir: 'agentcore-evaluations', src: path.join(ROOT, 'doc_agentcore_evaluations'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-evaluations', title: 'AgentCore — Evaluations', icon: '✅', dir: 'agentcore-evaluations', hidden: true, src: path.join(ROOT, 'doc_agentcore_evaluations'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '✅',
     description: 'Evaluation dimensions, on-demand vs continuous evals, judges and score dashboards.' }),
     subtitle: 'Agent evaluations — correctness, faithfulness, judges, dashboards' },
-  { id: 'agentcore-tool-controls', title: 'AgentCore — Policy & Tool Controls', icon: '🌲', dir: 'agentcore-tool-controls', src: path.join(ROOT, 'doc_agentcore_tool_controls'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-tool-controls', title: 'AgentCore — Policy & Tool Controls', icon: '🌲', dir: 'agentcore-tool-controls', hidden: true, src: path.join(ROOT, 'doc_agentcore_tool_controls'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '🌲',
     description: 'Cedar policies on Gateway — argument-level authorization for agent tool calls.' }),
     subtitle: 'Control agent↔tool interactions — Cedar policies, argument-level authz, audit' },
-  { id: 'agentcore-episodic-memory', title: 'AgentCore — Episodic Memory', icon: '📓', dir: 'agentcore-episodic-memory', src: path.join(ROOT, 'doc_agentcore_episodic_memory'), discover: (s, b) => discoverFlat(s, b, {
+  { id: 'agentcore-episodic-memory', title: 'AgentCore — Episodic Memory', icon: '📓', dir: 'agentcore-episodic-memory', hidden: true, src: path.join(ROOT, 'doc_agentcore_episodic_memory'), discover: (s, b) => discoverFlat(s, b, {
     id: 'core-chapters', title: 'Core Chapters', icon: '📓',
     description: 'Episodes, reflections and feedback — agents that learn from experience.' }),
     subtitle: 'Episodic memory — episodes, reflections, feedback loops, namespaces' },
+  // Playlist-level framing docs (intro map + summary notes) — hidden source, its
+  // chapters are surfaced inside the composite 'aws-agentcore' category below.
+  { id: 'agentcore-playlist', title: 'AWS AgentCore — Series Framing', icon: '☁️', dir: 'agentcore-playlist', hidden: true, src: path.join(ROOT, 'doc_agentcore_playlist'), discover: (s, b) => discoverFlat(s, b, {
+    id: 'framing', title: 'Series Framing', icon: '☁️',
+    description: 'Series map and summary notes for the AWS Show & Tell AgentCore playlist.' }),
+    subtitle: 'Intro + summary framing for the AgentCore playlist course' },
 ];
 
 const registry = { categories: [] };
+const discovered = {};   // cat.id -> discovered courses (for composite assembly)
 for (const cat of CATS) {
   if (!existsSync(cat.src)) {
     console.warn(`⚠️  ${cat.id}: source not found — ${cat.src}`);
@@ -329,12 +343,83 @@ for (const cat of CATS) {
   const base = `/${dir}/`;
   const courses = cat.discover(cat.src, base);
   mirrorDocs(cat.src, path.join(ROOT, 'public', dir));
-  registry.categories.push({
-    id: cat.id, title: cat.title, icon: cat.icon,
-    subtitle: cat.subtitle, contentBase: base, courses,
-  });
+  discovered[cat.id] = { base, courses };
+  if (!cat.hidden) {
+    registry.categories.push({
+      id: cat.id, title: cat.title, icon: cat.icon,
+      subtitle: cat.subtitle, contentBase: base, courses,
+    });
+  }
   const n = courses.reduce((a, c) => a + c.chapters.length, 0);
-  console.log(`✅ ${cat.id}: ${courses.length} courses, ${n} chapters`);
+  console.log(`✅ ${cat.id}: ${courses.length} courses, ${n} chapters${cat.hidden ? ' (merged into aws-agentcore)' : ''}`);
+}
+
+/* ───────────── AWS AgentCore — Complete Series (composite category) ─────────────
+ * One landing card for the whole 12-episode AWS Show & Tell playlist. Each
+ * sidebar section is one episode; chapters are reused in place — every section
+ * carries its own contentBase pointing at the episode's public/ dir, so no
+ * chapter files are duplicated. "from" pulls a hidden cat's discovered chapters;
+ * "files" cherry-picks specific chapter files from a dir (used to lift the
+ * Runtime/Gateway episodes out of bedrock-deepti and the framing chapters out
+ * of agentcore-playlist).
+ */
+const allChaptersOf = catId => (discovered[catId]?.courses || []).flatMap(c => c.chapters);
+const fileChapters = (catId, files) => {
+  const chapters = allChaptersOf(catId);
+  return files.map(f => chapters.find(c => c.file === f || c.file.endsWith(`/${f}`)))
+    .filter(Boolean);
+};
+
+const PLAYLIST_SECTIONS = [
+  { id: 'introduction',               title: 'Introduction & Series Map',              icon: '🧭', from: 'agentcore-playlist',          files: ['Chapter_00_Welcome_and_Series_Map.md'],
+    description: 'Welcome — the 12-episode map, the AgentCore pillars and learning paths.' },
+  { id: 'ep01-production-agent',      title: 'EP 01 — Production-Ready AI Agent',      icon: '🛡️', from: 'agentcore-production-agent',
+    description: 'The prototype→production gap and a tour of every AgentCore pillar.' },
+  { id: 'ep02-strands-agents',        title: 'EP 02 — Build an Agentic App (Strands)', icon: '🧬', from: 'strands-agents',
+    description: 'Strands Agents SDK, tools, MCP wiring and multi-agent orchestration.' },
+  { id: 'ep03-runtime-deep-dive',     title: 'EP 03 — Runtime Deep Dive',              icon: '🚀', from: 'bedrock-to-production',    files: ['Chapter_04_AgentCore_Runtime_Prototype_to_Production.md'],
+    description: 'agentcore configure/launch/invoke, session isolation, streaming, MCP on Runtime.' },
+  { id: 'ep04-gateway-deep-dive',     title: 'EP 04 — Gateway Deep Dive',              icon: '🌉', from: 'bedrock-to-production',    files: ['Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools.md'],
+    description: 'Lambdas and OpenAPI services as MCP tools — auth, tool search, live wiring.' },
+  { id: 'ep05-secure-workflows',      title: 'EP 05 — Secure Agent Workflows',         icon: '🔐', from: 'agentcore-security',
+    description: 'Inbound vs outbound identity, token vault, OAuth credential providers.' },
+  { id: 'ep06-built-in-tools',        title: 'EP 06 — Built-in Tools',                 icon: '🧰', from: 'agentcore-tools',
+    description: 'Managed Browser Tool (headless Chromium/CDP) and sandboxed Code Interpreter.' },
+  { id: 'ep07-memory-deep-dive',      title: 'EP 07 — Memory Deep Dive',               icon: '🧠', from: 'agentcore-memory',
+    description: 'Short-term vs long-term memory, strategies, namespaces and hooks.' },
+  { id: 'ep08-prototype-to-production', title: 'EP 08 — Prototype to Production',      icon: '🏭', from: 'agentcore-prod-deploy',
+    description: 'CI/CD for agents — CodeBuild→ECR→Runtime and the full deployment lifecycle.' },
+  { id: 'ep09-observability',         title: 'EP 09 — Observability',                  icon: '📡', from: 'agentcore-observability',
+    description: 'OpenTelemetry spans/traces, CloudWatch GenAI dashboard, third-party APM.' },
+  { id: 'ep10-evaluations',           title: 'EP 10 — Evaluations',                    icon: '✅', from: 'agentcore-evaluations',
+    description: 'Judges, on-demand vs continuous evaluation, score dashboards.' },
+  { id: 'ep11-tool-controls',         title: 'EP 11 — Policy & Tool Controls',         icon: '🌲', from: 'agentcore-tool-controls',
+    description: 'Cedar policies on Gateway — argument-level authorization and audit.' },
+  { id: 'ep12-episodic-memory',       title: 'EP 12 — Episodic Memory & Patterns',     icon: '📓', from: 'agentcore-episodic-memory',
+    description: 'Episodes, reflections and feedback loops — agents that learn from experience.' },
+  { id: 'summary-notes',              title: 'Summary Notes — Whole Series',           icon: '📝', from: 'agentcore-playlist',          files: ['Chapter_99_Summary_Notes.md'],
+    description: 'The entire playlist condensed — cheatsheet tables, commands, decision guide.' },
+];
+
+const playlistCourses = PLAYLIST_SECTIONS.map(sec => {
+  const src = discovered[sec.from];
+  if (!src) { console.warn(`⚠️  aws-agentcore: missing source category '${sec.from}'`); return null; }
+  const chapters = sec.files ? fileChapters(sec.from, sec.files) : allChaptersOf(sec.from);
+  if (!chapters.length) { console.warn(`⚠️  aws-agentcore: no chapters for '${sec.id}'`); return null; }
+  return {
+    id: sec.id, title: sec.title, icon: sec.icon,
+    description: sec.description, contentBase: src.base, chapters,
+  };
+}).filter(Boolean);
+
+if (playlistCourses.length) {
+  registry.categories.unshift({
+    id: 'aws-agentcore', title: 'AWS AgentCore — Complete Series', icon: '☁️',
+    subtitle: 'All 12 AWS Show & Tell episodes — Introduction, every episode, Summary Notes',
+    contentBase: '/agentcore-playlist/', courses: playlistCourses,
+  });
+  const n = playlistCourses.reduce((a, c) => a + c.chapters.length, 0);
+  console.log(`✅ aws-agentcore: ${playlistCourses.length} sections, ${n} chapters (composite)`);
 }
 
 writeFileSync(path.join(ROOT, 'src', 'data', 'docsRegistry.json'), JSON.stringify(registry, null, 2));

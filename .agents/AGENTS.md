@@ -6,6 +6,8 @@ This is a React + Vite rebuild of the AWS Production Masterclass course applicat
 - **This app**: React rebuild in `AWS_REACT` (branch: `AWS_REACT`)
 - **Architecture reference**: `.agents/ARCHITECTURE.md` (in-repo)
 
+> **HARD RULE — never use `wscs_bedrock`** (user directive): this repo is fully self-contained. Never read from, write to, reference, or depend on `C:\Users\nishu\workspace\wscs_bedrock` (or any `*wscs*` path). All course sources live in this repo's `doc_*` dirs; `convert-docs.mjs` has zero external paths. Any lingering `wscs` strings in old docs (README/PLAN/ARCHITECTURE) are stale text — ignore them.
+
 ## Strict 1000% Component Reusability Rule
 
 Whenever building or modifying UI components:
@@ -57,19 +59,21 @@ Markdown-driven courses rendered by the shared lesson engine (`moduleParser.js` 
 
 | Course id | Title | Source dir (in-repo) | Public dir | Route |
 |---|---|---|---|---|
+| `aws-agentcore` | **AWS AgentCore — Complete Series** (composite, 14 sections / 36 ch) | assembled in `convert-docs.mjs` `PLAYLIST_SECTIONS` | reuses all dirs below | `/courses/aws-agentcore/<sectionId>/<ch>` |
+| `agentcore-playlist` | Series framing (intro map + summary notes) — hidden, feeds `aws-agentcore` | `doc_agentcore_playlist/` | `public/agentcore-playlist/` | sections `introduction` + `summary-notes` |
 | `bedrock-to-production` | Bedrock to Production | `doc_bedrock_production/` | `public/bedrock-deepti/` | `/courses/bedrock-to-production/core-chapters/<ch>` |
-| `strands-agents` | Strands Agents | `doc_strands_agents/` | `public/strands-agents/` | `/courses/strands-agents/core-chapters/<ch>` |
-| `agentcore-production-agent` | AgentCore — Production-Ready Agents | `doc_agentcore_production_agent/` | `public/agentcore-production-agent/` | `/courses/agentcore-production-agent/core-chapters/<ch>` |
-| `agentcore-security` | AgentCore — Secure Agent Workflows | `doc_agentcore_security/` | `public/agentcore-security/` | ep 05 `wv2doVDF7KQ` |
-| `agentcore-tools` | AgentCore — Built-in Tools | `doc_agentcore_tools/` | `public/agentcore-tools/` | ep 06 `z3lAJ-Nf_lk` |
-| `agentcore-memory` | AgentCore — Memory Deep Dive | `doc_agentcore_memory/` | `public/agentcore-memory/` | ep 07 `-N4v6-kJgwA` |
-| `agentcore-prod-deploy` | AgentCore — Prototype to Production | `doc_agentcore_prod_deploy/` | `public/agentcore-prod-deploy/` | ep 08 `WyGK8UcAxKo` |
-| `agentcore-observability` | AgentCore — Observability | `doc_agentcore_observability/` | `public/agentcore-observability/` | ep 09 `wWQgawUPr1k` |
-| `agentcore-evaluations` | AgentCore — Evaluations | `doc_agentcore_evaluations/` | `public/agentcore-evaluations/` | ep 10 `i0h7xA8cqYs` |
-| `agentcore-tool-controls` | AgentCore — Policy & Tool Controls | `doc_agentcore_tool_controls/` | `public/agentcore-tool-controls/` | ep 11 `q_9htaugcgI` |
-| `agentcore-episodic-memory` | AgentCore — Episodic Memory | `doc_agentcore_episodic_memory/` | `public/agentcore-episodic-memory/` | ep 12 `1EEIGsKIjGA` |
+| `strands-agents` *(hidden)* | Strands Agents → `aws-agentcore` ep02 | `doc_strands_agents/` | `public/strands-agents/` | `/courses/aws-agentcore/ep02-strands-agents/<ch>` |
+| `agentcore-production-agent` *(hidden)* | Production-Ready Agents → `aws-agentcore` ep01 | `doc_agentcore_production_agent/` | `public/agentcore-production-agent/` | `/courses/aws-agentcore/ep01-production-agent/<ch>` |
+| `agentcore-security` *(hidden)* | ep 05 `wv2doVDF7KQ` | `doc_agentcore_security/` | `public/agentcore-security/` | `…/ep05-secure-workflows/<ch>` |
+| `agentcore-tools` *(hidden)* | ep 06 `z3lAJ-Nf_lk` | `doc_agentcore_tools/` | `public/agentcore-tools/` | `…/ep06-built-in-tools/<ch>` |
+| `agentcore-memory` *(hidden)* | ep 07 `-N4v6-kJgwA` | `doc_agentcore_memory/` | `public/agentcore-memory/` | `…/ep07-memory-deep-dive/<ch>` |
+| `agentcore-prod-deploy` *(hidden)* | ep 08 `WyGK8UcAxKo` | `doc_agentcore_prod_deploy/` | `public/agentcore-prod-deploy/` | `…/ep08-prototype-to-production/<ch>` |
+| `agentcore-observability` *(hidden)* | ep 09 `wWQgawUPr1k` | `doc_agentcore_observability/` | `public/agentcore-observability/` | `…/ep09-observability/<ch>` |
+| `agentcore-evaluations` *(hidden)* | ep 10 `i0h7xA8cqYs` | `doc_agentcore_evaluations/` | `public/agentcore-evaluations/` | `…/ep10-evaluations/<ch>` |
+| `agentcore-tool-controls` *(hidden)* | ep 11 `q_9htaugcgI` | `doc_agentcore_tool_controls/` | `public/agentcore-tool-controls/` | `…/ep11-tool-controls/<ch>` |
+| `agentcore-episodic-memory` *(hidden)* | ep 12 `1EEIGsKIjGA` | `doc_agentcore_episodic_memory/` | `public/agentcore-episodic-memory/` | `…/ep12-episodic-memory/<ch>` |
 
-- All course routes follow `/courses/<courseId>/core-chapters/<chapterId>`; every AgentCore course maps to a playlist video ID shown at right.
+- **Composite playlist course**: `aws-agentcore` is assembled in `convert-docs.mjs` (`PLAYLIST_SECTIONS`) — one landing card whose sidebar sections are `Introduction → EP 01…EP 12 → Summary Notes`. Each section keeps its own `contentBase`, so chapters are **reused in place** (no file duplication). ep03/ep04 sections cherry-pick `bedrock-deepti` Ch04/Ch05. Categories flagged `hidden` still mirror to `public/` but emit no landing card — their content only surfaces via `aws-agentcore`.
 - bedrock-to-production route id vs on-disk dir differ (`bedrock-deepti`); `convert-docs.mjs` `dir` override decouples them.
 - Other categories are also fully in-repo: `doc_linux/`, `doc_docker/`, `doc_python_devops/`, `doc_kubernetes/` — `convert-docs.mjs` has **no external source dependencies**.
 - Course source assets stage per-video under `.course-src/<youtubeId>/` (gitignored) — transcript.txt, video.mp4, frames/, repo_ref/. Playlist transcripts also live in `doc_uday_bedrock_notes/aws_employee_video_playlist/transcripts/NN_*.txt` with summaries/questions/examples alongside.

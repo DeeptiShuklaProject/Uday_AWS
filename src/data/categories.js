@@ -13,6 +13,7 @@ import docsRegistry from './docsRegistry.json';
 
 const CAT_COLORS = {
   aws:                { color: '#f59e0b', colorBg: '#fef3c7' },
+  'aws-agentcore':    { color: '#2563eb', colorBg: '#dbeafe' },
   bedrock:            { color: '#8b5cf6', colorBg: '#f5f3ff' },
   linux:              { color: '#0ea5e9', colorBg: '#e0f2fe' },
   docker:             { color: '#0284c7', colorBg: '#e0f2fe' },
