@@ -330,6 +330,17 @@ const CATS = [
     id: 'framing', title: 'Series Framing', icon: '☁️',
     description: 'Series map and summary notes for the AWS Show & Tell AgentCore playlist.' }),
     subtitle: 'Intro + summary framing for the AgentCore playlist course' },
+  // Nishant's personal notes — hidden source surfaced as the last section of
+  // 'aws-agentcore'. Accepts ANY .md file (except README) so notes can be
+  // dropped in freely without renaming; each file becomes a chapter.
+  { id: 'nishant-notes-src', title: "Nishant's Notes", icon: '✍️', dir: 'nishant-notes', hidden: true, src: path.join(ROOT, 'doc_nishant_notes'), discover: (s, b) => {
+    const chapters = existsSync(s)
+      ? readdirSync(s).filter(f => /\.md$/i.test(f) && !/^readme/i.test(f)).sort()
+          .map(f => chapterEntry(s, f, f))
+      : [];
+    return chapters.length ? [{ id: 'notes', title: "Nishant's Notes", icon: '✍️',
+      description: 'Personal working notes.', contentBase: b, chapters }] : [];
+  }, subtitle: 'Personal notes — drop any .md into doc_nishant_notes/' },
 ];
 
 const registry = { categories: [] };
@@ -399,6 +410,10 @@ const PLAYLIST_SECTIONS = [
     description: 'Episodes, reflections and feedback loops — agents that learn from experience.' },
   { id: 'summary-notes',              title: 'Summary Notes — Whole Series',           icon: '📝', from: 'agentcore-playlist',          files: ['Chapter_99_Summary_Notes.md'],
     description: 'The entire playlist condensed — cheatsheet tables, commands, decision guide.' },
+  // Nishant's notes — auto-discovers every .md in doc_nishant_notes/ (any name).
+  // Section only appears once at least one note file exists.
+  { id: 'nishant-notes',              title: "Nishant's Notes",                        icon: '✍️', from: 'nishant-notes-src',
+    description: 'Personal working notes — drop any .md into doc_nishant_notes/.' },
 ];
 
 const playlistCourses = PLAYLIST_SECTIONS.map(sec => {
