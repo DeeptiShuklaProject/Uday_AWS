@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "comment": "AgentCore Built-in Tools course — concept → source references.",
+  "concepts": {
+    "Chapter_01_Browser_Tool#1-2": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/built-in-tools.html", "title": "AgentCore built-in tools — official developer guide" },
+        { "kind": "file", "repo": "aws/bedrock-agentcore-sdk-python", "path": "src/bedrock_agentcore/tools/browser_client.py", "title": "BrowserClient — SDK wrapper over Browser sessions" }
+      ]
+    },
+    "Chapter_01_Browser_Tool#1-4": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/05-tools", "title": "agentcore-samples — Browser tool examples incl. QA automation" },
+        { "kind": "repo", "url": "https://github.com/aws/nova-act", "title": "aws/nova-act — the browser-automation library used in the demo" }
+      ]
+    },
+    "Chapter_02_Code_Interpreter#2-3": {
+      "refs": [
+        { "kind": "file", "repo": "aws/bedrock-agentcore-sdk-python", "path": "src/bedrock_agentcore/tools/code_interpreter_client.py", "title": "CodeInterpreterClient — start session, writeFiles, executeCode" }
+      ]
+    },
+    "Chapter_02_Code_Interpreter#2-4": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/05-tools", "title": "agentcore-samples — Code Interpreter data-analysis examples" }
+      ]
+    }
+  }
+}

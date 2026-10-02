@@ -4,10 +4,15 @@ Samples every SAMPLE_SEC seconds, detects large frame differences
 (slide/code/screen changes), and saves a settled frame ~SETTLE_SEC
 after each change. Output: frames/NNNN_tMMSS.png
 """
-import cv2, os, sys
+import cv2, os, sys, argparse
 
-VID = 'strands_agentic_app/strands_video.mp4'
-OUT = 'strands_agentic_app/frames'
+ap = argparse.ArgumentParser()
+ap.add_argument('--video', default='strands_agentic_app/strands_video.mp4')
+ap.add_argument('--out', default='strands_agentic_app/frames')
+args = ap.parse_args()
+
+VID = args.video
+OUT = args.out
 SAMPLE_SEC = 2.0
 SETTLE_SEC = 2.5
 DIFF_THRESH = 12.0      # mean abs diff on downscaled gray (0-255)

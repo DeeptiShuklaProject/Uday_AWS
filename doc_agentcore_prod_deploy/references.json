@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "comment": "AgentCore Production Deploy course — concept → source references.",
+  "concepts": {
+    "Chapter_01_Production_Lifecycle#1-1": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/aws/agentcore-cli", "title": "aws/agentcore-cli — configure/launch/invoke deploy toolchain" },
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples", "title": "awslabs/agentcore-samples — the customer-support reference app" }
+      ]
+    },
+    "Chapter_02_MCP_on_Runtime#2-2": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/02-host-your-agent", "title": "agentcore-samples — hosting MCP servers on Runtime examples" },
+        { "kind": "url", "url": "https://modelcontextprotocol.io/", "title": "Model Context Protocol — the spec Runtime serves" }
+      ]
+    },
+    "Chapter_03_End_to_End_Walkthrough#3-4": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/", "title": "Amazon Bedrock AgentCore — developer guide" }
+      ]
+    }
+  }
+}

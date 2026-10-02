@@ -1,0 +1,1497 @@
+Title: 11_control_agent_to_tool_interactions
+Video URL: https://www.youtube.com/watch?v=q_9htaugcgI
+============================================================
+
+[00:32] Hello all, welcome to another episode of
+[00:33] AWS show and tell. I am Anil Nadimi
+[00:36] joining from New Jersey today and uh
+[00:38] joining along with me is Barati. In
+[00:41] today's episode, we're going to uh go
+[00:43] into some details. We're going to do a
+[00:44] deep dive on why we need policies for uh
+[00:48] uh you know on agentic uh evaluations
+[00:51] and how we can get there. Right? So but
+[00:53] before we go into the details let's uh
+[00:55] also do some introductions. Barati you
+[00:56] want to introduce yourself?
+[00:58] >> Hi uh yeah thanks uh Anna I'm so happy
+[01:01] to be here. I'm Barati. I'm a geni data
+[01:04] scientist in AWS. I've been specializing
+[01:07] in responsible AI and large language
+[01:10] models for various agentic applications
+[01:12] across enterprises. I'm really happy to
+[01:15] be here and talk about building new
+[01:17] governance safeguards using policy in
+[01:19] Amazon bedrock agent core.
+[01:20] >> Excellent. Barati, where are you joining
+[01:22] from today?
+[01:23] >> Oh, I am from Seattle and um believe it
+[01:26] or not, it's actually sunny today. So, I
+[01:28] I guess it's a wonderful day.
+[01:29] >> Excellent. Right. So, we are actually
+[01:31] under a a heap of snow here in New
+[01:34] Jersey. So, digging our way outside. Um
+[01:37] but that's uh us here. Let us know in
+[01:39] the chat where you folks are joining
+[01:41] from and uh uh let's uh take this away.
+[01:44] Right. So in this uh deep dive series,
+[01:46] we've already uh discussed how to bring
+[01:48] your uh PC's into uh you know
+[01:52] production. We've discussed about the
+[01:53] frameworks strands frameworks also being
+[01:56] able to host your uh agents in runtime
+[01:59] agent core runtime. Uh making the
+[02:02] services like agent core memory
+[02:03] available to store your conversational
+[02:05] history, extract summaries out of
+[02:07] conversations. uh also shown you how you
+[02:10] can create MCPs using agent core MCP
+[02:13] gateway uh but in today's conversation
+[02:15] we want to focus more on uh how you can
+[02:19] also enforce certain actions with your
+[02:22] uh agentic invocations right because
+[02:24] agents are doing these tool calling and
+[02:26] uh you want to ensure that there are
+[02:28] safeguards in place and uh enforcement
+[02:30] actions that you can also take. So
+[02:32] Barati is going to dive uh deep today to
+[02:35] understand uh and help you understand
+[02:37] like more about this right. So Barati
+[02:39] what what's all of this uh uh about this
+[02:42] policy and policy engine right so can
+[02:44] you talk about that
+[02:45] >> yeah um I know you already set a
+[02:48] wonderful stage to be able to talk about
+[02:49] this right so we have AI agents which
+[02:52] are proliferous across enterprises and
+[02:54] we've all been experimenting with it um
+[02:56] and typically these agents are also
+[02:58] calling hundreds of tools on behalf of
+[03:01] your behalf of you a real user or even
+[03:04] other systems and the cost of getting um
+[03:07] access and authoriz ization wrong
+[03:09] whether it's through overly permissive
+[03:11] access or slow decisions or
+[03:13] hallucinations or even brittle ad hoc
+[03:16] checks all of this becomes unacceptable.
+[03:18] So the focus is on how you can bring in
+[03:22] centralized and deterministic safeguards
+[03:24] on controlling what agents can do um
+[03:28] when they're connected to all these
+[03:29] tools like MCP savas and other agents
+[03:32] for instance. So we want to basically
+[03:34] have something that would align the
+[03:36] security architecture and performance
+[03:38] and be able to design and prove that a
+[03:41] PC can meet not just your cost and
+[03:43] latency goals but it should not
+[03:45] sacrifice the control you want to have
+[03:46] on your agent.
+[03:47] >> That's that's great right. So for
+[03:49] example, if we want to have uh agents
+[03:51] that are doing some operations on behalf
+[03:53] of us, right? So and they are making
+[03:55] those tool calls, you want to have those
+[03:57] safeguards in place and uh ensure that
+[04:00] they can only do certain operations in a
+[04:01] certain way, right? So we're going to
+[04:03] dive deep into that. At this point,
+[04:04] we're just setting the stage here for
+[04:06] you folks uh to get you to know more
+[04:08] about this. Uh now Bari, let's take an
+[04:11] example here and maybe a use case
+[04:13] example on what uh would be most
+[04:15] applicable, where this would be most
+[04:17] applicable. Mhm. So think about maybe um
+[04:20] enterprise application like a healthcare
+[04:23] agent for instance and it's connected
+[04:25] perhaps it's a very simple agent. It can
+[04:27] just help you book for example
+[04:28] appointments with your uh uh doctor
+[04:32] right and now when I'm trying to access
+[04:34] this agent first I'm going to
+[04:35] authenticate myself that this is who I
+[04:38] am this is probably what uh on the back
+[04:41] end they're going to authenticate myself
+[04:42] as um exactly what patient I am with
+[04:45] some ID and so on. Now I should have
+[04:48] access to modify appointments that have
+[04:51] been only made for myself. I should not
+[04:53] have access to any systems which are
+[04:56] connect which have other patient data or
+[04:58] the ability to modify someone else's
+[05:00] appointments. However, when we have
+[05:02] these kind of agents which are connected
+[05:04] to these wide variety of tools, they
+[05:06] without the right control and
+[05:08] boundaries, they can start taking unsafe
+[05:10] actions. Now, it can show up in a couple
+[05:12] of ways, right? um take unpredictable
+[05:15] runtime behavior for instance. So even
+[05:17] if the agents are very carefully
+[05:19] designed now the decisions they take at
+[05:22] runtime actually depend on the evolving
+[05:24] and the tool responses. So the LLM the
+[05:26] large language model underlying the
+[05:28] agent is actively listening to the
+[05:30] information it gets about the user as
+[05:34] well as what responses it's getting back
+[05:36] from the tools themselves. which means
+[05:38] there's also a variety of possible
+[05:39] attacks for adversaries in terms of the
+[05:42] inputs they can manipulate which get to
+[05:44] the LLM itself. Now this is not
+[05:47] something you can fully predict ahead of
+[05:49] time.
+[05:51] >> So uh and maybe if we take an example of
+[05:54] maybe a case use case where there is
+[05:56] monetary action involved like a refund
+[05:57] policies, right? So the agent should be
+[05:59] able to do refunds until maybe uh maybe
+[06:03] $25 or $50. But then after that you you
+[06:06] need to enforce some kind of policy
+[06:08] action that you know the agent should
+[06:09] not be able to do refunds, right? So
+[06:11] maybe to uh prevent any fraud or any of
+[06:14] those actions from happening or maybe
+[06:15] you need a human in the loop to look at
+[06:17] this more carefully to uh you know to
+[06:19] allow that action to take place.
+[06:21] >> Mhm. That is a great example. Right. For
+[06:24] example, they shouldn't miss like LLMs
+[06:27] can misinterpret business rules. So you
+[06:29] can even in a in the system prompt to a
+[06:32] large language model tell it that do not
+[06:34] process refunds above a certain amount
+[06:36] because this could violate your internal
+[06:38] policy like approving a transaction that
+[06:41] should uh that can meet the users
+[06:43] criteria but it's not the business
+[06:45] policy. Right? So your agent you can
+[06:47] instruct in the system prompt tell the
+[06:48] agent be helpful to your users and in
+[06:51] the same system prompt you can tell it
+[06:52] do not refund above I don't know $5,000.
+[06:55] Now which part of the instruction in the
+[06:58] system prompt is your LLM going to
+[06:59] listen to. Is it going to be the be
+[07:01] helpful part which in this case the user
+[07:03] is actually asking for a refund. So if
+[07:05] it's being helpful it should actually
+[07:06] process all refunds. Right? So this is
+[07:09] also a good reason why you shouldn't put
+[07:10] these kind of business rules internal
+[07:13] policies into a system prompt itself
+[07:15] because the LLM you don't want to give a
+[07:17] choice to the LLM whether to obey this
+[07:19] rule or not.
+[07:21] >> Exactly. Right. So uh exactly and then
+[07:23] people you know again it could be a
+[07:25] misinterpreted misinterpreted action or
+[07:27] maybe bad actors that are trying to play
+[07:29] around the system prompt uh to be
+[07:31] exploit that right. So you need to have
+[07:33] more uh enforcement actions in control
+[07:36] and uh that's why we are talking about
+[07:38] uh this new uh offering here. So let's
+[07:41] talk about that right. So agent uh
+[07:43] policy in agent core.
+[07:45] >> Yeah absolutely. So the TLDDR really is
+[07:48] how do we give agents the freedom to act
+[07:51] without letting them cross these
+[07:53] boundaries that you didn't in intend
+[07:55] intend for them. Right? So this is our
+[07:57] whole premise and vision for policy in
+[08:00] Amazon bedrock agent core. We want to
+[08:02] help enforce deterministic boundaries
+[08:05] over the actions that agents can take.
+[08:08] Um let's actually look at this with a
+[08:11] deeper example of understand agents from
+[08:14] scratch, how they're typically behaving
+[08:16] and then how policy is going to help you
+[08:17] with it. Now let's just start with this
+[08:20] um blind agent. It can be any particular
+[08:23] use case. Now in this case your agent is
+[08:26] very flexible because of this underlying
+[08:28] large language model powering its
+[08:30] reasoning. It's highly dynamic. It um
+[08:33] adapts to the tool responses and user
+[08:36] queries and um gives valid responses.
+[08:39] And the behavior is defined by um the
+[08:42] code which is typically procedural code
+[08:45] and declarative prompts like your system
+[08:47] prompt, the user prompt um the tool um
+[08:50] that is attached to. But it's not just
+[08:52] limited to this code. It's also
+[08:54] dynamically changing its behavior based
+[08:56] on the information returned by the
+[08:59] environment which could be the user
+[09:00] giving information or even the tools. Um
+[09:03] so for our purposes let's just say this
+[09:05] agent code isn't actively adversarial at
+[09:08] all. Um it could be buggy but at the
+[09:10] moment it's not adversarial. Um however
+[09:13] the tool responses the environment state
+[09:16] um human interactions all of this in
+[09:18] turn could actually be controlled by
+[09:20] adversaries. For this case, let's just
+[09:22] say we're starting with a it could be
+[09:24] buggy scenario but not really actively
+[09:26] adversarial. Now, um it's connected to
+[09:30] two here two tools you can see here.
+[09:32] One, there's a reimbursement tool and
+[09:34] there's a calendar reading tool. Now,
+[09:36] we've uh in this pattern um we see all
+[09:40] the interactions to these tools going
+[09:42] through a gateway. So, there's a single
+[09:44] point of um like a BA barrier before it
+[09:48] can reach the tools. Now even in this
+[09:50] kind of uh common framework that we've
+[09:54] been using for agents security is hard
+[09:56] for a couple of reasons. Now first we
+[09:58] want them to be flexible and adaptable.
+[10:00] Uh but this so every constraint we start
+[10:03] putting on the agents actually going to
+[10:05] reduce the value of the agentic model.
+[10:07] The so we don't want to put hardcoded
+[10:11] rules into the agent itself because this
+[10:13] is going to start limiting how it's
+[10:14] going to behave with the user. We also
+[10:16] already talked about how putting in
+[10:18] rules in the system prompt is also not
+[10:21] guaranteed that the agent will follow
+[10:22] them. Right?
+[10:23] >> Um so this is the primary reason
+[10:26] security is so hard with agents because
+[10:28] they're running on LLMs which are
+[10:29] probabilistic uh machines. The second
+[10:32] one is that an LLM itself which is the
+[10:35] underlying primitive of an agent is does
+[10:38] not have a very hard separation between
+[10:40] what an instruction is and what
+[10:42] incidental data or incidental text is.
+[10:45] Now what I mean by that is the LLM
+[10:48] doesn't have a very robust mechanism for
+[10:51] differentiating between a command and
+[10:53] data. So I could have um send a a a
+[10:57] command saying send a reimbursement to
+[11:00] Bob for example. But on my calendar
+[11:03] which it has access to, I can also have
+[11:05] a reminder to myself as a calendar block
+[11:08] saying reimburse Bob on this particular
+[11:10] date. Right.
+[11:11] >> Yeah. LLM sees everything as a context,
+[11:13] right? So it's all text in the context
+[11:15] of the LLM or maybe tokens at that
+[11:17] point.
+[11:19] >> Yeah, exactly. So all of this both the
+[11:21] command and the data is flowing through
+[11:23] the same context window with no
+[11:25] architectural boundary. So it's not
+[11:27] distinguishing between this is a command
+[11:28] and this is data. So this is why I'm
+[11:30] going to if I say reimburse Bob, should
+[11:32] it call the reimbursement tool or should
+[11:34] it look at the calendar tool and
+[11:36] retrieve this piece of data? Right? So
+[11:38] it's not very clear to the LLM.
+[11:41] Now what so when we start talking about
+[11:43] safety now what I mean is we want to
+[11:46] start constraining the set of things the
+[11:48] agent can do. Now think of it as a box
+[11:51] right every interaction go between the
+[11:54] agent and the outside world has to pass
+[11:56] through the walls of this box and every
+[11:59] time it p every time an interaction is
+[12:01] happening through the walls of this box
+[12:03] we're going to enforce policy which is
+[12:06] going to be very deterministically
+[12:07] applied. um this is how we guarantee
+[12:10] absolute safety in when your agent is
+[12:12] interacting with tools.
+[12:14] >> So this is an important point right
+[12:15] because uh agents are nondeterministic
+[12:17] by nature uh because of the LLMs that
+[12:20] are under the hood and uh we're trying
+[12:22] to add a deterministic approach here so
+[12:25] that we can control the actions on every
+[12:28] interaction with the agent uh that the
+[12:30] agent is having with the tools uh that
+[12:32] are uh the tool calling that's happening
+[12:34] here.
+[12:36] So compare this again with uh one of
+[12:39] those examples we've been talking about
+[12:40] like the reimbursement tool. So let's
+[12:43] say your internal company policy is your
+[12:45] agent can handle reimbursements if it is
+[12:47] up to $1,000 and everything above this
+[12:50] has to go to a customer rep. Now if we
+[12:53] just gave this as a system prompt uh now
+[12:56] your agent may or may not listen to it.
+[12:58] So it's nondeterministic but by
+[12:59] enforcing it as a policy you're more
+[13:02] it's always applied. Now why can't we
+[13:05] why can't we do this in the tool itself?
+[13:07] Right? So again we could write the logic
+[13:09] in the tool reimbursement tool that you
+[13:12] know do not process re uh you know again
+[13:14] refunds over $1,000. Uh why do we have
+[13:17] to use the policy in this case?
+[13:19] >> You can actually absolutely achieve the
+[13:22] same goal of constraining the tool call
+[13:24] in the agent code itself. You can just
+[13:27] put these business rules into your
+[13:28] tools. But this approach has a couple of
+[13:31] downsides. So first it would depend on
+[13:34] the implementation of that code not
+[13:36] being bypassed by the agent under any
+[13:38] circumstance right. Um so if you have
+[13:40] any fixed function imperative wrapper
+[13:42] around this um calendar reading tool or
+[13:45] the reimbursement tool now it can be
+[13:47] bypassed. So if the moment you start
+[13:49] putting in these rules you're also
+[13:51] limiting the flexibility of the agent
+[13:54] and there's a very subtle burden on the
+[13:56] developer as well. So one when the de
+[13:58] now all this business logic and internal
+[14:01] policies are being maintained in the
+[14:03] tool code itself. So the the imperative
+[14:06] is now on the developer instead of the
+[14:08] governance persona or the auditor
+[14:10] persona. And when we start looking at
+[14:13] the whole application and thinking if we
+[14:16] have the right policies encoded now
+[14:19] you're going to be reading a much larger
+[14:20] codebase just to understand what
+[14:22] policies have been incorporated. Right?
+[14:24] you don't want to always look do a full
+[14:27] code reasoning um which can be a very
+[14:29] tough task on large code bases
+[14:32] >> right that's a very important point
+[14:33] right because as you make those changes
+[14:36] within the codebase number one is it's a
+[14:38] change within the codebase it could
+[14:39] still be a configuration within the
+[14:40] codebase but you want it to be auditable
+[14:42] you want to probably uh look at hey what
+[14:46] if I change this instead of $1,000 if I
+[14:48] make it $1500 right so if you if you
+[14:50] want to keep playing with it and maybe
+[14:52] not enforce it right away but being able
+[14:54] to uh uh understand what the enforcement
+[14:57] actions could be, right? I think so that
+[14:59] makes sense. And always with agents,
+[15:02] we're also thinking about a different
+[15:04] persona who actually wants to come in
+[15:06] and check what your agent is doing in
+[15:08] production like a security team or an
+[15:10] auditing team where they want to come
+[15:12] and see what the policies are correct
+[15:14] and if it's embedded in your codebase uh
+[15:18] one managing it for the developers is
+[15:20] also difficult but then also even
+[15:21] showing what internal policies are
+[15:23] encoded becomes much harder.
+[15:26] >> Mhm.
+[15:27] So what we're doing with policies, we're
+[15:29] moving this out of the agent and by
+[15:32] doing this we get to crisply say that
+[15:34] policy gets enforced no matter what the
+[15:36] agent does, no matter how the agent is
+[15:38] abused. So we're coming back to this
+[15:40] adversarial scenarios that could happen
+[15:42] and also no matter what bugs could exist
+[15:44] in the agent code, there could be
+[15:46] conflicting rules within the tools
+[15:48] itself um which um have not been managed
+[15:51] correctly. But despite all of this, by
+[15:53] abstracting policy outside of it, we're
+[15:56] be we're able to make agents safer and
+[15:59] also much faster to develop because you
+[16:00] have a more manageable codebase. Um and
+[16:03] also you don't have to disrupt
+[16:04] production traffic to bring in policies
+[16:06] which I can also show you um when we get
+[16:08] into the demo.
+[16:09] >> That's great. Yeah. So uh we're going to
+[16:11] look at this uh live in action in a
+[16:13] little bit. Uh so uh Bari has some demos
+[16:17] uh ready to show you, but uh yeah, let's
+[16:19] let's keep uh talking through this,
+[16:21] right? So now we have policy that's
+[16:23] looking at every single request that's
+[16:25] flowing in uh there uh and uh we have
+[16:28] some enforcement actions that we could
+[16:30] take.
+[16:31] Another key aspect of um just safety and
+[16:36] security about your agents is um one
+[16:39] controlling what can happen which is
+[16:40] what when we do have when we have
+[16:42] session isolation within your agents
+[16:44] itself for example what agent core
+[16:46] runtime offers uh complete session
+[16:48] isolation. The second one is controlling
+[16:50] what the agents can do um which is what
+[16:52] policy helps you with. So it controls
+[16:55] all the interactions happening between
+[16:56] the agent and the outside world. And
+[16:58] finally we also want to know what
+[17:00] actually happens. So this is where
+[17:01] observability comes in. So we
+[17:04] observability and policy are tightly
+[17:06] integrated in the agent core um set of
+[17:09] primitives and we're we're tracing every
+[17:13] agent decision and tool invocation and
+[17:15] giving complete visibility to the
+[17:17] developer into the agent behavior.
+[17:19] >> So you will be able to see when it's
+[17:21] calling through the gateway um what tool
+[17:24] it invoked which policy applied to it
+[17:27] and what the outcome was it as well. So
+[17:29] this basically closes the loop. We are
+[17:31] going to keep things contained um in the
+[17:34] agent run session or runtime um and keep
+[17:38] them isolated. Then policy keeps the
+[17:40] actions governed and observability keeps
+[17:43] them accountable.
+[17:46] >> Excellent.
+[17:53] So yeah, let's look at um how policy um
+[17:56] as a primitive in agent core behaves
+[17:58] with um everything else.
+[18:00] >> Yeah, let's dive deep into this right.
+[18:02] So uh share us more about the details
+[18:05] here.
+[18:06] >> Um so irrespective of where your agent
+[18:11] is hosted um the primary for point of
+[18:14] enforcement for policy is agent core
+[18:17] gateway. So if you gateway is configured
+[18:20] as your typical pattern where all the
+[18:22] tools are um added as targets and your
+[18:26] agent is interacting through the
+[18:28] gateway. Now you will be able to attach
+[18:30] a policy engine to it. So a policy
+[18:32] engine is nothing but uh something
+[18:34] that'll hold all your policies. And once
+[18:36] you attach a policy engine and have
+[18:38] policies in it, it's going to actively
+[18:40] monitor all the traffic flowing into
+[18:43] your gateway um trying to access the
+[18:45] tools. Um what this does is it gives you
+[18:49] a unified protection through
+[18:51] deterministic policy enforcement. So
+[18:53] you're able to intercept all the uh
+[18:56] agent tool interactions and start
+[18:58] governing them using your policies.
+[19:01] And behind the scenes, we're also
+[19:04] optimizing for latency, which means we
+[19:06] can give you low latency policy
+[19:08] evaluations, which allows real time
+[19:10] decision-m. Um, the policies themselves,
+[19:12] we're also going to look at how to
+[19:14] author them. Um, they do use a language
+[19:17] called Cedar, which is our open- source
+[19:18] language for uh policy authorization.
+[19:21] But you will also see how easy it is to
+[19:24] author these directly in natural
+[19:25] language and then have them converted
+[19:27] into Cedar by the um capability for you.
+[19:31] Finally, I did say it also has uh
+[19:33] integration with cloudatch itself. So
+[19:35] this gives you a very granular
+[19:37] visibility into policy enforcement also
+[19:39] with uh showing you which policy ids
+[19:42] actually came into effect.
+[19:46] So what do you say uh Anel? Should we
+[19:49] start looking at the demo itself?
+[19:50] >> Uh before we get into the demo, uh I
+[19:52] know policy uh is something like a new
+[19:56] primitive here for people to understand
+[19:57] like how long does it take to create a
+[20:00] policy? Is it uh uh do you have to know
+[20:03] a lot of coding? Can you do it from the
+[20:05] console like you know just just maybe
+[20:06] talk about that right?
+[20:08] uh you spoke about cedar language uh
+[20:10] maybe we want to understand a little bit
+[20:12] more about that as well as we go into
+[20:14] the flow right so yeah
+[20:16] >> yeah absolutely so it is actually quite
+[20:19] um easy to just work on console if
+[20:22] that's where you're comfortable uh be
+[20:24] able to create a policy engine attach
+[20:26] this to a gateway start authoring your
+[20:28] policies directly in natural language um
+[20:30] so there is no barrier to knowing cedar
+[20:33] or even coding to get into this so this
+[20:35] makes it actually uh very easy for also
+[20:38] different personas other than just the
+[20:40] data scientists and machine learning
+[20:41] engineers to go in and start authoring
+[20:43] policies for their agents itself.
+[20:45] >> So product managers could go in there
+[20:47] and then uh uh you know enforce I mean
+[20:49] type the rules like in natural language
+[20:51] and then could they see that uh in real
+[20:54] time on on to how it performs?
+[20:56] >> Yeah, absolutely. Let's actually do just
+[20:58] that right. Um let's go into the
+[21:02] console. Um can you confirm you see
+[21:04] this?
+[21:04] >> We can see the screen. Okay, perfect.
+[21:07] So, I'm inside my AWS uh account and I'm
+[21:10] in the Amazon Bedrock agent core landing
+[21:12] page. So, once you're inside your
+[21:14] console, you'll actually see how we've
+[21:16] integrated now policy already as one of
+[21:19] the native resources in agent core. Um
+[21:21] you can see on the build panel there is
+[21:24] policy. Now, you have three easy steps.
+[21:27] Uh two to get started, one to start
+[21:29] monitoring. Now, the first one is
+[21:31] actually creating a policy engine. Now,
+[21:33] this is what I talked about. A policy
+[21:35] engine is a collection of policies. So
+[21:37] this is the first step you want to do.
+[21:39] The second one is the second step is
+[21:42] actually now attaching this policy
+[21:43] engine to an active gateway. So you
+[21:46] could have had a different developer in
+[21:48] a different team develop for example
+[21:50] this agent which is probably a customer
+[21:53] support agent like doing the refunds and
+[21:55] then I'm going in as a product manager
+[21:57] and say hey my business rule is don't
+[21:58] refund above $1,000. So I go and find
+[22:01] out which gateway the developer has
+[22:02] created and I go and attach my policy
+[22:04] engine to it.
+[22:05] >> So when you talk about that Barati now
+[22:07] uh there could be maybe one policy or
+[22:09] multiple policies right because we could
+[22:11] have like you know refund uh policy we
+[22:13] could have like another policy uh can we
+[22:15] attach multiple policies to this
+[22:17] gateway?
+[22:17] >> Yeah absolutely. So in a policy engine
+[22:20] you can have about you can have up to
+[22:22] thousand policies and in an account you
+[22:25] can have right now a thousand policy
+[22:27] engines. Yeah, these are all soft I mean
+[22:29] these are all quotas that you know again
+[22:31] you can evaluate you can look at the
+[22:32] quotas page to see if those can be
+[22:33] modified but for now those are the
+[22:35] numbers that are available right so but
+[22:37] the answer is that yes you can attach
+[22:39] multiple
+[22:39] >> you can answer you can attach several
+[22:42] and multiple policies uh that
+[22:45] >> which you may or may not want to do but
+[22:47] like long story short business rules
+[22:50] your um internal policies these
+[22:53] high-risk applications where you have
+[22:55] like these you know edge cases is where
+[22:57] you say under no circumstances should my
+[22:59] agent do this. Right now these are the
+[23:01] things you would typically put into
+[23:03] policy to give you that say um peace of
+[23:06] mind that your agent is going to do the
+[23:08] right things even under adverse uh
+[23:10] situations.
+[23:12] So let's actually go ahead and create a
+[23:15] policy engine and say I'm doing this for
+[23:18] my show and tell
+[23:28] Now what we've done now is actually
+[23:31] created an empty policy engine. So you
+[23:34] can go and once I've created it, it's in
+[23:36] the status of uh creating. It's not got
+[23:40] any gateways attached to it as you can
+[23:42] see. And it also doesn't have any
+[23:44] policies. So
+[23:47] before we get into defining policies
+[23:50] here, right? Uh let's actually do one
+[23:53] pick a very concrete use case which
+[23:54] makes it much easier to start talk here
+[23:58] to start talking about uh creating
+[24:00] policies and authoring them.
+[24:02] >> Is that okay?
+[24:03] >> Yeah, let's do that.
+[24:05] >> So
+[24:07] let's
+[24:10] >> come back to the use case and um
+[24:15] let's start with a insurance use case.
+[24:18] Now what this typically is going to do
+[24:21] is going to take care of uh insurance
+[24:24] underwriting use case. So you have um
+[24:27] basically users who are going to go in
+[24:29] here and create their insurance
+[24:32] applications. But then the same agent is
+[24:35] actually used by multiple different
+[24:37] personas across the underwriting um use
+[24:40] case itself. So there could be a end
+[24:42] user who's authenticating themselves and
+[24:45] using the create application tool for
+[24:47] instance. But you can also have the
+[24:49] underwriters themselves using um logging
+[24:53] into the agent with a different set of
+[24:54] credentials and using the approval tool.
+[24:58] So they're basically going in and
+[24:59] looking at the insurance claims that
+[25:00] have been created and approving them. Um
+[25:03] you also have some risk analysts who can
+[25:06] come in and look at the risk of the
+[25:07] models by calling the appropriate tools.
+[25:09] So my point is you can repurpose this
+[25:11] agent to serve different um users across
+[25:14] the entire business case just by
+[25:16] manipulating
+[25:18] what kind of tools the agent is going to
+[25:21] call based on who is using the agent.
+[25:23] Does that make sense?
+[25:24] >> Yeah. Yeah.
+[25:26] >> So what is typically going to happen is
+[25:28] let's say I'm an end user. I'm going to
+[25:30] send a prompt to my agent. Now for the
+[25:33] purpose of policy itself, you do not
+[25:35] have to be hosting your agent on
+[25:37] runtime. Um this is simply an example
+[25:39] where I'm showing let's say it's hosted
+[25:41] uh my agent is hosted and it's calling
+[25:43] the gateway uh where the tools are
+[25:45] attached. So it's going to call it um
+[25:48] the model is basically going to reason
+[25:50] about the user query. Let's say I'm
+[25:51] asking it create an insurance
+[25:53] application for me. I'm based in the US
+[25:56] region in Seattle and my I want an
+[25:58] insurance coverage amount of let's say
+[26:01] um 10 million, right? Uh let's shoot for
+[26:04] the moon. So I'm going to try to create
+[26:06] this um send this query to the uh agent.
+[26:09] The LLM behind the scenes is trying to
+[26:11] understand what is the right tool
+[26:13] attached that will help serve this user
+[26:16] query. Um then it's going to understand
+[26:18] let me call the in create application
+[26:20] tool. Um so it's going to try to call
+[26:22] this tool on the gateway. What is going
+[26:25] to happen is when we start attaching
+[26:27] this policy engine to the gateway now
+[26:31] before the tool is even invoked the
+[26:34] policy
+[26:36] or the request will be actively
+[26:38] evaluated against the set of policies.
+[26:40] So it's going to first check is the user
+[26:43] under the set of conditions actually
+[26:45] allowed to call this tool. Right? So
+[26:47] we're going only if it is approved only
+[26:49] if the policy engine says yes you can
+[26:51] call this tool will this tool call even
+[26:54] happen and once it does the result will
+[26:57] be passed back to the agent and the
+[26:58] agent will communicate it back to the
+[26:59] user. So I want to dive deep later on uh
+[27:02] to understand how the user can be
+[27:04] authenticated and how the tokens can be
+[27:06] passed and maybe talk about uh the
+[27:08] identity itself right so maybe we'll
+[27:10] park it for a little bit later but yeah
+[27:11] please continue
+[27:13] >> we will absolutely talk about identity
+[27:15] as well as when I show you the a um
+[27:17] agent in uh runtime as in my demo then
+[27:21] we will also see how how identity plays
+[27:23] in but we can also address it definitely
+[27:25] uh in depth. So let's say um your policy
+[27:29] actually denies this. Um then what
+[27:32] happens is your tool call will not even
+[27:34] happen. Um so the response will simply
+[27:38] be an error code that is sent back to
+[27:40] the agent and you can instruct your
+[27:42] agent on what you want to tell the user.
+[27:44] Let's say maybe you ask them to go to
+[27:46] customer support or maybe you ask them
+[27:48] to first check the FAQ page. But like
+[27:50] basically you the agent is going to get
+[27:52] an error code back saying it's been a
+[27:54] policy violation and then you can
+[27:56] instruct your agent on how to handle it.
+[27:58] >> Mhm. So with this use case in mind,
+[28:02] first let's see um gateways right we
+[28:05] have this gateway set up already for us
+[28:09] uh for the insurance underwriting use
+[28:11] case and we have three tools attached to
+[28:15] it uh which is this risk model tool that
+[28:18] is for the analyst to look at the risk
+[28:21] itself. If you go into it we will see a
+[28:25] schema for this. Now attaching the
+[28:27] schema to the target is really important
+[28:31] and the reason is there is a name for
+[28:34] what this function is as well as what
+[28:37] the different tool parameters are which
+[28:40] is API classification and the data
+[28:42] governance. Now essentially what this
+[28:44] means is if I want the agent to call
+[28:47] this invoke risk model tool, it needs to
+[28:50] pass two parameters to the model uh to
+[28:52] the tool itself which is an API
+[28:55] classification which can be public
+[28:56] internal or restricted or a data
+[28:59] governance um which is a boolean so it
+[29:01] can be true or false. Only if this is
+[29:03] passed will the tool call even be
+[29:05] successful.
+[29:07] Um we have two other tools attached
+[29:10] which is my application tool which is
+[29:13] allowing me to create applications as an
+[29:15] end user and to call this tool we have
+[29:17] to provide it an applicant region and a
+[29:20] coverage amount. Now the reason I'm
+[29:22] calling this out as important is when we
+[29:26] start authoring policies
+[29:29] um I told you we have this natural
+[29:30] language capability
+[29:32] >> but for the LLMs which are basically
+[29:35] understanding what policies to be
+[29:37] created with a precise um syntax it's
+[29:41] actually pulling this um schema from the
+[29:44] gateway to understand what is the tool
+[29:47] name what are the tool parameters so
+[29:50] when I go in and say allow users uh to
+[29:54] call the application tool only when the
+[29:58] coverage amount is below 5 million. It
+[30:01] has to know exactly what the syntax for
+[30:03] coverage amount and the tool name is. So
+[30:06] it's going to be pulling the schema.
+[30:08] >> So it should understand the schema and
+[30:09] it does a pull to understand what is
+[30:11] part of the schema and what are the
+[30:13] parameters that the tool needs to be
+[30:15] able to uh make a successful tool call.
+[30:18] >> Yeah. So when your developer is actually
+[30:20] setting up your agent to uh with tools
+[30:23] on the gateway, they're going to be
+[30:25] adding the schema. Now when I go in and
+[30:28] create my policies in my let's say show
+[30:31] and tell uh let's start adding policies.
+[30:34] Now I don't have to worry. I'm just
+[30:36] going to select my resource as that
+[30:39] gateway which is my insurance
+[30:41] underwriting gateway. Now I can just use
+[30:44] uh text saying
+[30:46] allow users to create applications
+[30:52] only when coverage amount where do you
+[30:55] want to cap it? I know I was aiming for
+[30:58] 10 million as my application.
+[31:00] >> Yeah.
+[31:01] >> As the product manager, where are you
+[31:02] going to cap it?
+[31:05] >> I would say I don't know. You pick a
+[31:07] number, right? So
+[31:08] >> okay, let's say 5 million. Maybe I was
+[31:10] too ambitious with my 10 million. Let's
+[31:12] say okay any application um over 5
+[31:16] million we don't want the agent to
+[31:17] process this right so we can just add
+[31:20] this as natural language text here
+[31:23] >> I don't want the agent to process more
+[31:25] than $1,000 but that's me
+[31:30] >> um so this is just creating an insurance
+[31:32] application um so we don't have to worry
+[31:34] too much right uh you can still like
+[31:37] approve it or deny it based on what you
+[31:39] see
+[31:40] >> now you can see here that a policy has
+[31:43] actually been generated for you. Um, so
+[31:45] let's start like digging into what this
+[31:48] policy itself is. Um,
+[31:51] you can see the word permit here. Now I
+[31:55] told you when a policy is evaluated, it
+[31:59] explicitly takes two actions. Either it
+[32:02] allows an interaction to happen or it
+[32:04] denies. So that is what this is. So this
+[32:06] can if it's permit, it allows it to
+[32:08] happen. If it is a forbid, it denies the
+[32:10] tool. uh the agent tool interaction. Um
+[32:14] the principle is basically who is you
+[32:17] trying to call this tool through the
+[32:19] agent. Now this is going to be your oath
+[32:22] identity. This is how identity is going
+[32:24] to plug in. Your principle defines your
+[32:26] who. The second one is your what. So
+[32:31] essentially what action is it trying to
+[32:33] take or what is this agent trying to do
+[32:35] right? So the action is it's trying to
+[32:38] call this application tool which is the
+[32:41] target name on the gateway and inside
+[32:45] the target it's trying to call this
+[32:46] function called the create application.
+[32:48] Now you can see now why it is so
+[32:50] important that it has the correct inline
+[32:53] schema for the target on the gateway
+[32:55] itself is because it needs to pull in
+[32:57] this proper syntax for the policy to be
+[32:59] valid.
+[33:02] the resource is my uh the AR on of my
+[33:06] gateway uh which it just figures out
+[33:08] because we've also attached the resource
+[33:10] here. And now this is the interesting
+[33:12] bit. This these are the conditions we're
+[33:13] going to attach to the policy. So we're
+[33:15] essentially saying if the coverage
+[33:17] amount
+[33:19] when contextinput
+[33:21] is 5 million then we're allowing this.
+[33:25] Now essentially we're only allowing it
+[33:28] if the coverage amount is 5 million or
+[33:32] which is what we've actually expressed
+[33:33] here. Allow users to create applications
+[33:35] only when coverage amount is 5 million.
+[33:37] Right?
+[33:38] >> But actually this was a mistake is less
+[33:41] than 5 million is what I want to say.
+[33:45] Allow users to create applications only
+[33:47] when covers less than 5 million. Now the
+[33:50] condition part um it has this
+[33:52] context.input. Now this is important to
+[33:54] discuss the context is everything that
+[33:56] is flowing on the um input request to
+[34:00] the gateway itself.
+[34:02] You can see it has updated the condition
+[34:04] now. So it says now when the context
+[34:06] input this is going to contain all the
+[34:08] tool parameters. So from the context
+[34:10] input it parses out the coverage amount
+[34:13] and checks that it's under 5 million. If
+[34:16] it is, it's going to permit it. And um
+[34:20] if it is over 5 million, it'll be a deny
+[34:22] action.
+[34:23] >> Mhm.
+[34:25] >> There is an additional thing which we
+[34:27] also do for you which is actually
+[34:28] performing a validity check of the CER
+[34:30] itself. So given that this is an LLM
+[34:33] behind the scenes that is auto auto
+[34:35] formalizing your instruction into a
+[34:38] cedar uh policy, we still run a lot of
+[34:41] like Cedar checks for you because Cedar
+[34:43] as a language is constructed on
+[34:45] automated reasoning which means we can
+[34:47] start looking for overly expressive or
+[34:51] overly permissive rules which you might
+[34:53] not want to add by mistake. So we're
+[34:55] just trying to add in extra safeguards
+[34:58] on the console experience where you
+[35:00] don't by any uh through any mistake
+[35:03] create something that can disrupt your
+[35:05] uh production traffic or cost uh
+[35:08] experience that you don't desire. What I
+[35:11] mean is let's say I have an um policy
+[35:15] saying allow all users
+[35:18] to call all tools.
+[35:21] >> Mhm. This is a extremely permissive
+[35:24] policy, right? So I'm basically just
+[35:26] allowing everybody uh permission to do
+[35:29] everything on this agent. Now you can
+[35:31] already see in this insurance
+[35:33] application, this is not desirable.
+[35:35] >> The end user should not be able to call
+[35:37] the approval tool, right? Otherwise,
+[35:39] they're going to create the application
+[35:40] and approve it themselves.
+[35:41] >> Um here you can see that we're flagging
+[35:44] it as a allow all. So we tell you it's a
+[35:46] overly permissive policy. It permits all
+[35:48] actions for all principles and you
+[35:51] should confirm that unrestricted access
+[35:53] is intended before applying this policy.
+[35:55] >> Um here you can see the action is a list
+[35:58] of these various tool names. It's listed
+[36:01] all of it and it basically permits every
+[36:03] user.
+[36:04] >> You brought this up bari is this um is
+[36:06] this going to be by default is deny all
+[36:10] by default and then do we approve only I
+[36:13] mean allow only what we need to allow.
+[36:14] Is that how we designing this? Yeah,
+[36:17] excellent question. Right. So, a policy
+[36:20] engine is supposed to give you the
+[36:22] maximum safety and security safeguards.
+[36:25] So, essentially the moment you attach a
+[36:27] policy engine to a gateway, the default
+[36:30] behavior is a deny.
+[36:31] >> Mhm.
+[36:32] >> So, unless you explicitly allow things
+[36:35] to happen, the agent is going to be
+[36:38] blocked from accessing the outside
+[36:40] world. Now if you if we think back again
+[36:41] to this vision of safety as a box, we
+[36:44] draw a very tight box around your agent
+[36:47] and say deny by default and you need to
+[36:49] explicitly start allowing uh
+[36:51] interactions to happen through these
+[36:53] policies.
+[36:53] >> Excellent.
+[36:55] >> Now there is also the case where you
+[36:57] actually say okay that is too
+[36:59] complicated for me. My use case doesn't
+[37:01] deserve that. All I want to do is
+[37:03] actually have one policy for one
+[37:05] particular tool. This is the only one I
+[37:06] want to restrict. Right? Mhm.
+[37:08] >> That is when you would attach policies
+[37:10] like this saying I'm very very sure I
+[37:12] want to attach a permit all policy. I
+[37:14] want to allow all users to do
+[37:15] everything. Then you can also create an
+[37:18] explicit deny and say I've allowed
+[37:20] everything to happen except I don't ever
+[37:23] want this um approval tool to be called
+[37:26] by anybody except the right user. Right.
+[37:29] >> So you can create that deny and the deny
+[37:31] is going to take precedence
+[37:33] >> over a permit. So this way you can still
+[37:36] have exactly the right kind of policies
+[37:39] you want even um even though you don't
+[37:42] want this uh deny by default behavior
+[37:44] right because deny will take up
+[37:46] residence
+[37:47] >> right
+[37:48] >> um now what's happening is when I create
+[37:51] this policy it's going to fail um that's
+[37:55] because I want to prevent people working
+[37:57] on console by mistake creating any of
+[38:00] these policies so there is actually a a
+[38:03] little validation mode here. Now, this
+[38:06] is going to handle um how these warnings
+[38:09] will be taken care of when we start
+[38:11] going into policy creation. If I'm in a
+[38:13] strict mode, the moment I try to create
+[38:15] this policy, it's going to fail.
+[38:17] >> Mhm.
+[38:18] >> Um I have to explicitly change it to a
+[38:20] permissive mode for it to be allowed. By
+[38:23] doing these extra clicks on the console,
+[38:25] I'm basically indicating I'm very sure I
+[38:27] want this policy. It's not a mistake,
+[38:28] right? you won't the SDK behavior is a
+[38:31] little different because the SDK is
+[38:33] already uh different uh flows where you
+[38:36] first trigger the generation and then
+[38:38] you take that generation and create a
+[38:39] policy out of it. Um you don't have this
+[38:42] validation modes. You only have it on
+[38:44] the console behavior to kind of protect
+[38:46] you from any inadvertent
+[38:48] >> because you're writing the natural
+[38:49] language text and you don't want
+[38:51] accidentally to for any of these to flow
+[38:53] through this uh policy.
+[38:55] >> Yeah, absolutely. Although the natural
+[38:58] language to seed our policy uh creation,
+[39:01] you can also do all of these through the
+[39:03] SDKs.
+[39:05] >> So we have questions coming in the chat
+[39:06] where people are asking you know how do
+[39:08] we test this right? So I guess uh yeah
+[39:10] we're going to show that in a second
+[39:11] here as we go into the details.
+[39:14] >> Let me just put it into permissive and
+[39:16] then say create a policy and let's move
+[39:19] on. Right now the we've we can create
+[39:21] like multiple policies like this. It
+[39:23] needn't just be a single statement. It
+[39:25] can also be um paragraphs uh which you
+[39:29] can add here with a consistent uh
+[39:31] delimiter. The second step is now you
+[39:33] can see my policy is active. The second
+[39:35] step is associating it with a gateway.
+[39:37] Right now it's still not associated with
+[39:39] a gateway which means it's not
+[39:40] monitoring any traffic yet. So you can
+[39:43] go in here select any of the gateways.
+[39:46] My example is my insurance gateway. And
+[39:49] you will go into enforcement the moment
+[39:52] you pick one of these modes. Now you
+[39:54] have an emit logs only mode. This is
+[39:56] your shadow mode. And then the second
+[39:58] one is enable enforcement. Now this is
+[40:01] basically going to be live, right? So
+[40:03] it's not just going to look at what
+[40:06] traffic is coming in and just log a
+[40:08] decision which is what your shadow mode
+[40:10] does in the enable enforcement. It's
+[40:12] actually actively going to uh block
+[40:16] interactions and allow interactions
+[40:18] which are authorized through the
+[40:19] policies. The moment you pick one of
+[40:21] these modes and say associate gateway,
+[40:23] then it's active. Then it's basically
+[40:26] live and your policy evaluation will
+[40:27] start happening.
+[40:31] Um, did that answer the question, Anel?
+[40:34] Were there others questions?
+[40:35] >> We we we are getting some questions. I'm
+[40:37] taking them in the chat, but uh yeah.
+[40:40] >> Yeah. Let's actually uh I'm eager to
+[40:42] kind of jump into the agent itself and
+[40:44] show you what is happening. So before
+[40:46] that right let's see some of those
+[40:48] policies I've already created for the
+[40:50] insurance um application. So we saw
+[40:53] three tools just to remember there was
+[40:55] application tool uh risk model tool and
+[40:58] then approval tool
+[40:59] >> and let's look at some of these policies
+[41:01] I've created. Now um here I'm permitting
+[41:05] users to call the application creation
+[41:08] tool when the coverage amount is less
+[41:11] than 5 million. Um this is exactly what
+[41:14] we also tested from natural language to
+[41:16] cedar. So this is the first policy. The
+[41:18] second policy I have is for the risk
+[41:22] model tool and basically what I'm trying
+[41:25] to do is a condition on the identity
+[41:28] itself on my principle. my principle um
+[41:33] the identity is going to flow through as
+[41:35] the JWT token with which this user is
+[41:39] authenticating themselves uh with their
+[41:41] associated identity um which associated
+[41:44] IDP which could uh which is attached as
+[41:47] your agent core identity on the gateway
+[41:49] right um now this IDP is or the JWT
+[41:53] token is going to have a list of like
+[41:55] claims about who this person is you can
+[41:57] add claims like uh a department name and
+[42:00] say a department name can be finance or
+[42:03] you could belong to an engineering
+[42:05] department. Now essentially what I'm
+[42:07] saying is only if you're in the finance
+[42:09] department are you allowed to call the
+[42:11] risk model tool. Anybody outside the
+[42:13] finance department should not be able to
+[42:15] access the risk models tool. So that is
+[42:17] what this policy is doing.
+[42:19] Um
+[42:21] >> so that from the JW token and then allow
+[42:24] the policy to evaluate this uh
+[42:26] particular invocation. Right. So yeah
+[42:28] >> policy is automatically doing that. you
+[42:30] are going to just configure uh on the
+[42:32] gateway you would have configured um
+[42:35] identity now in my case I'm actually
+[42:39] using cognto as my inbound identity
+[42:41] >> okay
+[42:42] >> and I'm going to get a bearer token for
+[42:44] myself from cognto and use that in my
+[42:48] invocations to the gateway now policy
+[42:50] will be able to see this information
+[42:53] about what is in my JWT token directly
+[42:55] and evaluate it
+[42:59] Cool.
+[43:00] >> Um now just to remember we have two
+[43:04] policies attached um on this gateway and
+[43:08] now we can look into the
+[43:12] agent itself.
+[43:15] Now let me
+[43:18] restart this agent. What it's a very
+[43:20] simple uh strand agent which is
+[43:23] connected to the gateway and it's
+[43:24] pulling all the tools from the gateway.
+[43:28] Now I'm saying run interactive agent.
+[43:30] Now you can see what it's first doing is
+[43:34] um is getting my access token from
+[43:35] cognto and I'm also printing out for you
+[43:39] what information I have on my IDP claim
+[43:42] which is I have a department name. Right
+[43:44] now I'm a user belonging to the
+[43:46] engineering department. I have a
+[43:48] employee level cost center. These don't
+[43:50] really matter from the perspective of
+[43:52] policy right. But what is important is
+[43:53] I'm in the engineering department. Mhm.
+[43:55] >> Now I'm also telling you printing out
+[43:58] what tools this agent basically has. And
+[44:02] you can see the only tool it actually
+[44:04] has available to it is the application
+[44:06] tool.
+[44:09] And the reason is you can remember there
+[44:11] were three tools, right? But the first
+[44:13] thing is there is a deny by default um
+[44:17] principle in action. There were no
+[44:20] policies explicitly permitting me to see
+[44:24] or use the um approval tool. So I'm not
+[44:29] able to see it at all. The second one
+[44:32] was the risk model tool. But the risk
+[44:34] model tool can only be used by people
+[44:36] who are in the finance department and
+[44:38] I'm in the engineering department. So I
+[44:39] can't see the tool either.
+[44:41] >> So this is where policy is interacting.
+[44:44] policy is applying not just on the agent
+[44:47] tool interactions but also on the list
+[44:50] tools API uh when the agent is trying to
+[44:53] call the gateway and check what tools do
+[44:55] I have for my um purpose.
+[44:58] >> Mhm.
+[44:59] >> So because I don't see it, I naturally
+[45:01] can't even call this risk model tool.
+[45:05] But let's try to create some
+[45:07] applications. Let's say I want to create
+[45:09] an application for 10 million. That was
+[45:12] my initial desire. and I'm based in the
+[45:15] US region.
+[45:18] Now the agent is thinking and it
+[45:20] understands it needs to call the
+[45:22] application tool but it's not able to
+[45:25] call the tool due to a possible uh
+[45:27] policy violation. Um and it says please
+[45:30] check access with your per uh
+[45:32] permissions and what else can I help you
+[45:33] with? Now, this is text that I
+[45:35] instructed my strands agent to say every
+[45:37] time it runs into a policy violation.
+[45:39] But basically, it's getting an error
+[45:41] code back when it's trying to call the
+[45:42] >> You're looking at the exception, then
+[45:43] letting the agent respond back.
+[45:45] >> Mhm. Yeah. Absolutely. Um, now let's
+[45:48] just try to create uh maybe for 1
+[45:51] million. I gave up on my hopes for 10
+[45:53] million. Still in the US region and I'm
+[45:55] trying to say an application for 1
+[45:57] million.
+[45:58] >> Mhm.
+[45:58] >> So now it's able to call the tool. You
+[46:01] can see um my tool is just a simple
+[46:04] lambda function that's just replying to
+[46:06] you saying hey I've created this
+[46:07] application for you for this coverage
+[46:08] amount um with this particular ID. So
+[46:11] it's able to successfully call the tool.
+[46:13] So the policies actively been checking
+[46:15] what the coverage amount is and deciding
+[46:18] whether to allow that interaction to
+[46:20] happen or not.
+[46:24] Now there is a another thing we want to
+[46:26] check which is also the policy we
+[46:28] attached to uh the user ident user
+[46:32] identity itself which is on the risk
+[46:33] model tool right so for this purpose let
+[46:35] me actually switch my role from being in
+[46:38] engineering to finance
+[46:40] I wish it was that easy for the code
+[46:43] purposes it is um
+[46:47] so let's say I want to update my
+[46:48] department to finance
+[46:52] Now you can just think of these as
+[46:54] helper scripts uh which are for the
+[46:56] purpose of the demo basically
+[46:58] manipulating
+[46:59] um the cognto claim by injecting um this
+[47:04] uh custom claims into it which is my
+[47:07] department name and so on. So it
+[47:09] basically changed my cognto claims uh to
+[47:13] uh finance department. Now when I
+[47:16] restart my agent,
+[47:21] you will see that I'm in the finance
+[47:22] department. You can see it's extracting
+[47:25] the custom claim and it understands I'm
+[47:27] in the finance department. You can
+[47:28] already see when I'm uh in the available
+[47:31] tools, it's able to see this risk model
+[47:33] tool.
+[47:35] Uh let's invoke the risk model tool.
+[47:40] And I believe it needs the API
+[47:42] classification. Uh
+[47:44] >> so you can find the sample to the code
+[47:46] uh in the chat uh and it's also in the
+[47:49] description of the video. But uh that's
+[47:51] something we can do as well.
+[47:53] >> Mhm. Yeah, absolutely. All the samples
+[47:55] are on uh GitHub agent core page. So you
+[47:59] can find everything I'm showing you um
+[48:01] in the notebooks there for you to
+[48:02] execute as well. We also have some
+[48:04] workshops for you to uh go into full use
+[48:06] cases and execute that if uh that's what
+[48:09] you want to track. But you can see in
+[48:10] this case that it's been able to
+[48:12] actually invoke the risk model because
+[48:13] I'm in the finance department. So it's
+[48:15] basically calling this like helper
+[48:17] lambda and saying success. It's been
+[48:19] able to give you my uh risk score and so
+[48:21] on.
+[48:22] >> So we have some questions in the chat
+[48:24] here. Right. So when an agent obtains a
+[48:26] list of tools, can the information be
+[48:28] brought back to the user? I would like
+[48:29] my user to be advised of the tools that
+[48:31] the agent has access to. Right. So
+[48:33] >> yeah.
+[48:34] >> Mhm.
+[48:35] >> Yeah. Absolutely. I can even ask let's
+[48:37] say the here I'm explicitly printing out
+[48:41] um from my strands agent what I can see
+[48:43] right let's say your user is actually
+[48:45] not able to see this but you can I can
+[48:47] also as a user just ask uh what tools
+[48:50] can I use right and the agent
+[48:53] understands what question I'm asking and
+[48:55] it tells you also it tells you there's
+[48:57] an application tool these are the
+[48:58] parameters you need to call it there's a
+[49:00] risk model tool these are the parameters
+[49:02] you need so as long as the LLM
+[49:05] driving the agent actually has this
+[49:07] information, it's going to reply to you.
+[49:08] It's going to try to be helpful and tell
+[49:10] you what information it has.
+[49:12] >> Right? And we also have question about
+[49:14] 82A. Uh you know again Darcoin is asking
+[49:17] uh if uh this is supported in 8way mode
+[49:20] like if agent agent communication is
+[49:23] involved so uh you know does it include
+[49:26] that right?
+[49:28] A2A is simply is just a protocol, right?
+[49:31] But the idea behind it is I understand
+[49:33] you have agents performing some tasks
+[49:35] and then you have a different agent
+[49:37] which is actually accessing this agent
+[49:38] for information or interacting with it.
+[49:41] Now you can actually attach this agent
+[49:43] also as a target on your gateway
+[49:45] >> and then all of this comes into play
+[49:46] again. So you can basically say I have a
+[49:49] research assistant agent don't call this
+[49:51] research assistant in under these
+[49:53] certain set of uh conditions.
+[49:56] and the gateway,
+[49:58] >> right?
+[49:59] >> Yeah. Yeah. Exactly.
+[50:02] Um so yeah, we've already seen now how
+[50:05] to author policies um how to attach them
+[50:08] to a gateway. We've created a small
+[50:10] trans agent. We see how it interacts but
+[50:13] policy enforces both on the list tools
+[50:17] API as well as the interaction between
+[50:19] the agent and tool itself. So we're able
+[50:21] to control it with policies. Um with
+[50:24] Cedar itself we saw the deny by default
+[50:26] behavior. Uh default uh deny takes
+[50:28] precedence. Now the one thing we still
+[50:31] want to see is how does observability
+[50:33] look like right? We said it's integrated
+[50:35] with cloudatch logs. Now um what is
+[50:38] happening here? Now once you go into
+[50:43] um so gateways actually has uh you want
+[50:47] to turn on tracing and logging here. So
+[50:50] on my insurance uh gateway I've actually
+[50:52] turned on tracing and I'm also feeding
+[50:56] all these logs to cloudatch.
+[50:58] >> Mhm.
+[50:59] >> So we can go into now cloudatch and when
+[51:02] we go into the
+[51:07] particular gateway you will see all the
+[51:09] traces as traffic coming into the
+[51:11] gateway being captured here.
+[51:13] >> So as we get into this Barati uh you
+[51:16] know there's one question that's asked
+[51:17] and we touched on this as well. How can
+[51:19] you run uh this in monitor mode? Right.
+[51:22] So uh is that something that uh we can
+[51:24] show as well?
+[51:26] >> By monitor mode, do you mean you don't
+[51:28] want to enforce anything?
+[51:30] >> Correct. Right. So
+[51:31] >> you simply want to So what you would do
+[51:33] is when I'm attaching my policy engine
+[51:37] to my um gateway here. You can see this
+[51:41] policy engine with these two policies
+[51:43] are attached to the insurance gateway.
+[51:46] Mhm.
+[51:46] >> Right now it's in the enforce mode.
+[51:49] But what I want to do is convert this
+[51:52] into um the shadow only mode.
+[51:56] >> Right?
+[51:58] >> So if you put this in the shadow mode,
+[52:02] >> then it's basically going to only log
+[52:05] things, but it won't take any action.
+[52:07] It'll tell you that $10 million
+[52:10] insurance application is denied, but it
+[52:12] will not block that interaction. It'll
+[52:13] simply log it for you.
+[52:15] >> Mhm.
+[52:15] >> So you can see here now it's in log
+[52:17] only. Excellent.
+[52:20] >> So let's look into Cloudatch. We see 74
+[52:25] invocations over the multiple times I've
+[52:27] done this demo and uh or and tested it.
+[52:31] Now what is interesting to note is you
+[52:33] will actually see all the policy
+[52:36] decisions as well. Um, so you will
+[52:38] already see over time how many of my
+[52:41] policy decisions were allowed, how many
+[52:43] were denied. And remember that this is
+[52:46] not just for a tool call, but also every
+[52:49] time your agent is asking, hey, what
+[52:51] tools do I have? Right? Every time you
+[52:52] spin up an agent, it's going to first
+[52:54] query the gateway and check what tools
+[52:57] do I have. So it also applies to this
+[52:59] and you can see which policies are
+[53:02] applied, how many times it allowed and
+[53:05] denied. Uh but another interesting thing
+[53:08] we show you is actually the mismatches.
+[53:10] >> Yeah, I was going to ask you right. So
+[53:12] if the tools names are changing or the
+[53:14] details of the tools are changing,
+[53:15] right? So and then uh the agent has
+[53:18] already uh you know the policy engine
+[53:20] has already obtained it and if the
+[53:22] developers are changing the tools, how
+[53:24] does this work?
+[53:26] >> Yeah. Um, so essentially if your
+[53:29] developers go in and change the tool
+[53:30] names or the tool parameters, um, and
+[53:34] probably you've not really kept track of
+[53:36] what policies were attached to this and
+[53:38] haven't updated them accordingly. We
+[53:40] actually identify and track this for you
+[53:42] and show you as mismatched policies. So
+[53:44] we're also tracking tool drift. So let's
+[53:47] say that insurance claims application
+[53:49] actually changed and maybe the coverage
+[53:51] amount has been rewarded or it's taking
+[53:54] in different parameters now, right? So
+[53:56] we actually track this difference and
+[53:58] actually show you that as mismatch
+[54:00] policy. So you can set up um cloud
+[54:02] alarms for instance and if there's any
+[54:04] mismatch policy that fires up say go in
+[54:07] and look at what your tool parameters
+[54:09] are and tool name is and go in and
+[54:10] evaluate if your policies are up to
+[54:12] date.
+[54:13] >> Mhm.
+[54:16] >> So within the um so within
+[54:20] Yeah. basically your gateway all these
+[54:23] traces are being captured and let's just
+[54:25] look into uh one trace that I dug into
+[54:27] that list of SNA4 to already show you
+[54:29] right so you can see that there are
+[54:32] different events that happen first it's
+[54:34] trying to call the gateway uh let's
+[54:37] actually not see this for a moment it
+[54:39] tried to in first it's going to call the
+[54:41] gateway and try to invoke a tool then
+[54:44] the policy is basically allowing or
+[54:47] denying that action so there is a
+[54:48] authorization action happening And then
+[54:51] finally once it's allowed um it's able
+[54:53] to call that risk model tool itself. Now
+[54:56] if we look at this uh trace itself you
+[54:59] will see
+[55:04] that it's been trying to call the risk
+[55:06] model tool
+[55:15] policy author. So under policy
+[55:17] authorization, it's going to tell you
+[55:19] what decision it took, which is allow
+[55:24] >> and you will also see what the
+[55:25] determinist determining policy was. So
+[55:28] you're able to identify.
+[55:30] >> Mhm. You're able
+[55:30] >> Exactly. So you're able to audit it. So
+[55:32] if you say an action happened or um then
+[55:35] you will also explicitly see what was
+[55:37] the determining policy that allowed that
+[55:39] action to happen. Maybe you want to go
+[55:41] and update this or maybe this was um
+[55:44] right. So you're able to trace back
+[55:47] every agent decision back to a rule
+[55:49] you've incorporated. So this is how
+[55:51] you're really controlling what the agent
+[55:52] does.
+[55:53] >> And do you have a sample of uh one of
+[55:55] the policies that is uh denied? One of
+[55:57] the tool call actions that was denied.
+[56:00] >> Oh yeah, absolutely no. So let's
+[56:02] actually look at
+[56:05] a deny
+[56:12] or uh you know I I think uh we could we
+[56:14] could take a look at that but maybe
+[56:16] since we're getting close to the end of
+[56:17] the there's a question here about uh
+[56:19] guardrails as well. So uh we have
+[56:21] guardrails and uh we also have uh you
+[56:24] know this policy engine right so can you
+[56:26] tell uh our viewers what is the
+[56:28] difference here between the guardrails
+[56:29] and policy engine.
+[56:32] >> Mhm. So guardrails and uh very
+[56:34] specifically also bedro guardrails is
+[56:36] going to help uh help you control what
+[56:39] the LLM or the agents can say. So it's
+[56:42] basically your safeguard that is going
+[56:44] to come between the user and the LLM.
+[56:47] It's going to both protect the LLM from
+[56:50] what bad queries can go in from the user
+[56:52] to the LLM, but also protect any bad
+[56:54] responses from your LLM going to your
+[56:56] user. Right now, policy is um behind the
+[57:00] scenes. It's going to control what the
+[57:01] agents can do. So, it's going to control
+[57:04] agents to tools and this is the layer
+[57:06] where it's intercepting and controlling,
+[57:08] >> right?
+[57:08] >> So, guardrails help you help you control
+[57:11] what the agent can say and policy helps
+[57:14] you control what the agent can do.
+[57:16] Excellent. Yeah, that's uh you know
+[57:18] great. And I know we're getting close to
+[57:19] the end of the hour, Barati. Now uh do
+[57:23] you have like uh you know any takeaways
+[57:25] for our viewers as we uh get close to
+[57:28] the end of the hour here?
+[57:30] >> Yeah, absolutely. Anal thank you so much
+[57:32] first of all for having me. It's been a
+[57:33] blast uh walking through the use case
+[57:35] and talking about how policy can help
+[57:37] you build in um safeguards to control
+[57:40] what the agent can do. Um we have policy
+[57:43] in Amazon Bedrock agent core. It's going
+[57:45] to help you govern, audit and uh trust
+[57:48] your agents. So it's actively
+[57:49] intercepting all the uh traffic flowing
+[57:53] in to agent core gateway at the moment
+[57:55] and governing them through these
+[57:56] deterministic policies that you're
+[57:58] creating. Now um it also has very low
+[58:00] latency policy evaluation for real-time
+[58:02] decision- making. We also saw how it's
+[58:05] deeply integrated with cloudatch uh inte
+[58:07] cloudatch for you to have this complete
+[58:10] audit trail and visibility into what
+[58:12] your agent is doing in runtime. So yeah
+[58:15] with that
+[58:16] >> so we have uh we've shown how to uh not
+[58:18] only deploy your agents uh into
+[58:21] production uh in the prior episodes but
+[58:23] in this one we focus more on the
+[58:24] governance and enforcing controls uh but
+[58:27] before you put them in in place you can
+[58:30] uh create your policies look at this in
+[58:32] monitor mode and then once you feel uh
+[58:34] comfortable then you can put those
+[58:35] enforcement actions in place right so uh
+[58:38] this is uh from uh today's episode in
+[58:41] diving deep into agent core uh you know
+[58:44] the policy in agent core. Uh but uh come
+[58:47] back again next week and we'll uh have
+[58:49] more uh coming up uh you know in this
+[58:51] same channel. Uh thank you again for
+[58:53] joining the live stream today. We'll see
+[58:55] you next time. Thanks Barati.
+[58:57] >> Thanks everyone. Thanks Ano.

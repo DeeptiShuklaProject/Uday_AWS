@@ -1,0 +1,1341 @@
+Title: 06_browser_tool_and_code_interpreter_tool
+Video URL: https://www.youtube.com/watch?v=z3lAJ-Nf_lk
+============================================================
+
+[00:06] [Music]
+[00:27] [Music]
+[00:33] Hello everyone, welcome to another
+[00:34] episode of AWS show and tell. I am Anil
+[00:37] and your host today. Uh joining from New
+[00:40] Jersey, Princeton, New Jersey. I am a
+[00:41] senior solutions architect here at AWS
+[00:43] and I'm joined by our uh uh AI
+[00:46] specialists today from the agent core
+[00:48] team. I'll let them introduce
+[00:50] themselves. Uh so we'll we'll go with
+[00:52] Kosti. Please go ahead and introduce
+[00:55] yourself.
+[00:55] >> Hi everyone. Uh I'm Ki. I join you from
+[00:57] the bedrock agent core uh product team.
+[01:00] I personally read the few of the
+[01:02] primitives that we recently launched in
+[01:04] public review uh runtime and as well as
+[01:08] uh tools like code interpreter and
+[01:10] browser. And I'm super excited to be
+[01:12] here today and doing a deeper dive on
+[01:14] the tools.
+[01:18] >> Yeah, I can go next. Hey everybody, uh
+[01:21] thanks for joining us. My name is Veda
+[01:22] Raman. I am a geni essay specialist. Um
+[01:27] so I work very closely with Costi um to
+[01:31] get this these uh AWS uh agent core
+[01:35] tools uh out to all of you. I'm glad to
+[01:38] be here today.
+[01:41] >> Thanks Va. Yeah. Uh hello everyone.
+[01:43] Rahul Sharma, senior specialist essay
+[01:45] supporting agent core and specifically
+[01:47] first party tools that we're going to
+[01:48] talk about more today. Uh super excited
+[01:50] and look forward to sharing some more
+[01:53] information.
+[01:54] >> Cool folks. So u you know thanks for
+[01:56] joining uh you know from all over the
+[01:58] world. I know people you know you tell
+[02:00] us in the chat you know feel free to let
+[02:01] us know in the chat where you're joining
+[02:02] from. Uh we have people joining from uh
+[02:05] you know India from from Dubai from New
+[02:07] Zealand. I've seen people from
+[02:09] everywhere in the live stream. So let us
+[02:11] know in the chat and also put in the
+[02:14] chat you know what way you are in your
+[02:15] agentic journey. Are you learning how to
+[02:17] build agents? Are you looking to build
+[02:18] multi-agent systems? Uh feel free to
+[02:21] post it over there. Now with that said
+[02:23] uh we are doing a deep dive series on
+[02:26] bedrock agent core. So uh today we are
+[02:29] going to cover uh more specifically an
+[02:32] area uh you know for that covers like
+[02:34] bedrock agent core browser code
+[02:36] interpreter and we call these as uh
+[02:38] tools right. So we will go into detail.
+[02:41] So Kosi, do you want to break this down?
+[02:43] Do you want to give us uh you know give
+[02:45] the audience a recap of you know what
+[02:47] what agent core is if if they're
+[02:49] catching up with this uh session?
+[02:52] >> Yeah, thank you so much. Um first of all
+[02:54] again um thank you for being here. I
+[02:57] personally join you from the Bay Area
+[02:59] here in Palo Alto and um um excited that
+[03:03] we have coverage from across the globe
+[03:05] in many continents. Thank you. Thank
+[03:07] you. So the three uh main areas that
+[03:10] we're going to cover today is first of
+[03:12] all a quick refresher of what is better
+[03:14] agent core. I remind everyone what it
+[03:16] is, how you can use it and we're going
+[03:18] to dive deep in terms of the
+[03:20] capabilities, the use cases, the how it
+[03:22] works and a demo of the tools that we
+[03:25] offer as part of the agent browser and
+[03:27] co interpreter.
+[03:29] But what is a core and why uh why care
+[03:34] about it? So what we heard from our
+[03:36] customers is that they tend to start
+[03:39] with a own framework or a public an open
+[03:42] source framework like Langraph,
+[03:44] Langchain, Cro AI, Google ADK. They
+[03:48] build agents. They add tools. But then
+[03:50] they need to productionalize these
+[03:52] agents in a more deterministic, secure
+[03:56] and scalable way. And this is why we
+[04:00] launched what we call agent core uh
+[04:03] runtime. That is a serverless compute
+[04:05] environment fully isolated and allows
+[04:08] you to scale your agents uh um
+[04:12] as as as needed. But an agent is not
+[04:15] just a um good by itself. It's actually
+[04:20] as good as the tools that it has. So the
+[04:23] tools that one you one can expose to the
+[04:26] agent are either your own uh APIs or you
+[04:32] are own first party tools that we will
+[04:34] speak today for your own APIs. We've
+[04:37] designed a capability called agent core
+[04:39] gateway where you can expose those um um
+[04:43] um tools to an agent using that gateway
+[04:46] but we have also designed our own tools
+[04:49] like browser and code interpreter so
+[04:52] that you can make your agents navigate
+[04:54] the web or execute securely agent
+[04:58] generated code in an isolated
+[05:01] environment. Of course, it's tools. It's
+[05:04] not only the only piece that you
+[05:06] actually need. You need to have some
+[05:08] proof of identity. You need to be able
+[05:10] to give access to your agents to
+[05:13] remember short and long-term memories.
+[05:15] And you need to be able to inspect and
+[05:17] analyze what has this agent done um and
+[05:21] what exactly um thinking or traces or uh
+[05:26] tools it has invoked in the end to end
+[05:28] chain. And we offer all of those
+[05:31] capabilities for you either via our
+[05:33] agent core identity primitive or agent
+[05:36] core memory or observability.
+[05:39] But in today's session as we mentioned
+[05:42] we'll focus predominantly on those uh
+[05:45] two uh tools the browser and code
+[05:47] interpreter. So let's dive deep on the
+[05:50] the browser piece
+[05:53] >> right. So why do we need this browser
+[05:55] right? So I think that's a question that
+[05:56] will be coming up right these agentic
+[05:58] applications they need to be able to
+[06:00] access the real world maybe get some
+[06:03] stock data you know that's kind of what
+[06:05] uh you know we're going to see now right
+[06:06] so coy yep break it down for us
+[06:10] >> yeah uh why do agents need browsing
+[06:13] right uh same question applies why do
+[06:16] humans need browsing um we need it
+[06:19] because we navigate the web perform
+[06:21] actions we for example buy things We um
+[06:27] use it to test that a website works. We
+[06:30] use it to analyze and do competitive
+[06:34] analysis in terms of prices um and
+[06:37] across different competitors understand
+[06:40] uh competitive research, read reports.
+[06:43] Same thing, same reasons that we as
+[06:45] humans need the browsers. This is the
+[06:48] same reasons why agents need the
+[06:50] browsers as well. So um they need to be
+[06:53] able to do multi-step forms. You need
+[06:56] they need to be able to do some back
+[06:59] office um automations. They need to be
+[07:02] able to navigate websites and do QA
+[07:05] testing. They need to be able to um uh
+[07:09] access ERPs.
+[07:11] um and they need to be able to also um
+[07:15] uh scrape the web and do all kinds of
+[07:18] analysis so that they produce reports
+[07:22] and that's why uh we decide to create
+[07:25] agent called browser to give um a fully
+[07:28] managed browser for the for your agents.
+[07:36] Now you might be asking and what is
+[07:39] exactly the browser like what kind of
+[07:41] capabilities do you offer as part of it?
+[07:44] Um, at the crux of it, it's a fully
+[07:47] managed um, headless browser, fully
+[07:50] serverless environment that you can very
+[07:54] very quickly in a subsecond latency spin
+[07:56] up or not you, your agent as it needs a
+[08:01] browser can decide to spin up a browser,
+[08:04] our own agent or browser in the
+[08:07] subsecond latency and it can use that
+[08:09] browser to perform any kind of actions
+[08:14] uh and it can orchestrate those actions
+[08:17] either in a fully deterministic way and
+[08:20] we can speak about what this means or in
+[08:22] a fully stoastic using an LLM to produce
+[08:26] what is the next step that the um agent
+[08:29] should take within that browser and that
+[08:32] session can last with the browser can
+[08:34] last many hours. The same way that we
+[08:37] humans browse the web for many hours,
+[08:39] maybe too many. Um, the same way agents,
+[08:43] agents using agent core browser can run
+[08:46] a browser for up to eight hours. And we
+[08:49] offer, we securely offer this uh
+[08:53] environment with full-on isolation. It's
+[08:56] a dedicated microVM for your own
+[08:58] browser. Nobody will reuse it. The
+[08:59] moment it ends, uh, the the browser uh
+[09:02] underlying instance ends as well. And
+[09:06] it's uh fully observable meaning the mo
+[09:10] you can immediately see what that
+[09:13] browser or agent using that browser is
+[09:15] doing with a live view endpoint. You can
+[09:19] take over if you want that endpoint to
+[09:22] perform additional actions you that at
+[09:26] the same time is being recorded. So you
+[09:28] can inspect that uh um session after so
+[09:32] that you understand what your agent did
+[09:34] with that browser. And of course we have
+[09:36] comprehensive logging for you to also
+[09:38] inspect. And as I mentioned it's a fully
+[09:41] managed environment where it scales
+[09:44] without you worrying about preallocating
+[09:46] right sizing uh or worrying about like
+[09:49] how much demand you'll have at different
+[09:51] points in time. We take care of all of
+[09:53] that complexity for you. And very
+[09:56] importantly, we take care of the price
+[09:59] performance complexity from your side as
+[10:02] well where we only charge you for
+[10:04] however much you actually use from CPU
+[10:07] and memory at the per second level. So
+[10:10] you don't worry about pre-allocating an
+[10:13] instance or right sizing that instance.
+[10:15] We just we manage that for you and we
+[10:18] build you for exactly as much as you use
+[10:21] of the resources you use at the per
+[10:23] second level. So the core constructs of
+[10:25] the serverless compute is and the
+[10:27] managed services are are ingrained in
+[10:29] here.
+[10:30] >> Exactly. And and further enhance to even
+[10:33] not have to worry about not only
+[10:35] preallocating but also right sizing
+[10:37] here. In this case it's a fairly new
+[10:40] innovation that we've created that you
+[10:41] don't worry about allocating a specific
+[10:44] size instance. We take care of right
+[10:46] sizing and we charge you exactly for the
+[10:49] amount of CPU and memory you've used at
+[10:52] a per second level.
+[10:58] So let's go uh towards the demo. But
+[11:01] before we get into the demo, h I'd love
+[11:03] to make sure that we level set on some
+[11:06] terminology that we use as part of
+[11:09] browsers. Maybe it's hairy. So I'll very
+[11:12] quickly walk you through the three
+[11:13] concepts that are um uh in are playing a
+[11:17] role in our manage browser experience.
+[11:20] As I mentioned, we offer a headless
+[11:21] browser and that what is that browser?
+[11:23] It's actually a a Chrome B Chrome based
+[11:26] browser. So the uh main uh underlying uh
+[11:31] um capabilities are driven by what we
+[11:34] call CDP or Chrome dev tools protocol
+[11:37] and um it allows you to have lower level
+[11:41] commands like navigate on a specific
+[11:44] page um dispatch key events and it gives
+[11:47] you the ability to um um have domain
+[11:51] exposed um uh events like in the page
+[11:56] the network and the runtime and input.
+[11:58] And if you want precise automation of
+[12:01] this uh of the browser, you can use the
+[12:04] CDP. But of course, CDP is um for some
+[12:09] people quite verbose and and brittle. So
+[12:12] it takes quite some time to understand
+[12:14] what um um APIs to use. For this reason,
+[12:18] you can find open-source um uh libraries
+[12:22] like playright and puppeteer which are
+[12:24] very popular and you can orchestrate
+[12:28] that browser and in a way generate CDP
+[12:30] command using those APIs and it it's
+[12:34] much easier for you or an agent to
+[12:37] leverage those um um um libraries to
+[12:42] orchestrate that um uh Chrome that
+[12:45] Chrome browser.
+[12:47] Lastly, there's the concept of um the um
+[12:51] DCV where it's a high performance
+[12:54] streaming protocol so that we can um use
+[12:58] for you to immediately see what exactly
+[13:01] that browser is doing. So uh you um it
+[13:06] captures the chromium window, it
+[13:08] compresses it and it sends it back
+[13:10] through a web socket so that you can
+[13:12] live view, you can interject so that it
+[13:15] can do human takeover and it's also the
+[13:19] one that is being recorded in real time
+[13:21] for observability.
+[13:23] Enough of those hairy consoles. Let's
+[13:26] get into the the more fun part of it. So
+[13:29] what is happening behind the scenes as
+[13:32] part of that browser? So as I mentioned
+[13:35] there is the browser Chrome and the DCB
+[13:37] CV server in an isolated execution
+[13:41] environment. How does the agent use it
+[13:44] though? There's many ways but the
+[13:47] simplest way one can use it um you can
+[13:50] ask using agent can set a um a query for
+[13:55] example search for some shoes on
+[13:58] amazon.com
+[14:00] the agent can use LLMdriven
+[14:03] instructions so that um the and for
+[14:08] example from Nova act or any other LLM
+[14:12] use a library like browser use or um um
+[14:16] puppeteer or um um playright to instruct
+[14:22] um to the um to the browser what exactly
+[14:26] to do. So the instructions buy misuse on
+[14:29] amazon.com. The LLM reasons based on
+[14:31] what it sees on the screen says oh click
+[14:35] here specifically where to click and it
+[14:39] makes a decision um on what to do next
+[14:42] based on what it sees in the screen. So
+[14:44] um it says click here uses a library
+[14:47] browser use playright etc. Sends that
+[14:50] command to our own browser instance that
+[14:54] browser is executing the command takes a
+[14:57] screenshot send it back to the agent
+[14:59] that is using for example LLM and it
+[15:02] processes that um screenshot and then
+[15:06] makes decision on what is the right next
+[15:08] step. So it goes through a continuous
+[15:10] feedback loop to achieve the goal of
+[15:13] purchasing for example um shoes on
+[15:16] Amazon.com.
+[15:18] Um
+[15:21] now how this works as I mentioned is the
+[15:24] Nova act or the specific library using
+[15:27] playright is issuing CDB commands which
+[15:31] um we um consume through a web circuit
+[15:34] endpoint. we um um um perform it on the
+[15:38] browser and then through that DCV server
+[15:41] we're sending a live ustream endpoint
+[15:44] into um our observability or you can use
+[15:47] that endpoint and expose it in your own
+[15:49] applications.
+[15:52] Um now uh VA maybe I would like to
+[15:56] understand and maybe we uh tell um the
+[15:59] participants here how to use actually uh
+[16:02] brows um the browser tool and uh how
+[16:05] they can incorporate it into their
+[16:07] applications.
+[16:08] >> Yeah. Um so there are two ways uh you
+[16:12] know you can get started um using the
+[16:14] browser tool. um one is using um our
+[16:18] good old B3 SDK which is our Python uh
+[16:22] library for accessing AWS API and so
+[16:25] these are lower level APIs through which
+[16:27] you can create a browser session create
+[16:29] the browser tool itself start a session
+[16:32] and so on um but we have also offered
+[16:35] another way um uh which is using the
+[16:38] agent core Python SDK um which is a
+[16:41] little more simpler to use um because it
+[16:44] has higher level constructs
+[16:46] again agent core python SDK uses part of
+[16:48] three APIs um so using these higher
+[16:51] level constructs you write less code and
+[16:54] and you use the same set of APIs um but
+[16:57] you can get started faster so these are
+[16:59] the two ways and I'm going to actually
+[17:00] show in the demo how you can use the
+[17:02] Python agent core python SDK uh to get
+[17:05] started
+[17:06] >> so we have a question in the chat uh vea
+[17:09] and uh Edward is asking right is it open
+[17:11] source and does it work with llama
+[17:13] models
+[17:15] Well, um
+[17:18] the so it depends on the uh SDK that
+[17:21] you're using. So if you use trans SDK or
+[17:23] browser use SDK, you can you're free to
+[17:25] use whatever model that you want, but
+[17:28] the model needs to support um you know
+[17:31] multimodal in the sense that it it
+[17:33] should be able to look at a screenshot
+[17:34] and understand the elements of the
+[17:36] browser. So if the model supports then
+[17:38] yes.
+[17:41] >> Thanks. Yeah, sure.
+[17:43] Um yeah so let's go to the next slide
+[17:45] Kiy
+[17:47] so yeah so here's a higher level flow on
+[17:50] how do you get get started so the first
+[17:53] step is to create a browser resource
+[17:56] right and by default we have a browser
+[17:59] resource when you go to your AWS
+[18:01] accounts and go to agent core built-in
+[18:03] tools you will see already a browser
+[18:06] resource that's created for you and this
+[18:08] browser resource is nothing but like a
+[18:11] configuration resource ource where you
+[18:13] can where you can say what are my
+[18:14] network settings that I want for my all
+[18:16] of my browser sessions what is going to
+[18:18] be my S3 settings to save recorded
+[18:22] sessions into and so on and so forth. So
+[18:24] this is just a configuration resource
+[18:26] and then once you have that browser
+[18:28] resource then you start browser sessions
+[18:31] and these are those ephemeral sessions
+[18:33] that Costi was talking about which are
+[18:35] execution environments um which can be
+[18:38] started when you actually want the
+[18:39] workflow to start uh when you actually
+[18:42] want the workflow to uh you know happen
+[18:44] via the agent and then you can shut it
+[18:47] down later. So these are ephemeral in
+[18:48] nature serverless completely um running
+[18:51] for you and then once you start the
+[18:53] session uh in your code you generate the
+[18:55] websocket URL and signed headers and
+[18:59] these are required for your agent to
+[19:01] connect to that browser over that CDP
+[19:05] connection that cost was talking about.
+[19:08] Um and then optionally you can also
+[19:10] generate a pre-signed live view URL. So
+[19:12] if you uh if you have an application
+[19:14] where you want to embed this live
+[19:17] browser view on your application then
+[19:20] you can actually generate a pre-signed
+[19:22] live view URL and set up the DCV client
+[19:25] on your application so that you can
+[19:26] embed the live browser view on your own
+[19:29] application. Um so this is again
+[19:32] optional. We have a live view available
+[19:34] in the AWS console. Uh so while you're
+[19:37] testing that's useful but you want to go
+[19:38] into production you want to embed it on
+[19:40] your own applications and then finally
+[19:43] you have the agent now that is connected
+[19:46] to the browser perform the browser based
+[19:49] tasks. So for example it wants to do QA
+[19:51] testing of your web application or it
+[19:54] wants to automate an entire workflow
+[19:57] where you want to you know download
+[19:59] things from a vendor website and upload
+[20:02] fill a form on an ERP system and so on.
+[20:05] So the entire workflow the agent can
+[20:07] automate and perform the actions on the
+[20:10] browser session and then finally um
+[20:13] after that is done you can stop the
+[20:15] browser session which will release the
+[20:16] resources um and you'll not be charged
+[20:19] at that point.
+[20:21] All right I think now we can look at
+[20:23] some demo and code.
+[20:26] >> Excellent. Yep. Let's go to the demo.
+[20:29] >> Yep. And just to add uh I think Va and
+[20:33] Kos mentioned this earlier but uh you
+[20:35] can use of course this with any model.
+[20:37] You can use the framework of your choice
+[20:39] as well from a browser automation
+[20:41] standpoint. Browser use is a common one.
+[20:43] You can use playright directly as well.
+[20:45] So because that gives you a lot of
+[20:46] flexibility as to how you want to design
+[20:48] your workflows. Um yeah.
+[20:51] >> Yeah. Thank you Rahul. Thanks for that
+[20:53] tip. Um so here I'm on the AWS console
+[20:57] uh for agent core. And so if you
+[20:59] navigate over here, you have the
+[21:01] built-in tools. And you have both the
+[21:04] code interpreter and the browser tool
+[21:06] here. And so if you see um I talked
+[21:09] about the browser resource where you can
+[21:12] create a resource and specify the
+[21:14] network settings and so on. So I have
+[21:15] all of these a lot of browser resources
+[21:17] that I have created in my account. Um so
+[21:20] if I click on one of them here, you will
+[21:23] see all of the browser sessions. These
+[21:25] are the actual sessions which has the
+[21:28] Chrome browser opened up and these were
+[21:30] all terminated. I used them and
+[21:32] terminated them. So you will have all of
+[21:34] these browser sessions and you can have
+[21:36] multiple concurrent sessions running at
+[21:38] a time. So this is really useful if you
+[21:40] want to parallelize your workflow. Um
+[21:42] and so you can have them concurrently
+[21:44] running. So and now um I'm going to go
+[21:48] to my code and show you um an
+[21:51] application that I really built. So I
+[21:53] wanted to show you how you can use agent
+[21:55] core browser and an agentic SDK like no
+[21:59] act to automate your QA testing of a web
+[22:02] application right and why do you really
+[22:05] need an agentic QA testing applic like
+[22:09] why do you want agents to test your web
+[22:11] applications there are I think two
+[22:13] reasons one is um if you want to test
+[22:18] your web application from how a human
+[22:20] from a human perspective how would my
+[22:22] end users really view uh are able what's
+[22:26] the customer experience for my end users
+[22:28] when they use the application you're
+[22:30] able to really test that um using the QA
+[22:34] uh when you use an agentic SDK to to do
+[22:37] the QA testing um the other um other
+[22:41] useful feature of agentic testing is
+[22:44] that so before agents even came into
+[22:47] picture the way you know you would test
+[22:50] your uh uh web applications is by
+[22:53] writing either clear write scripts or
+[22:54] selenium scripts and so on and so forth.
+[22:56] And these scripts are like the lower
+[22:59] lower you know level commands that that
+[23:01] send to the browser these can be brittle
+[23:04] because when your UI changes these
+[23:06] scripts can break right and it needs
+[23:08] resources and time to maintain the
+[23:10] scripts and so on. So enter the age of
+[23:14] agentic AI and now you can easily you
+[23:16] know give your instructions in natural
+[23:18] language to these agents and it it can
+[23:20] actually go and test from a human
+[23:22] perspective. Right? So um to actually
+[23:26] show you this we I built a fake web
+[23:29] application. So this is my fake web
+[23:32] application which is uh a retail website
+[23:36] which let's assume that I I want to I
+[23:39] have a startup and I want to get this
+[23:41] going and I want to test this
+[23:42] application. So I created this fake web
+[23:45] application. So you can go and navigate
+[23:47] the products. Uh you can go to the
+[23:49] category and navigate the product. So
+[23:51] now I want to test this or when I want
+[23:54] to add a new feature I want to test this
+[23:55] so that my feature is not breaking
+[23:57] anything and so on. Right? So,
+[24:01] so let's go back to my code. So, this is
+[24:03] the web application that's hosted on an
+[24:05] S3 bucket with cloud front and
+[24:07] everything. Now, what I did was I used a
+[24:11] coding agent um to actually go and say,
+[24:15] "Hey, look at all my code, my front-end
+[24:17] code, and generate natural language test
+[24:20] cases." And that's what you see here. Um
+[24:23] so, I'll go here and show you a few test
+[24:24] cases. So um I have homepage load
+[24:29] testing you know QA tests set of tests.
+[24:31] So this is one test suite which can test
+[24:34] my load how the lo homepage loads and
+[24:38] here are the tests uh steps itself that
+[24:41] my coding agent actually generated right
+[24:44] so you the action would be to navigate
+[24:47] the application URL and the this is the
+[24:49] expected result right and the next step
+[24:52] is to verify the page title and what the
+[24:54] expected result is and so on so and I
+[24:56] have a bunch of all of these tests that
+[24:58] are listed out here all in natural
+[25:00] language Right
+[25:03] now let's go and look at um
+[25:08] run. Yeah, this is where I am taking in
+[25:11] this piece of code. I'm taking all of
+[25:14] those test individual tests the JSON
+[25:18] files and now I am creating multiple
+[25:21] processes for my testing agent which is
+[25:24] Nova act to go and take those natural
+[25:27] language prompts and you know make uh
+[25:30] you know run those tests on agent core
+[25:32] browser right so this is the code for
+[25:35] where I am creating multiple processes
+[25:39] one process for each test suite that you
+[25:41] see Um and then um and each of those
+[25:45] will run the u single test suite. We'll
+[25:48] pick up a test suite and run. Now let's
+[25:52] go to the testr runner. This is where
+[25:55] the magic happens. So and this is that
+[25:58] where actually Noah act agent is
+[26:01] connecting to agent core browser and
+[26:03] running the each of those tests. So to
+[26:06] start with uh I'm first importing um the
+[26:11] browser client class from my bedrock
+[26:14] agent core SDK that I uh mentioned
+[26:17] earlier right the python SDK which makes
+[26:20] it easy for you to uh write code for
+[26:23] agent core. So from there from the tools
+[26:26] browser client I'm importing the browser
+[26:28] client uh class and the browser session
+[26:31] here
+[26:32] and then here this is where I'm getting
+[26:35] the the region that I want to run it
+[26:37] against run it in and then I am now
+[26:41] initializing that an object of that
+[26:44] browser client class. So this is where
+[26:47] this particular uh you know when I
+[26:49] initialize this it initializes my B3
+[26:51] client for agent core right within uh
+[26:55] this is the wrapper for initializing
+[26:56] that now once I have the object for
+[27:00] browser client and then I can start a
+[27:03] browser session and here I am passing in
+[27:07] um that browser tool that I want the
+[27:09] browser session to run in. So I have uh
+[27:13] the the network configuration set up in
+[27:15] this browser tool. I have the um S3
+[27:19] configuration where you know all of the
+[27:22] recorded sessions should be stored and
+[27:23] everything. So I want this particular
+[27:25] session to start uh using this browser
+[27:29] tool. So that's what I'm specifying and
+[27:31] this is optional. Again if you don't
+[27:33] specify anything it'll use that default
+[27:35] browser tool that is already created for
+[27:37] you by default. Um although it does not
+[27:40] have record replay settings in it but if
+[27:43] you do want record and replay settings
+[27:45] then you need to create your own browser
+[27:47] tool specifying the S3 location right
+[27:51] and after I start then I can now I'm
+[27:55] generating the websocket uh URL and the
+[27:59] headers and again this is a wrapper
+[28:00] function where we are taking the
+[28:03] websocket URL we are getting the
+[28:06] websocket URL for that particular
+[28:07] browser session that's starting
+[28:09] along with some signed headers. Um so
+[28:12] that now I can pass this to my agent so
+[28:16] that it can connect to the browser
+[28:17] session
+[28:19] and this is where next I am initializing
+[28:23] a Nova act uh instance. So again Nova
+[28:26] act is an agentic SDK that is
+[28:28] specialized in browserbased automation.
+[28:32] Um it uses an underlying LLM which is
+[28:34] Nova based. So uh which can really
+[28:37] understand browser actions and it can
+[28:39] take screenshots and understand the
+[28:41] screenshot and it also works at the DOM
+[28:43] level uh for the browser. So now I'm
+[28:46] initializing this Nova act uh and as you
+[28:49] can see I'm sending in the starting page
+[28:51] which is my web application where it is
+[28:54] hosted.
+[28:55] Um I'm also sending in the CDP endpoint
+[28:59] URL. This is where I want no act to go
+[29:02] connect to agent core browser uh which
+[29:05] is essentially the websocket URL that I
+[29:07] got back when I started the session and
+[29:10] I'm also uh using the signed headers so
+[29:12] that the session is authenticated and
+[29:15] I'm sending in my Noah acti key here.
+[29:18] >> So it's no act where all the magic
+[29:19] happens.
+[29:21] >> Yes, in this particular example yes and
+[29:23] of course you're free to use other SDKs.
+[29:25] Browser us is another one you can use
+[29:27] playright right. So this is one of the
+[29:29] ways that you know I'm you I can use an
+[29:32] agentic SDK to control the actions in
+[29:34] the browser.
+[29:35] >> Yes.
+[29:36] Uh and then I start the Noa uh act
+[29:40] instance right.
+[29:42] So, and this is some more helper code
+[29:44] where you know essentially for QA
+[29:48] testing I want to assert um you know uh
+[29:52] if the if the based on what the natural
+[29:55] language instructions that I'm sending
+[29:56] in it is seeing uh it is actually um
+[30:01] seeing what I mean it is actually
+[30:03] passing or failing right so that's what
+[30:04] I want to assert here um and again I
+[30:08] want to if there's a string input I want
+[30:11] to make sure that those tests are
+[30:13] passing. So I'm I'm just this is some QA
+[30:15] code that uh I'm using here. So again,
+[30:19] here is where we are sending the natural
+[30:21] language prompt to Noah so that Noah can
+[30:24] take that natural language prompt and
+[30:27] run CDP commands on the agent core
+[30:30] browser.
+[30:33] And that is about it. So let's actually
+[30:36] see this run this and uh see it in
+[30:40] action.
+[30:42] So I'm just running the uh tests. So as
+[30:45] you can see it started four different
+[30:48] test suites and all of them are running
+[30:50] in parallel.
+[30:51] Um and then let's so it started running
+[30:55] all it's taking now those natural
+[30:57] language test cases and running them
+[30:59] against agent core browser. So let's
+[31:01] head to the agent core page.
+[31:06] And as you can see here we didn't have
+[31:08] any live view. So we can see that four
+[31:10] different live view sessions have come
+[31:12] up and so when I click on this it
+[31:16] actually shows you that browser live
+[31:18] view uh which is running on agent core
+[31:21] browser right so now as you can see it's
+[31:24] typing out this is all nova act typing
+[31:28] uh on the agent browser and testing
+[31:31] based on the instructions that it was
+[31:32] given.
+[31:37] So agent is doing the actions now and
+[31:40] >> interacting uh autonomously.
+[31:42] >> Yep.
+[31:45] And you can see uh it in action here in
+[31:48] live view. Again this live view can also
+[31:51] be embedded in your own applications.
+[31:53] You don't have to navigate to the AWS
+[31:55] console every time you want to view it
+[31:57] live.
+[32:03] Uh let's go back here. So, it's still
+[32:06] running. Takes about a few minutes. So,
+[32:10] as you can see, it's thinking and
+[32:11] acting. And I have some tests passing
+[32:13] and some tests failing here. And I
+[32:15] deliberately designed it that way so
+[32:17] that um we show how it passes and fails.
+[32:20] So, if you see uh it finished testing
+[32:23] because I parallelized it, it took uh
+[32:26] you know because I could run it in
+[32:28] parallel, it finished fairly quickly.
+[32:30] And you can you can run hundreds of
+[32:32] tests like this in parallel together. So
+[32:35] as you can see I had two test suites
+[32:38] pass and two failed. Um right and if you
+[32:42] see this particular test all passed. So
+[32:45] as you can see here also we have
+[32:46] thinking steps where the ll where the
+[32:50] agent is thinking and then this is the
+[32:52] action uh you know click on contact
+[32:55] navigation. This is the action that it
+[32:56] took. So it thinks and then acts and
+[32:59] then it looks at the screenshots and
+[33:01] then acts on based on that as well. So
+[33:04] this is um the agentic loop that uh is
+[33:07] running here.
+[33:09] All right. So uh let's go back to the
+[33:13] browser view itself. And then I wanted
+[33:16] to show you another thing here.
+[33:19] Um so now because I had enabled
+[33:23] recording and replay
+[33:25] um I am able to view these. This is a
+[33:28] observability. So I'm able to view the
+[33:30] recorded session and now I can actually
+[33:34] go and replay those recording and figure
+[33:36] out hey if if the agent did the right
+[33:39] thing and audit what agent did at every
+[33:42] step. So I can really play this. This is
+[33:46] this is not a video recording. This is
+[33:48] actually the the actions the the agent
+[33:52] took on the browser. it we have captured
+[33:55] the DOM actions and everything and then
+[33:58] reconstructed
+[33:59] um the uh replay here. So as you can see
+[34:02] this this is a recording and if you see
+[34:04] here it gives you page level details. Uh
+[34:09] you can inspect the page DOM here. You
+[34:12] can see the actual CDP commands that the
+[34:15] browser received. Um and then the
+[34:18] network traffic is zero here because
+[34:20] mine is a really front-end application.
+[34:22] I don't have a backend and so there's no
+[34:25] network. But if you you know in a
+[34:27] typical application you will see network
+[34:29] logs as well uh come here and the agent
+[34:33] actions as well like what did the agent
+[34:35] uh do in this so it really if you see
+[34:37] here I can go and play this over here
+[34:39] and see it actually focused at this
+[34:43] point here and you can see it'll go to
+[34:46] that moment where the agent took that
+[34:48] particular action and here the agent did
+[34:51] a click so when I play that it actually
+[34:54] went and then focused on the homepage
+[34:56] and then made a click action there.
+[34:58] Right? So, um really nice observability
+[35:01] that we recently added um which can give
+[35:04] you all the details that the agent uh
+[35:08] took actions on the browser itself.
+[35:12] >> And using this uh of course uh since it
+[35:14] gives you all the actions that that were
+[35:16] taken by the agent, you can of course
+[35:18] optimize your paths as well, right? uh
+[35:20] try different models, what part it took
+[35:22] to get to the actual end goal,
+[35:25] deconstruct the actions and things like
+[35:26] that and go from there. So it gives you
+[35:28] really good breakdown and optimization
+[35:30] capabilities as well.
+[35:31] >> Yeah.
+[35:32] >> Absolutely.
+[35:35] >> Yeah. And that's
+[35:36] >> and we have like couple of questions
+[35:38] coming in the chat uh like you know so
+[35:41] one question is that uh you know do we
+[35:45] have like a free tier for this service?
+[35:49] I'll take that actually right now. Um
+[35:52] it's quite free. Uh meaning that uh up
+[35:55] until we enable billing which is in a
+[35:57] couple of weeks um you can play with the
+[35:59] service uh free of charge and um um
+[36:02] we're in preview so you can experiment
+[36:05] without worrying about the charges. Once
+[36:07] we enable billing um on October 7th uh
+[36:11] you will be able to you will it will the
+[36:14] service will be part of the AWS free
+[36:16] tier. So it will belong to the $200 uh
+[36:20] for new accounts. Um and um then after
+[36:24] that you'll be charged. So yes, we will
+[36:26] be part of the AWS free tier. You'll
+[36:28] have access but for now anyways it's
+[36:31] free of charge. So please go experiment
+[36:33] and test. I feel yeah build your uh
+[36:35] agentic applications and let them access
+[36:37] the live you know perhaps if you're
+[36:39] building a finance application it could
+[36:40] go to NASDAQ and pull the stock takers.
+[36:43] And next part I think we're going to
+[36:45] chat about you know what uh uh how the
+[36:47] code interpreter works. But before that
+[36:49] I think uh you know cos also has to add
+[36:51] you know more to that context right so
+[36:53] let's uh switch over to cost decide
+[36:57] um awesome demo thank you so much um
+[36:59] let's switch gear towards the other tool
+[37:02] um the code interpreter like what is
+[37:05] code interpreter um and why would you
+[37:08] use it and why agents need code
+[37:11] interpreters. So think of an agent and I
+[37:13] think the one of the most popular use
+[37:15] case after of course the customer
+[37:17] support agents that was the first one
+[37:20] first use case that everybody was
+[37:21] speaking about.
+[37:23] Now agents generate all kinds of code
+[37:26] and once they generate that code they
+[37:29] need to somewhere validate that that
+[37:31] code runs correctly.
+[37:34] If they run the same that code in the
+[37:37] same hosting environment that the agent
+[37:40] is hosted on, there's um danger that
+[37:43] this um will lead to some bugs that will
+[37:47] bring down the agent. So when someone
+[37:50] needs to validate that a agent generated
+[37:53] code actually works, they can
+[37:56] dynamically
+[37:58] spin up a code interpreter environment,
+[38:00] isolated low latency environment. so
+[38:03] that they can run the code as needed.
+[38:07] And that's not only good for validating
+[38:10] code, it's actually giving you a lot
+[38:13] more superpowers to your agents. Agents
+[38:15] now can become
+[38:17] data analysts. They can uh also
+[38:21] dynamically
+[38:23] think and reason on what exactly code is
+[38:26] needed to be generated. they generate it
+[38:29] and they can execute it and and they can
+[38:32] dynamically automate processes as needed
+[38:36] even if they don't have access to an API
+[38:38] or or or tool to to to do that process.
+[38:42] So code interpreter provides that um in
+[38:46] a way sandbox environment to validate a
+[38:48] generated code to um be able to perform
+[38:52] mathematics and do some portfolio math
+[38:55] pricing and to ensure that this math is
+[38:58] not uh hallucinated LLM generated um but
+[39:02] it's actually uh math that uh adds up it
+[39:06] can add um it can do uh create um
+[39:10] advanced analytics and perform um um and
+[39:15] generate reports and and and PDFs and
+[39:17] CSVs and all of that. And of course, as
+[39:18] I mentioned, in the ideal case, you can
+[39:22] m uh mix and match browser tool and code
+[39:25] interpreter where you navigate and
+[39:27] dynamically automate processes with both
+[39:30] of them. Now, what are the key features
+[39:33] that um code interpreter offers? In a
+[39:37] similar vein as the browser tool, code
+[39:40] interverter is also fully managed server
+[39:44] and serverless. We you don't have to
+[39:46] worry about managing infrastructure
+[39:48] reallocating resources. It gives you low
+[39:51] latency. It can run for um across real
+[39:55] time and long running um executions up
+[39:58] to eight hours. And it gives you that
+[40:01] isolation that you really need uh your
+[40:04] agents and the environment those agents
+[40:07] um um have. So it gives you an isolated
+[40:10] microVM every time you um uh instantiate
+[40:14] the code interpreter session and you can
+[40:16] configure it of course to uh be deployed
+[40:19] in your own VPC.
+[40:22] As I mentioned before though um it's not
+[40:24] only an interpreter just environment to
+[40:27] execute code but you can um use that
+[40:30] execution environment to do a lot of
+[40:32] data processing and to do data
+[40:34] processing you need to be able to
+[40:36] analyze large data and this is why we
+[40:39] have ensured that our payload size is
+[40:42] 100 megabytes and you can also import
+[40:45] large files directly from S3 and it can
+[40:48] reach up to 5 GB so you can process your
+[40:51] Excel files, your CSV, JSON, JSON files
+[40:55] very quickly using a code interpreter.
+[40:58] And the good thing is that the setup is
+[41:01] super mineral. So you can get going with
+[41:03] go to interpreter super fast. It comes
+[41:05] with pre-built Python, JavaScript,
+[41:08] TypeScript um um languages and a lot of
+[41:12] pre-built libraries so that you can get
+[41:14] started right right away. And of course
+[41:18] in the vein of transparency and
+[41:20] observability we ensure that any ex any
+[41:25] time that you execute code in code
+[41:27] interpreter there is logging and
+[41:29] cloudwork message associated with it.
+[41:35] Now before we go down to the demo and uh
+[41:38] pass into Rahul maybe I'll give you a
+[41:40] quick uh overview of what is going on
+[41:44] within that uh
+[41:45] >> yeah let's dive deeper right so
+[41:47] understand what's happening under the
+[41:48] hood
+[41:50] >> perfect so imagine um um the end user is
+[41:56] asking a query to an agent uh how many
+[41:59] leap years let's say are between 1957
+[42:02] and 2020 23 the agent if it directly uh
+[42:07] uses the LLM without any code execution
+[42:12] or validation through the code it most
+[42:14] probably will uh hallucinate. So for
+[42:17] this reason the LLM can generate code or
+[42:21] can generate gen code in for example
+[42:23] Python, Type or JavaScript and you can
+[42:26] execute that in that uh code interpreter
+[42:29] session. But this code interpreter
+[42:31] session doesn't only offer you ability
+[42:34] to execute that generated code but it
+[42:37] offers you ability to interact with that
+[42:39] underlying microv using a file system.
+[42:42] So you can import, read, process files
+[42:46] and you can also um uh do cell commands
+[42:49] that are uh very much needed um uh for
+[42:52] example to uh write files uh uh read
+[42:56] files and and to be able to um not only
+[42:59] um execute a command for example on the
+[43:03] um environment that we offer but also in
+[43:05] the underlying system that is
+[43:07] environment is um is hosted on.
+[43:13] And there's two types of code
+[43:14] interpreters there. There's the
+[43:16] pre-built uh code interpreter where you
+[43:19] can very quickly instantiate a session
+[43:21] with it and we give you a sandbox only
+[43:23] environment where you can access only
+[43:25] that uh microVM plus S3 and it doesn't
+[43:29] have access to any other um uh AWS
+[43:32] resources and it comes pre uh through
+[43:35] our own configuration of sandbox only.
+[43:38] But if you want to deploy it on your
+[43:40] VPC, enable public access you or give an
+[43:45] IM role that has permissions to access
+[43:48] other resources within the AWS ecosystem
+[43:50] like for example DynamoB or other
+[43:53] databases. You can do that. You just
+[43:55] have to customize K with our own API.
+[44:00] Maybe I'll pass it on to uh Rahul to
+[44:02] describe how that configuration as well
+[44:06] as
+[44:07] usage of um the uh code interpreter
+[44:11] happens and ideally let's let's do show
+[44:13] some code and and show in reality how it
+[44:15] works.
+[44:17] >> Excellent.
+[44:18] >> Thanks Costi.
+[44:20] Yes. Uh so I think uh let's uh get into
+[44:23] a little bit of new type and then we can
+[44:25] get into a quick demo as well.
+[44:28] Um
+[44:30] all right so let's get to the demo first
+[44:32] then all right so uh uh let's consider a
+[44:36] use case that costly already described
+[44:37] and which is probably a very common use
+[44:39] case around data analysis right u what
+[44:41] we will try to do in this case is we'll
+[44:43] try to analyze cloud trail data this is
+[44:46] mock data but the idea is to analyze
+[44:47] crowd rail data from your let's say from
+[44:49] your AWS account and try to find maybe
+[44:52] some interesting activities going on
+[44:54] things that you may want to further
+[44:55] double click on find out what's
+[44:56] happening
+[44:57] through through agents, right? That's
+[44:59] the idea. Um, so yeah, so let's start
+[45:04] here and see how to basically make it
+[45:06] happen, right? Similar to uh the uh
+[45:09] browser tool as well, you can use the
+[45:11] core interpreter with either POT3 or the
+[45:13] agent code Python SDK. Both options are
+[45:16] available. What we are using right now
+[45:17] is the agent core SDK, Python SDK. And
+[45:21] um you can use the code interpreter tool
+[45:24] as well as the browser tool either uh as
+[45:26] custom tools as part of your workflows
+[45:28] or if you're for example if you're using
+[45:30] strands then these are available as
+[45:32] native tools as well. In this case just
+[45:35] to show a little more detail we are
+[45:37] using we will be using core interpreter
+[45:39] as a custom tools. So from the SDK we
+[45:42] are we are importing that. We also have
+[45:45] bunch of other imports uh to be able to
+[45:47] do handle some uh processing and some
+[45:50] some of the interim steps here. Uh we
+[45:52] are also of course importing strands
+[45:54] which is the framework we'll be using to
+[45:56] build our agent.
+[45:58] So getting started is easy. All you need
+[46:00] to do is once you have the import in
+[46:02] place uh you specify your region as well
+[46:05] as your timeout duration. Right? So for
+[46:07] example in this case we want to
+[46:09] basically aend the session we want to
+[46:11] start a session for code interpreter
+[46:13] which is in US west to region and we
+[46:15] want to define a timeout duration which
+[46:17] is 900 seconds in this case 15 minutes
+[46:20] you can have sessions up to 8 u uh to 8
+[46:22] hours long if you wish to but in this
+[46:24] case we'll be starting this session with
+[46:26] a timeout of 15 minutes which is 900
+[46:28] seconds there you go super fast we have
+[46:30] the session available that we can now
+[46:32] start using in our agent subsequently
+[46:35] now once we have the session
+[46:38] uh code interpreter session available.
+[46:40] Uh what we are doing of course here is
+[46:42] I'm trying to get some mock data from my
+[46:44] S3 bucket. Uh so just to take a look
+[46:47] here, these are some mocked up logs for
+[46:50] uh cloud trail logs from from the AWS
+[46:52] account which have been slightly um I
+[46:55] would say processed to make them a
+[46:56] little more uh deidentifi deidentify the
+[46:59] some of the information. But the idea is
+[47:01] we have a bunch of logs here line items
+[47:03] in JSON format that we want to use right
+[47:06] and analyze viser agent. So I'm I'm just
+[47:09] specifying those details providing the
+[47:11] location in S3 where my logs exist and
+[47:13] so and so forth some of the basic
+[47:15] information.
+[47:17] All right. Um once we have that
+[47:19] information again some other helper
+[47:21] functions to identify how many logs we
+[47:23] have uh what's the what's the content
+[47:26] things of that nature and also more
+[47:28] importantly to actually get those uh as
+[47:31] part of uh a variable here so that we
+[47:33] can use it to directly copy those logs
+[47:36] into code interpreter. So we are
+[47:38] retrieving the the the the logs here um
+[47:41] and then doing some basic diagnostics
+[47:44] here to make sure um the logs look okay
+[47:47] and identify how many. So we in this S3
+[47:50] bucket there are total of 42 cloud trail
+[47:52] events that we'll be analyzing using the
+[47:54] agent here shortly.
+[47:57] All right. Um the next thing that we are
+[48:00] going to do is uh remember going back to
+[48:02] the slide that was just shared, you have
+[48:04] the ability to directly write
+[48:06] information into the code interpreter
+[48:08] session, right? Um in this case we are
+[48:10] we are taking the logs from our S3
+[48:12] bucket and then streaming those logs
+[48:14] directly into the core interpreter
+[48:16] session onto the local file system
+[48:18] because that is where we want the the
+[48:19] the agent to write and execute code and
+[48:22] analyze them. So I'm using a specific
+[48:25] I'm just defining where my local file
+[48:27] lives and then I'm defining that I want
+[48:30] to copy this uh using the the helper
+[48:32] libraries that code interpreter provides
+[48:35] and then there is another helper
+[48:37] function to invoke code. This is again
+[48:40] uh I'm using one of the various method
+[48:42] that the code interpreter library
+[48:44] provides in this case invoke to be able
+[48:46] to actually provide the specific code
+[48:49] that will be generated by the agent and
+[48:51] most specifically by the lm to be to be
+[48:54] ultimately uh executed by the code
+[48:57] interpreter. So a bunch of helper
+[48:59] functions here just to make life a
+[49:00] little bit easy and once we start
+[49:02] actually using it. All right. Now this
+[49:05] is where the actual action starts right.
+[49:07] So first of all we are writing our uh
+[49:10] the the logs the cloud trail logs into
+[49:12] the code interpreter uh session more
+[49:14] specifically the file system. So if you
+[49:16] see here the call to the call tool
+[49:18] helper function is being called and I'm
+[49:20] specifically using the write files
+[49:21] operation to write the file which was
+[49:24] locally available into the core
+[49:25] interpreter and then subsequently I'm
+[49:27] doing a list file operation to make sure
+[49:29] that the file was actually written. So
+[49:31] if you see this bottom snippet of output
+[49:34] here, it's which is what confirms that
+[49:38] the file actually was successfully
+[49:39] written. So the data now exist for us to
+[49:42] go ahead and start analyzing using the
+[49:44] agent. Now let's pro define some prompts
+[49:46] and other configs as part of this agent.
+[49:49] Right? So this is a basic system prompt
+[49:51] with that that is optimized for speed
+[49:53] which and we are just trying to make
+[49:55] sure that the the the agent and most
+[49:57] specifically the model understands that
+[49:59] it's supposed to be an analyst and and
+[50:01] give us some interesting findings in
+[50:03] these logs. So we run that
+[50:06] u and this is where we define the tool
+[50:08] that ultimately will be plugged in into
+[50:10] the agent configuration for it to use
+[50:13] and execute code. Now, like I mentioned
+[50:15] earlier, this is slightly verbose
+[50:16] because I wanted to show you all the
+[50:19] details, but you can you can simplify
+[50:21] it. For example, if you're using
+[50:22] strands, it can be just a simple line of
+[50:24] code to in to basically import the tool
+[50:27] and start using it. But uh you annotate
+[50:30] the the function as tool. And more
+[50:33] importantly, probably the most important
+[50:34] part here is we are using the invoke
+[50:37] method that the that the code
+[50:38] interpreter library provides to be able
+[50:40] to actually send the code to the code
+[50:43] interpreter session for it to execute.
+[50:46] So with this custom tool defined, let's
+[50:49] go ahead and configure our agent. So we
+[50:52] define the model which is CL cloud 7 u
+[50:55] 3.7 set. we def uh we have the tool that
+[50:59] we just defined as a custom tool. We
+[51:00] have the system prompt we defined
+[51:02] earlier. Um and then that's pretty much
+[51:05] it from the agent configuration
+[51:06] standpoint. And then finally with all of
+[51:09] this done we are now ready to actually
+[51:11] invoke our agent and analyze these logs.
+[51:13] So again a bunch of information in this
+[51:16] query and we are specifically asking it
+[51:18] to tell us maybe top five services any
+[51:21] thread summaries and also create a
+[51:23] report um uh once it's done with this
+[51:26] analysis. So as I run this so this is
+[51:29] the agent but when I start running this
+[51:31] you'll see that based based upon the
+[51:34] prompt that was provided it starts
+[51:36] basically understanding what's needed. I
+[51:38] also asked it to take a look at the
+[51:40] format of the logs to understand it
+[51:42] first and then based upon that you know
+[51:44] generate code and things of that nature.
+[51:47] So it's doing that. It's writing code in
+[51:49] Python. The the the LLM uh and the agent
+[51:52] the LLM is writing the code and the
+[51:54] agent is using the tool to send it to
+[51:56] the code interpreter session, execute
+[51:58] it, take a look at the output, give that
+[52:01] output back to the agent and then
+[52:02] iteratively basically make changes to
+[52:05] the code generated till the time it's
+[52:07] actually able to achieve the end goal
+[52:10] which is to able to be able to analyze
+[52:12] these logs. So this might go for a
+[52:14] minute or two. uh but I wanted to show
+[52:16] you while this runs and comes up with
+[52:18] the with the output uh if you see here I
+[52:21] had asked it to actually create a report
+[52:23] ultimately uh in a markdown format. So
+[52:25] let me open this ultimately uh and I'll
+[52:28] open this in preview format. So once
+[52:30] this runs and everything is completed
+[52:32] this is something uh it will generate a
+[52:34] report in this format. Of course you can
+[52:36] customize this based upon what you need.
+[52:39] uh this report will be generated on the
+[52:41] file system within the core interpreter
+[52:43] environment. But you can of course using
+[52:46] the uh the read capabilities that the
+[52:48] that a core interpreter provides. You
+[52:50] can of course read objects from the file
+[52:52] system and then bring them back uh as
+[52:54] well. So uh once this is done I'm
+[52:57] actually reading the markdown report and
+[53:00] then that is what I was showing here in
+[53:01] a second. So you can of course uh this
+[53:05] is what a very specific use case and and
+[53:07] actually a common use case of using code
+[53:09] interpreter in conjunctions with an
+[53:10] agent to do data processing. Of course
+[53:12] you can make it more complex. You can
+[53:14] have multiple agents where one agent is
+[53:16] doing some specific analysis maybe
+[53:18] around um you know open IPs which are
+[53:21] exposed another one trying to find uh
+[53:24] specific things around uh maybe
+[53:26] unauthenticated calls and then you may
+[53:28] have a supervisor agent who's actually
+[53:30] taking all of that information and doing
+[53:32] something else. So you can pick and
+[53:34] choose how you want to use them but
+[53:35] there are a lot of possibilities in
+[53:37] which you can use it. Um yeah so if you
+[53:40] see here it's continuing to actually run
+[53:42] code iteratively back and forth. It's
+[53:44] generating uh information and then it
+[53:47] should be done here in a second but
+[53:48] finally it will try to uh write a report
+[53:51] that that will come back uh in in micron
+[53:53] format.
+[53:54] Um
+[53:56] all right so in this case I think I
+[53:58] should highlight very quickly uh is one
+[54:01] of the things is we are using the system
+[54:03] code interpreter that ki uh referred to
+[54:05] earlier. There is absolutely no
+[54:07] configuration as a customer that you
+[54:09] have to do. You can just directly use
+[54:11] it. It's sandbox. It's super easy to use
+[54:13] it to run untrusted code that is
+[54:16] generated by u by LLMs via the agents.
+[54:18] So super easy to use. But again, if you
+[54:21] have requirements where you want to
+[54:22] customize maybe your network settings,
+[54:24] you want to provide custom fine grain
+[54:26] roles, you have the option of using a
+[54:28] custom code interpreter as well. um that
+[54:30] that that is more configured for your
+[54:33] use cases and then use it in conjunction
+[54:35] with your agents.
+[54:37] Uh so yeah, that was a quick demo. I
+[54:39] don't know an if you have questions
+[54:41] coming in or
+[54:42] >> Yeah, great demo there. U so showing the
+[54:45] capabilities of you know how we can uh
+[54:48] invoke and run generate and invoke code
+[54:51] you know securely in a sandbox
+[54:53] environment. So Rahul uh you know maybe
+[54:55] like Rahul Kosi Veda like maybe let's
+[54:57] let's try to sum it up right. So we've
+[54:59] we've shown all these different tools uh
+[55:02] and the capabilities of you know what
+[55:05] you know is possible using the you know
+[55:07] built-in tools. So let's probably you
+[55:09] know go around and and and understand
+[55:11] what is uh you know you know how does it
+[55:13] look like you know for deploying an
+[55:15] agent using these frameworks being able
+[55:18] to you know use browser sessions maybe
+[55:20] talk let's talk about the use cases and
+[55:22] maybe security you know maybe to sum it
+[55:24] up
+[55:29] with I think you
+[55:32] >> sorry yeah so maybe I can talk about use
+[55:36] cases that we are seeing uh for browser
+[55:40] um uh QA testing as I walk through is
+[55:43] very popular because it's very easy to
+[55:46] get started with QA testing maintaining
+[55:49] you know playright scripts or you know
+[55:51] traditional scripts for QA is time
+[55:55] consuming it takes up resources and
+[55:58] needs expertise so this is very easy to
+[56:01] get started and you can you know
+[56:03] parallelize your testing so that's very
+[56:05] popular um the next use case that we've
+[56:08] been seeing is general workflow
+[56:10] automation. If you see a lot of our our
+[56:14] work is done based using browsers,
+[56:17] right? And imagine if you can automate
+[56:19] all of those workflows and just tell the
+[56:21] agent say hey do this for me, right? And
+[56:25] general workflow automation both in both
+[56:27] in a you know consumer setting and an
+[56:29] enterprise setting. I think that has
+[56:31] been another very popular use case form
+[56:33] filling you know a lot of these web
+[56:36] applications or traditional applications
+[56:38] don't have either documented APIs don't
+[56:41] even offer APIs so the web- based access
+[56:45] is the only way that a lot of
+[56:46] applications have and automating those
+[56:49] workflows has been very popular so um
+[56:52] and general you know web scraping that's
+[56:54] another thing and you know getting
+[56:56] information from the web as well so
+[56:58] that's those are the use cases that we
+[56:59] are seeing
+[57:00] a lot of browser use um happening with
+[57:05] coupled with agents. I think it's a very
+[57:06] powerful combination.
+[57:09] >> Thanks for that. And
+[57:11] >> on the browser side, I just want to be
+[57:13] clear that although we launched it as
+[57:15] part of the agent in this business, the
+[57:18] browser we've noticed actually be used
+[57:19] completely standalone for other use
+[57:22] cases outside of agents as well, which
+[57:24] is a very exciting um observation and
+[57:28] like a um
+[57:30] like unfolding. So one of the cap things
+[57:34] that we really need to um um make sure
+[57:36] people understand is that everything we
+[57:38] describe you don't have to use
+[57:41] all together. You don't have to use
+[57:42] runtime or you don't have to use code
+[57:44] interpreter browser at the same time.
+[57:47] You can pick and choose in a fully modal
+[57:50] way uh build your solution on top of a
+[57:53] code.
+[57:55] >> That's excellent. Right. So you know a
+[57:57] lot of use cases that are possible when
+[57:59] you can generate code live in real time
+[58:03] and execute it right. So yeah a lot of
+[58:05] use cases. Thanks for an awesome uh
+[58:07] session today and sharing with our
+[58:10] viewers uh you know and uh providing
+[58:13] more details here. So uh this is a deep
+[58:16] dive on agent core uh browser and code
+[58:19] interpreter. So we have uh some more
+[58:21] sessions coming up uh on agent core
+[58:24] memory that's uh that's next. So um you
+[58:27] know that's that's all from our side
+[58:28] from from this this week's episode um
+[58:32] and wrapping up here right so thanks a
+[58:34] lot for watching come back again next
+[58:36] week
+[58:37] >> thanks for listening
+[58:39] >> by
+[58:42] [Music]

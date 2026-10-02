@@ -1,0 +1,251 @@
+{
+  "version": 1,
+  "comment": "Concept → reference manifest. Key = concept bookmark id ({chapterId}#{slug}). Each ref has a kind so new knowledge-base types (docker, kubectl, terraform…) slot in without schema changes. Repo may be a full URL or owner/repo.",
+  "concepts": {
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-4": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/01-first-agent/recipe-bot-cli/recipe_bot.py", "title": "recipe_bot.py — your first agent" },
+        { "kind": "commit", "repo": "strands-agents/samples", "sha": "abd96ba4af", "title": "Fix recipe_bot.py by specifying model explicitly" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-6": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/strands-agents/tools", "title": "strands-agents/tools — 20+ built-in tools" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-9": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/02-tools-and-mcp/01-using-mcp-tools/mcp-agent.ipynb", "title": "mcp-agent.ipynb — MCP tools walkthrough" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-12": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/11-swarm/swarm.ipynb", "title": "swarm.ipynb — multi-agent swarm" },
+        { "kind": "commit", "repo": "strands-agents/samples", "sha": "47af0dbd72", "title": "Fix: make the graph lab's first example genuinely sequential" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-17": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/06-memory/personal_agent_with_memory.py", "title": "personal_agent_with_memory.py — memory in code" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-19": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/18-self-improving-agents/code/step-05-deploy/agent.py", "title": "agent.py — deployable agent" },
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/18-self-improving-agents/code/step-05-deploy/deploy.sh", "title": "deploy.sh — ship it" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-20": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/08-observability/Observability-and-Evaluation-sample.ipynb", "title": "Observability & Evaluation sample" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#3-21": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/strands-agents/samples" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/tools" }
+      ]
+    },
+    "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP#where-strands-fits": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python", "title": "The SDK that implements everything in this section" }
+      ]
+    },
+    "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#chapter-02-git-repository": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/amazon-bedrock-agentcore-samples" },
+        { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-starter-toolkit" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python" }
+      ]
+    },
+    "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#2-13": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/06-memory/personal_agent_with_memory.py", "title": "Memory in practice (Strands side)" }
+      ]
+    },
+    "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#2-16": {
+      "refs": [
+        { "kind": "file", "repo": "strands-agents/samples", "path": "python/01-learn/08-observability/Observability-and-Evaluation-sample.ipynb", "title": "Observability & Evaluation sample" }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-7": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/agent.py", "title": "agent.py — Strands agent on Runtime" },
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/deploy.py", "title": "deploy.py — programmatic deploy" },
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/invoke.py", "title": "invoke.py — boto3 invocation" },
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "Host a Strands agent on Runtime — full walkthrough",
+          "files": [
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/agent.py",
+              "label": "Agent",
+              "highlights": [[12, 20]],
+              "note": "BedrockAgentCoreApp + @app.entrypoint is the entire Runtime contract — the agent body is unchanged Strands code."
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/deploy.py",
+              "label": "Deploy",
+              "note": "Programmatic deploy — same result as the agentcore CLI."
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/invoke.py",
+              "label": "Invoke",
+              "note": "boto3 invoke_agent_runtime — the production invocation path."
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/requirements.txt",
+              "label": "Deps"
+            }
+          ]
+        }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-13": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/mcp_server.py", "title": "mcp_server.py — MCP server on Runtime" },
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/deploy.py", "title": "deploy.py — MCP deploy" },
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "MCP server on Runtime — full walkthrough",
+          "files": [
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/mcp_server.py",
+              "label": "MCP Server",
+              "highlights": [[34, 45]],
+              "note": "The whole file — FastMCP + @mcp.tool() + mcp.run('streamable-http'). The Dockerfile isn't in the repo: agentcore configure generates it (see §4.8)."
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/deploy.py",
+              "label": "Deploy",
+              "note": "Same deploy path as agents — Runtime doesn't care it's MCP."
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/invoke.py",
+              "label": "Invoke",
+              "note": "Authenticated streamable-HTTP client — the Inspector does the same handshake."
+            },
+            {
+              "path": "Dockerfile",
+              "src": "/bedrock-deepti/code/Dockerfile.agentcore",
+              "label": "Dockerfile",
+              "highlights": [[12, 12], [22, 23], [32, 32]],
+              "note": "Generated by agentcore configure — not shipped in the repo. Same file packages the MCP server."
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/requirements.txt",
+              "label": "Deps"
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/README.md",
+              "label": "Docs"
+            }
+          ]
+        }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-8": {
+      "refs": [
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "What gets packaged — agent, MCP server, and the generated Dockerfile",
+          "files": [
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/01-http-protocol/01-strands-bedrock/agent.py",
+              "label": "Agent",
+              "highlights": [[12, 20]],
+              "note": "The HTTP agent being containerized — BedrockAgentCoreApp + @app.entrypoint."
+            },
+            {
+              "path": "01-features/02-host-your-agent/01-runtime/02-hosting-tools/01-mcp-server-basics/mcp_server.py",
+              "label": "MCP Server",
+              "highlights": [[34, 45]],
+              "note": "Same packaging path — Runtime doesn't care it's MCP, not HTTP."
+            },
+            {
+              "path": "Dockerfile",
+              "src": "/bedrock-deepti/code/Dockerfile.agentcore",
+              "label": "Dockerfile",
+              "highlights": [[12, 12], [22, 23], [32, 32]],
+              "note": "Generated by agentcore configure — otel distro, non-root bedrock_agentcore user, CMD under opentelemetry-instrument."
+            }
+          ]
+        }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-17": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/02-a2a-protocol/agent.py", "title": "agent.py — custom protocol on Runtime" }
+      ]
+    },
+    "Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-19": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples" },
+        { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-starter-toolkit" }
+      ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-9": {
+      "refs": [
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "Lambda targets — the function and the tool schema",
+          "files": [
+            { "path": "lambda_weather_tool.py", "src": "/bedrock-deepti/code/lambda_weather_tool.py", "label": "Default Lambda", "highlights": [[8, 8], [10, 18]], "note": "The toolkit's generated test Lambda — the Gateway passes which tool was invoked via client_context.bedrockAgentCoreToolName." },
+            { "path": "lambda_function_code.py", "src": "/bedrock-deepti/code/lambda_function_code.py", "label": "Your Lambda", "highlights": [[7, 13], [15, 18]], "note": "Bring-your-own Lambda from the workshop samples — strips the {TargetName}___ prefix. Ships as lambda_function_code.zip." },
+            { "path": "gateway_lambda_target.py", "src": "/bedrock-deepti/code/gateway_lambda_target.py", "label": "Target Payload", "highlights": [[5, 7], [10, 36]], "note": "lambdaArn + toolSchema — Gateway does the MCP→Lambda schema conversion." }
+          ]
+        }
+      ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-10": {
+      "refs": [
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "OpenAPI target — NASA Mars API via boto3",
+          "files": [
+            { "path": "gateway_boto3_openapi.py", "src": "/bedrock-deepti/code/gateway_boto3_openapi.py", "label": "boto3 OpenAPI Target", "highlights": [[17, 20], [29, 37], [43, 56], [58, 65]], "note": "create_api_key_credential_provider → openApiSchema S3 URI → API_KEY credential config → create_gateway_target." }
+          ]
+        }
+      ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-13": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/aws/bedrock-agentcore-starter-toolkit", "title": "bedrock-agentcore-starter-toolkit — the GatewayClient used in the demo" },
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "Starter toolkit — authorizer, gateway and Lambda target",
+          "files": [
+            { "path": "gateway_starter_toolkit.py", "src": "/bedrock-deepti/code/gateway_starter_toolkit.py", "label": "Toolkit Setup", "highlights": [[12, 13], [18, 19], [24, 28], [35, 39]], "note": "Extracted from the workshop notebooks (06-workshops/02-AgentCore-gateway)." }
+          ]
+        }
+      ]
+    },
+    "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-17": {
+      "refs": [
+        {
+          "kind": "code-explorer",
+          "repo": "awslabs/agentcore-samples",
+          "ref": "main",
+          "title": "Data plane — a Strands agent calling the Gateway",
+          "files": [
+            { "path": "gateway_mcp_client.py", "src": "/bedrock-deepti/code/gateway_mcp_client.py", "label": "MCP Client + Agent", "highlights": [[11, 15], [18, 29], [40, 48], [52, 55]], "note": "streamablehttp_client + Bearer token → MCPClient → tools/list → a normal Strands Agent. Just MCP + OAuth on the data plane." }
+          ]
+        },
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/06-workshops/02-AgentCore-gateway", "title": "Gateway workshop — Lambda/OpenAPI/Smithy notebooks and specs" }
+      ]
+    }
+  }
+}

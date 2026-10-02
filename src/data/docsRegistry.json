@@ -2401,7 +2401,7 @@
         {
           "id": "core-chapters",
           "title": "Core Chapters",
-          "description": "Main guided chapters of the Bedrock to Production course.",
+          "description": "Main guided chapters of the Bedrock by Deepti course.",
           "icon": "🤖",
           "contentBase": "/bedrock-deepti/",
           "chapters": [
@@ -2409,7 +2409,7 @@
               "id": "Chapter_01_Introduction_to_Amazon_Bedrock",
               "title": "01 — Introduction To Amazon Bedrock",
               "file": "Chapter_01_Introduction_to_Amazon_Bedrock.md",
-              "sectionCount": 13
+              "sectionCount": 15
             },
             {
               "id": "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents",
@@ -2425,7 +2425,7 @@
             },
             {
               "id": "Chapter_04_AgentCore_Runtime_Prototype_to_Production",
-              "title": "04 — AgentCore Runtime From Prototype To Production",
+              "title": "04 — AgentCore Runtime Prototype To Production",
               "file": "Chapter_04_AgentCore_Runtime_Prototype_to_Production.md",
               "sectionCount": 24
             },
@@ -2433,7 +2433,7 @@
               "id": "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools",
               "title": "05 — AgentCore Gateway Connecting Agents To Tools",
               "file": "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools.md",
-              "sectionCount": 19
+              "sectionCount": 20
             }
           ]
         }
@@ -2457,25 +2457,25 @@
               "id": "Chapter_01_Why_Strands_Agents",
               "title": "01 — Why Strands Agents",
               "file": "Chapter_01_Why_Strands_Agents.md",
-              "sectionCount": 9
+              "sectionCount": 10
             },
             {
               "id": "Chapter_02_Strands_SDK_and_the_App_Blueprint",
               "title": "02 — Strands SDK And The App Blueprint",
               "file": "Chapter_02_Strands_SDK_and_the_App_Blueprint.md",
-              "sectionCount": 8
+              "sectionCount": 9
             },
             {
               "id": "Chapter_03_Agents_Tools_and_MCP_Hands_On",
               "title": "03 — Agents Tools And MCP Hands On",
               "file": "Chapter_03_Agents_Tools_and_MCP_Hands_On.md",
-              "sectionCount": 9
+              "sectionCount": 10
             },
             {
               "id": "Chapter_04_Multi_Agent_Orchestration",
               "title": "04 — Multi Agent Orchestration",
               "file": "Chapter_04_Multi_Agent_Orchestration.md",
-              "sectionCount": 10
+              "sectionCount": 11
             }
           ]
         }
@@ -2497,27 +2497,315 @@
           "chapters": [
             {
               "id": "Chapter_01_Prototype_to_Production_Gap",
-              "title": "01 — The Prototype to Production Gap",
+              "title": "01 — Prototype To Production Gap",
               "file": "Chapter_01_Prototype_to_Production_Gap.md",
-              "sectionCount": 8
+              "sectionCount": 9
             },
             {
               "id": "Chapter_02_Runtime_Local_to_Cloud",
-              "title": "02 — Runtime: Local to Cloud",
+              "title": "02 — Runtime Local To Cloud",
               "file": "Chapter_02_Runtime_Local_to_Cloud.md",
-              "sectionCount": 9
+              "sectionCount": 10
             },
             {
               "id": "Chapter_03_Gateway_Tools_as_MCP",
-              "title": "03 — Gateway: Tools as MCP",
+              "title": "03 — Gateway Tools As MCP",
               "file": "Chapter_03_Gateway_Tools_as_MCP.md",
-              "sectionCount": 9
+              "sectionCount": 10
             },
             {
               "id": "Chapter_04_Memory_Identity_Observability",
-              "title": "04 — Memory, Identity & Observability",
+              "title": "04 — Memory Identity Observability",
               "file": "Chapter_04_Memory_Identity_Observability.md",
+              "sectionCount": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-security",
+      "title": "AgentCore — Secure Agent Workflows",
+      "icon": "🔐",
+      "subtitle": "Secure your agent workflows — inbound/outbound identity, token vault, OAuth, Gateway auth",
+      "contentBase": "/agentcore-security/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Identity model, credential providers, OAuth and Gateway+Identity — from the AWS Show & Tell episode.",
+          "icon": "🔐",
+          "contentBase": "/agentcore-security/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Agent_Identity_Model",
+              "title": "01 — Agent Identity Model",
+              "file": "Chapter_01_Agent_Identity_Model.md",
               "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_Credential_Providers_and_OAuth",
+              "title": "02 — Credential Providers And OAuth",
+              "file": "Chapter_02_Credential_Providers_and_OAuth.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_03_Gateway_and_Identity",
+              "title": "03 — Gateway And Identity",
+              "file": "Chapter_03_Gateway_and_Identity.md",
+              "sectionCount": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-tools",
+      "title": "AgentCore — Built-in Tools",
+      "icon": "🧰",
+      "subtitle": "Browser Tool + Code Interpreter — managed headless Chromium and sandboxed Python",
+      "contentBase": "/agentcore-tools/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Browser Tool and Code Interpreter — managed first-party tools for agents.",
+          "icon": "🧰",
+          "contentBase": "/agentcore-tools/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Browser_Tool",
+              "title": "01 — Browser Tool",
+              "file": "Chapter_01_Browser_Tool.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_Code_Interpreter",
+              "title": "02 — Code Interpreter",
+              "file": "Chapter_02_Code_Interpreter.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_03_Composition_and_Production",
+              "title": "03 — Composition And Production",
+              "file": "Chapter_03_Composition_and_Production.md",
+              "sectionCount": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-memory",
+      "title": "AgentCore — Memory Deep Dive",
+      "icon": "🧠",
+      "subtitle": "AgentCore Memory — STM vs LTM, extraction strategies, namespaces and hooks",
+      "contentBase": "/agentcore-memory/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Short-term vs long-term memory, strategies, namespaces, hooks and the memory browser.",
+          "icon": "🧠",
+          "contentBase": "/agentcore-memory/",
+          "chapters": [
+            {
+              "id": "Chapter_01_STM_vs_LTM",
+              "title": "01 — STM Vs LTM",
+              "file": "Chapter_01_STM_vs_LTM.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_Strategies_and_Namespaces",
+              "title": "02 — Strategies And Namespaces",
+              "file": "Chapter_02_Strategies_and_Namespaces.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_03_Hooks_and_Demo",
+              "title": "03 — Hooks And Demo",
+              "file": "Chapter_03_Hooks_and_Demo.md",
+              "sectionCount": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-prod-deploy",
+      "title": "AgentCore — Prototype to Production",
+      "icon": "🏭",
+      "subtitle": "Move agents from prototype to production — CI/CD pipeline, MCP on Runtime, full walkthrough",
+      "contentBase": "/agentcore-prod-deploy/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "The full deployment lifecycle — CodeBuild→ECR→Runtime, MCP servers on Runtime, end-to-end.",
+          "icon": "🏭",
+          "contentBase": "/agentcore-prod-deploy/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Production_Lifecycle",
+              "title": "01 — Production Lifecycle",
+              "file": "Chapter_01_Production_Lifecycle.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_MCP_on_Runtime",
+              "title": "02 — MCP On Runtime",
+              "file": "Chapter_02_MCP_on_Runtime.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_03_End_to_End_Walkthrough",
+              "title": "03 — End To End Walkthrough",
+              "file": "Chapter_03_End_to_End_Walkthrough.md",
+              "sectionCount": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-observability",
+      "title": "AgentCore — Observability",
+      "icon": "📡",
+      "subtitle": "Observability — OTel traces, CloudWatch GenAI dashboard, third-party APM",
+      "contentBase": "/agentcore-observability/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "OpenTelemetry spans and traces, CloudWatch GenAI dashboards, third-party APM export.",
+          "icon": "📡",
+          "contentBase": "/agentcore-observability/",
+          "chapters": [
+            {
+              "id": "Chapter_01_OTel_Spans_Traces",
+              "title": "01 — OTel Spans Traces",
+              "file": "Chapter_01_OTel_Spans_Traces.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_CloudWatch_GenAI_Dashboard",
+              "title": "02 — CloudWatch GenAI Dashboard",
+              "file": "Chapter_02_CloudWatch_GenAI_Dashboard.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_03_Third_Party_APM",
+              "title": "03 — Third Party APM",
+              "file": "Chapter_03_Third_Party_APM.md",
+              "sectionCount": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-evaluations",
+      "title": "AgentCore — Evaluations",
+      "icon": "✅",
+      "subtitle": "Agent evaluations — correctness, faithfulness, judges, dashboards",
+      "contentBase": "/agentcore-evaluations/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Evaluation dimensions, on-demand vs continuous evals, judges and score dashboards.",
+          "icon": "✅",
+          "contentBase": "/agentcore-evaluations/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Evaluation_Concepts",
+              "title": "01 — Evaluation Concepts",
+              "file": "Chapter_01_Evaluation_Concepts.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_OnDemand_Evals_Config",
+              "title": "02 — OnDemand Evals Config",
+              "file": "Chapter_02_OnDemand_Evals_Config.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_03_Dashboards_and_Judges",
+              "title": "03 — Dashboards And Judges",
+              "file": "Chapter_03_Dashboards_and_Judges.md",
+              "sectionCount": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-tool-controls",
+      "title": "AgentCore — Policy & Tool Controls",
+      "icon": "🌲",
+      "subtitle": "Control agent↔tool interactions — Cedar policies, argument-level authz, audit",
+      "contentBase": "/agentcore-tool-controls/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Cedar policies on Gateway — argument-level authorization for agent tool calls.",
+          "icon": "🌲",
+          "contentBase": "/agentcore-tool-controls/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Agent_Tool_Risks",
+              "title": "01 — Agent Tool Risks",
+              "file": "Chapter_01_Agent_Tool_Risks.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_Cedar_Policies_on_Gateway",
+              "title": "02 — Cedar Policies On Gateway",
+              "file": "Chapter_02_Cedar_Policies_on_Gateway.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_03_Policy_Author_and_Enforcement",
+              "title": "03 — Policy Author And Enforcement",
+              "file": "Chapter_03_Policy_Author_and_Enforcement.md",
+              "sectionCount": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agentcore-episodic-memory",
+      "title": "AgentCore — Episodic Memory",
+      "icon": "📓",
+      "subtitle": "Episodic memory — episodes, reflections, feedback loops, namespaces",
+      "contentBase": "/agentcore-episodic-memory/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Episodes, reflections and feedback — agents that learn from experience.",
+          "icon": "📓",
+          "contentBase": "/agentcore-episodic-memory/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Episodic_Memory_Concept",
+              "title": "01 — Episodic Memory Concept",
+              "file": "Chapter_01_Episodic_Memory_Concept.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_02_Episodes_and_Reflections",
+              "title": "02 — Episodes And Reflections",
+              "file": "Chapter_02_Episodes_and_Reflections.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_03_Feedback_and_Loops",
+              "title": "03 — Feedback And Loops",
+              "file": "Chapter_03_Feedback_and_Loops.md",
+              "sectionCount": 8
             }
           ]
         }

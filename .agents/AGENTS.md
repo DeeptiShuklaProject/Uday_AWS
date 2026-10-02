@@ -4,7 +4,7 @@
 This is a React + Vite rebuild of the AWS Production Masterclass course application.
 - **Source app**: Vanilla HTML/CSS/JS in `Uday_AWS` (branch: `main`)
 - **This app**: React rebuild in `AWS_REACT` (branch: `AWS_REACT`)
-- **Architecture reference**: Copied from `wscs_bedrock/.agents`
+- **Architecture reference**: `.agents/ARCHITECTURE.md` (in-repo)
 
 ## Strict 1000% Component Reusability Rule
 
@@ -55,19 +55,29 @@ Markdown-driven courses rendered by the shared lesson engine (`moduleParser.js` 
 
 ### Courses
 
-| Course id | Title | Source dir | Public dir | Route |
+| Course id | Title | Source dir (in-repo) | Public dir | Route |
 |---|---|---|---|---|
-| `bedrock-to-production` | Bedrock to Production | `wscs_bedrock/doc_aws_bedrock_production by Deepti` (**STALE — see warning**) | `public/bedrock-deepti/` | `/courses/bedrock-to-production/core-chapters/<ch>` |
-| `strands-agents` | Strands Agents | `doc_strands_agents/` (in-repo, true source) | `public/strands-agents/` | `/courses/strands-agents/core-chapters/<ch>` |
-| `agentcore-production-agent` | AgentCore — Production-Ready Agents | `doc_agentcore_production_agent/` (in-repo, true source) | `public/agentcore-production-agent/` | `/courses/agentcore-production-agent/core-chapters/<ch>` |
+| `bedrock-to-production` | Bedrock to Production | `doc_bedrock_production/` | `public/bedrock-deepti/` | `/courses/bedrock-to-production/core-chapters/<ch>` |
+| `strands-agents` | Strands Agents | `doc_strands_agents/` | `public/strands-agents/` | `/courses/strands-agents/core-chapters/<ch>` |
+| `agentcore-production-agent` | AgentCore — Production-Ready Agents | `doc_agentcore_production_agent/` | `public/agentcore-production-agent/` | `/courses/agentcore-production-agent/core-chapters/<ch>` |
+| `agentcore-security` | AgentCore — Secure Agent Workflows | `doc_agentcore_security/` | `public/agentcore-security/` | ep 05 `wv2doVDF7KQ` |
+| `agentcore-tools` | AgentCore — Built-in Tools | `doc_agentcore_tools/` | `public/agentcore-tools/` | ep 06 `z3lAJ-Nf_lk` |
+| `agentcore-memory` | AgentCore — Memory Deep Dive | `doc_agentcore_memory/` | `public/agentcore-memory/` | ep 07 `-N4v6-kJgwA` |
+| `agentcore-prod-deploy` | AgentCore — Prototype to Production | `doc_agentcore_prod_deploy/` | `public/agentcore-prod-deploy/` | ep 08 `WyGK8UcAxKo` |
+| `agentcore-observability` | AgentCore — Observability | `doc_agentcore_observability/` | `public/agentcore-observability/` | ep 09 `wWQgawUPr1k` |
+| `agentcore-evaluations` | AgentCore — Evaluations | `doc_agentcore_evaluations/` | `public/agentcore-evaluations/` | ep 10 `i0h7xA8cqYs` |
+| `agentcore-tool-controls` | AgentCore — Policy & Tool Controls | `doc_agentcore_tool_controls/` | `public/agentcore-tool-controls/` | ep 11 `q_9htaugcgI` |
+| `agentcore-episodic-memory` | AgentCore — Episodic Memory | `doc_agentcore_episodic_memory/` | `public/agentcore-episodic-memory/` | ep 12 `1EEIGsKIjGA` |
 
-- bedrock-to-production was renamed from `bedrock-deepti`; the physical asset dir stays `bedrock-deepti` (dev-server lock prevented rename). `convert-docs.mjs` supports a `dir` override decoupling route id ↔ on-disk dir.
-- Course source assets: `strands_agentic_app/` holds transcripts (`agentcore_gateway_transcript.txt`, `strands_first_agentic_app_transcript.txt`), downloaded video, extracted `frames/`, and `repo_ref/` copies of GitHub files used for explorer highlight mapping. Newer work stages per-video under `.course-src/<youtubeId>/` (gitignored) — e.g. `.course-src/wzIQDPFQx30/` for the AgentCore ep-01 build (transcript, video, frames, repo_ref).
-- `agentcore-production-agent` is built from the AWS Show & Tell ep-01 video `wzIQDPFQx30` (transcript also in `doc_uday_bedrock_notes/aws_employee_video_playlist/transcripts/01_*.txt`); the repo it demos was renamed `amazon-bedrock-agentcore-samples` → `awslabs/agentcore-samples`, and `bedrock-agentcore-starter-toolkit` is legacy → `aws/agentcore-cli`.
+- All course routes follow `/courses/<courseId>/core-chapters/<chapterId>`; every AgentCore course maps to a playlist video ID shown at right.
+- bedrock-to-production route id vs on-disk dir differ (`bedrock-deepti`); `convert-docs.mjs` `dir` override decouples them.
+- Other categories are also fully in-repo: `doc_linux/`, `doc_docker/`, `doc_python_devops/`, `doc_kubernetes/` — `convert-docs.mjs` has **no external source dependencies**.
+- Course source assets stage per-video under `.course-src/<youtubeId>/` (gitignored) — transcript.txt, video.mp4, frames/, repo_ref/. Playlist transcripts also live in `doc_uday_bedrock_notes/aws_employee_video_playlist/transcripts/NN_*.txt` with summaries/questions/examples alongside.
+- `agentcore-production-agent` is built from the AWS Show & Tell ep-01 video `wzIQDPFQx30`; the repo it demos was renamed `amazon-bedrock-agentcore-samples` → `awslabs/agentcore-samples`, and `bedrock-agentcore-starter-toolkit` is legacy → `aws/agentcore-cli`.
 
-### ⚠️ convert-docs.mjs hazard
+### convert-docs.mjs behavior
 
-`node scripts/convert-docs.mjs` does `rmSync(public/<dir>)` then re-mirrors from each category's `src`. The bedrock-to-production source (`wscs_bedrock/doc_aws_bedrock_production by Deepti`) is **stale** — it lacks Chapter 05, the Ch01 video section, and all recent edits. Running a regen would **delete them from `public/`**. Until that source is synced, register/edit courses by hand-editing `docsRegistry.json` + copying files to `public/` manually. `strands-agents` is safe (in-repo source).
+`node scripts/convert-docs.mjs` does `rmSync(public/<dir>)` then re-mirrors from each category's `src`. **All sources are in-repo `doc_*` dirs** — a regen is safe and regenerates `docsRegistry.json` + every `public/` mirror. Edit course content in the `doc_*` source dir, then run the script (or hand-mirror into `public/` for a single file).
 
 ### Chapter markdown conventions
 

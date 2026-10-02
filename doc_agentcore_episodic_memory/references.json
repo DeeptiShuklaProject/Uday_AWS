@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "comment": "AgentCore Episodic Memory course — concept → source references.",
+  "concepts": {
+    "Chapter_01_Episodic_Memory_Concept#1-1": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory.html", "title": "AgentCore Memory — official developer guide (episodic strategies)" }
+      ]
+    },
+    "Chapter_02_Episodes_and_Reflections#2-1": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/04-manage-context-of-your-agent/memory", "title": "agentcore-samples — episodic memory + reflections notebooks" },
+        { "kind": "file", "repo": "aws/bedrock-agentcore-sdk-python", "path": "src/bedrock_agentcore/memory", "title": "SDK — MemoryClient for episode/namespace APIs" }
+      ]
+    },
+    "Chapter_03_Feedback_and_Loops#3-4": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html", "title": "AgentCore Evaluations — outcome scores as feedback signal" }
+      ]
+    }
+  }
+}

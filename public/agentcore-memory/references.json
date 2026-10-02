@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "comment": "AgentCore Memory course — concept → source references.",
+  "concepts": {
+    "Chapter_01_STM_vs_LTM#1-2": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory.html", "title": "AgentCore Memory — official developer guide" },
+        { "kind": "file", "repo": "aws/bedrock-agentcore-sdk-python", "path": "src/bedrock_agentcore/memory", "title": "SDK — MemoryClient (create_memory, create_event, retrieve_memories)" }
+      ]
+    },
+    "Chapter_02_Strategies_and_Namespaces#2-1": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/04-manage-context-of-your-agent/memory", "title": "agentcore-samples — Memory strategies + namespace examples" }
+      ]
+    },
+    "Chapter_03_Hooks_and_Demo#3-1": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/04-manage-context-of-your-agent/memory/02-long-term-memory/examples/single-agent/with-strands-agent/02-custom-hook/customer-support/customer-support-override-strategy.py", "title": "Memory hooks example — MemorySessionManager + HookProvider with a Strands agent" },
+        { "kind": "repo", "url": "https://github.com/strands-agents/sdk-python", "title": "strands-agents/sdk-python — the agent framework used in the demo" }
+      ]
+    }
+  }
+}

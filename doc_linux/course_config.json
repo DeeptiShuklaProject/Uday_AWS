@@ -1,0 +1,8 @@
+{
+  "rootFolder": "Master_Course_v2",
+  "exclude": [
+    "Master_Course_v2_Backup",
+    "Master_Course_v2_Backup_Full",
+    "FInal Notes for Creating Course"
+  ]
+}

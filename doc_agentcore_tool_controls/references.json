@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "comment": "AgentCore Tool Controls (Policy) course — concept → source references.",
+  "concepts": {
+    "Chapter_02_Cedar_Policies_on_Gateway#2-1": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/cedar-policy/cedar", "title": "cedar-policy/cedar — the open-source policy language used by AgentCore Policy" },
+        { "kind": "url", "url": "https://docs.cedarpolicy.com/", "title": "Cedar policy language docs — permit/forbid/when syntax" }
+      ]
+    },
+    "Chapter_02_Cedar_Policies_on_Gateway#2-5": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html", "title": "AgentCore Policy — attaching Cedar policy engines to Gateways" }
+      ]
+    },
+    "Chapter_03_Policy_Author_and_Enforcement#3-3": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples", "title": "agentcore-samples — policy enforcement + audit decision examples" }
+      ]
+    }
+  }
+}

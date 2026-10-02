@@ -114,6 +114,6 @@ After it verifies, do a second pass over every chapter with fresh eyes:
 
 - **Heading+code-fence trap**: `##` headings containing `code|examples?|demo|walkthrough|implement|yaml|dockerfile|script|program|snippet` + a code fence → section renders ONLY the fence; prose/images die. Rename the heading ("Coding" ≠ "code").
 - `Q&A|interview|quiz|terminal|challenge|lab` headings also become typed sections — keep prose out of them or split the section.
-- **convert-docs.mjs wipes `public/<dir>`** and re-mirrors from source. `bedrock-to-production`'s WSCS source is STALE (no Ch05/edits) — never run regen until it's synced; hand-register instead.
+- **convert-docs.mjs wipes `public/<dir>`** and re-mirrors from each category's `src` — all sources are in-repo `doc_*` dirs, so a regen is safe. Edit `doc_*/`, then regen (or hand-mirror a single file into `public/`).
 - Git Bash heredocs eat `\\` in Windows paths — write .mjs/.py with file tools.
 - Explorers: `expanded="true"` opens on scroll; only multi-file explorers claim ←→ keys on mount (fixed in `GitHubPreciseCodeExplorerModal.jsx`).

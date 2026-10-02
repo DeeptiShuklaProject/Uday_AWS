@@ -1,0 +1,1455 @@
+Title: 07_memory_deep_dive
+Video URL: https://www.youtube.com/watch?v=-N4v6-kJgwA
+============================================================
+
+[00:00] Hey, hey, hey.
+[00:06] [Music]
+[00:27] [Music]
+[00:32] Hello all, welcome to another episode of
+[00:34] AWS show and tell. I am Anil Nadimi,
+[00:38] your host for today. We have Mani and
+[00:40] Akasha joining us. We'll do
+[00:42] introductions in a second here. Uh but
+[00:44] we are doing a deep dive series on uh
+[00:48] agent core. Uh before we get uh into the
+[00:51] details u you know again I'm connecting
+[00:53] from Princeton, New Jersey. Um we'll go
+[00:56] into introductions. I'm a senior
+[00:57] solutions architect uh supporting
+[00:59] enterprise customers in the green field
+[01:01] area uh within AWS. Uh over to you Mani.
+[01:04] >> Hi everyone. Uh very nice to be here.
+[01:07] I'm principal generative AI specialist
+[01:09] solution architect at AWS and primary
+[01:12] line with agent cover.
+[01:16] >> Perfect. Hi man. Um hi everyone. I my
+[01:20] name is Akersha and I'm a data scientist
+[01:23] a geni data scientist with agenti orc uh
+[01:27] of AWS and I'm working very closely with
+[01:30] agent core memory and I'm very excited
+[01:33] to share all the details with you all
+[01:35] here and
+[01:37] >> excellent thanks uh thanks man and
+[01:39] akasha so where are you connecting from
+[01:41] money
+[01:42] >> oh I'm connecting from orange county
+[01:45] near the LA Los Angeles area
+[01:47] >> okay yeah Akasha
+[01:49] I am very central in New York. I'm in
+[01:52] Manhattan. The midtown of Manhattan.
+[01:54] >> Okay. So, we have both both coast. Yeah.
+[01:57] So, excellent. So, uh getting into the
+[02:00] episode today, we are going to uh dive
+[02:03] deep into agent core memory. We've been
+[02:06] doing this series uh uh deep dive series
+[02:09] on agent core different suite of
+[02:12] services that agent core offers. And
+[02:14] today's episode we have money and Akasha
+[02:17] joining us. So uh you might be using or
+[02:21] building agentic applications uh and
+[02:23] memory is a central component of of this
+[02:26] right. So uh money and akash are going
+[02:30] to dive deep and uh explain break it
+[02:33] down for us how things work. So we let
+[02:36] uh we let the specialists uh give or you
+[02:39] about this right. So yeah take it over.
+[02:43] >> Sounds good.
+[02:49] All right. So I mean we are today going
+[02:52] to talk about u agent core memory which
+[02:55] is a service for agent memory
+[02:57] management. Um, agent core memory makes
+[03:00] it easier for developers to build
+[03:02] context aware agents by eliminating the
+[03:06] complex memory infrastructure
+[03:08] management, right? While providing full
+[03:11] control over what exactly the II agent
+[03:14] remembers. So first of all before we go
+[03:18] into that why are we talking about this
+[03:21] at the moment? Because till 2025 till
+[03:25] today we have focused on creating
+[03:28] technically amazing agents providing
+[03:31] them with a lot of tools with a lot of
+[03:33] capabilities but however good agents are
+[03:36] in giving humanlike responses they are
+[03:39] fundamentally stateless. Think think
+[03:42] about it this way. So imagine every time
+[03:44] you talk to a friend and they forgot
+[03:46] everything about your previous
+[03:47] conversation. That could be frustrating.
+[03:50] >> Won't be good, right? So yeah.
+[03:53] >> So I mean the fact remains that the
+[03:55] ability to remember the is the
+[03:58] foundation of our meaningful human
+[04:01] relationships, right? We remember the
+[04:03] past conversations. We learn preferences
+[04:05] of our friends over time. We build that
+[04:07] share context and that's what deepens
+[04:10] our connections. And this is what we
+[04:12] want to uh replicate in our agents to
+[04:16] provide truly great user experiences. We
+[04:19] need our agents to remember things the
+[04:21] preferences your uh important facts
+[04:24] about you uh you know the important the
+[04:27] patterns of how you like to interact and
+[04:29] that's what matters that's what will
+[04:32] drive the user adoption for the
+[04:34] applications.
+[04:38] So that brings us to what I believe is
+[04:42] going to be huge and not just me. It's a
+[04:45] clear consensus for what agents um for
+[04:49] agents right now that in 2026 it's going
+[04:52] to it's going to be the year of context
+[04:55] engineering.
+[04:57] >> So
+[04:58] >> I think we need to dive deep into this
+[05:00] context changing topic itself. Right. So
+[05:02] there it's it's huge. it's going to make
+[05:04] a a fundamental uh you know shift impact
+[05:06] on everything that's agentic in nature.
+[05:10] >> I completely agree. I mean think about
+[05:12] it right we have all of these different
+[05:15] kinds of context that we can give to our
+[05:17] models
+[05:19] um and we can engineer it so many
+[05:21] different ways and that context is the
+[05:24] only thing that impacts how or you know
+[05:27] how brilliant a response we're going to
+[05:29] get or are we going to get complete
+[05:30] hallucinations.
+[05:32] So this is especially critical for AI
+[05:34] agents because let's be honest, they're
+[05:38] handling pretty complex tasks today,
+[05:42] right? We can have longunning sessions
+[05:44] that can go out for hours and we are
+[05:48] providing them with so many tools and
+[05:50] that feedback piles up in that context
+[05:53] window as well. So here's what we've
+[05:57] observed. Most of the times when these
+[05:59] agentic systems mess up, it could be one
+[06:03] of the two reasons, right? It could be
+[06:05] either the model itself,
+[06:08] but to be honest, models are getting so
+[06:11] much better.
+[06:13] So that's not that prominent a reason
+[06:15] anymore.
+[06:16] Uh so moving to the second aspect which
+[06:20] is the context itself. So what we are
+[06:23] providing and that impacts how much a
+[06:26] model is going to hallucinate or how
+[06:27] much how accurate responses how good
+[06:30] responses uh it's going to provide.
+[06:36] So there's a quick question Nakasha like
+[06:38] uh I think uh whenever we go into these
+[06:40] customer conversations um one thing that
+[06:43] everyone ask is like these days because
+[06:46] you have touched based on this model
+[06:47] thing right
+[06:48] >> so these days models can handle like
+[06:51] millions of tokens of context so why are
+[06:54] we talking about context because if I
+[06:56] even if I provide like all these
+[06:58] documents tool calls and everything
+[07:00] comprehensive
+[07:01] >> in instructions
+[07:03] >> model can handle really long context
+[07:05] text. So what is it driving? Because
+[07:08] this is a common question and I'm
+[07:10] putting you on the spot.
+[07:14] >> But so I mean it is it can take in so
+[07:17] much tokens but then this also maybe
+[07:20] misguides it. If you're providing it the
+[07:22] wrong context or it is not able to
+[07:25] derive the right information from that
+[07:27] context, it can uh maybe go into the
+[07:31] wrong direction. And that's where we
+[07:33] have to make sure that you know if we
+[07:35] want our agents to perform really well
+[07:38] in all cases uh in all corner cases as
+[07:41] well. We want to make sure that we are
+[07:43] providing um everything that is cured
+[07:46] out for the agent. So we are making sure
+[07:49] that the context window is precise,
+[07:51] accurate and uh complete.
+[07:54] >> Yeah. And also additionally like even if
+[07:56] they can handle millions of tokens,
+[07:57] imagine every call you giving millions
+[07:59] of tokens. What about the cost?
+[08:01] >> Exactly.
+[08:03] >> Yeah.
+[08:04] >> Caching may come to the rescue actually
+[08:06] out there. Right. So caching may help
+[08:08] but uh again yeah there's
+[08:11] >> I mean caching will only help when it's
+[08:13] repetitive information which
+[08:16] >> in most of the cases uh like if you're
+[08:18] talking about user uh messages, if
+[08:20] you're talking about tools, this is not
+[08:22] always the case, right? It might take in
+[08:24] different pieces of information. So
+[08:28] yeah,
+[08:29] >> I think the bottom line is to have the
+[08:31] relevant context every time. That's it.
+[08:33] >> Yes. Yes, 100%. Yeah, we have a question
+[08:36] coming in from Ragu asking you know to
+[08:38] share some realtime use cases as we
+[08:40] speak about this.
+[08:43] >> Sure. Uh I think um I can take take up
+[08:46] this one. So some of the real-time use
+[08:48] cases for example if you have a customer
+[08:51] support agent right and then you are you
+[08:53] have been talking to the customer
+[08:55] support agent for quite some time and
+[08:57] that customer support agent can fetch
+[09:00] some tools uh such as some of the data
+[09:03] APIs and then it can also get
+[09:05] information from your vector stores and
+[09:09] by the way rag is still alive so not
+[09:13] going anywhere and um because you always
+[09:15] have these these documents right which
+[09:18] uh which your company which reflects
+[09:19] your company brands those are the polic
+[09:21] can be policy documents can be you know
+[09:23] to provide additional context. So the
+[09:26] agents even if you give like ask like
+[09:28] one question and if they need to fetch
+[09:30] information from these various tools it
+[09:33] can really grow and at the same time you
+[09:35] want to make sure that you're providing
+[09:37] personalized responses to your uh users
+[09:40] as well right so that's the main reason
+[09:43] why it becomes really important to
+[09:45] provide the most relevant information to
+[09:49] your agent so that it can provide you
+[09:52] with more accurate uh results. and the
+[09:55] responses back. So one example is
+[09:58] customer support. Now think about
+[10:00] another example. If you're doing deep
+[10:02] research, now this is a long running
+[10:04] agent, right? It's running for let's say
+[10:05] five minutes or sometimes even more than
+[10:08] an hour depending on the uh use case and
+[10:10] how you have designed it. So this
+[10:13] context can grow really big and again if
+[10:16] you provide too much context, think of
+[10:18] like I'm a human. I can only take so
+[10:20] much. I know AI models can take more but
+[10:23] still uh if I still have to filter out
+[10:27] uh what is relevant what is not relevant
+[10:29] and then you are adding this extra load
+[10:31] uh to the model to figure out what's
+[10:34] relevant what's not relevant right so
+[10:36] the idea is while you're designing your
+[10:37] application make sure that you are
+[10:39] providing the relevant context design
+[10:41] your application in such a way that it
+[10:44] always provide more relevant context uh
+[10:46] to your agent and I think uh this is
+[10:49] great that we're talking about context
+[10:51] engineering. I think we should also
+[10:53] focus on where memory plays a really
+[10:55] important part in the context
+[10:56] engineering. These user messages, this
+[10:58] message history, all of those among
+[11:00] other
+[11:01] >> histories, right? The chatbot chat
+[11:02] histories.
+[11:03] >> Exactly.
+[11:03] >> Exactly. I mean, we have been talking
+[11:05] about rag and prompt engineering for a
+[11:08] while now. So today, let's focus on
+[11:10] memory.
+[11:12] >> Exactly. And you have to make sure that
+[11:14] there is contextual intelligence um
+[11:17] embedded into it because if you provide
+[11:19] accurate and relevance um context that's
+[11:23] what will lead to more accurate and
+[11:25] relevant responses back. So it's
+[11:27] literally like the principle of garbage
+[11:29] in garbage out still holds true no
+[11:31] matter how smart uh you know the models
+[11:33] become and the stuff like that. So it's
+[11:35] important uh to do that and also while
+[11:38] you're working with these applications
+[11:40] it's super important uh sometimes I also
+[11:43] touched based about personalization I
+[11:45] want my agent to remember to give me a
+[11:48] better uh response so that I can connect
+[11:50] with my application all the time it if
+[11:53] it remembers my past conversations or
+[11:55] even just like my preferences so for
+[11:58] example if I'm coding all the time and
+[11:59] if I have to give instruction that I
+[12:01] like to code in Python then uh that's
+[12:04] like repetitive input that I'm providing
+[12:07] all the time. Why not my agent can
+[12:09] remember that I code in Python, right?
+[12:11] So just one example of user preferences.
+[12:13] It can go even big and then also like
+[12:15] retaining some of the knowledge while
+[12:17] I'm interacting with the agent. So it
+[12:19] should have like a way where it can
+[12:21] evolve and solve my problems and
+[12:24] understand the process and the you know
+[12:26] uh mindset on on how I like my responses
+[12:29] to be because I'll be ask keep asking
+[12:32] follow-up questions and so so on you
+[12:35] know it goes on and on and on. So uh so
+[12:37] all of these things are important like
+[12:39] we don't have to just remember we have
+[12:41] to be smart about what our agents are
+[12:44] remembering.
+[12:46] We we have a question coming from the
+[12:48] pitch chat asking if this is a
+[12:49] presentation or if it's uh uh you know
+[12:52] if includes demo. This is a show and
+[12:54] tell uh series folks. So which means
+[12:56] that you know we're doing the tell part
+[12:58] before we do the show part right. So
+[12:59] it's like you know the other way around
+[13:00] but we wanted to set some background
+[13:02] before we uh go into the demo and uh
+[13:05] share more information about that.
+[13:07] >> All right. Yeah.
+[13:08] >> Let's dive into this short-term memory,
+[13:10] long-term memory. I mean there's already
+[13:12] memory. Can you break this down for us?
+[13:14] What is this? Right. Yeah. And
+[13:16] short-term memory, think of it as raw
+[13:19] memory. like when I'm talking to the
+[13:21] agent there are like ongoing
+[13:23] conversation uh that I'm having and I
+[13:26] want to store and retain that ongoing
+[13:28] conversation
+[13:29] um which which will include the user
+[13:32] question that uh that the user is asking
+[13:34] the response that the agent is giving
+[13:36] back maybe sometimes tool information
+[13:38] and most importantly I might want to
+[13:40] store my agent state so that it can
+[13:42] resume from that if something goes bad
+[13:44] right or also I might want to do check
+[13:46] uh checkpointing uh to make sure that
+[13:49] you know I can resume from that
+[13:51] particular state and I can retrieve
+[13:53] those messages while I'm talking to the
+[13:56] uh agent and then uh this is like when
+[13:59] we are talking about short-term memory
+[14:00] there are two things that are very
+[14:01] important one is uh who the actor is
+[14:05] like who these messages belong to and
+[14:06] I'll do a little bit deeper uh dive into
+[14:09] that um in in a moment and then also uh
+[14:13] we are also we'll be calling like when
+[14:15] I'm talking about raw memory or
+[14:17] short-term memory I'll be using the term
+[14:19] events. So that just shows that I'm
+[14:21] talking about short-term memory. So uh
+[14:25] that's what the idea is like within a
+[14:28] session uh for that particular actor
+[14:30] actor can be a user can be a agent can
+[14:32] be a combination of the actor and the
+[14:34] user ID any unique ID uh to reflect
+[14:37] that. So this is the idea is that it's
+[14:40] within a session right the long-term
+[14:42] memory is more like where it can
+[14:45] maintain the processed information like
+[14:47] whatever intelligent processed
+[14:49] information not just the raw messages
+[14:51] like for example if I'm saying that I
+[14:53] like to code in Python then it should be
+[14:55] able to store that and it should be able
+[14:57] to remember that across many sessions
+[15:00] right or maybe I want to provide a
+[15:03] summary of my previous conversations uh
+[15:06] from the previous session so that when
+[15:07] the user returns back. uh there is a
+[15:10] better experience for the returning user
+[15:12] where the user can say where the agent
+[15:14] can say that you know what oh we talked
+[15:16] about this particular thing last time
+[15:18] when we met and do you want to continue
+[15:21] with that or do you have new something
+[15:23] new in your mind right and I'm just
+[15:25] giving ideas
+[15:26] >> yeah so if you take an example of a
+[15:28] travel booking portal maybe maybe let's
+[15:31] run with this particular you know what
+[15:33] is short-term memory and what's
+[15:34] long-term in that context right so
+[15:36] >> yes
+[15:37] >> you want to so if you're talking about a
+[15:39] travel agent Let's say I provide
+[15:41] information. I uh I just uh ask a
+[15:45] question to the agent that I'm planning
+[15:47] a vacation from November 5th to November
+[15:51] 10th and I want you to give me some
+[15:54] options uh of the cities and I like the
+[15:56] beaches and I love um you know maybe
+[16:01] small cabins in the forest on the hills
+[16:04] something like that right so those
+[16:06] conversations literally like my question
+[16:08] the agent responds the agent will pick
+[16:10] up some uh we'll call some tools tools
+[16:12] to get the relevant information. Uh so
+[16:15] all those things will go into the
+[16:16] short-term memory. Now in the long-term
+[16:19] memory uh we'll extract the information,
+[16:22] process it from the short-term memory
+[16:24] and store oh user preferences. User uh
+[16:27] likes to go on a vacation and beaches,
+[16:29] right? So maybe some water activities
+[16:31] might be interesting, right? So it will
+[16:33] keep uh uh saving the preferences which
+[16:37] I'm providing in the short-term memory
+[16:39] while talking to the agent. So it will
+[16:42] basically extract that information from
+[16:44] short-term memory and store it in the
+[16:46] long-term memory. And it can also like
+[16:49] based on the strategy that you're using,
+[16:50] it can also summarize um that
+[16:53] information. So we also have like
+[16:56] session summary which is one summary per
+[16:59] session and it's like a rolling uh sum
+[17:03] >> summary. So that would be one example.
+[17:06] >> Excellent.
+[17:07] >> Perfect. I think maybe this would make a
+[17:10] bit more structural.
+[17:13] So as money uh was already talking about
+[17:17] right we have short-term acting like the
+[17:19] raw storage. It's capturing everything
+[17:22] that is happening right now. So the user
+[17:23] interaction, the session attributes and
+[17:26] you can retrieve all of this uh
+[17:28] instantly. So this is kind of um
+[17:32] real time, right? It's it can act as
+[17:36] your agent's working memory essentially.
+[17:39] Um and here's where where it gets
+[17:42] powerful. These events are also being
+[17:45] processed through a memory extraction
+[17:47] module and being stored into a long-term
+[17:50] memory um as memory records. So this
+[17:54] could be you know the learn facts or
+[17:56] concepts based on how you configure the
+[17:58] long-term memory to be like.
+[18:01] So you know the first question comes in
+[18:04] why should I use agent core memory? So
+[18:06] first of all it is completely serverless
+[18:09] with minimal setup needed. So we talking
+[18:12] about literally a couple of lines of
+[18:13] code here. Plus we got built-in
+[18:16] encryption because I mean let's face it
+[18:19] we are using we are dealing with user
+[18:21] data here and we need it to be secure in
+[18:24] transit and in rest. Um and also we give
+[18:28] uh flexible name spaces so you can
+[18:31] define how do you want the memory to be
+[18:33] shared across um different agents or
+[18:36] across different users. And we also have
+[18:39] flexible time tolift settings where so
+[18:41] you can basically define everything and
+[18:44] it's all in your control. And of course
+[18:47] there's logging so so that you can
+[18:50] observe everything that's happening
+[18:51] behind the scenes.
+[18:53] So before we go in a bit deeper into
+[18:57] what short-term and long-term looks like
+[19:00] perhaps we can understand the concept
+[19:03] first and then uh go a bit more.
+[19:06] >> Yeah. So with agent core memory like
+[19:09] we're talking about short term uh and
+[19:11] I've already explained when I talk about
+[19:12] events they're literally like raw
+[19:14] messages right and before you do or
+[19:18] write any messages you first need to uh
+[19:21] create the memory resource itself. So we
+[19:23] have APIs which we are going to show you
+[19:25] the demo of the create memory. You just
+[19:28] need to know about that. You don't have
+[19:30] to worry about the underlying storage
+[19:32] and also because the short-term memory
+[19:34] has different uh properties. Uh so the
+[19:38] storage for short-term memory is
+[19:39] different from the storage u underlying
+[19:42] storage for the long-term memory. Right?
+[19:44] So in any ways what you have to do as a
+[19:46] a developer is basically just focus on
+[19:49] the APIs. it will automatically spin up
+[19:52] the infrastructure behind the scenes and
+[19:53] give you the memory ID. So memory ID
+[19:56] represents the related memory resource
+[19:58] because you need to have a contain you
+[20:01] know you know some space where you will
+[20:03] write your messages. So that's literally
+[20:05] the memory ID. Then actor ID is the
+[20:09] identifier like who these messages
+[20:11] belong to. Now you it can be like a user
+[20:14] ID, agent ID or a combination of both.
+[20:16] And in some cases I have even seen
+[20:18] people using project ID in combination
+[20:20] with the user ID. So it really depends
+[20:22] on your use case and how you design it.
+[20:25] We are providing you with all the
+[20:27] constructs to help you design your
+[20:29] application effectively. And session ID
+[20:31] very simple like group of related events
+[20:33] together. And again you have the
+[20:36] flexibility to define your session. You
+[20:38] can define it by uh by related events or
+[20:42] you can define it by u the time period.
+[20:46] So the main idea is to group these
+[20:49] events together. The payload is can be a
+[20:52] conversation like a me user message
+[20:54] agent message or it can be just a JSON
+[20:56] blob right the blob which it can store
+[20:58] the entire state of the agent and we
+[21:00] also need like a time stamp to
+[21:03] understand when these events are coming
+[21:05] up right. So those are basically when
+[21:08] you call uh or when you create the
+[21:10] events that's uh when in the response uh
+[21:13] you can pass in and it or it will uh
+[21:15] retrieve back as well and then branch I
+[21:19] very that thing because um it it
+[21:23] basically supports the alternate paths.
+[21:25] Now what do you mean by that? So let's
+[21:27] say you are designing a AI assistant
+[21:30] right and and an already mentioned about
+[21:32] let's take an example of the travel
+[21:34] assistant. So I'll continue with the
+[21:36] travel assistant example. Now let's say
+[21:39] you are saying that okay one option is
+[21:42] that I want this agent to talk to give
+[21:44] me uh ideas about beach vacations
+[21:48] another is I also like hiking so what
+[21:50] about those mountain locations right so
+[21:53] it can have like alternate paths but how
+[21:56] do you design that so for that we have a
+[21:58] feature called branching and where you
+[22:01] can which enables like advanced event
+[22:04] organization so if you don't provide the
+[22:06] branch Everything goes in the main but
+[22:08] you can literally call the create event,
+[22:10] provide your own branch and then you can
+[22:12] have scenarios like when you have to
+[22:14] edit a message or when you have the
+[22:16] alternative conversation paths
+[22:19] concurrent event streams for example. So
+[22:21] you can use uh branching. This is a very
+[22:24] nice construct uh and a tool that we are
+[22:27] giving you in your back pocket. So when
+[22:29] you design your agent applications think
+[22:32] about branching. So is it it's more like
+[22:34] you know these are my favorite foods
+[22:36] going to the foods branch travel going
+[22:38] to travel branch right so
+[22:40] >> yeah yeah you can organize it also
+[22:43] sometimes think about like multi- aent
+[22:45] um interactions so again talking about
+[22:49] the travel agent maybe I just I only
+[22:51] don't need the hotel or the location
+[22:53] once I finalize that I also need the
+[22:54] flights so maybe there is a flight agent
+[22:57] who can work on the flight branch the
+[22:59] hotel agent can work on the hotel branch
+[23:01] once I've provided them of uh the
+[23:03] location where I want to go right so
+[23:05] they can work parallelly as well. It
+[23:07] again dep and share the same memory
+[23:09] resource but they have different
+[23:11] branches that they are working on. So
+[23:13] it's still se level of separation of
+[23:15] soft separation of concern that goes in
+[23:18] there right
+[23:21] so those are the areas uh where it's
+[23:22] very helpful and this is like a
+[23:25] pictorial representation which I think
+[23:27] you'll be the best person to talk about.
+[23:31] >> Perfect. Uh thank you. I mean you have
+[23:33] covered everything you know this makes
+[23:35] it so much clear already but I think
+[23:37] still p picture speaks louder than words
+[23:41] and therefore this would help. Okay. Um
+[23:45] so overall what we are uh showcasing
+[23:47] here is let's let's say your agent is
+[23:51] having a conversation with the user
+[23:52] right it needs to have uh it needs to
+[23:55] store all of the immediate context that
+[23:57] is happening and that is being stored in
+[24:02] either conversational information or uh
+[24:05] conversational sorry conversational
+[24:07] messages or it could be a blob. This is
+[24:10] essentially going in as a binary piece
+[24:12] of information
+[24:13] and
+[24:15] this is where it's slightly uh the two
+[24:18] differ to some extent. So the
+[24:20] conversational event think of it as you
+[24:22] know chat messages, user input, agent
+[24:25] responses
+[24:26] uh or tool messages, right? This is this
+[24:29] the the piece of information that
+[24:31] actually enriches your long-term memory
+[24:35] uh because this is where you know the
+[24:37] meaningful interaction data lies.
+[24:39] Second here is
+[24:42] the blob which mostly stores the session
+[24:45] information. So this is the key
+[24:48] difference. So here it uh the events
+[24:51] that are in here would not uh be
+[24:54] extracted as insights later. So this you
+[24:57] know mostly includes checkpoints or
+[24:59] session state. Now just to clarify the
+[25:04] difference between checkpoints and
+[25:05] session states. I've heard a lot of
+[25:06] people are very confused about that. So
+[25:08] checkpoints are basically um snapshots
+[25:12] of uh of your application state. So
+[25:15] think of it in terms of fall tolerance
+[25:17] or recovery. So if something goes wrong,
+[25:20] you can pick pick back up right from
+[25:23] where you left off, you know, and
+[25:25] session state is mostly around uh the
+[25:27] user specific data across multiple
+[25:30] requests. So your session ID, your agent
+[25:32] state, this kind of thing. Um and then
+[25:36] to you know when you need to work with
+[25:38] this data you have got simple operations
+[25:40] that we provide like list events or get
+[25:43] event to retrieve specific events that
+[25:46] you need and you can filter them um and
+[25:50] to understand that I think uh we will go
+[25:53] deeper into it once um you you will see
+[25:57] it in the demo but overall the beauty
+[26:00] here is that the short-term memory acts
+[26:03] like the agent in scratchpad. So it
+[26:05] captures everything in real time
+[26:08] categorizing it you know in uh
+[26:10] categorizing it properly and making sure
+[26:11] that nothing gets lost in the process.
+[26:14] Now let's move on to long-term memory
+[26:19] and you've you know previously we
+[26:21] mentioned about name spaces. So now we
+[26:24] understood like in short-term memory
+[26:26] there are uh there is a concept of actor
+[26:29] ID there is a concept of session ID that
+[26:31] we have talked about and how you you
+[26:33] know how they are used to organize the
+[26:35] short-term memory and to identify okay
+[26:37] these are the messages that belong to my
+[26:39] calling uh uh calling user right
+[26:42] >> but what about the long-term memory
+[26:44] because long-term memory we are saying
+[26:45] that oh it keeps um you know uh extract
+[26:49] the processed information from the
+[26:51] short-term memory and goes into the
+[26:53] long-term memory, but how does it really
+[26:55] go and how do we organize our long-term
+[26:58] memory? Because long-term memory can
+[26:59] span across sessions, right? So, how do
+[27:02] we uh organize it? That's where the
+[27:04] concept of name spaces comes into play.
+[27:08] So, again, you are all aware of the
+[27:10] actor ID, you're all aware of the
+[27:12] session ID, but what about the strategy?
+[27:15] So, how do we know what to fetch from
+[27:17] the short-term memory that goes into the
+[27:19] long-term memory? So that is defined by
+[27:22] the strategy. So with long-term memory
+[27:24] we have uh three built-in strategies.
+[27:27] One is the semantic basically just the
+[27:29] facts during the conversation and it
+[27:31] will capture that. User preferences
+[27:34] literally as the name suggest extracting
+[27:36] preferences of the user. Summary is per
+[27:39] session. I think I've already talked
+[27:41] about that enough. Uh then override is
+[27:44] basically you can uh so there are some
+[27:48] userdefined extraction rules and with
+[27:51] this override strategies what you can do
+[27:53] is uh there are two things that comes
+[27:55] into play one is the extraction logic
+[27:57] the other is the consolidation logic
+[28:00] because if my information or my
+[28:02] preference is already stored or
+[28:04] extracted I don't want it to store like
+[28:07] duplicate things and also if I'm
+[28:09] updating my preference Like let's say I
+[28:13] love to code using Python but now I like
+[28:15] Java hypothetical example it should
+[28:19] update my preference so that's the
+[28:21] consolidation logic but if I want to
+[28:23] override that and provide my own prompts
+[28:25] and provide my own model to do that then
+[28:28] that goes into the override uh strategy
+[28:31] so you can do that so you have that
+[28:32] option as of today right and then you
+[28:37] have defined the strategy but how do I
+[28:39] organize let's say I have this user
+[28:41] preference reference uh long-term memory
+[28:44] that I have enabled like I have provided
+[28:46] that strategy then the namespace is a
+[28:49] hierarchical concept where literally
+[28:51] it's nothing more than the prefixes
+[28:53] hierarchically arranged which can take
+[28:55] these three ids which you can provide uh
+[28:59] because you also want to make sure at
+[29:01] runtime it's able to resolve the actor.
+[29:04] So my user preferences should only be
+[29:07] visible to me when I'm interacting with
+[29:10] the agent. But if Akasha is interacting
+[29:12] with the same agent, only her user
+[29:15] preferences should be shown to her.
+[29:17] Right? So that's the main idea. So then
+[29:20] in the name spaces and one of the
+[29:21] examples that we have given on the slide
+[29:23] is like retail agent/c customer ID/
+[29:26] preferences and then you provide and
+[29:28] this customer ID is actually resort at
+[29:31] runtime because you can pass these
+[29:32] variables. So this is just one example.
+[29:34] So think of it as a way to organize your
+[29:38] memory records into logical categories
+[29:41] so that you it's easier for you to
+[29:43] retrieve it. And one quick thing uh one
+[29:47] strategy can only have one nameace and
+[29:51] you can provide whatever namespace it is
+[29:53] as it so things change in future. You
+[29:57] never know what happens. So as
+[29:59] >> I mean you only need one name space,
+[30:02] right?
+[30:03] >> Yeah, you do.
+[30:05] >> All right. So here's where things get
+[30:08] very interesting. So now we have the
+[30:10] full picture and now we look at
+[30:14] everything of how it flows.
+[30:17] So we talked about the raw events,
+[30:19] right? They just don't sit in there. we
+[30:22] discussed uh so there's an asynchronous
+[30:25] pipeline a memory extraction module
+[30:28] which does some pretty smart work behind
+[30:30] the scenes. So this is the module that
+[30:32] takes in all the raw data um and
+[30:35] depending on the strategies that you
+[30:37] have defined of what you've configured
+[30:40] while you created that uh the memory
+[30:43] uh resource
+[30:45] um based on that it extracts the
+[30:49] relevant piece of information
+[30:52] and as money was mentioning we can also
+[30:54] override one of these um strategies.
+[30:58] Now I mean why would I override these?
+[31:01] They are uh they are pretty defined,
+[31:04] right? What else can I need? But I guess
+[31:07] so we were talking about this uh travel
+[31:09] agent, right? Uh let's let's take it
+[31:12] that way. So when I'm let's say when I'm
+[31:14] building an application for a travel
+[31:16] agent, I only want users preferences of
+[31:20] their you know if they of uh if they
+[31:23] prefer budget hotels versus luxury
+[31:25] resorts or are they adventurous
+[31:27] travelers or you know they are into
+[31:30] relaxed beach vacations but do I care if
+[31:32] they prefer their coffee black or if
+[31:34] they code in Python? No, probably not.
+[31:37] So that's where you want to override and
+[31:40] maybe focus uh these strategies more
+[31:43] onto the use case. So that's where you
+[31:45] might want to override um these the
+[31:48] prompts that are already defined in
+[31:49] there.
+[31:51] So I mean once you have it all stored,
+[31:54] you have these uh long-term strategies
+[31:57] uh then you can access them uh via the
+[32:01] retrieve memory record. So you can list
+[32:03] them uh retrieve them based on the name
+[32:05] spaces that you have provided. Um and
+[32:07] you can combine this with the list
+[32:10] events from the short-term memory. So
+[32:12] for for example, one of the very common
+[32:14] patterns that we see out there is uh the
+[32:17] last end messages. So let's say the last
+[32:19] five messages that you get through list
+[32:21] events and then you get the relevant
+[32:24] user preferences or the relevant um
+[32:27] summary of the let's say summary of that
+[32:29] session uh from the long-term memory. So
+[32:33] you can combine that and therefore
+[32:35] compress the the the context of the
+[32:38] agent to more or less like 60 70%. And
+[32:44] still get good quality responses equally
+[32:47] good responses as you would uh if you
+[32:49] provided the entire context history. So
+[32:53] we have kept this memory extraction
+[32:54] module uh a bit hidden. So let's go into
+[32:58] this a bit. So when we
+[33:02] there's one question that's coming in
+[33:03] from Ragoian asking uh if we can set a
+[33:06] time duration is it like for example is
+[33:08] it possible to retain only the past 5
+[33:10] days of discussion we can also cover
+[33:12] that.
+[33:13] >> So for shortterm
+[33:15] >> Mhm. For short-term events you can
+[33:17] configure a TTL
+[33:19] uh where you can define how long do you
+[33:21] want. So this can be between uh 7 days
+[33:23] to 365 days. So you can configure
+[33:26] anything in between that.
+[33:30] Okay. Um, moving on on to the our memory
+[33:35] extraction module. So, this extraction
+[33:38] pipeline runs asynchronously after every
+[33:41] k messages or after every x seconds of
+[33:44] inactivity because we don't want it to
+[33:47] wait for too long waiting for more
+[33:49] messages uh before it's it you know
+[33:51] stores the summary for example or or the
+[33:54] long-term uh information. So overall the
+[33:57] module has uh three steps. So first of
+[34:00] all we start with the extraction. This
+[34:02] is where it talk uh it extracts the
+[34:05] relevant info. And now as mentioned here
+[34:08] this per strategy. So depending on what
+[34:11] strategies you've defined you can you
+[34:13] can uh define zero or more strategies.
+[34:16] So depending on which strategy you've
+[34:17] defined this extraction module will run
+[34:20] per strategy for every for each of them.
+[34:23] Um okay. So first step is the memory
+[34:26] extraction module right this is where we
+[34:29] extract the relevant piece of
+[34:30] information. So if let's say we are
+[34:31] talking about user preferences it'll
+[34:33] only extract user preferences from all
+[34:36] the messages that we have provided and
+[34:40] one thing we skipped to uh skipped to
+[34:43] mention we can provide up to 100
+[34:44] messages in the in one event right so it
+[34:48] is essentially extracting only the
+[34:51] relevant parts where the user is uh
+[34:54] giving out some information about a
+[34:56] preference.
+[34:58] The next step is the consolidation part.
+[35:00] So this is an interesting one. So
+[35:03] remember um we were talking about this
+[35:05] travel agent, right? Uh imagine the user
+[35:07] mentioned in April 2025 that hey I like
+[35:11] to go for camping spots and now in
+[35:14] October the user is exhausted from work
+[35:17] and they suddenly prefer beach vacation.
+[35:20] Happens to all of us, right? But
+[35:22] >> exactly
+[35:23] >> this is the piece of information that we
+[35:26] need to update and not either and not
+[35:29] like create two entries or remove the
+[35:31] previous one. Um but we should have
+[35:34] update of this uh information that's
+[35:38] saying that hey user preferred um a
+[35:42] camping spot in in April but they prefer
+[35:45] a beach vacation in October because they
+[35:48] they feel exhausted. So something a bit
+[35:51] more complete, a bit more exhaustive
+[35:54] piece of information, right? Instead of
+[35:56] replacing the old one or um yeah,
+[35:59] ignoring the new one. So this is just
+[36:02] one example of when would update be uh
+[36:04] in the situation. So what consolidation
+[36:07] step does is it retrieves similar
+[36:10] memories from the existing vector store
+[36:12] of existing long-term memory and it
+[36:15] consolidates the new memories as per
+[36:19] what already exists. So it can add new
+[36:22] information if let's say that
+[36:23] information did not exist before it can
+[36:26] update it based like just uh with the
+[36:29] example I just shared or it can just
+[36:31] skip it because maybe that information
+[36:33] already exists. So user mentioned in
+[36:35] April that they want to go in camping
+[36:37] spots and they mention it again in
+[36:38] October. So we don't really need to
+[36:41] update any part, right? So we we can
+[36:44] skip that part. And then based on what
+[36:47] the outcome is, it can it it embeds and
+[36:49] indexes that into uh the long-term
+[36:52] memory which essentially is a vector
+[36:55] store.
+[36:56] >> Yeah.
+[36:58] >> And we have talked about vacation so
+[36:59] much. I think all like will be tempted
+[37:02] to go to the beach or for a walk or take
+[37:05] a vacation. I am. I don't know about
+[37:07] others.
+[37:08] >> And started it.
+[37:10] >> I'm thinking about it.
+[37:15] >> Yeah. So I mean this way we avoid
+[37:17] redundancy. We avoid any duplicates. We
+[37:20] avoid any incomplete pieces of
+[37:22] information. So we make sure that our
+[37:24] memory is always updated. Right? So we
+[37:26] are not creating any duplicate
+[37:29] information inside the vector store
+[37:32] which I would say is a very important
+[37:34] aspect of when you are trying to
+[37:36] remember something right things get
+[37:38] updated things change over time that has
+[37:41] to be captured
+[37:43] >> and also it's an important thing tying
+[37:45] it back to our context engineering stuff
+[37:47] right uh it becomes important we don't
+[37:50] have redundant information in our
+[37:52] context that's one way tying it back to
+[37:54] what we shared in the beginning Right.
+[37:56] So I think now we talked about a lot of
+[37:59] things. We talked about short-term
+[38:00] memory. Uh we talked about the concept
+[38:02] of events, actor ID, session ID. How do
+[38:06] we ex, you know, uh fetch that
+[38:08] information. We can filter events. We
+[38:10] can if you don't want to use long-term
+[38:11] memory and you only want to use agent
+[38:13] core memory for short-term, you can
+[38:14] actually do that. And if you want to use
+[38:17] long-term for storing just the user
+[38:19] preferences, you can do that. So you can
+[38:21] have one strategy, multiple strategies
+[38:23] and all. We also talked about how you
+[38:25] will organize your long-term memory
+[38:26] using namespaces. Um so there are so
+[38:29] many concepts that we have touched upon
+[38:31] and uh not but not uh you know not the
+[38:35] last but not the least we also talked
+[38:36] about the vacation which all I think uh
+[38:40] needs at some point in time. So but now
+[38:44] let's say we have talked so much about
+[38:46] all of these things right and now you
+[38:49] should be ready to deploy the travel
+[38:51] agent. Kasha, what do you think?
+[38:53] >> I agree. I think
+[38:55] >> Yeah.
+[38:55] >> Okay. So, let's deploy it. So, do we
+[38:58] want to deploy it with runtime agent
+[39:00] runtime or do we want to deploy it with
+[39:03] some other thing like other EKS or
+[39:06] Fargate? So,
+[39:08] >> I prefer runtime. I prefer runtime.
+[39:11] >> I mean, why do we want to build
+[39:12] everything from scratch, right? So,
+[39:14] >> yeah. Yeah. But there is option. That's
+[39:16] what I want to uh share that you can if
+[39:18] you already have a deployment pipeline.
+[39:21] We want to meet the customers where they
+[39:23] are in their journey. So you have an
+[39:25] option but for now we'll focus on the
+[39:28] sample deployment with agent core
+[39:30] runtime uh because we love runtime and
+[39:34] uh that's the main idea right? Yeah. And
+[39:36] since you mentioned that money um just
+[39:39] as we talk about that now agent core
+[39:41] memory if it's deployed in AWS can
+[39:44] external services integrate with agent
+[39:47] core memory
+[39:48] >> so all of these are APIs or the SDK
+[39:51] behind the scene right so you can uh
+[39:54] based on the permissions that you have
+[39:56] defined based on the resource access
+[39:57] permissions that you have provided you
+[39:59] should be able to call it from anywhere
+[40:01] so you can integrate it with any
+[40:02] framework you can use it with any model.
+[40:06] Uh only uh c only thing that I want to
+[40:09] consideration that I want to call out is
+[40:11] that we talked about the override
+[40:14] strategy and you can change your model
+[40:17] for extraction and consolidation because
+[40:20] that's handled by a large language model
+[40:22] and that model has to be the bedrock
+[40:24] model but your agent can be any model.
+[40:26] It can be like uh open AAI model or a
+[40:29] Gemini model or u something or any or or
+[40:33] one of our favorite models.
+[40:34] >> One of the many models that's out there.
+[40:36] >> Yeah. One of the many models. Right. So
+[40:39] so that's the key idea and the tenant
+[40:41] for all agent core services and that
+[40:44] includes memory as well.
+[40:46] >> All right. Yeah. Sure. Excellent. So I
+[40:47] can't wait to uh get to the demo part.
+[40:51] >> Yeah.
+[40:51] >> So
+[40:52] >> okay,
+[40:52] >> enough of talk, right?
+[40:54] >> Yes. People were very keen on looking at
+[40:56] the code.
+[40:57] >> Yep.
+[40:58] >> Okay.
+[41:00] >> Can you uh remove this uh left
+[41:02] navigation so that our users can only
+[41:04] focus on the code? So, click on the
+[41:06] folder on the top.
+[41:08] >> Yep. Awesome.
+[41:09] >> Thank you. Okay. Okay. Perfect. So, we
+[41:13] look at two examples. One with
+[41:16] checkpointing uh and one with uh
+[41:19] long-term memory. I mean it's not that
+[41:21] these are uh either or but it's just to
+[41:25] kind of keep it separate and show a very
+[41:27] easy demo right so first we see uh a
+[41:32] langraph agent being created which um
+[41:35] has a memory um so we are using the
+[41:40] default agent core memory saver from
+[41:44] langraph checkpoint and that is where uh
+[41:47] it will by default create the
+[41:49] checkpoints behind the scenes. So
+[41:51] there's an automatic event store in
+[41:53] place uh and that will store all the
+[41:55] events in the short-term memory and we
+[41:57] can retrieve those events through list
+[41:59] events and we can um yeah talk to the
+[42:03] agent and it can continue continuously
+[42:06] keep uh the
+[42:08] uh checkpointers in the memory. So what
+[42:12] do we need to do for that?
+[42:14] We firstly import a memory client. we
+[42:19] create um a memory or get memory based
+[42:22] on the name maybe we have already
+[42:24] created it in this case for example we
+[42:26] have already created it so it retrieves
+[42:29] a memory ID and that memory ID we can
+[42:33] provide in our react agent as a
+[42:36] checkpoint
+[42:38] right so the checkpointer that we have
+[42:41] uh sorry not memory ID we we create a
+[42:43] checkpointer uh using the memory uh
+[42:46] saver class from Langraph AWS and from
+[42:50] here we provide in the uh memory id and
+[42:53] the region where it is supposed to store
+[42:55] and that we provide as a default
+[42:57] checkpoint within the um within the
+[43:01] graph. So we created a very simple graph
+[43:04] we can just run it uh and we provide
+[43:06] when in the runtime we can provide some
+[43:10] configuration. So two that are required
+[43:13] is the thread ID which is a session ID
+[43:16] uh and the actor ID. So the actor ID
+[43:19] could be an agent level uh could be on
+[43:22] the actor could be on the user level
+[43:24] could be a project ID could be an org ID
+[43:26] could be a common one for every uh
+[43:28] everything if you want to share um the
+[43:32] entire memory resource with everyone
+[43:34] could also be the case but uh
+[43:36] essentially as money mentioned this is a
+[43:38] construct that we are providing you to
+[43:40] use to get that flexibility uh for your
+[43:44] application. So you provide in the
+[43:46] config here and then you uh send in the
+[43:48] input and based on that it it streams in
+[43:51] the output of you know what tools it has
+[43:54] used what it has done.
+[43:56] >> Yeah. And just before you go further a
+[43:59] I want to clarify something because this
+[44:01] is a very common question and while you
+[44:03] were presenting it was literally jumping
+[44:05] in my head and I couldn't stop myself.
+[44:07] So uh one common question that I know
+[44:10] that everyone has asked us most of the
+[44:13] time like literally 99% of the time
+[44:16] >> one question is uh especially when we go
+[44:19] into this uh demo piece right so one
+[44:23] question that I get is uh do I need to
+[44:25] create the memory every time I
+[44:27] initialize the agent the answer is no
+[44:32] >> that's a very good point
+[44:34] >> yeah because we have seen like you know
+[44:36] uh those mistakes happening and then it
+[44:39] was like let's let me just guide uh it
+[44:42] over here so that it becomes like a
+[44:45] common practice. So while you are
+[44:46] creating the memory it's a one-time
+[44:48] activity right you create the memory
+[44:51] resource and when you initialize the
+[44:53] agent you only need to provide the
+[44:55] memory ID and that's the reason why we
+[44:57] have this helper class create or get ID
+[45:00] so that you don't accidentally keep
+[45:02] creating the memory ID. So make sure
+[45:05] that when you whenever you are create uh
+[45:07] calling create memory it is creating the
+[45:10] resource itself. You don't need to
+[45:12] create the resource every time you
+[45:13] initialize the you only need to create
+[45:15] it once.
+[45:16] >> In the subsequent steps you only need to
+[45:18] provide the memory ID.
+[45:20] >> Now question number two very important
+[45:23] question how do we manage these ids
+[45:26] because this is memory ID there is
+[45:27] session ID there is actor ID and Aasha
+[45:30] you have provided that in the demo but I
+[45:33] want to call it out. so that we
+[45:34] understand what that is. So if you
+[45:37] scroll down uh Akasha like where you
+[45:40] were initializing the checkpointter
+[45:42] itself right oh that was up where you
+[45:46] were providing the memory ID right so
+[45:48] this is a initialization step so when
+[45:51] you are actually working with these
+[45:53] frameworks you can just provide the
+[45:55] memory ID once right so that the agent
+[45:58] knows where to store these messages and
+[46:00] then you need to provide the config
+[46:03] where you were again providing these ID
+[46:05] once Because once you get into the
+[46:07] session, you need to identify the
+[46:08] calling user or the agent. So you
+[46:10] provide the agent ID or the user ID or a
+[46:13] combination based on your use case and
+[46:15] then you pass in the session ID, right?
+[46:18] So that goes into the config and I think
+[46:20] Akasha the config is um was in was in
+[46:23] the cell downstairs. Yeah.
+[46:24] >> Yes.
+[46:25] >> So yeah, so that's where you would
+[46:27] provide it and then when you are
+[46:29] interacting with the agent, it's simple.
+[46:31] You just interact with the messages and
+[46:32] all and the agent knows that who is it
+[46:35] talking to and which session is it in.
+[46:36] Right.
+[46:37] >> Yeah. And in most of the cases you will
+[46:39] see that this part where the with the
+[46:42] thread ID and the actor ID comes in from
+[46:44] the payload that the back end is
+[46:46] interacting with the front end with. So
+[46:48] based on the authentication that the
+[46:50] user has done you would have the user
+[46:52] credentials and user information and
+[46:54] based on that usually uh you would
+[46:57] create uh an actor ID versus the memory
+[47:00] ID something you can store as an
+[47:02] environment variable or you can store as
+[47:04] a SSM parameter so in a in your secrets
+[47:07] manager or something which you can
+[47:08] continuously um repeatedly retrieve from
+[47:12] so it's a constant that once you've
+[47:14] created it you can you know use the same
+[47:16] over and over And
+[47:19] >> and even the session should come from
+[47:20] your like u for example if you're
+[47:23] deploying it in the runtime or some
+[47:25] other things. So it should come from uh
+[47:27] from your environment or or the payload.
+[47:29] Yeah. You mentioned that
+[47:31] >> session right? Yeah.
+[47:32] >> Yeah.
+[47:32] >> So we have 12 more minutes just a time
+[47:34] check. Yeah.
+[47:35] >> Okay. Okay. So just to um yeah just to
+[47:39] showcase here uh what we are doing here
+[47:41] is just like having a simple
+[47:42] interaction. It's a math agent with
+[47:44] multiply and addition as options as
+[47:46] tools. So we can uh you know kind of
+[47:50] interact with the agent continuously in
+[47:52] multiple steps and we can also retrieve
+[47:55] the checkpoint um different checkpoints
+[47:58] at different time that we have created
+[48:01] and we can also actually look at a very
+[48:07] simple memory browser that we have
+[48:09] created that lets us inspect. So we
+[48:12] created this react agent one as an actor
+[48:15] ID, right? So let's configure that. And
+[48:18] I think the session ID was session one.
+[48:22] >> And can you make it bigger like zoom
+[48:25] >> in?
+[48:28] Yes. So as you see since we have
+[48:30] checkpoints in here, we are creating
+[48:32] events of type blob.
+[48:35] And one thing with lung graph you would
+[48:37] see is that it creates the blobs of
+[48:39] either it creates the checkpoints or it
+[48:42] creates uh writes. So you can also have
+[48:45] event types of rights which are
+[48:46] intermediate checkpoints that it
+[48:48] creates. uh but it creates a lot of
+[48:50] events which are of the type blob which
+[48:53] you know it can uh it can store and
+[48:56] retrieve from and those are the events
+[48:58] that you basically would keep storing by
+[49:01] default
+[49:02] if you want to make sure that you know
+[49:04] your your um state is being persisted
+[49:10] >> and let's go to the long-term memory
+[49:12] piece right because uh short-term memory
+[49:14] is literally like this and if you're
+[49:16] saving the conversationals you can see
+[49:18] that and all this code like the memory
+[49:20] browser and all that Akasha has shared
+[49:24] in our GitHub so you'll be able to
+[49:26] quickly find that and we've already
+[49:27] provided that link. Okay.
+[49:29] >> Yes. Perfect. So the second one is a bit
+[49:32] more interesting. Um so here we have
+[49:35] created a customer support agent uh
+[49:37] using strands agents framework and here
+[49:40] we have provided some functionalities so
+[49:42] some tools that we have uh provided
+[49:44] locally and we are connecting it with
+[49:46] agent core memory. Now what we have done
+[49:49] just for the demo sake is seated this
+[49:54] with uh some previous information. Now
+[50:01] we have like uh provided this context.
+[50:05] Um first of all let's look at how do we
+[50:09] create the long-term strategies. Right?
+[50:12] So in this case we just to show you we
+[50:14] have created all three strategies as
+[50:15] options. So we define a list uh of a
+[50:19] dictionary which is the strategy type
+[50:21] user preference and we define the name.
+[50:24] This is on you. You can des uh you can
+[50:26] name it anything you want uh with a
+[50:29] description also uh editable and uh
+[50:32] based on your choice just for you to
+[50:34] remember. And this is the important part
+[50:36] here. So name spaces that you're
+[50:37] providing here
+[50:40] uh is going to take in a pathlike
+[50:43] structure. So it's the hierarchy uh that
+[50:46] money already discussed or was was
+[50:48] sharing before with one or more uh of
+[50:53] these uh variables that you can provide.
+[50:56] So it can be actor ID, strategy ID or uh
+[50:58] session ID. So in here for example, if
+[51:01] I'm talking about a summary, I can al I
+[51:03] also provide a session ID because my
+[51:05] summary would be dependent on a session,
+[51:07] right?
+[51:08] Um and then for semantic I say okay just
+[51:12] divide it based on the actor. Similar
+[51:14] for preferences I only want to divide it
+[51:16] based on the actor. And
+[51:18] >> so maybe a question here right is uh if
+[51:20] we're doing the same travel agent use
+[51:22] case and we have a session going on for
+[51:25] a particular user
+[51:26] >> who's interacting with the travel agent
+[51:28] chatbot.
+[51:29] >> What would be the actor ID? Right. So is
+[51:32] that the actor ID some ID that we are
+[51:34] giving to the user like a user ID? Yes,
+[51:38] it's so in the travel agent case mostly
+[51:40] it's going to be the user ID but it can
+[51:42] also be a combination of the user and
+[51:43] the agent ID if we are considering
+[51:45] branching concept
+[51:47] >> so it can be a mix I mean really depends
+[51:50] on what use case are you building and
+[51:52] how do you want to separate um separate
+[51:56] out
+[51:58] >> so here yes so here we have uh the
+[52:01] memory client we can get create or get
+[52:03] memory and we provide in the memory name
+[52:06] we provide in the description and the
+[52:09] strategies. So the the list of
+[52:11] dictionaries that we have created here,
+[52:13] right? So this is what we provide as
+[52:15] strategies and an event expiry date. So
+[52:17] this is as I said is between 7 and 365
+[52:20] days. So you can define how long do you
+[52:22] want the events to be stored and based
+[52:25] on that it you will get a response. So
+[52:28] this usually takes a couple of minutes
+[52:29] to run only the first in initiation of a
+[52:33] new resource. So this is going to be
+[52:36] only for the first time when you're
+[52:37] creating a new memory resource, not when
+[52:40] you're creating events or uh getting the
+[52:44] uh memories or retrieving memories. So
+[52:46] that's um not the case. But here you
+[52:49] will get a new memory ID that is being
+[52:51] created for you. And this you as I said
+[52:53] you can define how you want to store it.
+[52:56] So you can put it as an SSM parameter so
+[52:58] that you can always retrieve the same.
+[53:00] And I think we should also call that
+[53:02] out. This few minutes that we are
+[53:04] talking about is only for the long-term
+[53:06] memory and this event expiry days is
+[53:09] only for the short-term memory. For the
+[53:11] long-term memory, we currently uh we
+[53:13] don't have any TTL but you can always we
+[53:16] provide you all the APIs where you can
+[53:18] uh delete the messages based on your uh
+[53:20] business uh use case. So I just want to
+[53:23] call it out because sometimes people
+[53:25] understand that event expiry days is for
+[53:28] both. So, it's only for short-term
+[53:29] memory and um also only for if you're
+[53:33] using long-term memory, it will take
+[53:34] like uh like about 2 minutes to create
+[53:37] it because we are creating a vector
+[53:39] store behind the scenes. But for the
+[53:41] short-term memory, it's really fast. Go
+[53:43] ahead. I just wanted to clarify.
+[53:45] >> Thank you. Um yes. So going to so we
+[53:50] have created the memory resource and now
+[53:52] we want to um seed in some interactions
+[53:55] previously because maybe you know my
+[53:58] agent has already interacted with it
+[54:00] before
+[54:01] um and therefore we can batch in the
+[54:03] previous interactions or send them one
+[54:05] by one. It's really your choice. And we
+[54:08] send it to the memory client through a
+[54:11] create event API which takes in the
+[54:13] memory ID an actor ID which in this case
+[54:17] is a customer ID which uh we have just
+[54:20] created for demo purposes and a session
+[54:23] ID which let's say I want to group all
+[54:25] of them right so I can also hardcode a
+[54:27] session or I can take a UYU ID like a
+[54:30] unique ID that I can create for every
+[54:32] session that that comes in. It's again
+[54:35] dependent on what use case are you uh
+[54:38] planning to build and then we are
+[54:40] sending in the messages uh one or up to
+[54:44] 100 messages you can send in. So you're
+[54:47] sending in all of those interactions and
+[54:49] basically seeding it in so that it can
+[54:51] process it for long term. Now it'll take
+[54:55] around about uh 20 to 30 seconds for it
+[54:58] to reflect in the long term. In this
+[55:00] case, it was really fast.
+[55:02] >> Uh but in general, it takes around about
+[55:06] 20 seconds depending on how much the
+[55:07] payload um is and how many requests are
+[55:11] there.
+[55:12] So in this case, we have uh you remember
+[55:15] us creating three different strategies,
+[55:17] right? So maybe we look at different
+[55:20] strategies. So in this case, we retrieve
+[55:22] from preferences, right? uh we call the
+[55:25] retrieve memories API with the name
+[55:27] space that we provide and we fill in the
+[55:29] actor ID with the customer ID in this
+[55:31] case. So you see the um the string that
+[55:34] is being um filled with the customer
+[55:38] customer ID and we get uh let's say
+[55:42] these this interaction back. So based on
+[55:45] what we fed in, we just was talking, we
+[55:48] were talking about, you know, MacBook
+[55:49] Pro overheating issues, um my gaming
+[55:52] headphones, I like um competitive FPS
+[55:55] games, and then we had user messages and
+[55:57] we had assistant messages. So what the
+[56:00] agent responded back with and these were
+[56:02] like three conversations.
+[56:05] Um so here you would notice something um
+[56:09] is that we we for preferences we get in
+[56:12] a context we get in preference and we
+[56:15] get in some categories right so it's the
+[56:17] formatting that it does so it is giving
+[56:21] us some tags that we can use as
+[56:24] categories of what the user uh what
+[56:26] these this uh topic is and some context
+[56:30] of why did the model extract this
+[56:32] information or why does the model think
+[56:35] that this is a preference?
+[56:38] Um in case you want to you know roll
+[56:40] back and understand how did it uh
+[56:43] extract this piece of preference. So in
+[56:45] this case concern about laptop
+[56:47] performance and thermal uh thermal
+[56:49] management during intensive tasks
+[56:51] because the user reported experiencing
+[56:53] overheating issues with MacBook Pro.
+[56:56] So
+[56:57] >> Kasha can you also show like the memory
+[56:59] browser where we can see that uh
+[57:02] information because I mean they can
+[57:04] change the name our you our viewers can
+[57:07] change the name space and experiment
+[57:09] with the notebook themselves and let's
+[57:12] see how this will look in the browser so
+[57:14] that we are clear
+[57:16] >> and after that we can quickly summarize
+[57:19] what we have discussed
+[57:21] >> 100% okay we are we are we are short on
+[57:25] time.
+[57:27] I mean there's so much to share.
+[57:30] >> Yeah.
+[57:30] >> So, okay.
+[57:33] So, we have
+[57:36] um
+[57:40] so while Akasha is uh you know working
+[57:42] on that um I just want to like we can
+[57:46] talk about what we have discussed so
+[57:48] far. So a few things that we have talked
+[57:50] about is first we started with our
+[57:52] context engineering like why do we
+[57:54] really need memory we talked about there
+[57:56] is like there's so much focus on the
+[57:59] technical capabilities but what about
+[58:01] the good experience that we want to give
+[58:04] it to our end users right that's the
+[58:06] whole idea of creating this application
+[58:08] in the first place and then also how can
+[58:10] we be smart about context engineering
+[58:13] how can we uh smart about what goes into
+[58:16] the memory what uh goes into our vector
+[58:18] store like your documents the static uh
+[58:21] data and what where should you call the
+[58:23] APIs like with real time data APIs where
+[58:27] you need like literally real time data
+[58:29] right and then the memory comes into
+[58:31] place where we talked about long-term
+[58:33] memory like user preferences summary and
+[58:36] we also talked about semantic facts
+[58:38] those are the different kind of memories
+[58:39] how you can override based on your
+[58:41] business logic and we also talk a lot
+[58:44] about the short-term memory because
+[58:47] while you are interacting with the
+[58:48] agent. That's the first piece that you
+[58:51] need to do. You need to persist that
+[58:52] information, those raw messages, that
+[58:55] tooling and maybe you know save the
+[58:57] session state checkpointing so many
+[59:00] things and I'm so excited over here and
+[59:03] I'm very passionate about as you can see
+[59:05] my face when I talk it's literally
+[59:07] visible uh when Akasha and I when we
+[59:10] talk like it's literally visible how
+[59:11] passionate we are about this. So and we
+[59:14] really want you to go and try uh some of
+[59:16] these samples. We have shared the GitHub
+[59:19] uh with you and we have also shared the
+[59:21] memory browser. All you need to do is
+[59:23] provide the memory ID, your actor ID and
+[59:25] a session ID and you should be able to
+[59:27] do that. Um and even if Akasha you are
+[59:30] unable to show it over here, it's fine.
+[59:33] >> Yeah, don't worry about it because
+[59:35] there's a lot to show. What we could do
+[59:37] is definitely come back and have like
+[59:39] all these different moving parts and
+[59:41] show our viewers how everything connects
+[59:43] together, right? How the Lego blocks
+[59:44] connect.
+[59:45] >> But uh since we're at time, we'll uh
+[59:48] thanks for money for you know
+[59:50] summarizing everything. We can't wait
+[59:52] for our viewers to explore experiment
+[59:55] and come back and ask us u uh you know
+[59:58] more about you know agent core memory.
+[60:01] >> Right. So with that,
+[60:03] >> signing off uh for this week.
+[60:05] >> Uh we'll join you next week again.
+[60:08] >> Looking forward to more questions.
+[60:10] >> Yeah. All right.
+[60:11] >> Absolutely. Thank you. Bye-bye. Have a
+[60:13] great rest of
+[60:14] >> Bye.
+[60:14] >> Thank you. Bye-bye.
+[60:20] [Music]

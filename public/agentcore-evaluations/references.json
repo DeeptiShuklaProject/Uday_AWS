@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "comment": "AgentCore Evaluations course — concept → source references.",
+  "concepts": {
+    "Chapter_01_Evaluation_Concepts#1-2": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html", "title": "AgentCore Evaluations — official developer guide" }
+      ]
+    },
+    "Chapter_02_OnDemand_Evals_Config#2-3": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples", "title": "agentcore-samples — evaluation notebooks (built-in + custom evaluators)" }
+      ]
+    },
+    "Chapter_03_Dashboards_and_Judges#3-3": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GenAI-Observability.html", "title": "CloudWatch GenAI Observability — where eval results and traces meet" }
+      ]
+    }
+  }
+}

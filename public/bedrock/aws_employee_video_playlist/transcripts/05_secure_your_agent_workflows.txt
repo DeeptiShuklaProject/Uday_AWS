@@ -1,0 +1,1539 @@
+Title: 05_secure_your_agent_workflows
+Video URL: https://www.youtube.com/watch?v=wv2doVDF7KQ
+============================================================
+
+[00:05] [Music]
+[00:27] [Music]
+[00:31] Hello, hello everybody and welcome back
+[00:34] to another another episode, another
+[00:37] Tuesday evening, Tuesday night actually
+[00:39] for our for a couple of our friends
+[00:41] you'll you'll hear hear from in just a
+[00:43] second to another episode of Show and
+[00:45] Tell Generative AI with AWS. I'm your
+[00:48] host Trevor Spires and today I've got
+[00:50] three amazing guests ready to talk about
+[00:53] one amazing agent core service. Um,
+[00:57] Antonio Satvier, Faith, thanks for
+[00:59] joining on. We'll go around the horn and
+[01:00] do intros here in just a second. But
+[01:02] first, uh, for those folks who are
+[01:04] joining us in the chat, let us know
+[01:06] where you dialing in from today. I'm
+[01:07] coming at you from the great state of
+[01:09] Maine. Um, but one thing we love is that
+[01:11] we have folks from all over the place
+[01:14] dial into these sessions. So, let let's
+[01:16] uh let's kick it off with you, Fay.
+[01:18] Could we get a quick intro and let folks
+[01:19] know where where you're coming at us
+[01:21] from today?
+[01:22] >> Yes, of course. Thank you, Jeff. Uh so
+[01:25] my name is Fay Fay Yuan and I'm a
+[01:28] principal engineer in AWS been with
+[01:30] Amazon for close to 10 years and so I am
+[01:34] the elite engineer of Asian core
+[01:36] identity service and this is a service
+[01:38] that was launched during in July at New
+[01:41] York summit and this is one of the the
+[01:43] major launch of the of the Asian core
+[01:46] and the Asian core has a bunch of
+[01:47] services and for the identity part I'm
+[01:49] the lead engineer so so working with the
+[01:51] team design implementation all this
+[01:52] etcha
+[01:55] Love it. Fay, thanks so much for
+[01:56] joining. I uh we I it sounds like we got
+[01:58] all the folks we need to answer
+[01:59] everyone's questions today. Satir, how
+[02:02] about you?
+[02:03] >> Hi Trev. Hey Fay, thanks for the intro.
+[02:06] Uh my name is Satir. I'm part of the
+[02:07] Bedrock GTM team which is the go to
+[02:09] market team. I focus on Bedrock
+[02:11] security, Bedrock agent core identity,
+[02:14] working with FY and Anthony are the cool
+[02:16] folks here and also on agent core
+[02:18] security. Uh I've been with AWS for
+[02:20] around six and a half years and yeah
+[02:22] I've been working with all the experts
+[02:24] here working on all things agent core.
+[02:26] Nice to see you all.
+[02:28] >> Love to hear it. And you you you've got
+[02:29] a fan in the chat already Daryl who
+[02:31] apparently caught up with you both at uh
+[02:33] at Toronto Summit. So uh
+[02:35] >> yep love to see that we're building for
+[02:37] community.
+[02:38] >> Good to see you here Dario.
+[02:40] >> Yep.
+[02:41] >> Awesome. We got some folks from
+[02:42] Washington DC. What about you Antonio?
+[02:44] and tell and tell the folks what time it
+[02:46] is where you're at just just so they can
+[02:48] be grateful for the for the hard work
+[02:49] you're doing right now.
+[02:51] >> Absolutely. So yeah, for for me it's uh
+[02:53] right now midnight, right? So it's
+[02:55] actually 12:30. So yeah, this is how
+[02:58] exciting it is to talk about identity. I
+[03:00] cannot think of a better plan for this
+[03:02] time.
+[03:02] >> The man can't sleep. It's all he can
+[03:04] think about is Asian core.
+[03:06] >> Oh yeah. And and I'm sure our customers
+[03:08] are thinking about this definitely. But
+[03:11] uh yeah, well I'm Antonio. I work as a
+[03:13] principal solutions architect uh in the
+[03:16] same team as being in the Amazon go to
+[03:18] market. I've been with Amazon for a bit
+[03:21] more than seven years now and yeah I'm
+[03:24] based in Madrid in Spain. So that's why
+[03:27] it's this time for me. So yeah, happy to
+[03:29] be here.
+[03:30] >> Love it. Really excited to have you all.
+[03:32] um such an important topic in the world
+[03:34] of a you know if you haven't heard
+[03:36] everybody agentic applications that's
+[03:38] kind of like the thing that's that's
+[03:40] powering uh the all the change that's
+[03:42] going on in and our customers and and in
+[03:44] customer experiences that you're
+[03:45] probably dealing with day-to-day and so
+[03:47] uh I work in financial services so
+[03:49] anything related to identity and
+[03:51] security being able to log being able to
+[03:53] enforce some fine grain access control
+[03:55] is really key to my customers so um FA
+[03:58] I'd love to I'd love to open it up to
+[04:00] you to kind of just just maybe help set
+[04:02] the context here of what exactly is
+[04:05] agent core identity
+[04:08] >> of course. So I will get this started
+[04:12] from from my side.
+[04:14] So the first thing that so the story
+[04:16] kind of roll back into the beginning of
+[04:19] the year and
+[04:22] I think most of you probably know that
+[04:23] Amazon has a barro and barro has been
+[04:26] very successful providing a environment
+[04:28] to run models uh and then it has this
+[04:31] framework to to write some agents and
+[04:33] etc. You could do a bunch of things
+[04:34] there which is which is great. And then
+[04:37] uh at the beginning of the year we start
+[04:39] to think about
+[04:41] customers are are expanding right the
+[04:44] the agents customer using agents is an
+[04:46] area that gains a lot of traction and
+[04:48] growing fast. And then we start seeing a
+[04:50] problem that how do we make uh how do we
+[04:53] provide the best for example development
+[04:54] and production environment for Asian
+[04:57] developers. And that kind of translate
+[04:59] into a few areas. For example, there are
+[05:01] many frameworks that that came that came
+[05:04] into the came into the picture and
+[05:05] getting gaining traction such as uh LN
+[05:07] graph, land chain, crew AI and a lot of
+[05:10] the developers that start using
+[05:12] different ones and in addition to for
+[05:14] example what Bar offered before. MCP
+[05:18] obviously is another one that that
+[05:19] enables tools for agent to to rapidly
+[05:22] gain traction to talk different tools.
+[05:25] And then in other uh another one is that
+[05:28] well people want to run agents and where
+[05:30] do they run it? Did they run it in the
+[05:31] in the on the desktop local environment?
+[05:33] Maybe that's good to start as you have
+[05:35] some kind of VS code or cursor you can
+[05:37] kind of run some local agents there. But
+[05:40] if you need a agent to be there to serve
+[05:41] production traffic, then where do you
+[05:44] run it? What's environment? Do I do you
+[05:46] need some kind of isolation security? Uh
+[05:49] how long the session can can last? So
+[05:51] that's another practical problem of
+[05:53] bringing the agent into production. And
+[05:55] then the third one of course which is
+[05:57] which is the main topic that I'll expand
+[05:58] further with Savvia Antonio and CHF
+[06:01] today is that um how do you secure agent
+[06:05] and what does it mean by the agent? How
+[06:07] is it different from workload? We kind
+[06:09] of had a lot of debates and internally
+[06:11] as well that what's the difference
+[06:12] between agent and workload? Are they the
+[06:14] same thing? Are they different things?
+[06:15] And so here where the security identity
+[06:17] access control matters. Last one and
+[06:20] this is where a lot of security security
+[06:24] engineers or or CISOs and and the
+[06:27] governance body from different
+[06:29] enterprise customer they they want to
+[06:31] where do I see what's agent doing
+[06:33] because agent is so powerful I want to
+[06:35] be able to know what they're doing what
+[06:37] tools they accessing and etc. So there's
+[06:39] a lot of these production there's a lot
+[06:41] of these challenges that customer think
+[06:43] about I want to adopt agent however I'm
+[06:45] also afraid to adopt agent because
+[06:47] before I I'm able to get an answer to
+[06:49] this it's really hard for me to to to
+[06:51] move forward
+[06:52] >> and I I just have to plus one this
+[06:54] because like you know one one thing that
+[06:56] a trend that I've seen with AI and
+[06:57] particularly agents is like when a
+[06:59] customer scales an agent like it can go
+[07:01] from like a prototype and of an MVP to
+[07:04] like scaled to millions of customers
+[07:06] overnight and it's something that I
+[07:08] haven't really seen seen as much um you
+[07:10] know since the early days of kind of
+[07:12] like the internet and the cloud and I
+[07:14] think um a lot of customers get caught
+[07:16] with like a project that maybe catches
+[07:19] um catches a nerve inside of their
+[07:20] company and they don't have a lot of
+[07:22] these basics these these primitives in
+[07:23] place. So um I I when I when I saw the
+[07:26] the the keynote presentation on this in
+[07:28] New York Summit I was giddy. I was like
+[07:29] I was like finally um we've got these
+[07:31] we've got these Well, actually I I won't
+[07:33] take away your thunder, Fay. You go
+[07:34] ahead. What what's the solution to these
+[07:36] problems Fay?
+[07:37] >> Yeah. So hang in there. We'll get to the
+[07:39] solution but really soon.
+[07:41] >> Okay. Okay. I I'll let you have it.
+[07:43] >> Okay. So getting now zooming into the
+[07:46] identity identity problem is where now
+[07:50] we go into a little bit deeper and also
+[07:52] slightly more structured on here's how
+[07:54] we think about the problems with agent
+[07:56] identities. So first of all you have a
+[08:00] few parties here. Maybe think about this
+[08:03] this diagram that you have a user you
+[08:05] have application you have agent you have
+[08:07] resources right that's the that's the
+[08:09] most simplest form and sometimes
+[08:10] customer come to us that I'm just
+[08:12] thinking about agent no there's actually
+[08:13] there's a lot more there's a application
+[08:15] accessing agent there's a user in front
+[08:17] application and then agent access
+[08:18] resources so you start from that kind of
+[08:20] a structure and then think about how do
+[08:24] I allow authenticate users accessing my
+[08:27] agent so that's a that's probably the
+[08:29] first question what's your inbound
+[08:31] authent Authentication, authorization.
+[08:33] This o here means both. Not just about
+[08:36] authorization but also authenticating.
+[08:37] Who is this user? Is this user allowed
+[08:40] to call this agent? Um this how is this
+[08:44] user represented when they cost the
+[08:45] agent. So that's the first that's the
+[08:47] first area of problems that we think
+[08:49] about um that customer need to face and
+[08:52] solve. And then before we get to the
+[08:55] right side, there's a there's um um you
+[08:58] can see probably there's a blue box here
+[09:00] under the agent. Who is this agent? And
+[09:03] this is something that's interesting
+[09:05] which is where for this part is very
+[09:07] close to a workload because if you if
+[09:11] you have a traditional service when you
+[09:13] may build two microservices that talk to
+[09:15] each other usually you um customers or
+[09:18] developers don't really care about what
+[09:19] that service is. They give some kind of
+[09:22] a trusted connection permanent
+[09:23] connection that oh my service authorized
+[09:25] call the other one. And then eventually
+[09:27] all the traffic just flows because you
+[09:29] trust them. However, in the agent's
+[09:32] case, agent is a machine. It's an
+[09:34] application. That's right. The
+[09:35] difference is that agent is is kind of
+[09:37] hard to predict because there's a model
+[09:39] that agent uses. So then people then you
+[09:42] really need to identify you need to have
+[09:44] a kind of stable identify of who is the
+[09:46] agent. And that's the second challenge
+[09:48] that customers have. Where do we find
+[09:50] it? Do we assign or or who should be
+[09:52] assigning it? And how do we know that's
+[09:54] the agent who's calling V?
+[09:56] And then on the right side is now agent
+[09:58] need to access resources. So from the
+[10:03] from the um from the agenda AI's point
+[10:06] of view, one of the most unique part of
+[10:08] agenda AI is that what makes the agent
+[10:10] powerful is the agent can access
+[10:12] resources, right? Agent can access
+[10:13] resources uh fill in more knowledge to
+[10:16] give a better answer or or run um or
+[10:18] connect to real world API to perform
+[10:21] actions. So that's the key and then
+[10:24] usually customers ask ask us about how
+[10:26] do you think about this and our answer
+[10:28] is starting from your resources because
+[10:31] you are protecting first of all you're
+[10:33] the most important for the agent a is to
+[10:35] protect your resources you because
+[10:37] that's where agents access so then on on
+[10:40] this right side is is about I'm a
+[10:42] resource owner look this is a different
+[10:44] persona now I'm a resource owner I'm not
+[10:47] an agent developer but what I care about
+[10:49] is that who is the agent that's
+[10:51] accessing ing me and on whose behalf is
+[10:53] asking me. I need to have this proof and
+[10:56] this proof this information cannot be
+[10:58] just that the agent code is telling me
+[11:00] what he wants to tell me. This is kind
+[11:02] of kind of think about it's a little bit
+[11:03] tricky, right? Because you don't trust
+[11:05] the agent as a resource owner. You want
+[11:07] to know agent's telling me who it is. I
+[11:09] need to make sure that this is uh
+[11:11] verifiable. Agent's telling me who the
+[11:13] user is asking agent to to work. um for
+[11:16] example is severe asking me to do this
+[11:18] job to access his his account or is
+[11:20] Antonio doing that and how do I know
+[11:22] that agent is not lying to me so that's
+[11:25] where the another challenge on on the
+[11:26] right side of the B outbound access so
+[11:28] you see there's a inbound who is calling
+[11:31] the agent who is the agent and how is
+[11:34] agent access resource and how does
+[11:36] resource own so those are kind of a
+[11:39] deeper questions about the challenge
+[11:41] that we need to solve for agent identity
+[11:43] and access there are many other
+[11:45] questions or further down the line in
+[11:47] the future such as maybe multi- aent uh
+[11:49] step multi- aent chain and there's much
+[11:51] more uh additional advanced topics there
+[11:54] but this is a getting starting point
+[11:56] about how do you think about identity
+[11:58] and access for agents
+[12:01] okay so now I kind of jump into solution
+[12:04] a little bit uh I do want to um talk
+[12:07] about the high level components and and
+[12:09] the flow and then uh I'll leave the the
+[12:11] rest of the uh rest of the of the um the
+[12:15] session to Sevilla and Attorney on the
+[12:17] on the on running through some code. So
+[12:19] I'll be brief here. The four components
+[12:21] that that we launched at UF summit agent
+[12:25] core identities is that as I explained
+[12:27] in the previous diagram how you think
+[12:29] about agent is that first we have
+[12:30] inbound authorizer. So we offer inbound
+[12:34] authorizer that connect to IDP your
+[12:36] identity provider directly and this
+[12:38] directly we made a lot of effort there
+[12:40] because we could have asked customer
+[12:42] that you have to use one of our identity
+[12:44] provider ours means a identity provider
+[12:46] such as you could use cognito identity
+[12:49] center and you need to configure with
+[12:51] that that's one way to do that we didn't
+[12:53] choose that way we wanted to make sure
+[12:54] that you can bring your identity
+[12:56] provider as is with agent core means you
+[12:59] don't need additional setup you don't
+[13:01] need to set a federation You just say
+[13:03] that here's my here's my ding provider
+[13:05] is access token issues I want to treat
+[13:08] this agent as a application as a
+[13:11] resource that in my original setup can
+[13:13] connect to we do give you a cognto we do
+[13:16] give new cognto uh ident provide if you
+[13:19] want to use it with it but that's not a
+[13:21] that's not a coupled with the system so
+[13:23] that's an email authorizer we also give
+[13:25] you uh give you authorization that you
+[13:28] can control what's in my token what's
+[13:30] the user's claim in order for me to
+[13:32] access the the agent. And then the
+[13:35] second part the second part is about um
+[13:39] by the way by all means um we would love
+[13:41] you to use cognito. It's a very stable
+[13:43] service. We have a lot of we have a lot
+[13:45] of investment there. The scale security
+[13:47] operation is is is probably not topnotch
+[13:50] out there. Um but I just want we just
+[13:53] want to make sure that we meet where
+[13:54] customers are. If you use cogno you can
+[13:56] connect to it. use Entra, Octa or Azure,
+[13:59] you just connect to S is.
+[14:01] >> Yeah, this is one of my favorite parts
+[14:02] of of the agent core launches in general
+[14:04] is we really seem to be taking a very
+[14:06] like open kind of uh tool like not just
+[14:08] model agnostic approach but integration
+[14:10] agnostic approach across the board. And
+[14:12] so I think it's very exciting to see
+[14:14] that we support not just Amazon services
+[14:16] but some of the most popular authentic
+[14:18] authentication partners um that we have
+[14:21] here out on out on the marketplace. So
+[14:22] very cool.
+[14:23] >> Yeah. Yeah. And in fact we we do a lot
+[14:26] of testing. We we test the popular ones
+[14:28] out there and we do a lot of testing
+[14:30] making sure that it works end to end. So
+[14:32] invest a lot of efforts and for those of
+[14:35] you who develop services like this you
+[14:37] probably would know that just claiming
+[14:38] that you support this is not enough. You
+[14:40] need to actually test them. And then
+[14:41] there's a lot of nuances about OS. OS is
+[14:44] a is a standard but however different
+[14:46] dynamic provider different applications
+[14:48] will interpret different ways. So
+[14:49] there's a lot of nuances there. And if
+[14:52] you see some some of the ones if it
+[14:54] doesn't work of course you can always
+[14:55] contact our team and we will we'll do
+[14:57] our best to making sure that we it works
+[14:59] for all the popular ones out there. And
+[15:02] then the second component here is is
+[15:04] about the uh identity directory. So here
+[15:06] we we look at different we we evaluate
+[15:09] different um different choices. How do
+[15:11] we how do we assign identity to your to
+[15:13] your agent and at the beginning we
+[15:16] started with with a um with a role IM
+[15:18] role which which is which works fine for
+[15:20] many customers. However, many out
+[15:22] customers use IM role as a permission
+[15:25] setting or permission boundary and they
+[15:28] could be sharing the same role across
+[15:30] different application or different
+[15:31] agents. So this kind of makes it hard
+[15:33] for us to force customer that you have
+[15:35] to create one unique IM role per agent
+[15:39] and that's the reason why we create uh
+[15:41] we started with create a new resource as
+[15:44] resource called workflow identity and
+[15:46] this resource is identifier that you can
+[15:49] use in policy in configuration in
+[15:51] permissions and that is a stable
+[15:53] identifier for the agent and we're going
+[15:55] to probably talk about in the future on
+[15:57] how we will we think about to link that
+[16:00] if you already have a world identity
+[16:01] somewhere and we we we all think about
+[16:04] mapping that linking that. So it's
+[16:06] somewhere that's more of a hop and spoke
+[16:08] kind of pattern to to link that. So
+[16:10] that's the second one. And then the
+[16:12] third one is about authorizer and this
+[16:15] is where
+[16:17] agents needs to grab resources interact
+[16:21] with for example your OS application.
+[16:24] You can have enterprise application
+[16:25] inside your your parameter. You can also
+[16:27] have external ones such as maybe Gmail
+[16:30] or or um or Salesforce or or any service
+[16:34] out there. And and the thing here is
+[16:37] that if you're just writing a regular
+[16:40] application integrate with one or two
+[16:42] such resources, you can trust the
+[16:45] developer to do a good job. They they
+[16:46] can they can maybe stand up a some kind
+[16:49] of page orchestrate user going through
+[16:50] that and then they will manage or store
+[16:53] these type of outbound access token by
+[16:55] themselves. However, in the case of
+[16:57] agent, it gets much more it's much
+[16:59] trickier because as we said that how do
+[17:02] we trust the agent because agents is
+[17:04] using some outline models and there's
+[17:06] unpredictability there. So that's the
+[17:08] reason why because of that and also
+[17:12] because your agent to be powerful you
+[17:13] need to to access many other resources.
+[17:16] So from both a developer experience
+[17:17] making simpler for developers but also
+[17:20] reducing some of the security concern or
+[17:22] security risk there where we will help
+[17:25] you to grab those outbound uh access
+[17:30] credentials such as OS token API key and
+[17:33] only give that to your agent code when
+[17:35] your agent is is able to prove who it is
+[17:38] and which who is the user that come from
+[17:41] the identity provider there. So there's
+[17:42] there's a security model there that's
+[17:44] not just as simple as oh I just want to
+[17:45] integrate Gmail. It's not that simple
+[17:47] because the entire flow about inbound
+[17:49] who is agent that will become the key in
+[17:52] order for us to give that kind of token
+[17:55] back to your agent to use. So that's
+[17:57] outbound authorizer and the last one is
+[18:00] observability. Um those are standard
+[18:02] things that as always offers gives you
+[18:04] cloud trail so you can see who invokes
+[18:06] what and things like that. So those are
+[18:09] four main blocks of the identities. Now
+[18:12] plugging this back into the Barra agent
+[18:15] core services
+[18:17] we because it's a it's a collection of
+[18:18] services. So I'm not going to go into
+[18:20] those services in detail but this this
+[18:23] tells you where it fits. So agent core
+[18:26] identity itself is a is independent
+[18:29] service has its own APIs. You can use it
+[18:31] on its own to to when you your agent
+[18:34] runs here or runs somewhere you can use
+[18:36] it to to help you to get the outbound
+[18:39] authorizer. you can use it identity to
+[18:42] in order to apply your your policies and
+[18:44] things like that. So it's a service
+[18:46] there. It is also integrated with
+[18:50] runtime and gateway. So runtime is
+[18:52] another service under which which
+[18:54] closely works identity that if you're
+[18:56] using runtime to host your agent code or
+[18:58] host your gateway code and then runtime
+[19:01] automatically use that the agent core
+[19:03] identities authorization as the inbound
+[19:06] and and then for runtime for your code
+[19:08] running in the agent core runtime to
+[19:10] access some resources outside it uses
+[19:12] agent core identities outbound
+[19:14] authorizer and same thing to do with
+[19:16] gateway. So the when you use runtime to
+[19:19] host agent it automatically use agent
+[19:22] core identity for the inbound and
+[19:23] outbound and the same vice versa for the
+[19:25] gateway and you can also use a agent
+[19:27] identity by itself. There are other
+[19:30] components such as browser code
+[19:31] interpret interpreter those are the
+[19:33] first party those are the tools that you
+[19:36] can use uh and the memory memory as well
+[19:39] we kind of talked about when you deploy
+[19:41] the agent running somewhere how where do
+[19:43] you store the context of the the agent
+[19:45] interaction with user shortterm memory
+[19:47] long-term memory so those are also
+[19:49] additional components that you can use
+[19:50] from the collection of suite in a
+[19:53] backrock in order to to prodize your
+[19:55] agents
+[20:00] Okay. So this slide I'll go a little bit
+[20:03] deeper on interaction sequence on on how
+[20:07] user goes through applications through
+[20:09] agent through real tools. So step by
+[20:12] step first of all user needs to access
+[20:15] application and here we we we assume
+[20:19] that user is coming from identity
+[20:21] provider. Um you can use any identity
+[20:23] provider out there. You can also if your
+[20:25] user is coming from is if a user if you
+[20:29] have some internal uh authentication
+[20:31] scheme uh where how to represent how a
+[20:34] user logs into application you can also
+[20:36] do that too because when we implement
+[20:38] this inbound authentication authorizer
+[20:42] we are not taking a strong opinion about
+[20:44] what that token looks like to us it's a
+[20:47] it's a JT token um obviously if you use
+[20:50] identity provider that J token will have
+[20:52] some basic claims such is audience uh
+[20:56] audience and issuer so that we can viate
+[20:58] that but you can also use other type of
+[21:01] J ready tokens if you have some custom
+[21:02] schemes in your enterprise setup we also
+[21:05] support some other modes such as you can
+[21:07] pass a user ID which we can talk about
+[21:09] maybe at the end of the meeting uh if
+[21:11] you need to use that that's another
+[21:12] route for you to do so user comes in and
+[21:16] the user presents uh identity token
+[21:19] that's issued by by by customers by your
+[21:22] identity provider that gets sent to the
+[21:25] agent core. In this case, we're assuming
+[21:27] that you are hosting your agent with the
+[21:30] agent core runtime. And I think maybe
+[21:34] maybe um maybe some of you already are
+[21:36] aware the runtime essentially is a place
+[21:38] where it you you add some annotation to
+[21:41] existing Python code your code Python or
+[21:43] some other language and that code by
+[21:45] adding annotation you containerize it
+[21:48] and and then deploy in AWS uh with agent
+[21:52] runtime as a service function. So, so
+[21:54] that's the reason why runtime is acting
+[21:57] as as um as a service interaction or
+[22:00] invocation endpoint for your agent. So
+[22:03] once that your in once your use identity
+[22:06] token gets asset gets reached to the
+[22:08] agent core runtime and then our
+[22:10] authorizer will then pull from the agent
+[22:13] core identity directory to know who is
+[22:16] the agent itself right because when the
+[22:18] application is calling the agent
+[22:19] application doesn't is not in a place to
+[22:21] to uh um to test who is the agent but
+[22:25] when the agent is running now you got
+[22:26] incoming request it knows what it is by
+[22:29] itself because that's what runtime
+[22:31] deploys agent runtime I know the ID of
+[22:33] the the agent. So then the authorized by
+[22:36] combining the information about who is
+[22:38] the user and who am I myself then it
+[22:41] will combine these two do some internal
+[22:44] um token exchange process to generate
+[22:46] some access token and this access token
+[22:48] is internal to you will you'll be able
+[22:51] to see the access token but it's opaque
+[22:52] to you because that's the token that you
+[22:56] will send it forward to the tools. So
+[22:59] this token itself contains information
+[23:01] about who is agent, who is the user and
+[23:03] it's a verifiable because it's coming
+[23:05] from the directory. It's coming from
+[23:08] your inbound identity provider and it
+[23:10] combine them into there. Then your agent
+[23:13] code when you write your agent code
+[23:14] you'll be asking oh I need to access
+[23:16] someone's OS application resource or my
+[23:19] or that uses Gmail account. at that
+[23:22] point um then there's a couple ways you
+[23:26] can do that or I just maybe just expand
+[23:29] that all one way one way is that if this
+[23:31] resources is OS controlled or API key
+[23:34] controlled and then you could be using
+[23:37] the credential provider or outbound O we
+[23:39] have a token vault that your agent who
+[23:42] can interact essentially you're just
+[23:44] telling the uh the token vault that
+[23:46] here's my proof of who I am as agent and
+[23:49] here's a proof of who my user is calling
+[23:52] and please help me to orchestrate the
+[23:54] retrieval of accessing some resource out
+[23:57] there OS resource out there and then our
+[23:59] outbound will will give you a URL for
+[24:02] your agent to send it back to the
+[24:04] application prompt the user maybe open a
+[24:06] window or something like that and the
+[24:08] user will interact with the uh resources
+[24:11] on the right side directly but once
+[24:13] that's done then the access token is now
+[24:16] stored with with us with AWS h and that
+[24:19] token we store it in a way that only if
+[24:22] you can prove who you are and the user
+[24:25] and then you can get that token back. So
+[24:27] this is how we are we're removing the
+[24:30] need for your agent code to manage those
+[24:33] outbound access token for yourself
+[24:35] because your agent code could be
+[24:37] managing could be there could be
+[24:38] hundreds of thousands users using your
+[24:40] agent and and then it's really
+[24:43] challenging for you to trust that your
+[24:45] agents code will be handling those token
+[24:48] tokens um properly. So that's the reason
+[24:50] why we have this service and if you have
+[24:53] a resource that needs to go to AWS
+[24:55] resources such as IM control ads IM is
+[24:59] the identity access uh for AWS resources
+[25:02] and then you can use the role of the uh
+[25:05] agent core service itself agent core
+[25:08] runtime itself or the gateway those are
+[25:10] roles that you assigned when you set up
+[25:12] that uh agent runtime or agent gateway.
+[25:16] So this is the overall picture of um how
+[25:19] those components work together and how
+[25:22] do we give you the inbound agent
+[25:25] identity and how we tie that to the
+[25:26] outbound and that's the that's how we
+[25:29] see you can use this kind of component
+[25:31] to stitch your full end to end
+[25:33] application from inbound all the way to
+[25:34] the outbound.
+[25:35] >> Wow. This is really cool to see it drawn
+[25:37] into end like this. This is the first
+[25:38] time I've seen the the full kind of in
+[25:40] toin story of how we can pass the off
+[25:43] through for different um for for
+[25:45] different patterns. I think uh we had a
+[25:48] few questions while you're presenting I
+[25:49] want to I want to bring up here and and
+[25:51] I think in general u it' be really cool
+[25:53] to to just kind of double click on this
+[25:55] a little bit more throughout the rest of
+[25:56] the session. Somebody asked a question
+[25:58] that that I'd be curious to get your
+[25:59] opinion on Fay is like is this kind of
+[26:01] like a zero trust model for agents? Um
+[26:04] my my initial instinct was like zero
+[26:06] trust is is a loaded term, but if you're
+[26:08] going to do zero trust, you may as well
+[26:09] do it uh early in the process rather
+[26:11] than in a brownfield environment. Um and
+[26:14] uh a follow-up question to that was uh
+[26:16] if this is supported in in Spanish, I'm
+[26:19] going to guess you could build a Spanish
+[26:21] agent, right? A lot of the models that
+[26:22] you orchestrate support different
+[26:24] languages than English, but I I suspect
+[26:26] our our APIs are probably mostly uh as
+[26:28] you would expect from from Amazon.
+[26:29] >> That's right. Yeah. Yeah. Yeah,
+[26:31] definitely. Those are good questions.
+[26:33] First of all, this is not so we have an
+[26:35] opinion on how you you use pieces this
+[26:37] these things together interface.
+[26:39] However, we are not opinionated on what
+[26:41] models you want to use which in
+[26:42] frameworks you use. So you can
+[26:44] definitely use different models in
+[26:46] Spanish and and the different frameworks
+[26:47] as you want. You can see that this is a
+[26:49] container or this somewhere that run
+[26:51] your stuff and help you.
+[26:53] >> The second one is about zero trust. As
+[26:55] uh Chvy said perfectly, zero trust is a
+[26:57] loaded term. But however, that's also
+[26:59] how we think about these problems that
+[27:01] we don't trust this this hop from hop to
+[27:03] hop. Every hop you need to show us proof
+[27:06] in order for you to access resources.
+[27:08] Okay. So I I'm going to I'm going to um
+[27:12] turn it over to to Savvia Antonio.
+[27:14] There's a lot of demos to that you can
+[27:16] you can play and then we can I can ask a
+[27:18] question at the end.
+[27:19] >> Amazing. Thank you for the setup there,
+[27:21] Sevilla. Really excited to see what you
+[27:23] got you got cooking for us. Thank you so
+[27:24] much F. I mean that was uh very in-depth
+[27:27] and that's a great refresher any time to
+[27:29] hear that. So thanks D for getting my
+[27:32] screen share up. Uh I hope folks you can
+[27:35] see my screen. Um so you saw F spoke to
+[27:38] you and talked to you about inbound O
+[27:40] and outbound O. So I've got an example
+[27:42] here and all the examples that you see
+[27:44] on my screen they are in our bedrock
+[27:46] agent code samples. This is a public
+[27:47] repo. I'm using an example for uh GitHub
+[27:51] and the use case if you see this design
+[27:52] diagram. Uh we are deploying an agent
+[27:56] that can access your GitHub repo and
+[28:00] list maybe your private repositories as
+[28:02] an example. If there are any other
+[28:03] things that you would think of uh using
+[28:05] GitHub, you can definitely do that. U if
+[28:08] you see the user is authenticating with
+[28:09] Cognto in my example. The reason we
+[28:12] chose cognto uh of course it's a great
+[28:14] service but from a lab perspective for a
+[28:16] demo it's easy for me to spin up cognto
+[28:19] but if you want to use any identity
+[28:20] provider as we mentioned uh we are
+[28:23] meeting customers where they are I mean
+[28:24] you can use any popular oath based
+[28:26] identity provider we have examples step
+[28:29] by step for example for uh entra ID here
+[28:32] so these are already in the repo uh
+[28:34] these are screenshot based step-by-step
+[28:37] examples for entra we've got similar
+[28:39] examples for octa so So you can set all
+[28:41] of these up. Uh but going back to my
+[28:44] demo, I'm using Cognto today. And u so
+[28:48] the user so I have already configured
+[28:49] cognto in this particular case. Uh I'll
+[28:52] I have run I'll walk you through some of
+[28:53] the steps that will uh set up cognto
+[28:56] configure the app in the cognto and uh I
+[29:00] also have a small utility that will help
+[29:02] me get the o token or bear token from
+[29:06] cognto so that I can use it as part of
+[29:08] testing my agent. One more thing that I
+[29:10] have in my agent is uh we are trying to
+[29:13] interact with GitHub. Now GitHub is a
+[29:16] resource that is protected by its own o
+[29:18] server and uh fe walked us through the
+[29:20] concept of resource credential
+[29:22] providers. So if I navigate to the agent
+[29:24] core console and I'm on the identity
+[29:26] tab. I can create some of these either
+[29:29] from the console or I can even use the
+[29:31] API and if you see we have a few name
+[29:34] providers provided out of the box and
+[29:35] this list will grow as uh the service
+[29:38] grows. So one thing is I can just use
+[29:40] select GitHub and provide the client ID
+[29:42] client secret. But today we will see how
+[29:44] to do that uh using the APIs
+[29:47] u and we are using a small bedrock model
+[29:50] for uh inference. So the agent as part
+[29:53] of uh our demo will interact with GitHub
+[29:56] get a list of all the repositories or
+[29:58] any of the prompt that we want to send
+[30:00] summarize it uh using this. So uh here
+[30:04] is my notebook u and this is the same
+[30:06] notebook that is already in the samples
+[30:08] repo. Uh we start by setting deploying
+[30:11] some of the uh prerequisites uh all the
+[30:13] required libraries
+[30:16] and then u I set up u just the
+[30:19] environment with uh I would say uh the
+[30:22] dependencies for the utilities. In the
+[30:24] utilities all I have is a few helpers
+[30:27] that will help provision a cognitive
+[30:29] user pool and all the other parameters
+[30:31] that I need. So the first thing is
+[30:33] provisioning and setting up cognitive
+[30:35] user pool. If you see I'm emitting out
+[30:37] the pool ID, the discovery URL and of
+[30:40] course a bearer token. U this beer token
+[30:43] is something that I would be using when
+[30:44] I'm testing the flow. Uh the next thing
+[30:47] that I have here is uh configuring the
+[30:50] resource credential provider. So if I
+[30:52] scroll back slowly,
+[30:54] we spoke about this resource credential
+[30:57] provider and I also showed this to you
+[31:00] from uh my screen. So here we are
+[31:03] provisioning a resource credential
+[31:05] provider. So what I've done is I've
+[31:07] already configured all the settings for
+[31:09] GitHub and if you may be wondering how
+[31:11] do I configure GitHub here are all these
+[31:13] steps. So all the steps to configure
+[31:16] GitHub u is already here. that is log
+[31:19] into GitHub, go to the developer
+[31:20] settings and all of this. In the
+[31:22] interest of time, I've already
+[31:23] configured that and because you might
+[31:26] not be interested in seeing my client ID
+[31:28] and client secret in this video
+[31:29] recording, I have already stored that in
+[31:32] a secrets manager secret uh following
+[31:34] security best practices. And then here's
+[31:37] a small code snippet where I'm creating
+[31:39] the credential provider. So if you see
+[31:41] the provider vendor name is GitHub oath
+[31:44] 2 which means it's a name provider and
+[31:46] I'm just passing the client ID and
+[31:48] client secret. So once that's done you
+[31:50] can see that visible here. U so it's the
+[31:53] GitHub provider September 16th which is
+[31:56] here and uh the next step that I'm doing
+[31:59] is um deploying my agent itself. Now a
+[32:01] brief walkthrough of the agent u
+[32:03] starting bottoms up um and you may have
+[32:06] seen a demo of how you deploy agents and
+[32:08] runtime in the previous uh sessions. So
+[32:10] we start with an entry point decorated
+[32:13] by the entry point. U I have the agent
+[32:16] code itself. I'm using a set model as I
+[32:18] mentioned. uh it just it it's using a
+[32:21] tool which is called inspect uh GitHub
+[32:23] repos and a system prompt which is
+[32:25] clearly giving it the uh focus message
+[32:28] saying that hey you're a GitHub
+[32:29] assistant and you can use a tool to uh
+[32:32] provide responses based on the use case.
+[32:34] So that's how it is. Uh interesting note
+[32:37] I have a small helper function here
+[32:39] which says need token 3LO async. uh if
+[32:42] you see this is decorated by with uh
+[32:45] resource requests access token and a few
+[32:48] parameters very important the name of
+[32:50] the provider this is the one that I
+[32:52] provisioned in the previous step so if I
+[32:53] go back slowly scrolling up if you see
+[32:57] this is the name that I created for my
+[32:58] credential provider it's called GitHub
+[33:00] provider September 16th and that's what
+[33:03] I'm using there and then u the scope now
+[33:07] I'm just giving this permissions only to
+[33:10] read from my GitHub web repository. The
+[33:13] O flow is user federation which is the O
+[33:16] uh code flow or threeleg flow. In case
+[33:19] this would be a machine to machine flow,
+[33:21] I would use M2M here. And then I have a
+[33:23] callback function on O URL where I will
+[33:26] receive the access token. Um and then
+[33:29] scrolling up I have some more utility
+[33:31] functions for the agent to kind of
+[33:33] authenticate, get the access token and
+[33:36] finally walking you through the tool
+[33:39] itself. The tool itself is uh inspect
+[33:43] GitHub repos. As you see, it's just
+[33:45] iterating GitHub after it has the access
+[33:48] token to list the repositories. Uh so
+[33:50] all of this is public. You can explore
+[33:52] this uh offline. It's all in the form of
+[33:54] Jupyter notebook. So it's easy for you
+[33:56] to kind of step through it. Uh and the
+[33:58] next thing that I'm doing here is
+[34:00] configuring the runtime. One point to
+[34:02] note is we are autocreating the
+[34:03] execution role following security best
+[34:05] practices. Which means when you use the
+[34:07] setting the IM role that's getting
+[34:09] provisioned for agent code runtime is
+[34:11] following uh security best practices and
+[34:13] it's only having the minimum permissions
+[34:15] required to run runtime itself. But in
+[34:17] our use case we are also creating uh I
+[34:20] mean we are interacting with GitHub. So
+[34:22] we we are using credential provider. So
+[34:25] what I'm doing in the next step is u I
+[34:27] first launch uh which is deploying this
+[34:30] on runtime. And if you see this is
+[34:33] behind the scenes deploying, packaging
+[34:35] my container, pushing it runtime. Once
+[34:37] all of that is done, u I can add
+[34:39] additional permissions to my autocreated
+[34:41] IM role. And the permissions that I'm
+[34:44] adding are to read the resource
+[34:46] credential provider to access it.
+[34:48] Anything to do with secrets, all of
+[34:49] those permissions.
+[34:51] >> Got a I got a quick question for you
+[34:53] here, Seir. Something I saw first of
+[34:54] all, if it's possible in the notebook,
+[34:56] if if you could zoom in a little bit, it
+[34:58] would pro it might help uh be able to
+[35:00] see the code. But one thing I noticed if
+[35:02] you scroll up a little bit here like
+[35:04] some of the stuff that you're doing in
+[35:06] the setup um this looks like Asian core
+[35:09] helper I is is this um is this could you
+[35:12] just explain what what this is and maybe
+[35:15] is is this something that we should
+[35:16] expect to see in Boto 3 or is it like in
+[35:18] a future iteration or is this like a
+[35:20] separate tool just to bootstrap some
+[35:22] things?
+[35:23] >> Is your question around the autocreation
+[35:24] execution?
+[35:25] >> No, I'm just asking I I see us importing
+[35:27] from Bedrock agent core starter toolkit.
+[35:30] Um that's a that that seems like a
+[35:32] unique SDK. Is is this just to to
+[35:34] actually deploy the actual agent core
+[35:36] components? Is that what that
+[35:38] >> Yeah, the starter toolkit is an SDK that
+[35:40] allows developers to quickly uh uh set
+[35:44] up develop uh test agents locally as
+[35:46] well as quickly deploy them good
+[35:49] feedback cycle to runtime. Yeah,
+[35:51] >> makes sense. Okay. So you would be able
+[35:53] to execute all of this uh in your
+[35:55] terminal u and in the interest and I
+[35:58] assume u when we had the runtime session
+[36:00] uh shreas did walk through all of this
+[36:02] step by step it's the same thing so
+[36:04] that's what we using here
+[36:05] >> cool
+[36:08] >> um so navigating after I add the
+[36:11] permissions I'm just checking if the uh
+[36:13] agent is up and running it's in ready
+[36:15] state u and then here comes the time
+[36:17] where we are invoking the agent so first
+[36:19] thing is I'm getting a fresh beer token
+[36:21] from cognto so that I can pass it when
+[36:23] I'm making a call to the agent u and
+[36:26] here's the beta token that's part of my
+[36:28] call u the question the prompt is what
+[36:31] are my private repositories
+[36:34] um and if you see it's invoking based uh
+[36:38] the agent with the beer token that was
+[36:40] provided and the very first thing that
+[36:42] comes out from u the outbound o
+[36:46] perspective that fay was walking us
+[36:48] through is the consent URL so as part of
+[36:50] the three-legged do flow GitHub requires
+[36:53] this user consent and I have to like
+[36:56] copy this URL and open it up in a
+[36:58] browser tab provide the user consent
+[37:01] once the user consent is provided u the
+[37:04] credential provider is able to get the
+[37:05] access token from GitHub in this
+[37:07] particular case and then continue
+[37:08] listing my repositories so I have a
+[37:11] small streamllet app here let me try
+[37:12] running this uh to see if we can test
+[37:17] this out so I'll click the streamllet
+[37:20] repo Oh.
+[37:29] [Applause]
+[37:33] All right. Let's look at what the
+[37:35] credentials are.
+[37:38] It is this one.
+[37:43] [Applause]
+[37:45] Okay. So, this is the inbound O where I
+[37:48] authenticated with Cognito. And now I
+[37:51] can test this a few things like tell me
+[37:53] a joke just to see if the agent is up
+[37:56] and running
+[37:58] and it should prompt me that okay I
+[38:01] don't know if this is a generic agent
+[38:02] it's a agent very specifically
+[38:04] configured with a prompt for u GitHub in
+[38:08] this particular case I got throttled uh
+[38:10] but if you see uh the example here u
+[38:14] once I authorize this particular call u
+[38:17] I would definitely u complete the
+[38:20] consent flow and then list all the
+[38:23] repositories. So I can try again this
+[38:25] again just to see if I'm getting
+[38:26] throttled again. Let's see this.
+[38:30] So I'm running the invoke agent
+[38:32] invocation again.
+[38:37] Okay, I get the consent URL. So let me
+[38:39] copy this,
+[38:42] paste it in a new tab.
+[38:45] Okay, authorization is successful. I go
+[38:48] back to my demo and if you see the demo
+[38:50] should complete continue from here. So
+[38:52] the author the credential provider is
+[38:54] able to complete the user consent flow
+[38:57] continue getting the access token from
+[38:59] GitHub and there you go. So it is able
+[39:01] to list all the private repositories
+[39:02] from my GitHub. So very simple demo and
+[39:05] this similar concept applies with uh any
+[39:07] resources that are protected by oath. Uh
+[39:10] customers may have for example graphical
+[39:12] APIs or any other APIs that are
+[39:14] protected by OOTH. This could be they
+[39:16] may be using octa or any other leading
+[39:18] oath based IDPs and the same concept
+[39:20] works. One thing I want to point out
+[39:22] here is besides the name providers that
+[39:25] you see here we also provide a custom
+[39:27] provider. So if you don't see anything
+[39:29] that you want here and this list will
+[39:31] grow by the way you can always create uh
+[39:34] a custom provider provide the manual
+[39:35] configuration and provide all of these
+[39:37] details which are basically all the
+[39:39] configuration you need for an oath
+[39:40] server and that should that is all you
+[39:42] need and you can interact with any
+[39:45] resource that is outside of AWS using
+[39:47] oath. So that's my uh first demo.
+[39:50] Antonio, checking with you if you want
+[39:53] me to continue with the second one or do
+[39:56] you want to switch to gateway?
+[39:58] >> No, no, go ahead with the second one. I
+[40:00] think uh it will be interesting to see
+[40:02] because uh one one thing that we
+[40:04] commonly hear from our customers and we
+[40:07] were discussing uh before this session
+[40:09] was okay uh we seem to be associating
+[40:12] all the time agent core identity with
+[40:14] the runtime but what happens when you
+[40:16] want to use it as standalone right so
+[40:18] many customers are asking how do I use
+[40:19] it as standalone because I maybe have my
+[40:21] agent hosted in uh you know uh my own
+[40:25] EKS or or ECS and AWS or even you are
+[40:28] using it anywhere else in any compute
+[40:30] that you might have. So can I use any
+[40:32] agent core identity anyway? So if you
+[40:34] can walk through that example, I think
+[40:35] that would be valuable.
+[40:36] >> Absolutely. That's a great question and
+[40:38] this is a common question. So the whole
+[40:40] gist of uh agent core is you can use any
+[40:43] of these primitives or services either
+[40:45] on their own or together which also
+[40:47] means that you can only use agent core
+[40:49] identity if you want to. For example, as
+[40:50] Anthony was mentioning and FY also
+[40:52] alluded to it. uh you could be running
+[40:54] your agent on on premises or in a
+[40:56] different AWS service or maybe even a
+[40:58] different cloud for that sake and you
+[41:00] want your agent to interact with AWS
+[41:02] services and you want to use agent core
+[41:04] identity there's a way to do it so I
+[41:06] have uh this repo here again this is all
+[41:09] public uh it's the uh starter toolkit
+[41:11] and on starter toolkit I am in the
+[41:13] identity section and quick start and
+[41:15] we'll share this links is all public
+[41:16] information so in this example u it's a
+[41:20] small application uh agent application
+[41:22] where it's doing some research as part
+[41:24] of the research uh we are using uh
+[41:27] perplexity API to run a small research
+[41:29] for us uh and then store the uh end
+[41:33] result in a Google drive I mean very
+[41:34] simple use case intentionally we have
+[41:36] just picked a couple of combinations so
+[41:38] we can show you the use of API key
+[41:40] because the token wave was mentioning it
+[41:43] allows you to store different types of
+[41:44] secrets one is API key and then access
+[41:47] tokens for both the two-legged and
+[41:48] three-legged doclos uh and in this
+[41:50] example we are showing both like API key
+[41:52] as well as access tokens. So we start
+[41:54] with the prerequisites basically setting
+[41:56] up your Python environment configuring
+[41:59] AWS so you have enough AWS permissions
+[42:02] and the very first thing is we are
+[42:03] installing the SDK and Trevor you were
+[42:05] asking me sometime back this is the SDK
+[42:07] agent core identity quick start u and
+[42:10] just setting up the Python environment
+[42:12] activating it and we are good to go very
+[42:15] first thing we need is creating a
+[42:16] workload identity so uh if an agent is
+[42:19] running outside of runtime or gateway u
+[42:22] and it needs an identity we can use the
+[42:24] identity client libraries as part of
+[42:26] agent core identity to create a workload
+[42:29] identity and the API call here is create
+[42:32] workload identity. I'm just giving my
+[42:34] agent a name and this creates a workload
+[42:36] identity. So I can print out the ARN, I
+[42:39] can print out the agent name. So this is
+[42:40] the first piece and second piece is
+[42:43] configuring the resource credential
+[42:44] provider. If you saw my previous
+[42:46] example, I was walking you through
+[42:48] configuring the cred credential provider
+[42:50] for GitHub. In this particular case,
+[42:52] it's just for Google, just a different
+[42:54] name provider. The concept is the same.
+[42:56] Uh I'm just providing my client ID,
+[42:58] client secret. And if you want to see
+[43:00] instructions of how to configure Google
+[43:01] itself, we have all those instructions
+[43:03] in our demo. So if I go back to a core
+[43:06] identity, the 3LO example and uh this is
+[43:10] end to end example of how you can use u
+[43:13] Google in fact. Uh so here are the steps
+[43:15] of configuring Google for on behalf of
+[43:18] the user flow. Uh the next step is I'm
+[43:21] also configuring my API key provider. In
+[43:24] this cutter case as I mentioned I'm
+[43:25] using perplexity. So I definitely need
+[43:27] an API key. I will get that replace this
+[43:30] and configure the credential provider
+[43:32] for API key for perplexity. And then
+[43:35] here is a simple research agent. Uh the
+[43:37] code is very simple starting with a
+[43:39] class research agent. What this is doing
+[43:41] is interacting with perplexity. And then
+[43:44] I have another function to save the
+[43:45] results to Google Drive. Um and um so if
+[43:50] you see uh we starting off with
+[43:53] providing a prompt uh to say okay the
+[43:56] search queries research compreh
+[43:58] comprehensive information about a
+[43:59] particular topic and then uh the agent
+[44:02] will interact uh with perplexity get
+[44:05] those results and each of these
+[44:07] functions they're getting those access
+[44:08] tokens from the resource token w they're
+[44:11] using the workload identity as we
+[44:12] mentioned u and uh getting all the
+[44:16] information and storing it to Google
+[44:17] drive u you can locally test it by
+[44:20] running a small HTTP server. Here are
+[44:21] all the steps to test it. Uh so it's a
+[44:23] very simple flow uh where you can u use
+[44:28] the agent core identity features even if
+[44:30] the agent is outside of agent core. Uh
+[44:32] if your agent is running in agent core
+[44:34] runtime or gateway as part of tools then
+[44:37] you don't have to work worry about
+[44:38] getting the workload access token. All
+[44:40] that is done implicitly done for you.
+[44:45] So that those are the two demos that I
+[44:47] had. U just mentioning that all of this
+[44:50] is available on our samples repo. Uh we
+[44:53] are continuing to enhance and add more
+[44:54] and more examples to the repo. Uh one
+[44:56] thing that you will see more of is
+[44:58] examples with all the leading IDPS. So
+[45:00] we've already covered in ID we have
+[45:03] covered uh octa we are adding examples
+[45:05] for ozero pink federate cisco duo uh to
+[45:09] name a few. Uh if you have any identity
+[45:11] providers that you want to see in this
+[45:12] particular listing, do let us know via
+[45:14] chat. Uh and if you also want to see any
+[45:17] of the target uh oath servers, for
+[45:19] example, uh I was mentioning that we
+[45:22] have uh these connectors. If you want to
+[45:25] see any more that you don't see on the
+[45:26] list, do let us know what is the ones
+[45:28] that you most commonly use. So with
+[45:30] that, I would definitely like to hand it
+[45:31] over to Antonio for uh
+[45:34] >> Wow. I'm excited. We we've got time for
+[45:36] a bonus demo, everybody. If you didn't
+[45:38] know, we weren't sure if we were going
+[45:40] to have time to fit in this last demo.
+[45:42] So, we got a bonus demo and I think it
+[45:44] involves gateway, which is a that
+[45:47] service is uh I'm really excited to see
+[45:50] kind of how exactly that plays with the
+[45:52] um the identity solution that we've been
+[45:54] talking about. So, let us know what you
+[45:56] got for us here, Antonio.
+[45:57] >> Yeah, definitely. So, let's let's use
+[45:59] those last minutes for that. So, let
+[46:01] let's recap, right? So I think that the
+[46:03] first demo was about okay we have an
+[46:05] agent in agent core runtime and we want
+[46:08] to add the inbound and outbound identity
+[46:10] here for you know accessing that agent
+[46:12] and then for you know when that this
+[46:14] agent is accessing our github tool in
+[46:16] this case for inspecting the repos in
+[46:18] the second demo what we saw is okay can
+[46:21] we use uh agent core identity as a
+[46:24] standalone so you can you have any any
+[46:25] kind of piece of compute uh that you're
+[46:27] using and now we have two tools here so
+[46:29] we have perplexity for doing some search
+[46:32] Google Drive for storing and now we want
+[46:34] to you know identity to deal with the
+[46:37] all the odd that is happening there for
+[46:39] those tools and so on. Um but then the
+[46:41] question is okay can we also do this
+[46:44] with agent core gateway and agent core
+[46:45] gateway as you probably saw in the last
+[46:47] uh session um is a a very interesting uh
+[46:51] part of agent core today because it
+[46:53] allow us to u somehow incipy if you want
+[46:57] uh functions that we already have so
+[46:58] that that can be a lambda function that
+[47:00] you're using in AWS it can be in general
+[47:03] any API that you have compatible with
+[47:05] open API or Smitty uh format right so um
+[47:10] Agent core identity as Fay was saying at
+[47:12] the beginning is also built in into uh
+[47:15] the agent core gateway. So we can deal
+[47:17] with the inbound uh o also using o or we
+[47:20] can use uh or we can also deal with the
+[47:23] outbound o in this case. Um so the the
+[47:26] demo that we are going to show here in
+[47:28] this case is targeting a lambda and and
+[47:30] in that case we are going to be using an
+[47:31] AM role uh for um let's say dealing with
+[47:34] that O in the in the outbound but uh
+[47:37] bear in mind that that's not the only
+[47:39] option right so in general this these
+[47:41] are the uh options that you have
+[47:43] available when you are using identity in
+[47:45] the gateway so if you are going to an
+[47:47] external service so let's say that you
+[47:48] are again uh going to you know jeta
+[47:51] service now github salforce whatever
+[47:54] you're using as a as a third party
+[47:56] service here or even if you have any
+[47:58] tools in your uh organization that you
+[48:01] want to uh control through o you can do
+[48:03] that as well and it it also supports API
+[48:06] keys in the case that you are accessing
+[48:08] as we saw before with the perplexity
+[48:10] tool um u resources that require uh API
+[48:13] keys as well and um that's that's like
+[48:16] the the whole ecosystem and options that
+[48:18] you have but but again let's let's dive
+[48:20] into in this particular case into a
+[48:22] lambda function that we think is uh is a
+[48:24] good example for you know getting
+[48:26] started in this case. So I hope you can
+[48:28] see my code here. Hope that is big
+[48:30] enough. Um so first of all what we are
+[48:33] doing here is creating a lambda function
+[48:35] right. So uh again I did the magic of
+[48:38] the kitchen here and uh and I already
+[48:40] have a a lambda function created for us
+[48:43] uh here. But this lambda function is
+[48:44] just a a dummy function that I have uh
+[48:47] for simulating that we have some order
+[48:49] management in this case. Right. So I
+[48:51] have a a few tools inside that allow us
+[48:53] to give a status on an order uh ID that
+[48:56] we're going to be asking for and so on
+[48:58] and so forth. Uh but at the end I think
+[49:00] the important part here is that we uh
+[49:02] all see how again the o is being
+[49:04] enforced for calling that lambda
+[49:05] function and and in general for using
+[49:08] the gateway also in the email. So um
+[49:11] first uh thing that we do here is uh uh
+[49:15] create the role that we are going to be
+[49:16] using in our agent core uh gateway.
+[49:18] Again, this is an execution role that we
+[49:20] are going to be uh needing for for that
+[49:23] element to, you know, be able to uh
+[49:26] write the logs to cloudatch to uh to
+[49:29] execute uh what what it's doing and and
+[49:32] so on and so forth. And um the the next
+[49:35] step that we are doing here as you see
+[49:37] is that actually we are setting up the
+[49:39] inbound o and and in this case I'm
+[49:41] creating again a user pool in cognto. We
+[49:43] are using cognto for flexibility. It's
+[49:46] easy for us to set it up. But again, you
+[49:48] can extend this example to any kind of
+[49:51] uh identity provider that you might be
+[49:53] using today including uh the most common
+[49:55] ones like uh uh enter ID, former active
+[49:58] directory or octa or uh anybody else. In
+[50:02] this case, I have my uh user pool
+[50:04] created. I have my client ID. I have my
+[50:06] discovery URL and so on and so forth.
+[50:09] And then I'm ready uh for creating my
+[50:12] gateway. And in this case, as you see,
+[50:14] one very important piece that I'm
+[50:16] passing in in my configuration is
+[50:18] something that is called the authorizer
+[50:19] configuration for the gateway. Right? So
+[50:21] this gateway is going to uh get this
+[50:24] parameter that says okay, I'm going to
+[50:25] use a JWT uh token in this case that is
+[50:29] going to go uh against this discovery
+[50:31] URL and is going to allow this client uh
+[50:34] to invoke let's say this gateway or to
+[50:37] uh use the the gateway for listing and
+[50:39] invoking the tools that that he had
+[50:41] behind. So this is how we set up the
+[50:43] inbound. It's very easy, very similar to
+[50:44] how we do it also for the runtime. And
+[50:47] uh once I set it up, uh you should be
+[50:49] able to see it in the console by the
+[50:51] way. So if you go to the agent core
+[50:52] console, you should be able to go here
+[50:54] to your gateways and um and you should
+[50:57] have your uh gateway in this case uh
+[50:59] highlighting what is the uh method that
+[51:02] you're using for the inbound identity.
+[51:03] In this case, it's showing me that I
+[51:05] have a cognto as my identity provider.
+[51:08] And um and the next step that we have to
+[51:10] do here is now uh set up the targets for
+[51:13] that gateway. So we have the the gateway
+[51:15] element. We have to now configure what
+[51:17] are the tools that this gateway is going
+[51:19] to have behind. So what I do is that uh
+[51:22] basically I'm uh setting up the uh
+[51:24] schema the NCP configuration let's say
+[51:26] the NCPJSON schema here for my tool in
+[51:30] this case for my lambda function. Right?
+[51:31] So I'm I'm and I'm I'm pointing here to
+[51:33] my lambda function arn to the this dummy
+[51:36] function for uh working with orders. I'm
+[51:39] passing some details on what is the this
+[51:41] tool doing exactly a description what is
+[51:43] the what are the parameters that this
+[51:46] tool is accepting and so on and so
+[51:47] forth. And uh one important part is the
+[51:50] credential config that I have for this
+[51:52] tool. Right? So in this case I'm
+[51:54] specifying a gateway im role and this
+[51:57] will be the place where you actually
+[51:59] would change to whatever configuration
+[52:01] you might want to use in your uh in your
+[52:03] tool. Let's say that in example instead
+[52:05] of using lambda as we said before you're
+[52:08] using something else like I don't know
+[52:09] sandex in example we have an example for
+[52:12] sandex in the in the repository that was
+[52:14] shared before uh uh by the team and uh
+[52:18] in this case in in the case of sandex
+[52:20] you you can also configure here um with
+[52:23] your sendex client ID your your secret
+[52:26] and uh who are the authorizer ex exactly
+[52:29] that you're going to uh be using who is
+[52:31] the issuer and and so on and so forth so
+[52:33] any parameter in general that is
+[52:35] supported in your oath configuration by
+[52:37] your uh by by your uh resource
+[52:40] credential provider in this case uh by
+[52:42] the external tool uh authorizer that we
+[52:45] are going to be using. Um so again
+[52:48] coming back to our lambda I'm passing my
+[52:50] gateway im ro parameter here and all I
+[52:53] do is that I plug this into my uh target
+[52:55] configuration and I create my gateway
+[52:58] target. So here I'm effectively
+[53:00] attaching let's say my lambda to the uh
+[53:03] agent core gateway. So in other words we
+[53:06] are incipying that lambda function and
+[53:09] uh and we make it uh already with the
+[53:11] outbound path that we need for being
+[53:14] able to call it only uh for users that
+[53:17] are allowed to call uh this tool or
+[53:19] allowed to call this lambda function in
+[53:21] this case. And um uh the rest is uh well
+[53:25] pretty much setting it up so we can use
+[53:27] it and maybe if the demo gods help me uh
+[53:30] we can uh test it out live and see how
+[53:32] it goes. The first step that I'm going
+[53:34] to do is to request an order access
+[53:36] token. So uh that that I can call in the
+[53:38] inbound this gateway and I can uh go
+[53:41] with it. I got my token. I have my uh
+[53:44] URL for my gateway there and uh I'm
+[53:47] going to locally test with a with a
+[53:49] domain agent here. As you see, all I'm
+[53:51] doing is setting up uh through NCP
+[53:54] through an NCP client. I'm setting up my
+[53:56] streamable HTTP client pointing to my
+[53:59] gateway. I'm passing my token again as a
+[54:02] as the authorization mechanism for
+[54:05] invoking this uh gateway and then I'm
+[54:08] specifying that I'm going to be using an
+[54:10] agent with Amazon Nova Pro in example
+[54:13] and I'm pretty much exposing the tools
+[54:16] uh that are behind this gateway as the
+[54:18] tools that this agent is going to have
+[54:20] accessible. Right? So the here the key
+[54:22] parameter is that I'm I'm I'm syncing
+[54:24] the tools that are in the gateway uh so
+[54:26] that the agent is able to discover this
+[54:29] uh when it's being invoked and uh that's
+[54:32] it. I'm passing here a prompt that is
+[54:33] saying um in example uh check the order
+[54:36] status for order ID 1 2 3 and show me
+[54:39] the exact response from the tool and so
+[54:41] on. And if again the demo gods help me
+[54:44] uh in this case what uh we should be
+[54:46] able to see is that the agent is uh
+[54:48] thinking and it says okay I need to list
+[54:50] all the tools available and then it says
+[54:53] I see the tools available are get order
+[54:55] update order. Awesome because we saw
+[54:58] that it's actually reading from our
+[54:59] lambda. So it means that it was able to
+[55:02] get to the lambda and now it's using the
+[55:04] tool one. It was able to invoke it. So
+[55:06] it means that our outbound o also work
+[55:09] and then in this case it's saying that
+[55:11] the order one two three is in chip
+[55:13] status which is really the result that
+[55:15] we wanted from that lambda function. So
+[55:17] amazing we did the inbound we did the
+[55:19] outbound and now we have a secure uh
+[55:21] pattern here for calling NCP tools uh
+[55:24] with the gateway and the last step would
+[55:27] be hey I want to put all of this
+[55:28] together. So I want to go from agent
+[55:30] core runtime to agent core gateway and
+[55:33] have identity dealing with all the
+[55:35] process. Well, it's pretty much the same
+[55:37] code that Sadbeir was showing us before.
+[55:39] Uh probably the only part that you will
+[55:41] have to modify here in this code is uh
+[55:44] specifically adding this uh gateway
+[55:46] part. So creating this NCP client
+[55:49] pointing to the gateway with the proper
+[55:51] authorization passing the token that is
+[55:53] needed and so on and so forth. The rest
+[55:55] is pretty much the same code that we had
+[55:57] in the in the runtime before. And again
+[55:59] you can do it as part of the same agent
+[56:01] uh process or you can do it as a split
+[56:03] processes if you want to you know do a
+[56:05] multi-agentic setup or or something like
+[56:07] that. So yeah that's uh that's what it
+[56:11] >> wow way to leave us on a high note. I I
+[56:13] I I think it's really it really helps
+[56:15] getting to visualize it kind of end to
+[56:17] end like this. So, um, but by the way,
+[56:19] can you can you all remind us where do
+[56:21] where should folks go if they want to
+[56:22] find their own their like like let's say
+[56:25] you've inspired some folks they want to
+[56:26] get started they want to start
+[56:27] experimenting with this um what's the
+[56:30] best resource
+[56:31] >> so uh if you can pull up my screen uh
+[56:34] prep I have a few links here
+[56:36] >> you came prepared with the QR codes
+[56:39] there you go
+[56:40] >> so yeah I mean we the GitHub examples
+[56:42] that I was showing you it's a onehop
+[56:44] stop we've got multiple types of
+[56:46] examples uh not primitive or specific
+[56:48] examples. For example, there are
+[56:50] examples only for runtime only for
+[56:52] gateway identity. But we also have end
+[56:54] to end getting started. You start with a
+[56:56] simple agent on your laptop. You add
+[56:58] memory to it. You you enable inbound o
+[57:01] using uh agent core identity. You add
+[57:05] outbound o maybe interacting with GitHub
+[57:07] or any other uh provider. Also examples
+[57:11] of how you can access AWS resources. And
+[57:14] you can do all of this end to end. So
+[57:15] we've got all of these examples. We are
+[57:18] active on discord. So there was a
+[57:19] question from the audience as to hey how
+[57:21] can we discuss these with you. Uh please
+[57:24] uh post your questions join discord. Um
+[57:27] one of us will uh I mean respond u and
+[57:30] happy to answer or unblock whatever use
+[57:32] cases you may have. So the GitHub
+[57:35] examples continuously updated. Please
+[57:37] watch that idea. If you have a use case
+[57:39] for which you don't see we covering an
+[57:41] example use discord and let us know that
+[57:44] hey we would like to have examples for
+[57:46] uh so and so identity provider or maybe
+[57:49] these type of external resources that
+[57:51] are not on AWS uh talk to us about uh
+[57:54] the different kinds of challenges or
+[57:55] different use cases that you're working
+[57:56] on. So of course the product detail page
+[57:59] and documentation links are always there
+[58:01] u and uh as the service continues to
+[58:03] evolve you will continuously see updates
+[58:05] in these spaces. Uh yeah,
+[58:10] >> amazing guys. It's been so awesome
+[58:11] having the three of you on um to to Faze
+[58:14] Point. Yeah, we're we're DMing
+[58:16] internally. This is a very comprehensive
+[58:18] session. Oops. Compreh comprehensive
+[58:21] session instead of demo. So I can't say
+[58:22] thanks enough. Um uh you know, I think
+[58:26] keep an eye out for more from the Agent
+[58:28] Core and Bedrock team. I think we just
+[58:30] had New York Summit, but it feels like
+[58:31] tomorrow we're going to be at reinvent
+[58:33] and I'm sure there's some brand new
+[58:35] goodies coming our way. So again, thanks
+[58:37] again for the time, gentlemen. Um, hope
+[58:39] to have you on again sometime. And for
+[58:41] those folks who join us for the session,
+[58:43] uh, this will be posted on YouTube right
+[58:45] right now after I I pressed end. So take
+[58:48] care and we'll see you all next week.
+[58:49] Thanks again, everybody.
+[58:50] >> Thank you all for your time. I mean,
+[58:51] this was an amazing conversation. Thank
+[58:53] you, Antonio Frey, and Trev as always.
+[58:55] Thank you so much.
+[58:56] >> Of course, guys.
+[58:58] [Music]
+[59:08] [Music]

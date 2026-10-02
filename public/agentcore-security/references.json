@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "comment": "AgentCore Security course — concept → source references. Key: <chapterId>#<sec>. Refs: {kind: repo|file|url, repo, path, url, title}.",
+  "concepts": {
+    "Chapter_01_Agent_Identity_Model#1-3": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples", "title": "awslabs/agentcore-samples — Identity tutorials for every major IdP" },
+        { "kind": "file", "repo": "aws/bedrock-agentcore-sdk-python", "path": "src/bedrock_agentcore/identity", "title": "SDK — Identity module (token vault + credential providers)" }
+      ]
+    },
+    "Chapter_01_Agent_Identity_Model#1-4": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity.html", "title": "AgentCore Identity — official developer guide" }
+      ]
+    },
+    "Chapter_02_Credential_Providers_and_OAuth#2-2": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/06-identity", "title": "agentcore-samples — OAuth2 credential provider notebooks (GitHub, Google, custom)" },
+        { "kind": "file", "repo": "aws/bedrock-agentcore-sdk-python", "path": "src/bedrock_agentcore/identity/auth.py", "title": "@requires_access_token / @requires_api_key decorators" }
+      ]
+    },
+    "Chapter_02_Credential_Providers_and_OAuth#2-5": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-identity", "title": "Identity examples — standalone usage without Runtime" }
+      ]
+    },
+    "Chapter_03_Gateway_and_Identity#3-2": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/03-connect-your-agent-to-anything", "title": "Gateway setup examples — customJWTAuthorizer config" },
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html", "title": "AgentCore Gateway — official developer guide" }
+      ]
+    },
+    "Chapter_03_Gateway_and_Identity#3-3": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/03-connect-your-agent-to-anything", "title": "create_gateway_target + credentialProviderConfigurations examples" }
+      ]
+    }
+  }
+}

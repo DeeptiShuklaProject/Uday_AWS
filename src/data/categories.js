@@ -21,6 +21,14 @@ const CAT_COLORS = {
   'bedrock-to-production':   { color: '#db2777', colorBg: '#fce7f3' },
   'strands-agents':          { color: '#0d9488', colorBg: '#ccfbf1' },
   'agentcore-production-agent': { color: '#7c3aed', colorBg: '#ede9fe' },
+  'agentcore-security':         { color: '#dc2626', colorBg: '#fee2e2' },
+  'agentcore-tools':            { color: '#0891b2', colorBg: '#cffafe' },
+  'agentcore-memory':           { color: '#9333ea', colorBg: '#f3e8ff' },
+  'agentcore-prod-deploy':      { color: '#ea580c', colorBg: '#ffedd5' },
+  'agentcore-observability':    { color: '#0284c7', colorBg: '#e0f2fe' },
+  'agentcore-evaluations':      { color: '#16a34a', colorBg: '#dcfce7' },
+  'agentcore-tool-controls':    { color: '#65a30d', colorBg: '#ecfccb' },
+  'agentcore-episodic-memory':  { color: '#a21caf', colorBg: '#fae8ff' },
 };
 
 export const categories = [

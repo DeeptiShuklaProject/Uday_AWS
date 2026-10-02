@@ -1,0 +1,44 @@
+# =====================================================================
+# EPISODE 08: Moving AI Agents from Prototype to Production
+# Topic: AWS CodeBuild buildspec configuration to compile & push ECR images
+# =====================================================================
+
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing system dependencies and Python packages..."
+      # (सिस्टम और डॉकर यूटिलिटीज़ इंस्टॉल करना)
+      - apt-get update && apt-get install -y docker.io
+
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      # (ECR रिपोजिटरी में लॉगिन करना)
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_CONTAINER_REGISTRY
+
+  build:
+    commands:
+      - echo "Build phase started on `date`..."
+      - echo "Compiling Bedrock AgentCore Docker Image..."
+      # (डॉकर इमेज को बनाना)
+      - docker build -t $ECR_REPOSITORY_NAME:latest .
+      # (इमेज को टैग करना)
+      - docker tag $ECR_REPOSITORY_NAME:latest $AWS_CONTAINER_REGISTRY/$ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+
+  post_build:
+    commands:
+      - echo "Build completed on `date`..."
+      - echo "Pushing Docker Image to Amazon ECR..."
+      # (इमेज को ECR में पुश करना)
+      - docker push $AWS_CONTAINER_REGISTRY/$ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push $AWS_CONTAINER_REGISTRY/$ECR_REPOSITORY_NAME:latest
+      - echo "Writing deployment configuration artifacts..."
+      # Save target image details for AgentCore serverless endpoint updates
+      - printf '{"ImageUri":"%s"}' "$AWS_CONTAINER_REGISTRY/$ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION" > imageDetail.json
+
+artifacts:
+  files:
+    - imageDetail.json
+    - agentcore.json

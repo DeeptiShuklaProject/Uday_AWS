@@ -88,6 +88,6 @@ Second pass over every chapter: dense paragraph → table; flow-in-words → mer
 
 - **Heading+code-fence trap**: `##` headings containing `code|examples?|demo|walkthrough|implement|yaml|dockerfile|script|program|snippet` + a code fence → section renders ONLY the fence — prose/images die. Rename the heading ("Coding" ≠ "code").
 - Headings matching `quiz|knowledge check|interview|Q&A|command|cli|terminal|challenge|lab|troubleshoot` become typed sections — keep prose out.
-- **`convert-docs.mjs` wipes `public/<dir>`** and re-mirrors from source — `bedrock-to-production`'s WSCS source is stale; never run a blanket regen. Hand-register + copy to `public/` instead.
+- **`convert-docs.mjs` wipes `public/<dir>`** and re-mirrors from each category's source — all sources are in-repo `doc_*` dirs, so a regen is safe. Edit `doc_*/`, then regen (or hand-mirror a single file into `public/`).
 - Git Bash heredocs eat `\\` in Windows paths — write scripts with file tools.
 - Explorers: `expanded="true"` opens on scroll; multi-file cards get ←→ keys.

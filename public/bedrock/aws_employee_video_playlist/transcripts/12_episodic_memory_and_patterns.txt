@@ -1,0 +1,1551 @@
+Title: 12_episodic_memory_and_patterns
+Video URL: https://www.youtube.com/watch?v=1EEIGsKIjGA
+============================================================
+
+[00:01] [music]
+[00:07] [music]
+[00:17] [music]
+[00:30] >> Hello everyone. Welcome to another
+[00:32] episode of AWS re:Invent. I'm your host
+[00:35] Anil Nademinti joining from New Jersey
+[00:37] today. And joining along with me is
+[00:39] Akasha.
+[00:41] Right? Hi everyone. Um, my name is
+[00:44] Akasha Sevag.
+[00:45] I'm a generative AI data scientist with
+[00:48] the agent core team, with the agent core
+[00:49] memory team.
+[00:51] Um, and I'm joining from Durham today.
+[00:53] I'm here for a conference.
+[00:55] Um, and yeah, the weather is amazing.
+[00:58] I'm loving it here.
+[00:59] A break from New York City, where yeah,
+[01:02] I
+[01:02] >> I was going to ask you, right? Because I
+[01:03] know that last week you were in New York
+[01:05] when we were chatting about it, but uh,
+[01:07] okay, great. So, is this like an AI
+[01:09] conference? It's an AI conference. It's
+[01:12] more focused on open source. So, all of
+[01:14] the um, yeah, all of the
+[01:16] um, open source community is here. It's
+[01:18] great to interact with them. AWS
+[01:20] supports all of them uh, with full
+[01:22] heart. So,
+[01:23] it's good it's good to be here. Yeah.
+[01:25] >> That's amazing, right? So, yeah, and uh,
+[01:27] by the way of introductions, I'm Anil
+[01:29] Nademinti. Uh, I'm a senior solutions
+[01:31] architect here. I uh, work with uh,
+[01:33] enterprise customers in the web three
+[01:35] fintech space.
+[01:36] Uh, more like the cryptocurrency space.
+[01:38] So, so that's kind of uh, what I support
+[01:40] in my domain. Uh, but in today's
+[01:42] episode, we're going to chat about uh,
+[01:45] AI agents,
+[01:46] but uh, you know, AI agents doing things
+[01:49] differently, right? So, uh, what we've
+[01:51] spoken in the past is agents being able
+[01:54] to uh, you know, being able to create
+[01:56] POCs, going from POCs to production,
+[01:58] being able to uh, get the power of uh,
+[02:01] large language models uh, looping
+[02:02] through the tools and able to you know,
+[02:05] giving them the ability to solve
+[02:06] problems.
+[02:07] We've also had in the past episodes
+[02:10] where we discussed about uh, uh, memory,
+[02:13] uh, observability, right? So,
+[02:14] evaluations and and many other agent
+[02:16] core suite of services. But uh, in
+[02:19] today's episode, we're going to talk
+[02:20] about episodic memory, right? So,
+[02:23] uh, maybe we'll we're going to break
+[02:24] this down
+[02:26] uh, for you between uh, Akasha and me
+[02:28] and uh, give you an insight into what
+[02:31] episodic memory is and how we get
+[02:34] And uh, we're going to give you some
+[02:35] energies of uh, you know, how we can
+[02:37] compare that with our real world of you
+[02:39] know, how we do maybe you know, I think
+[02:41] I let Akasha give that analogy and then
+[02:44] uh, about parenting, I guess, right? So,
+[02:46] how that compares with agents. So, that
+[02:48] was a good one.
+[02:49] >> Yeah. Uh, so we'll talk about that but
+[02:51] uh,
+[02:52] uh, get just getting into agentic
+[02:54] memory, Akasha. Uh, like why don't we
+[02:57] set the stage uh, for uh, you know, why
+[03:00] we need uh, more than semantic memory
+[03:03] and and maybe let's break this down as
+[03:05] well.
+[03:06] Yeah. And I think
+[03:08] uh, today we are also going to be
+[03:10] focusing a lot on the patterns that we
+[03:12] are seeing in production agents.
+[03:14] You know, like in 2025, 2024, 2025, we
+[03:18] were talking about POCs. We were talking
+[03:21] about how to build agents. And then
+[03:23] towards the end of 2025, when our
+[03:25] customers matured, when uh, enterprises
+[03:27] started to put this into production, we
+[03:29] were talking a lot about production
+[03:31] ready agents. Mhm. You know, and today
+[03:35] that the industry has matured even
+[03:38] further, when people have put their
+[03:40] agents in production, now I think it is
+[03:43] important to understand how production
+[03:46] agents should work, should evolve,
+[03:48] should learn over time,
+[03:50] and you know, should learn from the
+[03:52] experiences that the real users are
+[03:54] providing them with. And that's exactly
+[03:56] why we are here today. We are talking
+[03:58] about episodic memory,
+[04:00] how we can enable our agents to learn
+[04:05] from um, from the user experiences to
+[04:10] uh, personalize the the conversations
+[04:13] that they're having with the user, to
+[04:14] add some more context, to add some
+[04:16] personalization. And this is what
+[04:19] uh, what we're going to be covering
+[04:20] today. And the agents have probably done
+[04:22] in the past, right? Interacting with the
+[04:24] users, being able to uh, achieve an
+[04:26] outcome, doing some reasoning. So, uh,
+[04:29] you know, episodic
+[04:31] that recap of that reasoning, maybe in a
+[04:33] way, right? So,
+[04:34] uh, to be able to perform and uh,
+[04:37] deliver results for the next customer or
+[04:39] next interaction, I should say. Next
+[04:41] interaction, yes.
+[04:42] >> Next interaction.
+[04:43] So, it's talking to its future self.
+[04:45] It's like,
+[04:46] "Next time I do this, I better I better
+[04:49] be smarter than the last time I did it
+[04:50] before.
+[04:51] >> Yes. Right, so excellent. So, that's
+[04:54] right. I don't forget
+[04:56] Mhm.
+[04:58] All right.
+[05:00] So,
+[05:01] as I was talking about it, right? We've
+[05:03] been making a lot of progress on the
+[05:04] technical side. Like on the reasoning
+[05:06] side, we are talking about tool use, the
+[05:09] planning of the agents, calling
+[05:11] different APIs, standardizing the
+[05:12] protocols,
+[05:14] um, using different kind of databases.
+[05:16] So, we are working a lot on how to make
+[05:19] uh, a complex multi-step workflows or
+[05:23] how to solve the complex problems.
+[05:26] But once we move to production, the real
+[05:29] world hits different. So, that's where
+[05:31] the user experience, the um,
+[05:35] the real
+[05:36] user queries is what counts. And then
+[05:39] users have to feel that
+[05:42] this agent is actually understanding
+[05:46] what I'm trying
+[05:47] uh, to to share with it, right? So,
+[05:51] yeah, the analogy Anil and me were
+[05:52] talking about last time. Um, so it's
+[05:55] like sending our kids to school, you
+[05:57] know?
+[05:57] >> Mhm. So, no matter how well you have
+[06:00] nurtured your kid,
+[06:02] once you actually send them out to the
+[06:04] real world,
+[06:05] they
+[06:07] would face it they would experience the
+[06:09] world very differently, right?
+[06:11] It's not the bookish knowledge anymore,
+[06:13] right? It's it's the practical real
+[06:15] relevant experience. [laughter]
+[06:16] Yeah.
+[06:17] >> And the same thing with agents. No
+[06:20] matter how well we have tested it, no
+[06:22] many no matter how many different kind
+[06:23] of
+[06:24] questions or queries we have tested it
+[06:26] on, given it given um, different kind of
+[06:29] scenarios, different kind of
+[06:31] instructions in the system prompt, Mhm.
+[06:33] when the real user talks to it, it will
+[06:36] have
+[06:37] more and newer experiences than it has
+[06:40] seen in during the test testing, right?
+[06:43] Right. Um, and that's where we have to
+[06:46] improve it. And this is just one level
+[06:48] of um, user experience. The second level
+[06:51] is where
+[06:52] we have to adapt it to every user
+[06:54] differently, because
+[06:56] >> Correct. we are humans.
+[06:58] Each one of us have our own preferences,
+[07:00] have our own ways of working,
+[07:03] um, have
+[07:04] you know, our styles of everything we
+[07:07] do, right? We want to
+[07:09] uh, we want to have it in a certain way.
+[07:11] Right. And just like us humans, you
+[07:13] know, each time we move to a different
+[07:15] team, each time we have a different
+[07:16] manager, a new friend, we change the way
+[07:19] we interact with them.
+[07:21] And
+[07:23] therefore, that's exactly what we expect
+[07:25] our agents to do as well.
+[07:28] So, this both of these things together
+[07:31] is what
+[07:32] consists of a good user experience,
+[07:34] right? So, let's break it down.
+[07:37] So, so no matter how much technical
+[07:39] ability you give, I think I'm trying to
+[07:40] understand it, right? So, you need to
+[07:42] still get the real world experience by
+[07:45] uh, I mean, and then that interaction
+[07:48] uh, can be used to make the agentic uh,
+[07:50] you know, performance much better. I
+[07:52] mean, when I say performance, not the
+[07:54] speed, but maybe the ability to solve a
+[07:56] problem, maybe The quality of the
+[07:58] agent's response.
+[07:59] >> Yeah. The accuracy, the
+[08:02] um, the efficiency, everything, right?
+[08:04] So, along with personalization, also the
+[08:06] agent itself improves the way it works.
+[08:08] It learns from the past.
+[08:10] Um, and that's what guides our user
+[08:12] experience.
+[08:14] So, let's break it down, right?
+[08:16] Looking at the three different pillars
+[08:18] of what a good user experience looks
+[08:21] like.
+[08:22] Um, so first one is the personalization
+[08:24] aspect, where we want to make sure that
+[08:27] our users feel special, you know?
+[08:30] >> Mhm.
+[08:30] Uh, we want to give it a good uh,
+[08:32] customer experience or user experience.
+[08:35] So, this is where we want to learn over
+[08:38] time the facts about the user, the
+[08:40] preferences of the user, the role, the
+[08:43] communication style,
+[08:44] all of these things about the user,
+[08:46] right? Over time.
+[08:47] Um, so for example, right? We can
+[08:51] um, think of also in in terms of
+[08:53] personas. Uh, so let's say
+[08:56] uh, Alice is a user who is
+[08:59] uh,
+[08:59] who prefers technical reports uh, in a
+[09:02] more detailed form. So, she has an
+[09:04] engineering background. She wants it to
+[09:06] be very detailed. She wants to have all
+[09:08] the references and everything. Versus
+[09:10] person number two, let's name her Carol.
+[09:14] She's a director. She only want
+[09:15] executive summaries. She only wants a
+[09:17] high level information of like, "What
+[09:19] happened?
+[09:21] Did you solve it or not?" That that's
+[09:22] it, right? It's the same incident. It's
+[09:26] the same agent, but they want response
+[09:29] in a completely different way.
+[09:31] So, this is where personalization really
+[09:33] helps, right?
+[09:36] Um, the second pillar uh, that I want to
+[09:39] touch upon is the context awareness.
+[09:41] So, this is where we are making our
+[09:44] agents aware about um, the previous
+[09:48] conversations that it has had. So, to
+[09:51] make it some more uh, to make it context
+[09:53] aware of what has happened in the past.
+[09:56] Um, so this can include, you know,
+[09:58] summaries of different sessions that has
+[10:00] occurred or facts about the user.
+[10:03] So, it could, you know, overlap with
+[10:05] personalization to some extent.
+[10:08] But you need to still get the previous
+[10:10] conversation history back or else people
+[10:12] will feel that, "Hey, why am I repeating
+[10:14] myself again, right?" So, you want that
+[10:16] >> Yes. the history conversation history to
+[10:17] be persisting. Exactly. And also like to
+[10:20] have a, you know,
+[10:22] a nice follow-up, you know? So, "Hey, I
+[10:24] remember last time we talked about you
+[10:27] had this issue. I hope it was resolved.
+[10:29] Okay, now is there anything else I can
+[10:31] do for you? Or, you know, it's it's a
+[10:33] good user
+[10:35] experience to have that
+[10:38] feeling that, okay, the
+[10:41] they remember what I had asked
+[10:43] previously, right?" Right. Um,
+[10:46] so have that recap in some form.
+[10:48] Um, so this is context awareness. Now,
+[10:50] the third one and
+[10:52] my favorite one,
+[10:54] the self-learning bit.
+[10:56] So, this is where we talk about learning
+[10:59] from different episodes, different past
+[11:01] experiences that the agent has had with
+[11:03] the user,
+[11:05] right? And these episodes that I'm
+[11:07] talking about is not just going to be,
+[11:09] you know,
+[11:10] some kind of a summary of the past, but
+[11:12] more detailed analysis of what had
+[11:15] happened, what had occurred, um, what
+[11:18] was the root cause, how was it solved,
+[11:20] what tools were used, like a very
+[11:22] detailed analysis of, you know, every
+[11:25] bit of that episode.
+[11:28] Um, and then
+[11:31] uh, a more advanced um, level of that
+[11:35] episode would be to generalize this
+[11:36] information uh, in in the form of
+[11:39] reflections. So, this is where we say
+[11:42] uh, that, okay, based on, you know,
+[11:44] these episodes that have happened to me,
+[11:47] I feel that most of the times this is
+[11:50] what
+[11:51] is the issue or this is what has
+[11:53] happened, right? Like, think about us,
+[11:55] you know, when we join just, let's say,
+[11:57] we have just joined a new engineering
+[12:00] role.
+[12:01] Um, the day one of job is basically we
+[12:03] are doing everything by the book, right?
+[12:05] We are doing each and every thing that
+[12:07] we have learned in our universities.
+[12:09] Um, and then
+[12:11] 6 months later, we're like,
+[12:13] "Oh, this incident? Oh, yeah, I remember
+[12:16] in January 4th there was something
+[12:19] similar that happened."
+[12:20] So, you just remember something from the
+[12:22] past. That's what, you know, we have uh,
+[12:25] what we say as episodes, what we relate
+[12:27] to as episodes. Mhm. Um, and then 2-3
+[12:30] years into the role, once you get more
+[12:32] senior, um, you start observing
+[12:35] patterns, right? You start
+[12:36] understanding, "Okay,
+[12:38] generally this is how it works."
+[12:40] Um, so you start saying, "Okay, you
+[12:42] know, most of the times this is what has
+[12:45] been the root cause, so let's start from
+[12:47] there instead of taking it by the book
+[12:48] and taking it step by step."
+[12:50] Um, so that's what experience is all
+[12:52] about.
+[12:54] And this is what we want also to give to
+[12:58] our agent so that they can
+[13:00] um, solve the problems or, let's say, do
+[13:03] the tasks faster and in a more efficient
+[13:06] way. So, you're helping the agent
+[13:08] graduate then, you know, so it's like
+[13:10] in a more senior role or maybe get
+[13:12] promoted. Yes, to promoted. They never
+[13:15] graduate, but they they get promoted.
+[13:17] Yes, exactly. Right, so yeah.
+[13:19] Graduate is a level where you're like,
+[13:21] now now you're now you're great.
+[13:23] I think this is more of a gradual
+[13:25] learning. It it's a continuous
+[13:26] improvement.
+[13:28] Um, all right. So, let's zoom a bit more
+[13:30] into the self-learning bit.
+[13:33] So, what are the different components of
+[13:35] self-learning, right? What do we want or
+[13:37] what do we expect out of an agent that
+[13:40] is able to self-learn or self-evolve?
+[13:43] So, the first bit is for it to remember
+[13:45] what instances has it had before, what
+[13:48] it has it seen before. So, this is where
+[13:50] we are talking about episodic memory,
+[13:52] right? We can recall the episodes. Okay,
+[13:55] this is what has happened in the past.
+[13:57] This
+[13:58] um, these were the successful samples,
+[14:00] this was the unsuccessful experience
+[14:02] that I've had and so on.
+[14:04] Mhm. Um, the second component is the
+[14:06] reflection part where we generalize
+[14:08] these
+[14:09] experiences and we create some
+[14:12] uh, we synthesize some patterns, some
+[14:15] um,
+[14:16] general guidelines out of it, right?
+[14:19] That, "Hey, mostly this is how you solve
+[14:21] this issue."
+[14:23] And then the third one is we want the
+[14:24] agent to evaluate
+[14:26] um, itself
+[14:28] based on So, next time when it is using
+[14:31] uh, those reflections, it's, you know,
+[14:33] it has another episode, how well did it
+[14:35] perform? Or analyzing its own episodes,
+[14:38] analyzing its own reflections. So, it's
+[14:40] able to
+[14:41] evaluate, "What have I done? Was it
+[14:43] correct? Was it not correct? Was this
+[14:46] approach better than the other? Um,
+[14:49] the remediation that I
+[14:51] that I gave, was the user happy about
+[14:52] it?" So, things like this. It's able to
+[14:54] evaluate itself. And uh, in this phase
+[14:57] do you also capture the interaction from
+[14:58] the user, right? Because the users will
+[15:00] give thumbs up, thumbs down, be able to,
+[15:02] you know, capture those as well, right?
+[15:04] >> Yes. So, every episode should capture
+[15:06] that information as well. Mhm. Um, and
+[15:09] then based on that evaluate how the
+[15:11] experience was and how the episode
+[15:13] actually came into play.
+[15:14] Um, and then
+[15:16] the fourth component, the most important
+[15:19] component is the adaptation bit where we
+[15:21] allow the agent to
+[15:23] learn from all of this, from step one,
+[15:25] two, three, and based on that adapt and
+[15:27] improve, right? So, this is where it
+[15:30] learns how to how should I act
+[15:32] differently next time? What are the
+[15:33] guidelines to be differently in a
+[15:35] particular situation? Because it's not
+[15:38] super generic, right? But we can say,
+[15:40] "Oh, if this kind of situation occurs,
+[15:42] behave in the certain manner." Mhm. So,
+[15:45] that's where you want it to adapt, but
+[15:46] for specific situations.
+[15:49] So, keep it more dynamic
+[15:51] for different use cases, different
+[15:52] situations that can occur. So, is it is
+[15:55] it also the same as like you know, when
+[15:57] you when when you're allowing the agent,
+[15:59] you know, are we allowing the agent to
+[16:01] self-evaluate or are we saying that we
+[16:03] want to evaluate the agents?
+[16:05] That's a very good point. Um, so
+[16:07] actually in production
+[16:09] systems
+[16:11] to some extent we do want the agents to
+[16:13] self-evaluate because we cannot
+[16:15] supervise each and every situation. Mhm.
+[16:17] But so just like we were taking the
+[16:19] example of a, you know, a child going
+[16:23] off to school,
+[16:24] um, so as a parent you
+[16:27] you want them to learn by themselves,
+[16:29] but you still want to keep an eye. You
+[16:31] want to know what they are doing. Is it
+[16:33] okay? So, if something has a drastic
+[16:36] failover or something drastic happens,
+[16:39] you want to control it.
+[16:41] So, therefore in production systems we
+[16:43] do recommend that this like aside the
+[16:47] agent learning and improving by
+[16:48] themselves, you should also have other
+[16:51] measures, other metrics that are um,
+[16:55] let's say, keeping an eye on the agent
+[16:58] to evaluate it, to observe it, to see
+[17:01] what's happening, and
+[17:03] um, and based on that perhaps in some
+[17:05] cases you might also need manual manual
+[17:07] adaptation
+[17:09] uh, alongside what agent is by itself
+[17:12] doing. Okay, so what I think you know,
+[17:15] to convert that into our analogy, you're
+[17:17] as a the parent is still responsible to
+[17:20] make sure that the evaluations are
+[17:22] looked at, right? So, the report cards
+[17:23] of the, you know, the child is looked
+[17:25] at, so maybe looking at the agentic
+[17:28] performance more closely and understand
+[17:31] that it's doing correctly and then make
+[17:33] those changes
+[17:34] so that it can uh, adapt better, I
+[17:37] guess. Exactly. Exactly.
+[17:39] Um,
+[17:41] so now to put that into more concrete
+[17:43] terms, um,
+[17:46] like in terms of like how do we build
+[17:48] it? How do we actually see this, right?
+[17:51] Um, so we have
+[17:52] Bedrock Agent Core, uh, which is our
+[17:55] platform, which is the most advanced
+[17:57] agentic platform for production ready
+[18:00] agents. So, this is essentially
+[18:02] everything that you need to put your
+[18:04] agents into production.
+[18:06] Um, this is model agnostic, framework
+[18:09] agnostic, so you can bring in any of
+[18:11] your strands agents, LangGraph, CrewAI,
+[18:13] LangChain, any of the frameworks or any
+[18:16] of the model providers you want. And to
+[18:18] put them into production, you can use
+[18:20] different these different services
+[18:23] to um,
+[18:25] yeah, to to put them in production
+[18:27] safely, securely, and scalably,
+[18:29] right? Um, and in the context of what we
+[18:32] were talking about the self-learning
+[18:33] agents, so memory of course is providing
+[18:36] us with um, all of the
+[18:39] all of the capabilities that we need to
+[18:40] learn from the past experiences, right?
+[18:42] Episodic, summary, user preferences,
+[18:47] uh, semantic, all of those.
+[18:49] But then we, just like how as a parent
+[18:52] you should keep an eye, you um, you have
+[18:55] to, you know, you can use the
+[18:58] uh,
+[18:58] the traces from GenAI observability to
+[19:01] feed into the learning pipeline so that
+[19:03] you can keep an eye. Because, you know,
+[19:06] famously one of my colleagues always
+[19:08] uses analogy. So, he says, "What you
+[19:10] cannot see, you cannot measure.
+[19:12] And what you cannot measure, you cannot
+[19:14] improve."
+[19:15] And therefore,
+[19:17] you need observability in place to be
+[19:19] able to measure something and you need
+[19:22] uh, evaluations, therefore the
+[19:24] measurement or the metrics in place
+[19:27] to at the end improve your agents. So,
+[19:30] >> the flywheel effect. Flywheel effect,
+[19:33] right?
+[19:33] >> Yes. Yes, exactly. So, that's what
+[19:35] closes the quality feedback loop, right?
+[19:37] That's what improves
+[19:39] our agents.
+[19:42] All right.
+[19:43] Now, let's focus on memory since that's
+[19:46] our topic for today. Okay, and I'll also
+[19:48] just give a brief that, you know, for
+[19:50] folks who are watching this live stream,
+[19:52] there is a demo that is also coming up.
+[19:54] You know, we're going to talk through
+[19:55] the some of the content here and then
+[19:57] >> Yes. show this in a demo.
+[20:02] Uh thank you for the teaser. All right.
+[20:05] So,
+[20:07] uh I'm going to start just to give a
+[20:08] high-level overview of what Agent Core
+[20:11] Memory is.
+[20:13] Uh so, when the agent is having the
+[20:16] interactions with the users, it creates
+[20:18] these raw messages, right? The the
+[20:21] messages that uh come in from the
+[20:23] conversation that is going to and fro
+[20:25] between the agent and the user.
+[20:27] So, those uh
+[20:29] those conversations is what we capture
+[20:32] as raw events. Mhm. And we store them
+[20:35] into a raw storage into the short-term
+[20:37] memory. So, this is essentially a data
+[20:39] store that you just take in the messages
+[20:41] or the checkpoints or the um
+[20:45] the agent state. So, anything you want
+[20:47] to store
+[20:48] as it is, you would store that in the
+[20:51] raw storage in the short-term memory.
+[20:53] Right? And the short-term memory can
+[20:55] live up to 365 days, so it's not that
+[20:57] short-term.
+[20:59] But it's essentially take it to be the
+[21:01] raw uh storage. Right?
+[21:03] Now,
+[21:05] based on the configuration you have
+[21:06] created, based on what you choose
+[21:09] um of like how do you want to
+[21:11] give a good user experience to your
+[21:14] users, you configure some strategies for
+[21:16] long-term. So, you say, let's say I want
+[21:19] to create episodic memory strategy. So,
+[21:22] in those cases, you would uh pick
+[21:25] any of one or more of those strategies
+[21:28] and then those based on the strategies
+[21:31] you have configured, those events would
+[21:33] then flow into a memory extraction
+[21:35] module, which is a processing pipeline.
+[21:37] We'll go into it uh in a bit
+[21:40] of what this entails, what this means.
+[21:43] But essentially this then creates memory
+[21:46] records and stores them into long-term
+[21:48] memory from where you can retrieve it.
+[21:51] Right? You can retrieve it and append it
+[21:53] into your
+[21:54] um into your conversation to add more
+[21:56] context when the user let's say having
+[21:58] another conversation.
+[22:00] Um to add more context from the previous
+[22:03] episodes, from the previous chats, um
+[22:05] and so on. So, from your previous
+[22:07] example, like say let's say Carol is
+[22:10] going to Paris now, right? So, uh
+[22:12] would you consider that as a I mean
+[22:15] Carol going to Paris as uh as a
+[22:18] long-term storage item? I mean, it could
+[22:20] still be like you know, she's searching
+[22:22] for the flights to go to Paris.
+[22:24] >> Right? So, an extraction of that would
+[22:26] be like, you know, hey, uh from this
+[22:27] interaction I understand that uh Carol
+[22:29] is going to Paris, right? So, that will
+[22:31] be an item that could be stored. Yeah.
+[22:33] So, it depends on what you've configured
+[22:36] as in uh if let's say I say in my
+[22:38] application I do not need anything else.
+[22:40] I only want user preferences to be
+[22:42] stored. So, in that case, Carol going to
+[22:44] Paris is not relevant for me, right?
+[22:46] Because it does not mean that Carol
+[22:48] likes Paris. She's just going to Paris
+[22:50] for some reason.
+[22:51] But if Carol mentions, "Oh, I'm super
+[22:53] excited. I really enjoyed Paris last
+[22:56] time I went there." Um this with this
+[22:59] you can implicitly detect that, okay,
+[23:01] probably Carol like likes Paris. So,
+[23:04] that's going to be extracted. But not
+[23:06] every piece of information that you send
+[23:08] in would be extracted because it's has
+[23:10] to be relevant to that strategy.
+[23:12] Understood. Yeah.
+[23:14] Um so, Agent Core Memory
+[23:17] is providing you with a fully serverless
+[23:19] um
+[23:20] managed service. And it's providing you
+[23:23] with a built-in encryption in transit
+[23:25] and in rest. It's providing you with
+[23:27] flexible name spaces.
+[23:29] Uh you can scope memory differently uh
+[23:31] for memory sharing or
+[23:33] uh if you want to keep it separate per
+[23:35] agent, completely um yeah, completely uh
+[23:39] on the design you want to have.
+[23:41] And you do not have to manage the
+[23:43] infrastructure, so you don't have to
+[23:44] predefine how
+[23:46] you know, how big a vector store do I
+[23:48] want to have? You can just keep storing
+[23:50] memories and it'll automatically
+[23:52] accommodate all of that. And that's
+[23:53] really important in a production system,
+[23:55] right? We don't want to pay
+[23:57] uh pay for um let's say 10
+[24:00] uh gigabytes up front, but we want to
+[24:04] only pay for what we use. And that's
+[24:05] exactly what this is for. And Akshaya,
+[24:08] quick question, right? So, can Agent
+[24:10] Core Memory be used independently uh
+[24:13] uh in uh like outside of uh using maybe
+[24:16] runtime or gateway? I know that there is
+[24:18] a suite of services there, right? So,
+[24:19] can you clarify that?
+[24:21] >> 100%. Um so, all the Agent Core services
+[24:24] can be used independently. Of course,
+[24:27] they work really well together, but they
+[24:29] can all be used independently. Uh
+[24:31] same for Agent Core Memory. It provides
+[24:34] you with the APIs and you can use those
+[24:36] APIs to call from any
+[24:38] um
+[24:39] any runtime or any kind of uh a
+[24:42] compute wherever you're running your
+[24:44] agent. So, you can yeah, run it
+[24:46] anywhere.
+[24:47] All right.
+[24:49] So, to focus to go a bit deeper into the
+[24:51] long-term memory. So, short-term is
+[24:54] fairly simple, right? We are storing all
+[24:56] of the messages as as it is. It is um
+[25:00] yeah, storing in the information,
+[25:02] scoping it based on the user ID. Uh
+[25:04] sorry, the actor ID. And
+[25:07] the session ID and well, of course, the
+[25:10] memory store that you store it in.
+[25:13] For long-term memories, we have
+[25:14] different strategies. So, as we also
+[25:16] mentioned before,
+[25:18] so, first one is a summary memory, a
+[25:20] summary strategy.
+[25:21] Uh this is what creates a condensed
+[25:23] representation of the interaction. So,
+[25:25] it it summarizes the conversation but
+[25:29] topic-wise.
+[25:30] So, it has all of that uh information,
+[25:33] all of the key points of the
+[25:35] conversation
+[25:37] in in a summary.
+[25:39] Um the second one is the user
+[25:41] preferences, which is what
+[25:43] um stores and learns from the
+[25:46] uh user behavior,
+[25:49] the interaction style, the choices that
+[25:50] the user takes. So, the preferences and
+[25:53] the
+[25:54] um likes and dislikes of the user,
+[25:56] essentially.
+[25:57] Right? Uh the semantic facts is where it
+[26:00] literally stores the factual information
+[26:03] uh coming in from the from the
+[26:05] conversation. So, anything about like uh
+[26:08] any domain-specific information, any
+[26:10] factual um
+[26:12] information, that's what goes into
+[26:14] semantic.
+[26:16] And then we have episodic, which is what
+[26:18] allows our agents to retain um and
+[26:21] reason
+[26:22] over their own experiences, so they can
+[26:24] reflect back and, you know, create
+[26:27] uh
+[26:27] generalized insights or hints for
+[26:30] themselves for their future selves,
+[26:31] essentially.
+[26:33] Um and tying this back actually to the
+[26:35] first slide that we were discussing,
+[26:37] where we were talking about the good
+[26:39] user experience, right? Um so, we were
+[26:42] talking about the personalization bit.
+[26:44] So, personalization is what uh
+[26:46] user preferences and to some extent
+[26:48] semantic uh provides us with.
+[26:51] Uh the second one we were talking about
+[26:53] is the context awareness, right? That's
+[26:55] where summaries um and semantic facts
+[26:58] would help. Mhm. The third one we talked
+[27:00] about was the self-learning, and that's
+[27:03] where episodic memory would come into
+[27:05] play.
+[27:06] So, all of these strategies have been
+[27:08] created
+[27:09] uh to enhance that user experience.
+[27:12] Um but in case
+[27:15] any of these do not really solve your
+[27:18] use uh solve the uh problem for your use
+[27:21] case, you can also override the prompts.
+[27:24] The prompts are public, you can look at
+[27:25] them in the documentation. They're in
+[27:27] the chat right now. I've already added
+[27:29] them, yeah. Perfect. Thank you. And so,
+[27:32] you can override uh the prompts or the
+[27:35] models if you want to use uh another
+[27:37] ones.
+[27:38] Um or you can create a completely own
+[27:41] pipeline of your own if you want to have
+[27:43] a self-managed. So, this is something um
+[27:46] then you can fully
+[27:48] create a custom pipeline uh for your use
+[27:50] case. Right?
+[27:53] Now, let's touch upon what do we mean by
+[27:56] this, you know, this black box we
+[27:58] created of the extraction pipeline?
+[28:01] Um so, how does it work?
+[28:03] So, the raw events that were coming in,
+[28:06] we configured a strategy and an event
+[28:10] and the events that are coming in with
+[28:11] the strategy.
+[28:13] Um we wait for K messages or S X seconds
+[28:16] of inactivity, and based on that,
+[28:19] uh
+[28:20] it runs an asynchronous pipeline. So,
+[28:22] this pipeline would be running
+[28:24] asynchronously so that the conversation
+[28:26] is not being interrupted, right? This is
+[28:28] going to be running in the background.
+[28:31] Um so, the first step that takes place
+[28:34] um
+[28:35] is going to be the memory extraction.
+[28:37] So, that's where it extracts the
+[28:39] relevant information. So, the example
+[28:41] that Anil you were taking about Carol
+[28:43] going to Paris,
+[28:45] or let's say the Carol said, "Oh, I
+[28:47] really enjoy going to Paris."
+[28:49] Um so, from short-term memory, this
+[28:51] information will flow in here. And let's
+[28:53] say we configured a user preferences
+[28:55] strategy.
+[28:57] Um this extraction bit will uh this
+[29:00] extraction step will extract this
+[29:02] information that Carol really likes
+[29:05] going to Paris.
+[29:07] Mhm. Um then the consolidation bit
+[29:10] will look at the similar similar
+[29:12] memories before. Hey, has like has um
+[29:16] Carol talked about
+[29:17] going to Paris before or like
+[29:19] >> or tickets or hotels or, you know, which
+[29:21] part of Paris I think I think, right?
+[29:22] So, That yeah, that's also the context.
+[29:25] Yes. Mhm.
+[29:27] Um so, it looks at the uh vector store,
+[29:30] what has Carol talked about
+[29:32] uh Paris before.
+[29:34] And based on that, retrieve similar
+[29:36] information.
+[29:38] And based on what similar information it
+[29:40] has found in the existing vector store
+[29:42] about Carol,
+[29:44] it will either add a new piece of
+[29:46] information, so it'll add a new record
+[29:48] if let's say this information did not
+[29:50] exist. This is a new information.
+[29:53] Or it can update.
+[29:55] So, update would be the case where let's
+[29:57] say there was some contradictory
+[29:58] information that occurred in the past.
+[30:00] Let's say previously 5 years ago Carol
+[30:03] said,
+[30:04] "I don't like Paris right now. I'm super
+[30:07] frustrated." Something like this.
+[30:09] So, there's some contradictory
+[30:10] information.
+[30:11] And
+[30:13] therefore, we need to update that,
+[30:15] right? Something changed.
+[30:17] And so many times we keep changing our
+[30:19] preferences. So, I mean, that's very
+[30:21] natural, right? Right.
+[30:24] And and or perhaps Carol said, "I like
+[30:27] going to France." And now
+[30:31] Carol is talking specifically about
+[30:33] Paris, so you might want to make it more
+[30:34] exhaustive, you know? You want to
+[30:36] complete that that same information. So,
+[30:39] you would update
+[30:40] in in both of these cases.
+[30:44] The third
+[30:45] operation would be when let's say this
+[30:47] information already exists. We don't
+[30:48] need to update it. We don't need to add
+[30:50] anything new.
+[30:52] Then we would just skip this information
+[30:53] because there's no point of adding
+[30:56] redundant information. Maybe Carol is
+[30:58] just searching for the same you know,
+[31:00] the flight for maybe a better deal.
+[31:01] >> Yeah. You know, so
+[31:03] there's no need to update anything,
+[31:04] right? So, just
+[31:05] >> And therefore, we embed an index and
+[31:07] then put it into the vector store.
+[31:09] Right. So, that's how it goes.
+[31:12] Um
+[31:13] So, for the the three strategies that we
+[31:16] talked about, this is the pipeline for
+[31:18] that. But for episodic, it's slightly
+[31:20] different.
+[31:22] Right? For episodic, it works in three
+[31:24] steps. Mhm. So, the extraction that
+[31:26] takes place is not just on the on one
+[31:29] level, but on two levels. Mhm. So, first
+[31:32] one is the turn extraction.
+[31:34] Um which is for every turn for the every
+[31:37] agent turn, it extracts that. It looks
+[31:41] at that. It evaluates it, understands
+[31:42] it. What happened? What was the action
+[31:44] taken? What what is the assessment? Um
+[31:48] you know, what exact what tools were
+[31:49] called? How did it go? So, all of this
+[31:52] information is taken into
+[31:55] is like kind of broken down and
+[31:56] understood, right? On the turn level.
+[31:59] And then once the goal of the agent is
+[32:02] completed, once the agent has actually
+[32:05] done its task well, then the episode
+[32:08] extraction is being triggered and then
+[32:10] it creates an episode out of that. Of
+[32:12] like on a general level, how did the
+[32:15] agent perform?
+[32:16] Right? So, it's not super granular
+[32:18] anymore. It is more on the
+[32:20] general episode level. So, think about
+[32:22] it in this sense.
+[32:24] Um Like when we have a meeting, right?
+[32:27] We take notes on whatever important we
+[32:29] see. Mhm.
+[32:30] >> Right? So, every time someone says
+[32:31] something, we just note down whatever we
+[32:34] find important.
+[32:36] But at the end of the meeting, we then
+[32:39] look at all of the notes and then
+[32:41] summarize them and say, "Okay, this is
+[32:43] uh you know, we then create a full
+[32:47] summary of the entire meeting." So,
+[32:49] that's essentially the episode.
+[32:52] So, but in this case, do we still
+[32:53] capture the reasoning of the agent and
+[32:57] then do we process that?
+[32:58] >> Yes. So, it it creates multiple
+[33:02] different attributes Mhm.
+[33:05] which talks about, you know, different
+[33:07] kind of
+[33:08] So, what was the agent tasked to do?
+[33:10] What did it actually do? And so on. So,
+[33:13] there's different
+[33:15] things that are coming out of it. And
+[33:17] also assesses itself. It also creates an
+[33:19] assessment of itself and a reflection of
+[33:21] its own
+[33:23] doing of like how did the agent perform?
+[33:26] And then
+[33:27] after this on the episode level, after
+[33:29] this is done, it then retrieves similar
+[33:32] episodes from the past or from the other
+[33:35] interactions from the vector store and
+[33:37] then creates a reflection on a general
+[33:40] level where it creates
+[33:42] where it creates generalized guidelines
+[33:45] for the agent
+[33:46] along with when is it relevant?
+[33:49] Right? And I would really recommend you
+[33:51] to read
+[33:52] the blog post that we have here because
+[33:56] this will give you a lot more
+[33:57] information. We also have examples there
+[33:59] that you can look at.
+[34:01] Um and you can yeah, understand it much
+[34:04] more much better.
+[34:07] So, highly recommend it.
+[34:09] All right. Now, let's go to the demo.
+[34:14] All right. Um so, what we're going to
+[34:17] build today or what we're going to look
+[34:19] at today is
+[34:21] um
+[34:23] a web UI which is interacting with an
+[34:25] application built using Flask.
+[34:28] Um the application uses trans agents Uh
+[34:31] to create these agents.
+[34:33] The those agents have
+[34:36] been connected with
+[34:38] agent core memory using hooks.
+[34:40] So, it sends those messages into
+[34:42] short-term memory and asynchronously
+[34:46] it is being created as episodes and then
+[34:49] further reflections.
+[34:51] And those reflections
+[34:53] are being those episodes and those
+[34:55] reflections are being sent to the Amazon
+[34:59] Kinesis data stream. So, this is a
+[35:01] feature that agent core memory has
+[35:03] recently launched Um
+[35:05] that is to be able to stream this
+[35:07] information into some other
+[35:10] Um yeah, another place that you can, you
+[35:13] know, use to essentially
+[35:15] add some custom logic. So,
+[35:18] so from agent core memory, you would
+[35:20] get some um
+[35:23] you would get this information
+[35:25] >> like maybe recollection, right? That's
+[35:26] coming up and says, "Hey, you are
+[35:28] supposed to do this activity. Have you
+[35:29] really completed that?" Right? So, I
+[35:31] mean, we are all used to asking the
+[35:33] agent to do something and perform an
+[35:35] action, but and then it remembers, but
+[35:37] maybe the agent itself could recollect
+[35:40] and
+[35:41] remind us.
+[35:43] So, this I think this is more in terms
+[35:46] of notifications where you want to know
+[35:48] if there's a new episode being created
+[35:50] Mhm. for any reason, right? You could,
+[35:52] for example, wanted to have a human in
+[35:54] the loop. You might want to know every
+[35:56] time a new reflection is created, I want
+[35:58] to add this into the Kinesis data stream
+[36:03] from which I want to look at every
+[36:05] reflection myself.
+[36:07] Could be a could be a case, right? Or
+[36:10] you might want to analyze or aggregate
+[36:13] that data
+[36:14] or do something
+[36:16] it, right? So, you could use them for
+[36:18] anything.
+[36:19] Um if you want to further process this
+[36:21] information.
+[36:23] So, we just provide
+[36:25] this optionality
+[36:28] um to our customers that they can stream
+[36:31] that information.
+[36:33] And you can stream either the entire
+[36:35] messages, whatever is being created in
+[36:37] long-term memory, or you can just stream
+[36:39] in the metadata. So, you can just say,
+[36:41] "Okay, give me
+[36:42] give me the information that okay,
+[36:44] there's a new memory record that is
+[36:45] being created so that I can retrieve
+[36:47] that memory record from the agent core
+[36:49] memory."
+[36:50] Right?
+[36:50] >> Mhm. So, it could be for anything.
+[36:53] So, this example that we are that we're
+[36:55] going to show, in this case, we will use
+[36:57] it to um add some categorization and
+[37:02] some aggregation logic so that we can
+[37:04] create a dashboard on top.
+[37:06] So, we will we will look at that.
+[37:10] Now, if you give me a second, I want to
+[37:14] just refresh my credentials
+[37:16] so that I am connected to our AWS
+[37:19] account.
+[37:21] And I will
+[37:24] get
+[37:26] um
+[37:27] my demo up and running.
+[37:33] So, folks out there,
+[37:35] let us know if you are actually using
+[37:37] agent core memory or memory in general,
+[37:39] right? To to be able to make your
+[37:41] agentic interactions much more
+[37:43] personalized or if you are already
+[37:46] looking at
+[37:47] episodic memory in a different open
+[37:49] source repository, let us know in the
+[37:50] chat.
+[37:51] And uh
+[37:53] yeah.
+[37:55] All right.
+[37:57] Um
+[37:58] can you see my
+[38:00] IT incident response agent? Yes. Yes.
+[38:03] >> What is this demo going to do now? So,
+[38:05] this is an incident respond agent which
+[38:08] is able to
+[38:10] um receive So, as a user, I can send in,
+[38:13] "Hey, this is the issues that that are
+[38:14] occurring." Mhm. And it should be able
+[38:17] to resolve that in resolve that incident
+[38:20] and then give me a report of, "Hey, I've
+[38:21] solved this problem and this is what it
+[38:23] is."
+[38:25] So, here what we're going to look at is
+[38:27] three different versions.
+[38:29] Um we will look at when there's no
+[38:31] memory,
+[38:32] uh when there's episodic memory, and
+[38:35] then when there's episodic memory plus
+[38:36] reflections, right? So, we we can
+[38:38] compare it um
+[38:41] kind of yeah.
+[38:43] Uh we can compare it
+[38:45] with with and without memory.
+[38:48] Um so, let's start with I don't know.
+[38:52] Let's
+[38:53] pick any of the topics. And
+[38:56] on the right-hand side is our memory
+[38:58] inspector which shows us what our memory
+[39:00] [clears throat]
+[39:01] has. So, in this case, I mean, we just
+[39:03] see the inspector with just information
+[39:05] in store.
+[39:07] Um so, we have already
+[39:10] given in some episodes. So, I've
+[39:12] hydrated the memory with really 10
+[39:14] different like super different cases
+[39:17] um where, you know, it it had some
+[39:20] different IT incidents.
+[39:22] Um and based on that, it had created
+[39:24] reflections. So, one thing to observe
+[39:25] here is that the reflections are more
+[39:27] than the episodes, which is interesting,
+[39:29] right?
+[39:30] Uh so, it doesn't need to be one is to
+[39:32] one or
+[39:33] one like it doesn't have to be less than
+[39:35] the episodes or more than the episodes.
+[39:37] It really depends on what you are
+[39:39] sending in.
+[39:40] Because it's creating those hints
+[39:43] for different use cases, right? And
+[39:44] those use cases and those hints have to
+[39:47] be very specific of like what to do in
+[39:49] what situations.
+[39:50] Um so we will look at the reflections
+[39:52] and I think we'll get more idea of what
+[39:54] is happening.
+[39:55] >> when you see it then you can connect
+[39:56] better, right? So Yes. Yes, exactly.
+[39:59] Um and we have like different tools in
+[40:01] here so that that the agent can use. So
+[40:03] it essentially gives us incident that
+[40:05] it's been resolved.
+[40:07] That's what's happening. This is the
+[40:08] resolution. These are the findings to do
+[40:11] that. So this uh IT incident response
+[40:13] agent is doing some actions to fix some
+[40:15] problem.
+[40:16] Yes. Uh
+[40:18] so we basically gave it an issue being
+[40:20] like, "Hey, API latency was spiked to 5
+[40:22] seconds across all endpoints. This was
+[40:24] the error rate. It happened 30 minutes
+[40:27] ago." Right? Solve it. So it it gives us
+[40:30] the
+[40:31] I have
+[40:33] This is this was a root cause. This is
+[40:34] the resolution that I've done. And like
+[40:37] yeah, these are the key metrics.
+[40:40] Um
+[40:40] So now we are using episodes and
+[40:42] reflections.
+[40:44] So one thing if you observed, last time
+[40:46] the tools that was
+[40:48] that the number of tools that were used
+[40:49] without memory were five.
+[40:52] And this time it used three tools for
+[40:54] the exact same question.
+[40:58] So
+[40:59] like the idea of self-learning is also
+[41:02] to improve the efficiency of the agent,
+[41:04] right? So it not just
+[41:05] gave us a better response, but also gave
+[41:08] it gave it faster because it used less
+[41:10] number of tools. Mhm.
+[41:12] Right? So it does the same
+[41:14] task, but just faster and less
+[41:17] um tools. So less trial and error that
+[41:20] it goes through, right?
+[41:22] Okay, let's look at the episodes.
+[41:25] So first of all, every episode and every
+[41:27] reflection that comes in will give you a
+[41:29] relevant score of how relevant is this
+[41:32] is this Mhm. with the current situation
+[41:35] that is at hand.
+[41:37] Right? So based on that you can also
+[41:39] filter out if you want. This could
+[41:41] um also be important for some cases if
+[41:44] you want. Um and within an episode you
+[41:47] see it gives you a detail of what
+[41:51] happened.
+[41:52] And then different step-wise
+[41:55] information on, "Okay, what happened on
+[41:57] every different step?"
+[41:59] And then a reflection overall for that
+[42:01] whole episode.
+[42:03] So it looks at its entire episode and
+[42:05] says, "Okay, this is what I have figured
+[42:07] out. And this is what the agent did.
+[42:10] This was a better approach. This is what
+[42:12] um yeah, this is what
+[42:15] was the
+[42:16] let's say the approach that was taken.
+[42:19] Mhm. Right? So we it create we
+[42:21] configured it to take two relevant
+[42:23] episodes and then two relevant
+[42:25] reflections.
+[42:27] Within reflections you will notice we
+[42:29] have the same relevant score.
+[42:31] We have a topic. So it gives us a uh a
+[42:35] topic which is
+[42:36] what is this reflection about, right? So
+[42:39] this is about database connection pool
+[42:41] exhaustion diagnostics. Mhm. And this
+[42:44] will give us some hints
+[42:46] of what to do or how should the agent
+[42:49] perform.
+[42:51] And also gives us a use case of when
+[42:55] does this apply? When is this relevant?
+[42:58] Because
+[42:59] these hints and I think this is what we
+[43:02] have been doing with our system prompts.
+[43:04] We've been giving it so many
+[43:05] instructions.
+[43:07] And those instructions apply to very
+[43:10] certain use cases, you know, like very
+[43:13] specific situations.
+[43:14] >> Specific situations, right? So because
+[43:15] we are predefining like what could
+[43:17] happen there. Exactly. And then I think
+[43:20] this is a much better way of
+[43:23] looking at it because our agents are
+[43:24] doing lot many different kind of tasks.
+[43:27] And we have to make sure that for every
+[43:31] different task, just like not every user
+[43:33] is the same, not every task is the same.
+[43:36] So you have to handle them differently,
+[43:38] right? For some tasks you have to be
+[43:40] more
+[43:41] detail-oriented. For some tasks you have
+[43:43] to just do them faster.
+[43:45] So therefore the kind of context that
+[43:48] has to go into the model should be
+[43:51] different, should be more tailored.
+[43:54] Um and therefore
+[43:55] this approach of taking reflections and
+[43:59] creating dynamic guidelines of
+[44:02] um what should this you what should this
+[44:05] agent do in this certain use case or in
+[44:07] this certain situation? How should it
+[44:09] behave? How should it perform?
+[44:11] So that's where this is I find it very
+[44:14] beautiful. I I
+[44:16] Like this is yeah. This is fascinating.
+[44:19] And do we also like sometimes agent
+[44:21] says, "Okay, now I'm going to wait for
+[44:22] the human to give some feedback Mhm. and
+[44:25] then take the feedback and then
+[44:27] incorporate that as part of the
+[44:28] interaction? Yes. Do you think that the
+[44:30] episodic memory would also capture those
+[44:32] items?
+[44:32] >> Yes. Yes, definitely.
+[44:35] Um I mean one thing just to highlight is
+[44:37] that you uh within the application you
+[44:40] are the one who are sending those uh
+[44:42] information to the short-term memory,
+[44:44] right? So when you want to capture
+[44:46] episodic memory, please make sure you
+[44:47] also send in the tools and the user
+[44:50] feedback and everything.
+[44:53] Because if the agent core memory doesn't
+[44:55] get that information, it also cannot
+[44:57] process that information. So just to um
+[45:01] be very clear about it that you are
+[45:04] responsible to send that information to
+[45:06] the short-term so that it can process
+[45:08] it.
+[45:09] Okay. So this is one example we've seen.
+[45:11] I also want to
+[45:13] go to maybe one different perspective.
+[45:17] So let's say we take this example where
+[45:19] we talk about all HTTPS traffic is
+[45:21] failing. Um customers are seeing SSL
+[45:24] certificate.
+[45:25] So what this did, it used six tools. It
+[45:28] did the root cause analysis. It
+[45:32] did the resolution
+[45:34] which says restarted the API gateway
+[45:36] service with backup certificate
+[45:37] deployment and for certificate renewal.
+[45:40] So it's now operational.
+[45:42] Okay? Mhm. Now let's do the same thing
+[45:45] with
+[45:46] um memory.
+[45:51] Let's see what it does.
+[45:59] All right.
+[46:00] Um
+[46:03] So one of course it reduced the number
+[46:06] of tools that it used. Mhm. But also the
+[46:08] important thing to notice
+[46:10] is the resolution it did, it restarted
+[46:13] the API gateway with the ACM
+[46:14] certificate. All good. And since the DNS
+[46:17] validation and ACM were already
+[46:19] configured, we deployed it to
+[46:21] um ACM and a certificate to the load
+[46:23] balancer restoring HTTPS functionality.
+[46:26] So it did a more exhaustive resolution.
+[46:31] It looked at the previous things that
+[46:33] were resolved and did a more
+[46:36] um
+[46:38] exhaustive.
+[46:39] So in this case the DNS validation was
+[46:41] also checked. But if you remember in the
+[46:43] previous one we were not
+[46:45] looking at that.
+[46:47] So
+[46:48] it's just uh to yeah, just to just
+[46:53] to make it
+[46:54] uh more prominent that we are not just
+[46:57] using less number of tools so making it
+[46:59] faster, more efficient, but also doing a
+[47:02] bit more exhaustive resolution if we
+[47:04] have the information or the patterns
+[47:06] that have, you know, that we have seen
+[47:08] from the past.
+[47:10] Um
+[47:11] yes.
+[47:13] And then so this is what we have been
+[47:15] doing as let's say I am a
+[47:18] yeah, a an engineer who is doing these
+[47:21] resolution.
+[47:23] But then also from an admin perspective.
+[47:25] So you remember we did the streaming
+[47:26] bit. Correct. And I streamed
+[47:29] uh through the Kinesis to a lambda
+[47:31] function. And that lambda was writing
+[47:33] back to this dashboard. So this is the
+[47:34] dashboard that it was creating.
+[47:37] And it's a very basic dashboard, but
+[47:39] just to give an idea of what we are
+[47:41] trying to achieve here.
+[47:42] Um so we I wanted to create a
+[47:47] distribution in terms of severity of how
+[47:49] critical is the is the incident that
+[47:52] happened, right? So is it P1, P2? So I
+[47:54] classify them into
+[47:56] um P1, P2. Then I create categories for
+[47:59] this. Now this is all one one because as
+[48:01] I said I really created very different
+[48:03] episodes. Sorry, different chats.
+[48:06] And therefore um it's one each.
+[48:10] But
+[48:11] but you can essentially like create
+[48:13] those categories and see, you know,
+[48:15] which categories
+[48:16] uh are the issues more more coming in or
+[48:18] less
+[48:19] uh there.
+[48:21] And then you can also look at the
+[48:23] reflections of what was learned. And as
+[48:26] you said, as a human in the loop you can
+[48:28] then look at those reflections and say,
+[48:30] "Okay, no, this is not what I want." or
+[48:32] perhaps this is an important one. I want
+[48:34] to expand it or do something. So you can
+[48:36] directly write into read or write into
+[48:38] the agent core memory as well.
+[48:40] Um
+[48:43] And then you can just look at all
+[48:44] different learned insights.
+[48:46] Maybe evaluate them as you like. And
+[48:48] then look at the different situations
+[48:49] that occurred.
+[48:51] Uh and what was the assessment that took
+[48:52] place. So you can, you know, use that
+[48:55] information that is in the memory to
+[48:57] also perhaps categorize it, analyze it
+[49:01] um to
+[49:03] do more I don't know, aggregation of of
+[49:06] uh statistics or anything that you want
+[49:08] to do to to achieve out of it. So that's
+[49:11] completely on you of how you want to use
+[49:13] it. I just use it for a dashboard so
+[49:15] that because I wanted to classify.
+[49:19] Um
+[49:19] >> you get the real-time events from the
+[49:21] memory on the record creation or updates
+[49:23] or deletions so that you can take like
+[49:25] action uh instead of polling, right? So
+[49:27] I think this changes whole dynamics of
+[49:29] things. Exactly.
+[49:31] >> Now
+[49:31] Now Akasha, just to
+[49:33] you know, recap going back to one of you
+[49:35] know, a couple of things that you
+[49:36] mentioned, right? So, we had like less
+[49:38] episodes and more reflection. Can you
+[49:39] speak about why that happened?
+[49:43] Okay. Um
+[49:44] so, as you see, right? All of the
+[49:47] reflections are topic-based.
+[49:50] So, within one conversation that we have
+[49:53] seated in,
+[49:54] uh it was talking about a full incident
+[49:57] and says, "Okay, this this is what uh
+[49:59] this is what happened and then this was
+[50:00] the task that took place."
+[50:03] So, it could be the case where
+[50:05] we were having different
+[50:08] um analysis or different
+[50:11] uh how to say?
+[50:13] Different use cases within the specific
+[50:15] because when we are having a
+[50:17] conversation with the agent, it's not
+[50:18] necessary that we are talking about one
+[50:20] specific topic. Right.
+[50:22] >> Within that whole conversation, it could
+[50:24] extract, "Oh, these are two different
+[50:26] two important insights that I created."
+[50:29] So, that's kind of what happened here.
+[50:32] So, maybe like in the past that I gave
+[50:33] it Mhm.
+[50:35] So, chats that I gave it were like uh 50
+[50:37] messages long or so.
+[50:40] And therefore, it extracted two
+[50:42] different um
+[50:44] I I Yeah, I actually haven't seen if
+[50:47] it's two per episode or not, but
+[50:49] essentially it is able to also look at
+[50:52] Yeah, look at also cross episodes,
+[50:54] right? So, different episodes it looks
+[50:55] at and then it understands, "Okay,
+[50:59] across these five things, I see that
+[51:01] this is a general pattern that I've
+[51:02] created." So, it's it doesn't have to be
+[51:04] 1:2 or 1:5 or anything. It really
+[51:08] depends on what kind of conversation is
+[51:10] going in.
+[51:11] Um in most of the cases like where we
+[51:13] are talking about very general
+[51:14] conversation, you know,
+[51:16] uh where the user is sharing something
+[51:18] like a travel agent or so, there you'll
+[51:20] find really less reflections because the
+[51:22] situations are not that different. Mhm.
+[51:24] Versus here, we are giving it so many
+[51:27] different situations, right? You see the
+[51:29] categories are not overlapping at all.
+[51:32] So,
+[51:33] um it's able to
+[51:35] Yeah, it's able to um
+[51:37] create more reflections. So, if you look
+[51:40] at the reflections, right? Let's take an
+[51:42] example. So, here the reflection is not
+[51:44] about DNS or anything, it's about how do
+[51:46] I do post-incident documentation. Mhm.
+[51:49] This is a root cause analysis, right?
+[51:51] So, this is exactly what we when we
+[51:53] solve problems and we've had many
+[51:56] customer interactions where we say,
+[51:58] "Hey, we want to integrate our DevOps
+[52:00] into like an AI pipeline and let the AI
+[52:03] troubleshoot uh before the agent before
+[52:06] the engineer is coming on call, uh have
+[52:09] the summary ready, right? So, it can
+[52:11] reflect look at, you know, what are all
+[52:13] the incidents that happened in the past
+[52:14] when there is a new issue that's created
+[52:17] and then keep a summary ready for the
+[52:18] agent uh to be able to say, "Hey, now
+[52:21] that you're logged in, this is all the
+[52:23] troubleshooting I did. In the past, we
+[52:24] did all these five things. You can now
+[52:27] start and give your inputs as to how I
+[52:29] should proceed." You know, is that how
+[52:31] we could do? Yeah.
+[52:32] >> Yes. Yeah.
+[52:34] Yeah.
+[52:35] Um
+[52:38] Yeah.
+[52:39] So,
+[52:40] essentially, this is more like derived
+[52:44] uh insights, you know, like what it
+[52:45] learned of like how do I do
+[52:48] infrastructure assessment Mhm. before
+[52:50] the incident remediation.
+[52:52] Uh so, of course, this
+[52:55] uh
+[52:56] Yeah, just taking it from one
+[52:57] perspective. One incident happened. It
+[52:59] did some assessment before the incident
+[53:02] remediation. It did some um
+[53:05] some documentation after the incident.
+[53:07] So, let's say in this case, it'll have
+[53:09] these two different insights, right? But
+[53:11] of course, it's a very abstract, very
+[53:14] vague mapping criteria, but I'm just
+[53:16] giving an example of how it could lead
+[53:18] to more reflections than the episodes.
+[53:21] But that's usually in for most of the
+[53:23] cases, it's not uh that that common.
+[53:25] Like I've not seen it for 99% of the
+[53:29] cases. It's Yeah.
+[53:31] Um all right. So, now we have covered a
+[53:35] lot about the user, you know, user
+[53:38] journey and how do we improve based on
+[53:41] the user. Maybe let's get back to the
+[53:43] presentation. Yeah, I want to also ask
+[53:45] like maybe as we get to the next slides,
+[53:47] right? So, how do we put some boundaries
+[53:49] on these
+[53:50] um interactions because we want some
+[53:53] episodes some in memory interactions to
+[53:55] be like, you know, very specific Yes.
+[53:57] >> and uh not have the agent you know,
+[53:59] overlap on its memory recollection
+[54:02] abilities.
+[54:03] >> Yes. I mean, that's that's the biggest
+[54:05] challenge in production, right? How do
+[54:06] we make sure we have enough guardrails
+[54:09] that the agent can function what we want
+[54:11] it to do, but it doesn't go beyond that.
+[54:15] Like it doesn't go rogue. Mhm. Um so,
+[54:17] that's where we want to keep those
+[54:19] boundaries. We want to keep those
+[54:20] guardrails. We want to have some
+[54:22] enforcements
+[54:24] um built in.
+[54:26] That's uh one of the biggest challenges
+[54:28] that we have we are seeing our
+[54:30] enterprises
+[54:31] uh enterprise customers facing.
+[54:34] So, that's where I want to
+[54:36] uh talk about the scoping memory for
+[54:38] production, right?
+[54:40] What are the layers of uh scoping our
+[54:43] memory
+[54:44] uh bit when we are putting or when we
+[54:46] have our agent production or when we are
+[54:48] putting in production?
+[54:50] So, first uh layer is around the
+[54:53] short-term memory, which is
+[54:55] uh for short-term memory scoping, you
+[54:57] scope it based on the memory ID, the
+[54:59] actor ID, and the session
+[57:44] ID. So, these are the three identifiers
+[57:46] >> that it's assigned. Mhm. And then we
+[57:49] also have recently launched
+[57:50] resource-based policies, which allow you
+[57:52] to identify which resource is actually
+[57:56] accessing this uh memory. So, with this,
+[57:58] you can say
+[58:00] with this, you can identify which agent
+[58:02] uh is able to access your memory, right?
+[58:05] So, you can
+[58:07] um
+[58:07] combine these two to actually enforce
+[58:11] uh the access
+[58:14] on Yeah.
+[58:15] on the agent for the agent.
+[58:18] So, so this is good, right? So, to break
+[58:19] it down, we have we are creating how you
+[58:22] know, the the short-term memory, the the
+[58:24] long-term memory, scoping that, creating
+[58:27] episodes out of that, but then we are
+[58:29] talking about how you can bring security
+[58:32] so that uh you know, you're adding those
+[58:34] guardrails Mhm.
+[58:36] >> from uh interact I mean, from the code
+[58:39] and the actors also like to not be able
+[58:41] to interact with the other memories.
+[58:44] Yes. Yes.
+[58:45] All right.
+[58:47] Um I think we're almost on time, right?
+[58:51] Yeah.
+[58:51] >> So, I would want to share some resources
+[58:54] here.
+[58:55] Um
+[58:56] please also look at the episodic memory
+[58:59] blog post. It is much more It is
+[59:03] it is super detailed. Uh we've put a lot
+[59:06] of effort into it. It has examples also
+[59:08] at the end in the appendix. So, you can
+[59:10] look at it how it works, the detailed uh
+[59:13] diagram.
+[59:15] And I would highly recommend for you to
+[59:17] try it out. See how it's how it's
+[59:20] working for your use case. And if you
+[59:23] have any questions, please reach out to
+[59:25] us.
+[59:26] Um put in the comments. We definitely um
+[59:30] do keep an eye and respond timely.
+[59:35] Yeah, excellent. Thank you for diving
+[59:36] deep into the details of episodic memory
+[59:39] today, Akasha. And we'll come back to
+[59:42] you folks with another episode on the
+[59:43] AWS show Intel for next week. But until
+[59:46] then, thank you for joining the live
+[59:47] stream today.
+[59:50] Thank you.
+[59:53] >> [music]
+[59:59] [music]

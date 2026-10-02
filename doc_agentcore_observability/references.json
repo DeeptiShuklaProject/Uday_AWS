@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "comment": "AgentCore Observability course — concept → source references.",
+  "concepts": {
+    "Chapter_01_OTel_Spans_Traces#1-3": {
+      "refs": [
+        { "kind": "url", "url": "https://opentelemetry.io/", "title": "OpenTelemetry — the open telemetry standard Runtime emits" },
+        { "kind": "url", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html", "title": "AgentCore Observability — official developer guide" }
+      ]
+    },
+    "Chapter_02_CloudWatch_GenAI_Dashboard#2-1": {
+      "refs": [
+        { "kind": "url", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GenAI-Observability.html", "title": "CloudWatch GenAI Observability — agents/sessions/traces views" }
+      ]
+    },
+    "Chapter_03_Third_Party_APM#3-2": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/aws-observability/aws-otel-collector", "title": "aws-otel-collector (ADOT) — route OTLP to your APM" }
+      ]
+    }
+  }
+}

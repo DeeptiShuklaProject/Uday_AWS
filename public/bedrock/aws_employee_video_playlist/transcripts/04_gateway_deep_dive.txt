@@ -1,0 +1,1507 @@
+Title: 04_gateway_deep_dive
+Video URL: https://www.youtube.com/watch?v=atWXM5lziY8
+============================================================
+
+[00:00] Hey, hey, hey.
+[00:05] [Music]
+[00:26] [Music]
+[00:30] Hey, what is going on everybody? Welcome
+[00:33] back to another episode of AWS Show and
+[00:37] Tell. This week we've got an exciting
+[00:39] topic for you guys. We've always got an
+[00:40] exciting topic, but this is a
+[00:42] particularly exciting topic. Uh we're
+[00:44] going to dig into a piece of technology
+[00:46] I've been like waiting for an excuse to
+[00:48] dig into since New York Summit. That is
+[00:52] uh Bedrock Agent Core. Specifically,
+[00:54] we're going to take a look at that agent
+[00:55] core gateway. And we've got two
+[00:58] incredible guests with us today that are
+[01:00] going to take us on our agent gate uh
+[01:03] agent core gateway and MCP journey. Um
+[01:06] gentlemen, why don't you go ahead and
+[01:07] and say hello to the chat, introduce
+[01:09] yourself and and maybe let folks know
+[01:11] where you're uh where you're joining us
+[01:13] from in the in the world today.
+[01:15] >> Yeah, I'll go first. Uh first of all,
+[01:17] thank you very much. I'm super excited
+[01:19] about this uh session. Uh Dul Patel
+[01:22] here. I'm the principal generative AI
+[01:24] architect at AWS and I'm one of the
+[01:27] founding members uh solution architects
+[01:30] uh launching the agent core and I am a
+[01:33] builder at heart. I like to do stuff and
+[01:36] show and that's exactly what I want to
+[01:38] do here in this in this session using
+[01:39] agent core gateway.
+[01:41] >> Nick.
+[01:42] >> Yeah. Hey everyone. Uh I'm Nick
+[01:44] Aldridge. I'm one of the principal
+[01:45] engineers here at AWS. I work on our uh
+[01:48] agentic AI offerings like agent core and
+[01:51] agent core gateway. Um I'm also
+[01:53] representing AWS on the MCP and A2A
+[01:56] steering committees. Um so for those of
+[01:59] you that are deep in the protocols uh
+[02:01] you know happy to discuss about that and
+[02:04] um very excited to join you today to
+[02:06] talk more about agent core gateway.
+[02:09] >> Very very important business there A2A
+[02:11] and MCP. In fact, I'm I'm running a uh
+[02:14] fun fact, an MCP workshop with my
+[02:16] customer tomorrow. Uh and it it is
+[02:19] pretty much ever since that got uh got
+[02:22] velocity. It's like it's it's it's
+[02:24] interestingly I thought it was I thought
+[02:25] MCP was going to be like for advanced
+[02:27] customers, but it it's actually like the
+[02:28] the first step for many customers that
+[02:30] are getting started.
+[02:32] >> Everyone wants to talk about MCP and
+[02:34] ADA. I feel like that's like the the big
+[02:36] thing right now.
+[02:38] >> Amazing. Amazing. Well, thank you both
+[02:40] for joining us. very excited for the for
+[02:41] the topic today. Um I I I'm hosting you
+[02:44] all from the great state of Maine, the
+[02:45] woods, the middle the middle of nowhere.
+[02:47] It's a it's a wonderful spot.
+[02:49] >> Um and for those folks who are joining
+[02:51] us in the chat, let us know where you're
+[02:53] coming in from. We'll throw your comment
+[02:54] up on the screen and uh and it'll be a
+[02:57] fun it'll be fun to know you all are
+[02:58] here with us watching live. Um before we
+[03:03] get into some slides and some demo and
+[03:05] all that good stuff, like what what
+[03:06] should folks expect out of the next hour
+[03:09] or so?
+[03:13] Yeah, I think I mean
+[03:14] >> that's to you DeWalt or or you too,
+[03:16] Nick. Sure. Either of you. Go for it.
+[03:17] >> Uh yeah, I mean Deal, go ahead.
+[03:20] >> Go for it, Nick.
+[03:21] >> No, I think uh we're going to dive deep
+[03:23] into Gateway. We want to tell you a bit
+[03:25] about like this amazing product, talk a
+[03:27] little bit about the protocols as well.
+[03:29] I always love to talk about the
+[03:30] protocols. Um and then do a demo as
+[03:32] well. So um yeah, I think it's going to
+[03:35] be a good session.
+[03:36] >> Yeah. Yeah, exactly. So we're going to
+[03:38] dive deep into
+[03:40] what customers are uh looking uh for
+[03:43] developing agentic applications and how
+[03:46] agents can scale when it comes to
+[03:48] calling tools and tools are extremely
+[03:50] important for agents to work right uh
+[03:52] and we want to talk about how to scale
+[03:55] uh the tools using agent core gateway
+[03:58] going to dive deeper into how agent core
+[04:00] gateway works internally we are going to
+[04:02] dive deep into the code we're going to
+[04:03] show the demo
+[04:05] >> wow wow action action-packed session
+[04:07] today a Great. Great for folks that want
+[04:10] to learn the basics and then jump right
+[04:12] in to to my favorite way of learning,
+[04:14] which is to get hands-on and start start
+[04:16] deploying it and and configuring it
+[04:18] myself. So, we've got folks starting to
+[04:20] chime in in the chat. Uh folks joining
+[04:22] us from around the globe. Love to see it
+[04:25] every week. Um we're here every Tuesday,
+[04:27] folks. If you if you'd like to join us
+[04:28] next week, we got more Agent Core coming
+[04:30] right at you. But uh but I I I guess let
+[04:33] let's go ahead and get started with the
+[04:35] reason folks are here. Agent Core
+[04:38] gateway. What? Okay. I've heard of
+[04:39] gateways before. I've heard of API
+[04:41] gateways. I've heard of there's a lot of
+[04:42] gateways out there in the world. Uh we
+[04:44] got another gateway. I I'm eager to
+[04:47] learn here. I'm eager to learn.
+[04:48] >> You got g lots of gateways. I I I hear
+[04:51] you Trevor and that's exactly why we are
+[04:53] here to explain here. So, all right. So,
+[04:56] let's get started. Let's dive in. So,
+[04:58] you're going to talk about agent core
+[04:59] gateway. So first a little bit of like a
+[05:01] step back and let's understand what are
+[05:04] typical agentic AI applications look
+[05:06] like what are the components of
+[05:08] developing agentic applications right uh
+[05:10] so you need a if you're building an
+[05:12] agentic application obviously you need
+[05:14] an agentic framework like lang chain
+[05:16] lang graph strands uh we have by the way
+[05:18] open source strands we'd love you folks
+[05:20] to use strands um and then all that
+[05:24] great orchestration and kind of a
+[05:26] reasoning like a brain of the agentic
+[05:29] system right, is powered by LLMs, right?
+[05:31] A state-of-the-art LLM. And we have
+[05:34] Bedrock, Amazon Bedrock has lots of
+[05:36] state-of-the-art
+[05:37] uh LLMs to power the agents. One other
+[05:42] very important
+[05:44] uh component of the agent is tools,
+[05:48] right? The agent needs to have access to
+[05:50] the tools, the APIs, the logic that
+[05:54] agents are going to use in order to
+[05:56] orchestrate the workflows and answer the
+[05:58] user questions and kind of it's a power
+[06:01] engine, right? And it's exactly what we
+[06:03] are going to dive into that uh the
+[06:06] agentto tool interaction and we talk
+[06:08] about the tools like we talk about like
+[06:10] hey there are like um m number of agents
+[06:14] and those agents needs n number of
+[06:17] tools. So we are talking about M crossN
+[06:20] uh permutation combinations and we need
+[06:23] some kind of a standard framework
+[06:24] standard protocol to reduce that M
+[06:27] crossN uh and that's where the protocols
+[06:29] like MCP comes into the play where NX
+[06:32] comes into the play and Nick also is
+[06:33] helping out a lot of great stuff with
+[06:35] the MCP specification
+[06:37] um and um while we have the MCP
+[06:41] specification where an agentic
+[06:43] application has access to tools right um
+[06:47] and Then when we talk about scaling that
+[06:50] uh from one tool to like maybe three
+[06:53] tools and then in n number of tools
+[06:56] right right like that's great like agent
+[06:58] needs to call 20s or hundreds of maybe
+[07:01] thousands of tools and then if you talk
+[07:03] about scale like there are multiple
+[07:05] agents trying to call multiple tools and
+[07:08] that's where we want to optimize that uh
+[07:10] using the protocols like MCP where hey
+[07:13] there's somebody else who has already
+[07:15] developed a tool for achieving certain
+[07:17] stuff like search internet for example
+[07:19] or um or a tool for getting the weather
+[07:22] or tool for getting the time like
+[07:25] somebody out there has already developed
+[07:26] the tool why not reuse those tools using
+[07:28] MCP protocol or you using some kind of
+[07:31] standard protocol so that these agents
+[07:33] can discover these tools and call these
+[07:35] tools in a standard format um to kind of
+[07:39] scale right so that's why we have
+[07:41] protocols like MCP right that
+[07:44] standardizes the the interface of uh the
+[07:48] agent to tool interactions but then
+[07:50] that's not enough. Uh the protocols are
+[07:53] great but what our customers are asking
+[07:56] for like hey I have these MCP tools that
+[08:01] I need to develop and it takes a village
+[08:05] to develop an MCP tool. It takes a lot
+[08:10] of uh like you need to develop an MCP
+[08:13] server, you need to import the
+[08:15] libraries, you need to host what do you
+[08:17] mean? What do you mean it takes a
+[08:18] village? I just vibe coded five MCP
+[08:20] servers before my first call this
+[08:22] morning. I is that is that what you
+[08:25] mean? Or I think you mean a production
+[08:27] like agentic MCP server, right? Although
+[08:30] although I I like the mental model of
+[08:32] villages of people maintaining all
+[08:34] >> I actually I love that comment Trevor
+[08:36] because like that is even the attitude
+[08:37] of a lot of businesses like hey we
+[08:39] already have you know 100 MCP servers
+[08:42] live and like you know going from that
+[08:44] to to production and maintaining over
+[08:47] time is actually a hard thing and and
+[08:49] maybe just taking a step back right
+[08:51] agent core itself agent core is a lot of
+[08:53] different products right as part of that
+[08:56] umbrella of agent core and I think the
+[08:58] key philosophy behind mind agent core is
+[09:01] really this thing of like we want to
+[09:03] make sure that all of the undifferiated
+[09:05] heavy lifting that you do as a business
+[09:07] is stuff that we manage so that you
+[09:09] focus on building your application level
+[09:11] code right and so gateway is a perfect
+[09:14] example of like we're going to do all
+[09:16] the stuff around maintaining compliance
+[09:18] with MCP versions and patching and
+[09:21] security that and and Do's going to talk
+[09:23] about you know a bunch of these features
+[09:24] but at a high level it's it's really
+[09:27] about making sure that you can build
+[09:28] faster that you can build more reliably
+[09:31] um without having to take uh account of
+[09:34] all of these sort of low-level nitty-g
+[09:35] gritties. Honestly, I think there will
+[09:37] be come a future uh a near future where
+[09:40] we think of MCP like we think of TCP and
+[09:42] UDP, right? Where no one thinks about
+[09:44] it. It just works because there are
+[09:46] great products like gateway that just do
+[09:48] that thing and speak that protocol.
+[09:51] >> Yeah. Well, great call out Trevor and
+[09:54] thanks for interrupting. Thanks for
+[09:56] interrupting me. You know, I I I'm I'm
+[09:58] always ready for a for a vibe coding
+[10:00] joke. Always. Always ready. By the way,
+[10:02] we've already got some um some great
+[10:04] questions coming in from the chat. I'm
+[10:06] I'm going to pop them up as they're
+[10:07] coming in. I'm sure we'll get to this,
+[10:09] but it's it's so essential to like what
+[10:10] it's here for.
+[10:11] >> Can we connect local and remote agents
+[10:14] to this gateway? Like like like exactly
+[10:16] like like what could connect to this
+[10:19] agent core gateway on the front end?
+[10:21] >> Yeah. So for for now the gateway
+[10:24] supports a remote MCP servers, MCP tools
+[10:27] using streamable HTTP. If if folks are
+[10:29] aware of MCP protocol then there are
+[10:31] like different uh types of connections
+[10:33] like streamable HTTP and then streaming
+[10:37] response as using SSC
+[10:39] um and there's like stateless uh
+[10:43] stateless connections and stateful
+[10:44] connections. Right now, agent core
+[10:46] gateway supports remote
+[10:49] MCP tools using streamable HTTP.
+[10:54] Um, and particularly it is stateless
+[10:57] uh remote streamable HTTP connection.
+[11:00] Nick, if you want to add anything else.
+[11:02] >> That's right. Yeah, I think we're we're
+[11:04] excited about MCP, excited about all the
+[11:06] features today. That's what it it
+[11:08] supports. Yeah.
+[11:09] >> Yeah. Yeah. So going back to my
+[11:11] production like it does take a lot to
+[11:15] uh develop and deploy production grade
+[11:18] tools right and I I'm emphasizing the
+[11:20] word production grade and when I say
+[11:23] production grade like all of that cool
+[11:25] stuff like hey let's let me start
+[11:26] building the MCP server let me import
+[11:29] the libraries and then let me also build
+[11:31] a server that understands JSON RPC2.0
+[11:34] zero protocol, right? You need a solid
+[11:36] understanding of the protocol. You need
+[11:38] to also make sure that the authorization
+[11:40] authentication is baked in into it so
+[11:42] that we make it production ready. And
+[11:44] then and then things like um uh uh
+[11:47] observability like it's an very very
+[11:49] critical aspect right you want to make
+[11:51] sure that what's coming in what's going
+[11:52] out of your MCP server you want to do an
+[11:55] audit trail you want to understand
+[11:57] what's going on in my um MCP server uh
+[12:00] make sure that only authorized clients
+[12:03] are connecting to my MCP server so all
+[12:05] of those things takes a lot of time of a
+[12:08] developer although you have coding right
+[12:11] um and that's why We built the agent
+[12:14] core gateway which is completely
+[12:16] serverless fully managed service. Um
+[12:19] number one it gives you a one-click
+[12:21] transformation like I I would say MCP
+[12:23] fine your APIs for example like so the
+[12:26] all it takes is if you want to convert
+[12:29] an API that you have in your enterprise
+[12:31] in open API format or swagger format
+[12:34] like um we want to give an experience
+[12:37] where you can say like here's my here
+[12:39] here's my open API format uh just MCP5
+[12:43] just MCP for me I'm not in the business
+[12:45] of like writing an MCP server and host
+[12:48] hosting in a computer environment and
+[12:50] having an autoscaling and all that stuff
+[12:52] like we want to do that undifferiated
+[12:54] heavy lifting for you uh and you focus
+[12:57] on the business value that you want to
+[12:58] build out of that agentic application
+[13:00] right so yeah go ahead
+[13:02] >> I love that I love that like you can you
+[13:04] know with gateway you can write a lambda
+[13:06] function and then it just becomes MCP
+[13:09] through this agent core gateway in that
+[13:11] lambda function you can do all kinds of
+[13:12] crazy things whatever things you would
+[13:14] have otherwise done in your MCP server
+[13:16] you just don't have to worry about
+[13:18] integrating with a you know 618 version
+[13:21] of the specification and then
+[13:23] maintaining parody when you know the
+[13:25] nine whatever version comes around. So
+[13:28] uh I think you're just getting and and
+[13:30] Dell talked about you know logging and
+[13:32] security and all the stuff you're just
+[13:33] getting out of the box that's pretty
+[13:35] amazing. So I I think that's a
+[13:37] tremendously powerful uh vision even on
+[13:39] the side. I've been vibe coding over
+[13:41] agent core gateway uh and deploying it
+[13:44] just you know gateway plus lambda and I
+[13:46] think it's a it's a super powerful
+[13:48] pattern and I even saw somebody they
+[13:50] deployed a gateway over their sage maker
+[13:52] model. So they had a tool that was
+[13:54] calling their traditional ML model. I
+[13:56] thought that was like a a super cool
+[13:58] little thing. So yeah,
+[14:00] >> I know, you know, I I work for uh with a
+[14:03] lot of our financial services customers
+[14:04] and whenever MCP came out, they were all
+[14:06] really excited, but but this basically
+[14:09] is the first thing that they were were
+[14:11] asking us like, okay, this is cool, but
+[14:13] and it's great to have a PC where we can
+[14:16] kind of have all all of these great MCP
+[14:18] servers available, but how do I make
+[14:19] this available to my enterprise? very
+[14:21] quickly we started getting into like oh
+[14:23] yeah you need to run a off service on
+[14:25] every MCP server so that way you can and
+[14:27] at that point it they were like hey I I
+[14:30] think maybe it's a little too early and
+[14:32] so something like this really really uh
+[14:34] I think meets the mark for customers
+[14:35] like that who need governance who need
+[14:37] centralized control yeah in order to to
+[14:40] safely roll things out
+[14:42] >> yeah and then and then when we talking
+[14:44] about like scale right like it's not
+[14:46] about few tools right we're talking
+[14:48] about like hundreds of tools being
+[14:49] unified in one gateway and being offered
+[14:52] as a uh um as a centralized shared
+[14:56] services to their internal teams like
+[14:58] hey folks like there are multiple
+[15:00] organizations within uh within a company
+[15:03] and everybody wants to develop agent
+[15:05] application and the way how they think
+[15:08] is like all right like uh let's unify
+[15:10] all those those tools and offer in an
+[15:12] MCP protocol using MCP using agent core
+[15:15] gateway and that gateway unifies all of
+[15:18] those tools and offers as a single
+[15:20] single unified secure single point
+[15:24] access where these organizations can
+[15:26] have governance in place uh decide who
+[15:29] has access to which tool using the oath
+[15:32] protocol um and then when we talking
+[15:36] about hundreds of tools um there's a
+[15:39] risk where agents if if if agents get
+[15:41] access to hundreds of tools like there's
+[15:43] a risk of hallucinations there's a risk
+[15:45] of performance degradation
+[15:48] um and so We basically came up with a
+[15:51] tool search like a semantic discovery uh
+[15:54] in the gateway like where customers can
+[15:56] like you know what I'm not going to use
+[15:58] all hundreds or thousands of tools in
+[16:00] the gateway I just need some some
+[16:02] specific subset of these tools which is
+[16:04] relevant for the user query and I want
+[16:06] to use I want to scale using semantic
+[16:09] search I don't want to go through this
+[16:10] hundreds of tools and when you talk
+[16:12] about the context bloat right like more
+[16:16] you add the context into your agentic
+[16:18] application more you add up those number
+[16:20] of tools and and create that context blo
+[16:23] it's it's going to lead into
+[16:25] hallucinations and it going also lead to
+[16:27] reduced performance. So this semantic
+[16:30] search capability that we offer as part
+[16:32] of the gateway is immensely useful in
+[16:36] reducing the context size improving the
+[16:38] performance um and scale.
+[16:43] >> Yeah that's a I mean I'm super excited
+[16:45] about that feature. the the last product
+[16:47] I worked on for AWS I built better rock
+[16:49] knowledge bases. So rag or retrieval
+[16:51] augmented generation is like near and
+[16:53] dear to my heart and this tool search
+[16:55] thing I think is uh you know I haven't
+[16:57] seen a lot of products in the market uh
+[16:59] doing this and I think it's a total
+[17:01] gamecher. I I actually believe that
+[17:03] eventually nobody will do list tools
+[17:06] because I as an organization will have
+[17:07] so many tools my agent will have access
+[17:09] to so many tools that I'll always want
+[17:11] to search to find the you know 10 or 20
+[17:13] that are most relevant. And when you
+[17:15] think about it, like when I'm doing
+[17:17] tasks on my on my computer myself,
+[17:19] right, as a as a human agent, um I never
+[17:22] like go off and list every application
+[17:25] and just browse, right? I'm always
+[17:26] looking for something specific. Uh and I
+[17:29] think that's really what we're doing
+[17:30] with tool search is like looking for the
+[17:32] specific thing I need to do a task.
+[17:34] >> Cool. And talking about the
+[17:36] authorization, it's extremely important.
+[17:38] Job zero must have security baked in for
+[17:43] production grade uh applications and
+[17:45] that's why MCP has this o of based
+[17:49] specification for securing incoming
+[17:50] calls. Gateway has inbound and outbound
+[17:56] authorization built in. You're not
+[17:59] you're not here to build like let me let
+[18:02] me cache the tokens, let me reach out to
+[18:04] the authorization server or or ooth
+[18:07] compatible IDP and validate my incoming
+[18:09] access token like it takes it takes a
+[18:13] lot of white coding and then lots of
+[18:15] maintenance uh to develop like inbound
+[18:18] authorizer and outbound authorization uh
+[18:21] for your incoming calls and outgoing
+[18:23] calls to the APIs.
+[18:26] So
+[18:26] >> can't vibe code that actually still too
+[18:28] new to vibe code. Turns out turns out
+[18:30] anything released in the last six months
+[18:32] hard to vibe code. You have to actually
+[18:33] know what you're doing.
+[18:35] >> Not only can you not v code that, but
+[18:37] your security counterpart is going to be
+[18:39] very frustrated if you code that. And
+[18:42] that secure credential exchange is like
+[18:45] no joke technology. It's it's a
+[18:47] complicated thing to build and uh you
+[18:49] know I would never want to build that
+[18:51] from scratch per application. So
+[18:53] >> yeah,
+[18:53] >> and the tool search component you were
+[18:55] talking of earlier, you know, we when we
+[18:56] started I saw a lot of customers when
+[18:58] MCP got really popular have their light
+[19:00] bulb moments where they were like, oh,
+[19:02] I'm going to have an MCP server for
+[19:04] everything in my enterprise, which
+[19:05] working for the enterprise, that's
+[19:06] hundreds, sometimes thousands, tens of
+[19:08] thousands of endpoints. And then in the
+[19:10] same conversation, we were like, yeah,
+[19:11] right now it's about a 50 server maximum
+[19:14] for a scalable MCP application. That was
+[19:16] I I believe the guidance from anthropic
+[19:18] just in the context of like prompt
+[19:19] driven um MCP management. And so a hard
+[19:23] to like you can't overstate what Nick
+[19:25] was pointing pointing out there of the
+[19:27] the ability to like semantically search
+[19:29] tools really simplifying and also
+[19:31] expanding what like a an a model that's
+[19:34] functioning as like an orchestrator is
+[19:35] is capable of. And by the way we got a
+[19:38] few questions in the chat uh that I that
+[19:40] I think Nick would be a perfect uh
+[19:42] perfect guy to answer a few of them.
+[19:44] First I'll take the first question. Is
+[19:45] this going to be recorded? Absolutely.
+[19:47] Uh if you're watching it now, you can
+[19:49] find this recording on YouTube later.
+[19:51] But somebody asked a question um is I I
+[19:54] think their question is this seems
+[19:56] similar uh to to some options out there
+[20:00] with A2A. And I think they're asking
+[20:02] does uh does it support MC MCP and A2A?
+[20:05] I don't know the answer about A2A. Um
+[20:07] but I bet I bet Nick I bet you at least
+[20:09] have some comments on A2A since you're
+[20:11] on the steering committee,
+[20:12] >> right? Yeah. Uh so today we don't
+[20:14] support ATA. We're hyperfocused uh at
+[20:18] the current moment on MCP. Um but
+[20:21] definitely as AWS more broadly um we're
+[20:24] committed to supporting both uh
+[20:27] protocols and in general we want to try
+[20:30] to support the community where they are
+[20:31] right on the protocols that they are on.
+[20:34] Um and you may have seen we we put out a
+[20:36] few blog posts talking about how we've
+[20:38] integrated MCP and ADA in in products
+[20:41] like strands for example. Um so those
+[20:43] are worth checking out if you haven't
+[20:44] already. Um, but yeah, today it's it's
+[20:47] focused on MCP.
+[20:48] >> All right. And Duel, I want you to
+[20:49] finish, but I got another red-hot
+[20:51] question here that that's one of my
+[20:52] favorite questions when customers ask.
+[20:54] >> Hey, can I use this with like other
+[20:57] inference? Like, does it have does will
+[21:00] I be forced to use only bedrock models
+[21:02] if I go down this path?
+[21:04] >> That's a great question. Love that
+[21:06] question. No, you're not logged into
+[21:07] bedrock models. Yes, you're not logged
+[21:10] into bedrock models. You are free to use
+[21:12] any any models open source, closed
+[21:15] sourced, VLM,
+[21:17] hosted LLMs.
+[21:20] You can use your LLMs wherever they sit
+[21:22] using this agent core. In fact, it's not
+[21:25] just about agent core gateway. It's like
+[21:26] that's our vision and mission and that's
+[21:28] the founding principle of how we evolve
+[21:30] this entire agent core ecosystem of
+[21:33] seven primitives and more to come. Nick,
+[21:35] >> I just want to add one more thing. It's
+[21:37] not just about LM. So agent core as a
+[21:39] whole we support any framework right so
+[21:41] you can run any framework on agent core
+[21:44] runtime and integrate any framework with
+[21:46] agent core gateway and the others uh and
+[21:49] the other thing is if you look at agent
+[21:50] core gateway it speaks mcp and ooth
+[21:54] right so you can actually talk to this
+[21:55] thing from any agent running on any
+[21:58] stack it doesn't have to be even running
+[22:01] on AWS so this is like a brand new thing
+[22:04] uh for AWS and we're super committed um
+[22:07] to supporting customers where they are,
+[22:09] wherever they're hosting their agents.
+[22:11] >> Yeah. Yeah. Talk about composable
+[22:13] systems, talk about building blocks,
+[22:14] talk about decoupled systems. Uh that's
+[22:18] that's our vision. That's the founding
+[22:19] principle of uh Agent Core. All right.
+[22:22] Uh great discussion, Trevor. Any other
+[22:25] great questions before I move on?
+[22:27] >> No, please proceed. Proceed.
+[22:29] >> All right. Cool. So, just a a broader
+[22:31] context here. So you got your agent be a
+[22:34] lang chain, lang graph or whichever
+[22:36] framework that you prefer running on
+[22:38] agent core runtime which we talked
+[22:40] earlier before right and this session is
+[22:42] particularly focused on gateway. So now
+[22:44] your agent running on agent core runtime
+[22:47] or wherever right we talked about
+[22:48] composible systems. So where wherever uh
+[22:51] needs access to the tools. So you unify
+[22:55] those tools and offer this post it using
+[22:59] a single secure unified access point
+[23:02] access uh access point call is gateway
+[23:05] uh which is agent core gateway in this
+[23:06] diagram and so the agents calling the
+[23:09] tools using MCP
+[23:12] um calling agent core gateway where your
+[23:15] tools are there. Now um the
+[23:19] authentication part of it be it an
+[23:21] incoming inbound authorization when an
+[23:25] uh call comes into the gateway using
+[23:27] invoke tool or list tools you need to
+[23:29] make sure that you are authorizing the
+[23:32] access to these list tools or invoke
+[23:34] tool calls and that is uh basically
+[23:37] offered using another primitive called
+[23:39] agent core identity that does lots of
+[23:41] great stuff. Number one, it uh takes
+[23:44] care of uh validating the incoming
+[23:47] access token with whichever IDP systems
+[23:49] you want to integrate. You can literally
+[23:52] integrate with any of your IDP systems
+[23:54] as long as they talk o2.0 protocol. Like
+[23:57] you can bring oz0ero uh you can
+[24:00] integrate with octa you can you can you
+[24:02] can work with cognto. I'm going to show
+[24:04] you cognto integration in this in this
+[24:06] demo as well. Um and then the outbound
+[24:09] authorization like before calling an API
+[24:13] or an AWS lambda function to satisfy
+[24:16] your invoke tool call you know you you
+[24:20] need to authorize the outbound API calls
+[24:23] if it's an open API call um then you
+[24:27] would need to configure that outbound
+[24:29] authorizer as well like uh what is the
+[24:31] API key you want to use before before
+[24:34] calling the API or what is the box
+[24:37] access token that you want to send um
+[24:40] while invoking the outbound API.
+[24:42] >> All right.
+[24:43] >> Yeah. Yeah. Exactly. So just to double
+[24:45] click on that, right? Like um set
+[24:47] another way, you are going to call a
+[24:49] bunch of APIs. Those APIs may take a
+[24:52] credential that is different from the
+[24:54] one you use internally in your business.
+[24:56] For example, if I want to call uh Slack
+[25:01] API, right? I may need an API key for
+[25:04] Slack. So now we are actually managing
+[25:06] that exchange so that we ensure that
+[25:08] only certain callers get access to that
+[25:11] specific API key and specifically the
+[25:14] Slack calls use the specific Slack API
+[25:16] key. So we're managing all that and like
+[25:19] Dewal is saying caching access tokens so
+[25:21] that you don't have off fatigue and and
+[25:24] uh whatnot. So there's a lot of stuff
+[25:26] going on under the hood uh with that
+[25:28] feature.
+[25:29] >> Yep. Um I'm not able to move my slide to
+[25:32] the next one. I don't know what's going
+[25:33] on, Trevor. Uh
+[25:37] >> oh, there you go. Oh, something
+[25:39] happened.
+[25:39] >> Uh uh. It looks like it's bugging out,
+[25:43] but it's kind of it's kind of working
+[25:45] here. What slide do you need to be on? I
+[25:47] might I might be able to get you there.
+[25:49] >> Oh, yeah. I need to be on the last slide
+[25:52] before I go to the demo because I want
+[25:54] to show the de Yeah, there you go.
+[25:55] That's it.
+[25:56] >> Awesome.
+[25:56] >> There you go.
+[25:57] >> All right. So, I'm Before I hop into the
+[25:59] demo, I'm very eager to show you code.
+[26:02] So before I go show you the code, here's
+[26:04] what we're going to develop. We are
+[26:05] going to stand up a gateway MCP gateway
+[26:09] uh with bunch of tools. Those tools
+[26:13] uh are MCPI
+[26:16] uh from an existing open API, right? So
+[26:20] we kind of uh have a concept of logical
+[26:23] targets in the gateway. A target is a
+[26:26] logical grouping of the API that you
+[26:28] want to mcpy
+[26:31] or a target could be a AWS lambda that
+[26:33] you want to mcpy
+[26:35] or it could be a smidy target which is a
+[26:38] smidy format JSON RPC format I believe
+[26:41] it's a JSON RPC format uh no JSON RPC
+[26:44] yes so similar to similar to the JSON
+[26:47] that we have a we have a proprietary
+[26:49] format called a smidy target which you
+[26:51] want to MCPI
+[26:53] um and there's There's zero code that
+[26:55] you're writing by the way. Uh you just
+[26:57] you just give us the open API spec
+[26:59] either upload on S3 or you just specify
+[27:01] inline the payload while you're creating
+[27:03] the target and um and off you go like we
+[27:07] we'll convert that into uh the MCP tool
+[27:10] and we'll take the we'll take the we'll
+[27:13] do the conversion from the MCP's JSON
+[27:15] RPC format to the respective uh targets
+[27:19] uh open API schema. We do the conversion
+[27:21] of the schema. We unify all of these
+[27:24] APIs into logical targets. Um, and then
+[27:27] uh we basically take care of uh sending
+[27:30] the right credentials based on the uh
+[27:34] oath uh excuse me based on the resource
+[27:36] credential provider that you configure
+[27:38] per target. Um so there's a concept of
+[27:41] target. Each target might have multiple
+[27:43] APIs. You can have multiple targets
+[27:46] defined in the gateway.
+[27:49] Right? So what we're going to show is
+[27:51] I'm going to show you how to create a
+[27:52] gateway number one and then we are going
+[27:54] to add targets. I'm going to start with
+[27:56] adding a target like MCP finding your
+[27:58] AWS Lambda function and then and then
+[28:01] we're going to evolve that and add a
+[28:03] target for open API. Um and then if time
+[28:06] permits like we'll we'll do a smidy demo
+[28:08] as well quickly and then I'm going to
+[28:10] show you like um like how to list the
+[28:13] tools uh and invoke the tools uh using
+[28:16] the gateway. Um, and I I'll show the
+[28:19] demonstration from the MCP inspector.
+[28:21] That's one of the open- source tools
+[28:22] that folks use uh widely. Yeah, sounds
+[28:26] good.
+[28:28] >> That sounds lovely. I think I think the
+[28:31] folks in the chat would love would love
+[28:33] to see a demo. They they would
+[28:35] absolutely love it. Chat always loves a
+[28:38] demo and and I I like a demo myself. So,
+[28:41] >> uh just let us know when you're ready
+[28:43] and and we'll let you kick us off there.
+[28:45] >> Yeah. So, if you can just share the
+[28:47] screen. Yeah.
+[28:48] >> Cool. I'll I'll I'll uh pop it up right
+[28:51] here. Here we go.
+[28:53] >> Alrighty. All righty. Okay. Are you able
+[28:56] to see my notebook screen?
+[29:00] >> We we are able to see it. Um maybe. Is
+[29:03] it possible for you to like zoom in just
+[29:05] a little bit? Oh,
+[29:07] >> actually keep keep it where it was. Uh I
+[29:09] think it's probably better for us to see
+[29:11] everything. Cool. This is good.
+[29:12] >> Okay. All right. All right. So hey by
+[29:15] the way you can create the gateway using
+[29:19] AWS CLI or Bordo3 or
+[29:24] uh just REST API plain simple REST APIs
+[29:28] or you can create gateways using a very
+[29:32] easy simple way of getting started with
+[29:35] gateway using starter toolkit. We call
+[29:39] it as bedrock agent core starter
+[29:41] toolkit. I just want to paste that link
+[29:44] here like oh where is that link? Uh
+[29:47] here's a here's a link like agent core
+[29:50] starter toolkit. This is a quick start
+[29:51] tutorial. Uh but basically I'm following
+[29:53] that. Um so you basically inst
+[29:56] >> awesome. Yeah we'll we'll definitely
+[29:57] share that in the chat. In fact, it
+[29:58] answers uh it it it uh reminds me of a
+[30:02] question somebody was asking earlier was
+[30:04] basically like do do they need to invoke
+[30:07] agent core with a specific SDK
+[30:10] >> which as I understand I think it it uses
+[30:14] >> uh the MCP protocol on the front end but
+[30:16] I could be wrong on that. So help me
+[30:18] help me clarify my understanding of how
+[30:20] you connect to the gateway.
+[30:22] >> Yeah, you're right. So uh let me just
+[30:24] distinguish between two things. One is a
+[30:26] control plane API which is creating a
+[30:30] gateway, adding a target, um configuring
+[30:33] the gateway with semantic search. All of
+[30:36] those are called as control plane
+[30:38] operations which you need to do it
+[30:40] either through AWS CLI or starter
+[30:43] toolkit or BO3 or REST API calls, right?
+[30:46] But when it comes to data plane calls
+[30:48] like hey I want to list the tools, I
+[30:50] want to invoke the tool MCP tool. Yes,
+[30:52] you can do that with any any MCP
+[30:55] compliant client, any MCP compliant SDK.
+[31:00] You can do it from any of the IDPs that
+[31:03] are compliant with MCP clients.
+[31:06] Can do it anywhere.
+[31:07] >> Yeah, basically you have to set it up
+[31:09] with the AWS APIs, but then once it's
+[31:12] set up, like all the interactions are
+[31:13] just MCP. The other one, by the way, is
+[31:16] console. So, you can even do there's
+[31:18] like a user interface where you can go
+[31:20] click click click and set up a gateway.
+[31:23] Um, and one of the great things that I
+[31:25] love about the console is it also
+[31:26] creates the uh the Cognto authorizer for
+[31:30] you. So, if you're, you know, just
+[31:32] hacking around and just want to get
+[31:33] something running right away. You can
+[31:35] just do it in like three clicks on the
+[31:37] console.
+[31:37] >> Well, you you have a satisfied customer.
+[31:39] That is exactly what they wanted to know
+[31:40] about the data plane and the control
+[31:42] plane. So, thanks for uh clarifying that
+[31:44] part of the architecture. Oh, by the
+[31:45] way, I'm going to show you the console
+[31:46] experience as well. So, all right. So,
+[31:48] let's let's get started. Like, so I'm
+[31:51] going to show you how to create a
+[31:52] gateway, add a target, um, and then, um,
+[31:55] and that to using a very simple starter
+[31:58] toolkit SDK. Um, the great part of the
+[32:01] starter toolkit, Kate, is is give you it
+[32:03] gives you a high level APIs uh, easy for
+[32:06] you to spin up a gateway and configure
+[32:09] an inbound authorizer here. In this
+[32:12] case, I'm going to use Amazon Cognito.
+[32:14] There's generally a lot of steps
+[32:16] involved like creating a domain,
+[32:18] creating a user pool, configuring the
+[32:20] Cognto.
+[32:22] There's a lot of like there there's an
+[32:24] IM role that you need to create to make
+[32:26] sure that the policies are right.
+[32:28] There's lots of complex operations
+[32:29] involved that is simplified by using
+[32:31] starter toolkit. So, use starter toolkit
+[32:33] please um if you are starting for the
+[32:35] first time. So you import the starter
+[32:38] toolkit gateway client here and then you
+[32:42] basically configure the region for the
+[32:43] gateway client here right let me just uh
+[32:46] let me just zoom in here a little bit
+[32:48] and then you can set the client logging
+[32:50] level to whatever logging level here
+[32:51] I've set it to debug so that I can
+[32:53] understand what's going on when I create
+[32:55] a gateway client and then here's a very
+[32:57] important helper function creating a
+[33:01] Amazon cognto authorizer for inbound
+[33:04] authorization Here
+[33:08] here's a great helper helper function
+[33:10] that creates the the Cognto user pool
+[33:13] like it's very easy. You don't need to
+[33:15] deal with any of the complexities. And
+[33:17] then once you create that inbound cognto
+[33:21] as an inbound authorizer
+[33:24] time to create a gateway create MCP
+[33:27] gateway with authorizer configuration
+[33:30] that is pointing to Amazon Cognto,
+[33:32] right? And then the response of create
+[33:37] MCP gateway is a unique gateway URI
+[33:43] or unique gateway endpoint that you can
+[33:47] use to call invoke tools list tools with
+[33:51] any of the clients MCP compliant clients
+[33:55] right and then uh let's let's let's
+[33:58] let's go further and then I'm adding a
+[34:02] new AWS lamb lambda target. So basically
+[34:04] I'm mcpifying
+[34:06] the AWS lambda function by saying all
+[34:10] right create a gate create gateway
+[34:12] target with lambda target type. Here in
+[34:16] this case you have not specified a
+[34:17] lambda on like you haven't specified
+[34:20] anything like as to which AWS function
+[34:22] you are really mcpifying because the
+[34:25] helper function creates a default lambda
+[34:30] function for you to test real quick. You
+[34:33] can also customize the lambda. I'll show
+[34:35] you how. But for a moment, let's just
+[34:37] let's just understand what is it doing
+[34:39] in behind the scenes. Right? This is
+[34:40] this is what I call it as easy O setup.
+[34:43] Right? So when you do that, bunch of
+[34:46] things are done here. So you see the
+[34:48] user pool is created in cognto and you
+[34:51] can also go into the the console and
+[34:53] check like yes this this is the pool
+[34:54] that is actually created in uh in
+[34:56] incognito. It creates a domain, Cognto
+[34:59] domain and then um uh it it basically
+[35:05] you know and when you create a domain
+[35:06] and when you create a user pool it gives
+[35:08] you a client ID uh to configure in
+[35:10] gateway for inbound authorization
+[35:12] configuration and then it creates an IM
+[35:15] role uh and then here is the actual
+[35:20] gateway parameters that was finally sent
+[35:22] to the control plane API for creating
+[35:24] the gateway. Right? So, here's the
+[35:27] protocol type. Here's an MCP. Um, here
+[35:31] are the allowed client IDs here. In this
+[35:33] case, it's a Cognito client ID that you
+[35:36] just created. And hey, by the way,
+[35:38] there's a discovery URL also that you
+[35:41] get out of when you create a Cognto
+[35:44] pool, right? which is an IDP uh open ID
+[35:48] uh configuration that you give to the
+[35:50] gateway uh so that the gateway knows how
+[35:53] to authorize the calls incoming calls um
+[35:57] when somebody calls invoke tools or list
+[35:59] tools. So let's just execute that. Where
+[36:01] is All right. So let's execute that. Uh
+[36:05] so it's creating all of that cool stuff.
+[36:08] User pool creation. It's waiting for the
+[36:10] DNS propagation. Cool, cool, cool. Um
+[36:15] and then um by the way when we create
+[36:19] the cognto pool right uh if you pull up
+[36:22] that open ID configuration discovery URL
+[36:25] you'll see a like uh a lot of metadata
+[36:28] information about authorization endpoint
+[36:31] um the token endpoint the issuer
+[36:33] configuration all of that stuff uh can
+[36:37] pretty print it also like for you to see
+[36:39] it better right okay and Then
+[36:44] um
+[36:47] oh it's just it's still waiting for the
+[36:48] DNS propagation. Okay. Um
+[36:52] >> yeah this is like a one minute sleep we
+[36:54] do uh just for the DNS propagation. Um
+[36:58] but yeah I think you know I I was pretty
+[37:01] impressed with this this starter
+[37:02] toolkit. I think it's super nice to be
+[37:04] able to just set this up in a few lines
+[37:06] and and try something and then plugging
+[37:08] it into Inspector which I which I think
+[37:10] you're about to do is is is kind of a
+[37:12] light bulb moment that it just works
+[37:14] with the off-the-shelf MCP stuff.
+[37:16] >> Yeah. So it just worked. So we we got
+[37:19] the unique gateway URL created. Yes,
+[37:22] this is the unique URI which I'm going
+[37:24] to take this URI and conf I have the MCP
+[37:28] inspector running here. So, I'm going to
+[37:30] just replace this URL with this URL that
+[37:33] I just created. Yes. And then, oh, by
+[37:37] the way, it created a lambda target
+[37:40] uh with a pre-built lambda that does get
+[37:45] weather for location and get time for a
+[37:48] time zone. So, we are basically exposing
+[37:50] two tools
+[37:52] uh which we got it from the AWS Lambda
+[37:54] MCP5
+[37:56] and it added that as a target. So we
+[37:58] should have a two tools in this gateway
+[38:01] now, right? So you just did this and you
+[38:04] have the entire MCP gateway standing up.
+[38:07] Yeah. All right. Let's test it out now.
+[38:10] So what you need is the gateway URL
+[38:12] which I already have it here. But what
+[38:14] you don't have is the authentication
+[38:16] information like authorization
+[38:18] information. In this case, the
+[38:19] authorization bearer token. We don't
+[38:22] have it yet. So let's get that. So what
+[38:25] I'm going to do is I'm going to I have
+[38:28] this helper function written which which
+[38:30] gets the access token from Cognito,
+[38:33] right? And so I'm just just going to
+[38:36] execute that and it's going to spit out
+[38:37] a uh a JWT token for me to test it out.
+[38:41] Do not share JWT tokens, please. This is
+[38:44] just demo. You're not supposed to share
+[38:48] You're not supposed to share JWT tokens.
+[38:51] I love the I love the passion in this
+[38:53] disclaimer. Like, hey, if you weren't
+[38:55] listening, please do not share your job.
+[38:59] Yes. Don't you?
+[39:00] >> All right. So, what I'm
+[39:02] >> for a demo.
+[39:03] >> Yes, this is for demo. So, what I'm
+[39:05] going to do is I'm going to say, hey,
+[39:07] send this JWT token um in the
+[39:11] authorization barrier token. And here's
+[39:13] my authorization barrier token. I just
+[39:15] copy paste it and just reconnect. Right.
+[39:18] And then I'm just going to clear and I'm
+[39:21] going to list the tools. And ooh look at
+[39:23] that we have get time get weather
+[39:27] already listed as list tools. So what I
+[39:30] did actually was I cleared the history
+[39:33] and I I clicked on list tools. The list
+[39:37] tool basically is is is establishing a
+[39:40] connection to agent core gateway
+[39:43] and it is doing a handshake
+[39:46] uh using the MCP protocol uh is actually
+[39:49] doing initialize as you can see here in
+[39:51] the history I don't know if you can see
+[39:52] the history here here so you see the
+[39:54] initialize and then it's it's you when I
+[39:56] click on list tools it's it's actually
+[39:58] hitting the list tools API here um and
+[40:02] it's getting all these tools from the
+[40:04] agent core gateway Amazing.
+[40:06] Yeah. Amazing. And I I I you know, I
+[40:09] don't there's somebody in the YouTube
+[40:11] chat. You know, chat names are funny.
+[40:12] I'll never know who they are, but I
+[40:14] would love if they DM'd me on LinkedIn
+[40:15] because they're asking really smart
+[40:17] questions. Apparently, they've used the
+[40:19] MCP inspector utility before. And I
+[40:21] think they're they're basically asking
+[40:23] like um he's he's he thinks we're
+[40:26] calling the each MCP server, but
+[40:28] actually what's happening with this is
+[40:29] you're just pointing this at the gateway
+[40:32] URL, which is an MCP server. And so
+[40:35] basically any MCP client can connect
+[40:38] into MCP gateway as long as it speaks
+[40:40] the protocol and obviously has the
+[40:42] authorization header.
+[40:43] >> That's right. And in fact, these tools
+[40:45] are hosted on Lambda, right? So they're
+[40:48] not even uh you know, they're they're on
+[40:50] Lambda. You could have tools on Fargate,
+[40:52] uh, on EKS, who knows where. Um, and the
+[40:55] other point in that question I saw
+[40:57] that's important is this inspector is
+[40:59] not something we developed or AWS
+[41:01] developed. This is something that the
+[41:03] MCP has built and we're just
+[41:06] demonstrating that gateway talk speaks
+[41:08] MCP. So gateway can just integrate right
+[41:10] here.
+[41:12] >> Exactly. And if you want to see the
+[41:14] lambda here, uh I am going to Oh, there
+[41:19] are a bunch of lambdas that I've created
+[41:21] by the way. Okay, here's the
+[41:24] >> it's like when I open my S3 console and
+[41:27] it's like, oh gosh, I'm never going to
+[41:29] find that.
+[41:29] >> Exactly.
+[41:30] >> Bucket.
+[41:31] >> There you go. Yeah. So, look at that.
+[41:33] This is the lambda that is getting
+[41:34] invoked. Get weather get time. You see
+[41:37] that? Cool. like you you see the power
+[41:39] of the gateway like you didn't need to
+[41:43] core the MCP protocol you didn't convert
+[41:46] those schema into the respective AWS
+[41:48] Lambda schema like all of this is baked
+[41:51] in all of the heavy lifting is done by
+[41:53] us you just give us the lambda that you
+[41:55] want to mcpify give us the schema of
+[41:58] your lambda and we'll do the schema
+[42:00] conversion right um
+[42:03] >> and is that is that by the way a native
+[42:05] just like direct plumbing to lamb lambda
+[42:07] that we have where we like like or is
+[42:09] there some middle step there that's
+[42:11] happening where we like convert it into
+[42:13] an MCP?
+[42:14] >> No, exactly direct plumbing to lambda.
+[42:17] Um, cool. So, yeah.
+[42:19] >> Yeah.
+[42:19] >> Um, and for the like I mentioned the
+[42:21] Fargate and EKS one. So, you write your
+[42:24] tools over there. You give us that like
+[42:26] specification that open API spec that
+[42:29] just says, you know, here are the things
+[42:30] that we want to tell the agent about,
+[42:32] right? this tool has this description
+[42:34] and these parameters and that's all you
+[42:37] need and then you're off and running.
+[42:39] >> Interesting. So, so if I were to do that
+[42:41] integration, would I I wouldn't need to
+[42:44] run like fast MCP on the container?
+[42:46] >> You wouldn't. And you wouldn't even have
+[42:48] to deal with O, right? Like you don't
+[42:50] want to nitty-gritty of O. You just use
+[42:52] this semantic search. You don't even
+[42:54] have to worry about it. Just comes for
+[42:56] free. So,
+[42:57] >> could we talk about O a little bit?
+[42:59] Well, like I think where where you do
+[43:01] that MCP if you still have MCP inspector
+[43:03] Dol if you could pull that up. I think I
+[43:05] have I've got a question over this about
+[43:06] off right. So
+[43:08] >> in this case I'm assuming you just got
+[43:11] returned all of your tools right that
+[43:12] you have on this gateway but could you
+[43:15] feasibly say like for Trevor I only want
+[43:18] him to have access to like
+[43:20] >> you know uh developer tools and Nick I
+[43:23] want him to only have access to like
+[43:25] data science tools. Is there is there
+[43:27] some is there some capability there in
+[43:30] terms of like only returning certain
+[43:32] tools?
+[43:34] >> Yeah, so um that's a great question by
+[43:36] the way. Um I I've literally gotten this
+[43:39] question like almost every time. So um
+[43:42] first of all um I wanted to show you
+[43:46] something because this is related to
+[43:48] this question. Um where is the allowed
+[43:53] plan? Yeah. So first number one uh there
+[43:57] is an authorizer configuration in while
+[44:00] you create the gateway where you're
+[44:02] allowing a specific application clients
+[44:06] whoever has access to the gateway you
+[44:08] can this this is actually a list right
+[44:10] so you can have like any number of
+[44:12] applications who needs to access the
+[44:14] gateway tools uh you need to mention all
+[44:17] of these individual client ids here who
+[44:19] should have access to the tools that are
+[44:21] being served by that particular gateway
+[44:23] instance Now to your question uh if a
+[44:27] user who already has access to gateway
+[44:30] needs a fine grained access permission
+[44:33] to specific tools or not. Does the
+[44:35] gateway has that feature? Not yet. Not
+[44:40] yet. But what you can choose to do is to
+[44:42] have multiple gateways aligned to a
+[44:46] specific
+[44:47] client application and restricting the
+[44:51] number of tools or type of the tools
+[44:53] that you're offering to that gateway and
+[44:55] and and configuring this allowed clients
+[44:57] right there in before the call comes in.
+[45:00] >> That may that makes sense. That sounds
+[45:02] actually like a great project for an SA
+[45:03] like me to build. like we could we could
+[45:06] have like four different gateways with
+[45:07] different permissions or different sets
+[45:09] of um MCPS that they're supported. And I
+[45:11] guess I should be like precise too
+[45:13] because I think e you know tool level
+[45:15] granularity would be awesome one day.
+[45:17] Even MCP level granularity I think is is
+[45:19] quite um yes
+[45:20] >> quite interesting. So it's glad I'm glad
+[45:23] to know we're thinking in that direction
+[45:24] and we've already we're already devising
+[45:26] like workarounds for customers that need
+[45:27] to do it today is awesome.
+[45:29] >> Yeah and I think Trevor this also hits
+[45:30] on another amazing thing about gateway
+[45:32] which is that it's serverless.
+[45:34] Right. So like typically when we think
+[45:36] about MCP servers, you think about
+[45:38] standing up infrastructure and if I was
+[45:41] creating, you know, 10 different MCP
+[45:43] servers, I'm spinning up 10 different
+[45:45] servers. These gateways are totally
+[45:47] serverless. So you don't pay to have you
+[45:50] could have a million gateways and you
+[45:52] wouldn't pay per gateway, you would pay
+[45:54] per request. Um so so that you know
+[45:57] unlocks a lot of interesting patterns in
+[46:00] terms of tenency. Um, and it's not to
+[46:02] say that we'll never do fine grain
+[46:04] access control. I think that's a really
+[46:06] important feature. Um, but definitely
+[46:08] there's some really interesting things
+[46:09] you can build off that server.
+[46:10] >> Assumably I could have like if I have if
+[46:12] I'm just thinking on the the the uh
+[46:15] Lambda integration, if I have a Lambda
+[46:17] MCP, assumably I could have two gateways
+[46:19] pointing towards the same Lambda, right?
+[46:20] So really the gateway itself just
+[46:22] becomes the the off layer.
+[46:24] >> And not only that,
+[46:25] >> in a serverless model, it makes a lot of
+[46:26] sense,
+[46:27] >> right? And not only that, you could have
+[46:28] two different specs, right? You could
+[46:30] say even though I'm pointing to the same
+[46:31] lambda on gateway
+[46:32] >> different open API tool one and two and
+[46:35] on gate two I only want to expose tool
+[46:37] one even though they both point to the
+[46:39] same lambda. So
+[46:40] >> I like this I like this. This is great.
+[46:42] >> Let's extend it this more. So now
+[46:45] >> uh you want to bring your own lambda,
+[46:48] you want to customize the lambda. Yeah.
+[46:50] So how do you do that? Um so here's an
+[46:53] API um as part of the starter toolkit.
+[46:57] create MCP gateway target. Yeah. And
+[47:01] you're adding a target. Target type is
+[47:05] lambda, right? And then now you want to
+[47:07] select, oh, I have already authored a
+[47:09] lambda function. I just want you to use
+[47:12] that. Yes, we can use that. So what you
+[47:15] can do is give us a JSON. Um and as part
+[47:19] of that JSON configuration, you give us
+[47:22] the R number of the lambda function that
+[47:24] you want to MCP5 them and insert it
+[47:26] here. I haven't inserted here but just
+[47:28] this is a placeholder by the way. And
+[47:30] then very important aspect is give us
+[47:33] the tool schema which uh you Nick were
+[47:35] telling right you were telling
+[47:37] previously right you you could
+[47:39] definitely use this um you know uh a
+[47:42] different schema for different uh
+[47:44] gateways although you're using the same
+[47:46] underlying AWS lambda function. Uh here
+[47:49] in this case I have defined the tool
+[47:51] schema uh to expose two tools get
+[47:53] weather and get time. But here is how
+[47:57] you do it. And then you here is the
+[47:59] target payload meaning the target
+[48:01] configuration payload. Um and off you
+[48:04] go. It just it it will add your own
+[48:06] custom AWS Lambda function and MCPy
+[48:08] that.
+[48:10] >> Yeah.
+[48:11] >> Okay. All right. Let's let's move on. So
+[48:14] a lot of lot of things that we did for
+[48:17] AWS Lambda function. Now let's move on
+[48:21] and uh show you how to integrate with
+[48:24] strands. So let's say you have a strands
+[48:27] agent is it and then same thing like
+[48:29] similar code exists for lang chain agent
+[48:32] or lang graph where you need to create a
+[48:37] streamable HTTP client. Here is a very
+[48:40] important code streamable HTTP client
+[48:45] transport.
+[48:46] Uh the URL is going to point to gateway
+[48:51] URL agent core gateway URL. Yes. And
+[48:54] then the headers you're going to send uh
+[48:57] as part of the authorization header the
+[48:59] access token with whichever IDP you have
+[49:02] you want to work with it could in this
+[49:04] case it's cognto but it could be
+[49:05] variable ozero or octa or whatever
+[49:08] whichever IDB is compliant with ooth
+[49:12] right and then once you have this
+[49:15] uh streamable HTTP connection uh you
+[49:18] just create an MCP client with that
+[49:20] transport and use as usual will
+[49:23] configure your agent with the tools and
+[49:27] the LLM here. In this case, I'm using
+[49:29] bedrock model by the way. Um, and then
+[49:33] um here's the here's the main core like
+[49:35] agent you're spawning you're creating an
+[49:37] agent object with model and the tools
+[49:39] and this tools is pointing to agent core
+[49:41] gateway. Yeah, this this tools are
+[49:44] pointing to gateway, right? Um and then
+[49:47] I'm just I'm just invoking the run
+[49:49] gateway which is actually executing the
+[49:51] gateway or executing the agent and I'm
+[49:53] asking the questions literally like like
+[49:55] get me the time for PST time zone for
+[49:57] example here in this case right it's
+[49:59] thinking it it finds out the right tool
+[50:02] based on the list tools and then it's
+[50:04] like yes let me invoke the tool
+[50:06] everything is seamless right as as as
+[50:09] good as you're you're working with an
+[50:11] MCP compliant yet another MCP compliant
+[50:13] MCP server
+[50:16] Yeah, you can use it from cloud code,
+[50:18] you can use it from the IDE. You just
+[50:20] need to configure the the URL MCP URL
+[50:23] which is agent core gateway and the
+[50:25] authorization bearer token.
+[50:28] >> Awesome. Makes makes a lot of sense.
+[50:31] >> All right. Um let's move on and add more
+[50:37] targets. Targets. Targets. Yes. So let's
+[50:40] move on to the adding more targets which
+[50:42] is now I'm going to just show you like
+[50:44] quick quick like how to do the same
+[50:46] stuff with Bordo3. So here's the BO3. Um
+[50:50] you can also do with Bordo 3 using
+[50:52] create gateway API. Um and so just
+[50:56] executing that.
+[50:58] Oh. Oh yeah. Yeah. Sure. Sure. I need to
+[51:01] say exit. Bye-bye. Right. I'm just
+[51:03] exiting that. All right. Um, and here is
+[51:08] the border three client. Oh, am I do I
+[51:14] not?
+[51:15] >> Uh, quit, I think, is the Yeah.
+[51:18] >> Yeah. All right. Uh,
+[51:21] okay. There you go. All right. And then
+[51:23] you have you you create an Oh, I got an
+[51:27] exception. Oh my god. All right. Let's
+[51:28] troubleshoot. This says it already
+[51:30] exists. Yes. I'm going to change the
+[51:33] name. This is something cool about uh
+[51:36] show and tell, right? It might fail,
+[51:38] isn't it? I'm going to rename that the
+[51:41] name of the gateway,
+[51:44] right? Oh, it succeeds now. Uh I have
+[51:48] another gateway created with this URL,
+[51:52] right? And uh I'm going to bring my own
+[51:56] MCP Lambda target in this case get order
+[51:59] tool and update order tool. I give the
+[52:01] schema here and add it as part of the
+[52:04] gateway
+[52:06] and
+[52:08] uh it's successful. Let's test it out if
+[52:10] it's successful. Do we see the get order
+[52:13] and update order or not? So the first
+[52:15] thing I'm going to do is
+[52:19] uh
+[52:22] uh I'm going to use the gateway URL
+[52:24] replace it here and reconnect
+[52:29] clear and see the list tools. Yes, this
+[52:31] is the get order tool.
+[52:34] One, two, three. Run the tool. Make sure
+[52:36] it's successful, right? This is
+[52:38] successful.
+[52:39] >> Well, and you just created new you
+[52:41] basically created a new gateway and new
+[52:43] configs just now in that little code
+[52:45] snippet, right?
+[52:46] >> Yes. Little code. Yes,
+[52:47] >> that happened. That that was that was
+[52:49] super fast. That was super fast. So,
+[52:52] folks, you got you got no excuse not to
+[52:55] play around with and experiment with
+[52:56] agent core gateway a little bit. Um
+[52:58] because we've we've already seen in what
+[53:00] less than an hour you can have multiple
+[53:03] uh agent core gate uh gateways spun up.
+[53:07] You can test them out. I'm actually I
+[53:08] hadn't uh seen MCP inspector before, but
+[53:10] I'm going to play with that because uh
+[53:12] it seems easier than trying to write my
+[53:14] local MCP file every time I'm I'm
+[53:17] looking to update a new MCP server. But
+[53:19] >> yeah,
+[53:19] >> um it's been awesome having you having
+[53:21] you guys on. We've got a we're gonna
+[53:23] open it up to the chat to like let any
+[53:25] final questions come in for the next few
+[53:26] minutes. We've already got a few um that
+[53:29] have been floating in, but I just can't
+[53:30] say thanks enough for like sharing your
+[53:32] expertise and like I I personally
+[53:33] learned a lot. In fact, I'm going to go
+[53:35] to a customer workshop tomorrow and I'm
+[53:37] and when they ask the question, how do I
+[53:39] secure um applications behind gateway
+[53:42] for different teams, I'm going to have
+[53:43] the answer now thanks to you two. So,
+[53:45] so, so appreciate the appreciate the
+[53:47] guidance there. Um one question and and
+[53:50] I don't know if you all have a
+[53:51] perspective on this, but it's an
+[53:53] interesting one is around security. Um,
+[53:56] >> I think, you know, I think in the I
+[53:57] think about this in the context of MCP,
+[53:59] but also of course MCP is just a means
+[54:02] to an end of like injecting context into
+[54:04] a prompt that's going to go into a
+[54:06] model. So, um, of course I I know we
+[54:09] have a lot of different thoughts of how
+[54:11] to secure that, but do we do we
+[54:12] recommend any um any sort of layer like
+[54:16] in between an MCP server and a client or
+[54:18] do we see most customers just using a
+[54:20] typical guard rail to kind of uh secure
+[54:23] the agent that they've built on top of
+[54:25] MCPs?
+[54:26] Yeah, I I think it's a great question
+[54:28] like the there are lots of things that
+[54:33] uh comes to my mind when it comes to the
+[54:34] securing the agentic applications. It's
+[54:37] not only about calling the tool
+[54:39] securely. It's also like how the agent
+[54:43] is orchestrating the flows uh you know
+[54:45] monitoring each and every step within
+[54:47] the orchestration like which parameters
+[54:48] are being used to invoke the tool for
+[54:50] example uh what is the prompt uh you
+[54:54] know setting up the the guards before
+[54:56] even it hits the agent
+[54:58] >> in fact you know what you're making me
+[55:00] think that it maybe equally as important
+[55:02] as as security is just observability
+[55:07] just being able to see what's happening
+[55:08] inside the agent. Because you in the
+[55:10] world of generative AI, you you you can
+[55:13] I mean at least if you're using FM, you
+[55:15] can't ever really guarantee 100%
+[55:17] accuracy, right? So to be able to at
+[55:19] least see what's going right and what's
+[55:22] going wrong when it does feels um feels
+[55:25] feels very fundamental for people to be
+[55:26] thinking about.
+[55:27] >> Yeah. Yeah. Yeah. I I just want to show
+[55:30] like a quick thing for the open API as
+[55:32] well if there if there's time, Trevor.
+[55:34] Uh
+[55:35] >> yeah, we we we got like a couple more
+[55:37] minutes. If it's quick, I I I can I can
+[55:40] let you have it.
+[55:41] >> Let Let's do it. Let's do it. Let Let's
+[55:43] uh test it out here. So, um All right.
+[55:45] So, we're going to add an open API and
+[55:48] convert it and into MCP tool. Here, I'm
+[55:50] using NASA's Mars's get weather API,
+[55:54] which is publicly available open API. By
+[55:56] the way, go to NASA's
+[55:59] um API open API to get the weather for
+[56:02] Mars and you will get a sample API key
+[56:05] here uh which is demo demo key. So the
+[56:09] first thing you need is um how what do
+[56:14] you need to send that open API in terms
+[56:16] of credentials?
+[56:18] You could send it an API key or you
+[56:21] could also ask gateway to send an access
+[56:24] token using OOTH as you can see here in
+[56:27] this in this table right here. I'm going
+[56:29] to use NASA uh I'm going to call NASA's
+[56:32] API using API key. Here's the API keys
+[56:34] demo key by creating a API credentials
+[56:38] key provider and this will securely
+[56:41] store your API key in secrets manager in
+[56:43] your account basically. And you see a
+[56:45] bunch of error messages here. ignore
+[56:47] that because I did not uh ensure that it
+[56:51] has a unique name. All right, so let's
+[56:53] run this. All right, so it creates the
+[56:55] credential provider with an API key for
+[56:57] calling NASA's API. All right, now the
+[57:00] second second step you need is where is
+[57:03] my open API spec?
+[57:05] Where is it? Right? So you you get that
+[57:07] open API spec in either in YAML format
+[57:10] or JSON format uh and upload it in S3
+[57:13] and and then say hey gateway target
+[57:16] point that to this schema so that
+[57:20] gateway knows how to convert the
+[57:21] incoming MCP invoke tool request into
+[57:24] the respective open API schema and call
+[57:27] the API here in this case get weather
+[57:30] for Mars right and then uh the next step
+[57:34] is creating the gateway target and say,
+[57:37] "Hey, yes, this is the the NASA's open
+[57:40] API target with the open API spec
+[57:42] uploaded S3 URI." Uh, here's the target
+[57:46] configuration for that. And here is the
+[57:48] API key credential provider. I want
+[57:51] gateway to use the specific API key
+[57:53] which I've configured in the uh in the
+[57:57] API credentials provider and gateway
+[58:00] will use that credentials to call the
+[58:03] NASA's open API. Right? Right. So, I'm
+[58:05] just just going to call this uh and see
+[58:09] if it succeeds. Yes, it succeeded. Let's
+[58:12] see if you see that in the MCP
+[58:15] inspector. So, I'm going to clear the
+[58:17] cache. I'm going to call the list rules
+[58:18] again. Where is the get Mars weather?
+[58:21] Here is the get Mars weather. Get inside
+[58:24] weather. All right. 1.0.
+[58:28] Uh, and the feed type is JSON. They
+[58:30] expect us to send this this this thing.
+[58:33] Oh, it's it failed out. Oh my gosh. All
+[58:35] right.
+[58:37] >> I think it has to be lowercase, maybe.
+[58:39] >> Oh, is it Jason?
+[58:41] Good
+[58:43] cat.
+[58:45] You are a
+[58:47] Okay. All right.
+[58:49] >> Wow. I I was like I saw the error and I
+[58:52] was like, "All right, we got two minutes
+[58:53] left. I don't know if we got time to
+[58:54] troubleshoot this one, but we got we got
+[58:56] Nick. We're good. We're good."
+[58:58] >> So, you see here all of that great
+[59:00] stuff. Now here is the whole process.
+[59:03] You never had to code this. You never
+[59:05] had to convert the schema, right? Cool.
+[59:08] >> Very, very cool. We didn't get to search
+[59:10] tool and a few things, but I think we
+[59:12] got the gist and obviously we'll share
+[59:14] offline and uh yeah, thank you all so
+[59:16] much. This was this was great.
+[59:17] >> Yeah, of course. Thank Thank you both
+[59:19] for for making the time. Uh I I've been
+[59:21] sharing links to the repo in the
+[59:23] comments so folks can go play with it
+[59:24] themselves. So, uh again, appreciate you
+[59:27] guys coming on. Hopefully we can do it
+[59:28] again sometime. Maybe maybe after
+[59:30] reinvent whenever the next wave of agent
+[59:32] core gateway features come out. But
+[59:34] >> oh yeah I need more. I need more. I need
+[59:35] another session.
+[59:38] I hope folks folks in the audience
+[59:40] please say plus one. I need this folks
+[59:42] to come back.
+[59:45] >> We I think we can make it happen. It was
+[59:46] a great session. Um thanks everybody so
+[59:49] much for coming along and we'll see you
+[59:50] next week.
+[59:52] >> Thank you.
+[59:53] >> Thanks.
+[59:54] >> Bye.
+[59:56] [Music]
+[60:08] [Music]

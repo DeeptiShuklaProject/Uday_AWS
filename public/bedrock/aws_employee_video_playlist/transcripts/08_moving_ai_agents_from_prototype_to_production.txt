@@ -1,0 +1,1407 @@
+Title: 08_moving_ai_agents_from_prototype_to_production
+Video URL: https://www.youtube.com/watch?v=WyGK8UcAxKo
+============================================================
+
+[00:00] Hey. Hey. Hey.
+[00:06] [Music]
+[00:14] [Music]
+[00:27] [Music]
+[00:32] Hello all, welcome to AWS show and tell.
+[00:35] Uh I am Anil Ladinti. I'm a senior
+[00:36] solutions architect here um at AWS
+[00:39] working with the enterprise customers.
+[00:41] We have uh Isan, Myra and Mark. Today
+[00:44] we're going to go to the introductions
+[00:45] but today we have a very special
+[00:47] episode. It's agent core uh general
+[00:50] availability and we want to go uh cover
+[00:52] a whole lot of details. We have a pack
+[00:55] demos. We are probably going to do uh
+[00:58] little bit of uh show and tell, but the
+[01:00] tell part comes here first and then
+[01:02] we're going to go into a lot of demos. I
+[01:04] promise you there's exciting demos here.
+[01:07] So u let's go through the through
+[01:10] through the round of introductions here.
+[01:11] Mark.
+[01:12] >> Hey. Uh thanks Sil. Yeah, it's great to
+[01:14] be back uh on show and tell here. Uh
+[01:17] Mark Roy here. Been with AWS a little
+[01:20] over seven years. uh got to start with a
+[01:23] IML, moved on to Gen AI and now agents.
+[01:26] So I feel like I've uh aged another like
+[01:29] 20 years here because now with agent
+[01:31] years every every few days is a full
+[01:33] agent year but uh yeah good to be
+[01:36] >> this is new Mark like yeah agent years
+[01:38] is the is the new trend I guess.
+[01:40] >> Absolutely. Yeah.
+[01:42] >> I used to be every month is a year I
+[01:44] think is even faster now every few days
+[01:48] we are getting old. Okay. So, hi
+[01:50] everyone. Myra here. I'm a tech lead for
+[01:52] Agent AI here at AWS. I've been here for
+[01:56] almost six years now. Uh I'm a data
+[01:59] scientist uh from heart. Uh have been
+[02:02] working on all the ML fun genai
+[02:06] excitement and now having a lot a lot of
+[02:10] fun with Asian AI and yeah things are
+[02:14] moving fast. We are moving fast and it's
+[02:16] exciting and G. Yeah, it's amazing to be
+[02:19] here.
+[02:21] >> Cool.
+[02:23] >> Yeah. Uh, hi everyone. Great to be back
+[02:25] again. Uh, finally we are here. Uh, we
+[02:28] have agent core generally available. Uh,
+[02:30] really excited to see what you all build
+[02:32] with it, but we have so many cool stuff
+[02:35] to show you today. Uh, I won't, uh, take
+[02:38] any more time. I'll just dive right into
+[02:39] it. We have so much to cover. So, uh,
+[02:42] give it back giving it back to Mark.
+[02:46] >> Sounds good. Uh let's dive right in.
+[02:48] I'll probably spend about you just a few
+[02:50] minutes here giving you an introduction,
+[02:52] then we'll we'll get into serious
+[02:54] showand tell mode as well. Uh so uh let
+[02:57] let's get into it. Um so uh yesterday in
+[03:01] fact uh we hit our uh GA milestone. Uh
+[03:05] super exciting. We announced we launched
+[03:07] Agent Core back in July at the New York
+[03:09] Summit. The response has been amazing.
+[03:12] Uh we've seen just so many customers
+[03:14] getting excited. It sounds like the
+[03:16] timing was perfect uh with some of the
+[03:18] challenges that they're all facing and
+[03:21] in our work. We see it day-to-day with
+[03:23] uh with all of our customer engagements.
+[03:25] But big milestone uh fun show today to
+[03:28] bring you up to speed on all that's
+[03:29] happening. This is uh agent core and all
+[03:31] of its services here. Let me let me set
+[03:34] a little backdrop as to why it's so
+[03:36] important, why it's so interesting. Uh
+[03:39] what we found uh is that uh customers
+[03:42] are getting trapped in in prototype
+[03:44] purgatory. Uh so agents are living on
+[03:47] laptops, no real business value because
+[03:50] of all of the challenges. You see a few
+[03:53] mentioned here, but we'll go into a
+[03:54] bunch more as we as we dive into uh uh
+[03:58] what's what's being offered here. But
+[04:00] what we found is that just like with the
+[04:03] introduction of the cloud back in 2006,
+[04:07] customers needed an enterprise
+[04:10] scale, enterprise security, uh an
+[04:13] enterprise time to value. And what we're
+[04:16] finding is that with agents, we need the
+[04:17] same exact thing. So with agent core,
+[04:20] we're delivering uh a comprehensive
+[04:22] agentic platform. There's a few, you
+[04:25] know, core uh pieces of that that make
+[04:28] us unique that make us really excited.
+[04:31] Number one, build it the way you want.
+[04:33] We're very open. You pick your agent
+[04:35] framework. You pick your model. Uh
+[04:37] deciding your protocols. We're open to
+[04:40] using uh hotel for observability. Uh
+[04:43] pretty much uh meeting customers where
+[04:45] they're at. Uh the next big one uh is
+[04:48] enterprise level security. So, you can't
+[04:51] trust your agents uh unless you've got
+[04:54] uh security figured out. At AWS, we've
+[04:57] had uh you know, a huge long history of
+[05:00] security uh doing that right. We're
+[05:02] doing it with agents uh as well. Uh I
+[05:05] won't go through all of these, but let
+[05:06] me just wrap up with we're basically
+[05:09] combining speed, scale, and security for
+[05:13] agents, and that's what our customers
+[05:14] have been uh demanding. Uh so let's get
+[05:17] into uh some of what's uh been added to
+[05:21] uh agent core since we launched uh three
+[05:24] months ago.
+[05:26] the biggest focus has been uh uh
+[05:30] introducing all the things that you
+[05:32] would expect with a GA uh platform and
+[05:34] that for enterprises tends to be more
+[05:37] and more security right so what we've
+[05:39] added is private link and VPC so you can
+[05:42] run all of your agents in a fully secure
+[05:44] environment uh infrastructure as code uh
+[05:47] you've got to have repeatable uh
+[05:50] deployments repeatable um uh creation of
+[05:54] agents gateways and so forth. All of
+[05:57] that's done uh just like with any of
+[05:59] your traditional uh workloads as well.
+[06:01] Now, we've got infrastructure as code
+[06:03] for the entire platform. Tagging uh is
+[06:06] critical because you want to know uh
+[06:08] which agents uh uh which teams are are
+[06:12] spending on which components. uh you
+[06:14] want to be able to look across uh uh
+[06:17] different teams, different business
+[06:19] units, be able to associate tags with
+[06:21] all of your agent resources uh and
+[06:24] manage them effectively. And then of
+[06:26] course uh most of our customers aren't
+[06:29] just in in one region. They're uh
+[06:32] there's a lot of global uh need for
+[06:34] this. So we've basically expanded our
+[06:36] initial four regions. Now we've got
+[06:37] nine. Uh so if you uh are are in uh it'd
+[06:41] be interesting to hear where you're all
+[06:43] from today, but I'm sure some of these
+[06:44] regions are are pretty important to you.
+[06:47] Uh so we've upgraded to nine regions. Um
+[06:51] now let me just cover a few of the
+[06:53] upgrades that we've made to some of the
+[06:54] core services. Probably the most
+[06:56] fundamental part of the platform is our
+[06:59] runtime service. It's the piece that
+[07:01] really emphasizes that bring your own
+[07:03] agent framework, bring your agent code,
+[07:06] pick your model. Uh we're basically
+[07:08] giving you a secure, scalable, fully
+[07:11] managed way to to host your agents. Uh
+[07:15] you've asked for A2A support and and
+[07:17] that's our uh one of our big
+[07:18] deliverables here uh for GA. We've got a
+[07:21] A2A support. We'll I don't think we'll
+[07:23] show you a little bit of that today, but
+[07:25] we'll be back uh in a week or two to to
+[07:27] demonstrate that. Uh and we've done a
+[07:29] bunch of usability uh enhancements as
+[07:32] well to just make it as simple as
+[07:34] possible. The balancing act here is we
+[07:36] want people to be able to build agents
+[07:38] quickly and get started quickly, but we
+[07:40] also are are giving them full
+[07:43] configurability and scalability. So,
+[07:45] we've done things like uh make the AM
+[07:48] role creation automatic, giving it, you
+[07:51] know, lease privilege access to only the
+[07:53] pieces that you need. We've added an
+[07:55] ability to stop sessions. So, if you
+[07:58] want to tightly manage your agents, make
+[08:00] sure they're not going too far, we've
+[08:02] got APIs for that. you can configure how
+[08:05] long an agent can run. Uh we've got
+[08:07] header propagation which is basically uh
+[08:10] giving you a couple of things. One is uh
+[08:13] identity aware authorization. So when
+[08:16] you call your agent, the agent knows
+[08:19] who's calling, who is the user, and you
+[08:21] could use that to do your own uh
+[08:24] additional logging. You could do that to
+[08:25] hook to the right uh short-term and
+[08:27] long-term memory, things of that nature.
+[08:30] And we've also
+[08:31] >> Sorry, Mark. I love how easy it is to
+[08:34] get started but also how much
+[08:35] flexibility you get with all these new
+[08:38] capabilities right so it's really uh
+[08:40] having the full spectrum of getting your
+[08:44] uh IM role created automatically and
+[08:46] it's fine grain so it's already secure
+[08:49] it's enterprisegrade security and then
+[08:51] you want to move to production you want
+[08:53] to have that on a CI/CD pipeline you
+[08:56] want to have infrastructure as code you
+[08:58] can build up from it maybe you're adding
+[09:00] more services you're adding
+[09:03] more things to your agent, it becomes
+[09:04] more complex. You can do that
+[09:06] incrementally and this is really the
+[09:08] core of what we are offering here. So,
+[09:11] it's really really exciting to see all
+[09:13] of these capabilities that will keep the
+[09:16] developer experience great while also
+[09:19] providing a lot of flexibility.
+[09:22] Speaking of flexibility, if we talk
+[09:24] about runtime itself, you know, one of
+[09:26] the core capabilities of course is to
+[09:28] host agents, but we also let you make
+[09:31] your own MCP servers and host those
+[09:34] using runtime using the same great
+[09:36] capabilities of uh longunning workloads,
+[09:39] large payloads. All of these things are
+[09:40] are supported by uh runtime, but now
+[09:43] we're adding uh native A2A capability.
+[09:46] We'll deep dive on that soon. But you
+[09:48] get things like built-in uh agent card
+[09:50] support, uh agent agent communication
+[09:53] with JSON RPC. Uh all of that's built
+[09:55] in. So you can really easily take your
+[09:58] A2A code uh hosted in runtime and get
+[10:01] all the benefits of of agent core
+[10:02] runtime for those uh workloads and get
+[10:06] your interoperability. Uh a couple of
+[10:08] new pieces with respect to memory. We've
+[10:10] got a fully managed short-term and
+[10:12] long-term memory. you've asked for
+[10:14] customizations there. So, now you have a
+[10:16] fully uh customizable self-managed
+[10:19] strategy. So, we give you built-in ones
+[10:21] to do session summaries, extract user
+[10:24] preferences, things of that nature. Now,
+[10:27] if you've got your own ideas or if you
+[10:28] want to do maybe migrations from other
+[10:31] memory platforms, all of that's doable
+[10:33] with these custom strategies and with
+[10:35] the batch APIs to uh inject long-term
+[10:38] memory. We also heard loud and clear
+[10:40] that you want these things as easy as
+[10:42] possible to integrate with your agent
+[10:44] framework. So we've taken care of that
+[10:46] with lang chain, langraph and more. And
+[10:49] we've got uh metadata filtering and
+[10:50] short-term memory. Uh
+[10:54] um two more quick things and then we'll
+[10:56] get our first demo here. Uh on the
+[10:58] gateway front, uh if you remember, Agent
+[11:00] Core gateway is a an excellent way to
+[11:04] take all of your existing APIs and tools
+[11:06] and expose them as MCP and then they
+[11:08] plug right into your coding assistance.
+[11:10] They plug right into your agents. We
+[11:12] heard you loud and clear that you wanted
+[11:14] MCP server as a new target type. So now
+[11:16] you can create gateways that add in Open
+[11:19] API REST services, Lambda, and existing
+[11:23] MCP servers all within the same gateway.
+[11:27] uh you get this full security benefits,
+[11:29] you get the full search benefits. All of
+[11:31] that is is built in. Speaking of
+[11:33] security, you also asked for doing uh
+[11:37] inbound authorization using IM. A lot of
+[11:40] our enterprise customers have a huge
+[11:42] investment in IM and although MCP has
+[11:45] OOTH as a standard protocol, they also
+[11:47] wanted to support MCP using IM
+[11:50] authorization. So, we've got you covered
+[11:52] there.
+[11:54] Um, I'm going to skip this one. I want
+[11:56] to hit this uh last point and then show
+[11:59] you our our first demo. And that is uh
+[12:02] we wanted to uh make it even easier to
+[12:05] get started, even easier to use uh both
+[12:08] strands agents uh and uh agent core and
+[12:12] with any agent framework. So, we've got
+[12:13] a new MCP server uh that's easy to just
+[12:16] drag into whatever coding assistant
+[12:18] you're using uh and then it knows about
+[12:20] agent core uh and it can make your agent
+[12:23] core development life uh easier. So,
+[12:25] let's let's flip to the first demo.
+[12:28] >> Yeah, I mean there are so many
+[12:29] capabilities here, right? So, it's like
+[12:32] I mean obviously the time is not
+[12:33] sufficient to demo all of these
+[12:34] capabilities, but we're here to uh
+[12:37] definitely add more videos to this
+[12:39] playlist that we have. Um, we have a
+[12:41] deep dive playlist on agent core. U
+[12:44] please be sure to check that out. We'll
+[12:46] add that uh to the description of the
+[12:48] streams as well.
+[12:50] >> And the good news is even though we
+[12:52] don't remember all the launches that we
+[12:54] are getting because they are coming up
+[12:56] every day, our MCP server does and this
+[12:59] MCP server can really help you uh
+[13:02] bringing your agents to life and it can
+[13:04] really help you uh creating very uh nice
+[13:07] applications. So, it's a great way to
+[13:09] get started as well.
+[13:11] >> So, I'll be linking the agent code MCP
+[13:13] server in the chat.
+[13:15] >> Awesome. Yeah. So, uh for those of you
+[13:17] that don't know, uh Curo is uh AWS's, um
+[13:21] coding assistant. Uh it's like cloud
+[13:23] code, uh cursor, and more. It's it's got
+[13:25] some advanced capabilities that kind of
+[13:27] go a step further. Uh we won't dive into
+[13:30] all of that in this show, but let me
+[13:32] just show you a couple of quick things.
+[13:33] Uh when you uh
+[13:37] uh let's see where do they go? There's a
+[13:39] Curo ghost right there. Uh when you
+[13:41] bring up Curo, you can uh manage your
+[13:44] MCP servers. So this is how you can uh
+[13:48] add in whatever MCP servers you want. So
+[13:50] I've added in uh Strand agents uh MCP
+[13:55] server. You can get that from the Strand
+[13:57] agents website uh and from our MCP
+[14:00] server for agent core. You can just pop
+[14:02] that right in here as well. Um, and what
+[14:05] I did earlier, uh, actually just about a
+[14:08] half hour ago, uh, I asked, uh, Kira to
+[14:12] uh, make me a simple strand agent to
+[14:14] just do uh, f Englishtorench
+[14:16] translations. So, uh, it it did that for
+[14:19] me. So, if I just run that interactively
+[14:22] locally, uh, I can say
+[14:25] um,
+[14:28] whatever I'd like here, and it's coming
+[14:29] back with uh, with French. That's great.
+[14:31] And then I I asked Kira, "Hey, please uh
+[14:37] take that uh let's see, here it is. Take
+[14:40] that simple strands agent uh and uh make
+[14:44] it ready for agent core. Uh so it looked
+[14:47] up uh all the information about agent
+[14:49] core and it figured out that all it
+[14:51] really needs to do is these two lines of
+[14:53] code.
+[14:55] uh
+[14:57] add this decorator here to to make an
+[14:59] entry point uh and then run the app. And
+[15:03] uh it was able to uh automatically
+[15:07] do that and then uh automatically uh
+[15:11] configure the app, deploy it to the
+[15:13] cloud and then we can actually run that
+[15:17] uh here.
+[15:19] Let's see.
+[15:21] Yeah. So here I'm uh actually running
+[15:23] agent core invoke from the command line
+[15:26] uh and it's able to
+[15:30] do a French translation. So all of this
+[15:32] I didn't write a single line of code
+[15:33] here. Uh and and Myra just to see uh to
+[15:37] push the limits here let's say all right
+[15:39] hey Kira
+[15:42] um why not make this
+[15:46] support Portuguese
+[15:49] instead?
+[15:51] Uh, please update it
+[15:55] to translate to Port.
+[15:59] Okay,
+[16:02] let's see what it does.
+[16:09] It's making those changes.
+[16:18] This is what we get for doing a live
+[16:19] demo. Here we get to wait a few minutes
+[16:21] here.
+[16:30] Long pause. Maybe we shouldn't done
+[16:32] that. Shouldn't have done that live uh
+[16:34] update.
+[16:37] Why don't we come back?
+[16:38] >> Portuguese.
+[16:39] >> Yeah.
+[16:39] >> Yeah. Portuguese is too difficult. Why
+[16:41] don't we switch to uh to the next demo?
+[16:45] >> Yes. Sounds great. So, we see how you
+[16:48] can get started. You see that you can do
+[16:50] a lot of things uh with agent core. You
+[16:53] can start very simple. You can use the
+[16:55] MCP server to create your applications.
+[16:58] Uh but then we want to move to
+[17:00] production, right? We want to go and do
+[17:03] some more complex applications and we
+[17:06] want to start setting up the CI/CD
+[17:08] pipelines. We want to use infrastructure
+[17:11] as code. We want to have VPC support
+[17:13] tagging all of those. So to demonstrate
+[17:17] this uh real life example here uh I'm
+[17:20] going to uh walk you through our
+[17:23] customer support agent and I'm going to
+[17:27] share my screen for that.
+[17:29] >> Yeah. Anal can we switch to Marley?
+[17:32] >> Here we are.
+[17:32] >> Awesome. There we go. Yes. So let's go
+[17:36] through our customer support example.
+[17:39] All of these examples are available on
+[17:42] our GitHub samples repository. We have a
+[17:45] bunch of samples there to get started
+[17:46] with the new GA capabilities with the
+[17:49] capabilities of agent core overall and
+[17:52] we also have some use cases there end to
+[17:55] end use cases and uh this customer
+[17:58] support assistant is one of my favorites
+[18:01] uh that uh Ishan put together here. So
+[18:03] it's a pretty awesome example that will
+[18:06] demonstrate h all of those different
+[18:08] capabilities. So we have VPC support, we
+[18:11] have a infrastructure as code. So
+[18:13] everything is deployed with a cloud for
+[18:16] templates in this uh situation. Uh for
+[18:19] the folks asking about CDK, asking about
+[18:22] Terraform, don't worry, it's also
+[18:24] available. We just wanted to demonstrate
+[18:26] one of them. We need so many hours to
+[18:28] demonstrate all the different
+[18:30] functionalities here. Uh yeah, but all
+[18:33] of this we get deployed, we get some
+[18:36] taggings and yeah, here is the
+[18:38] architecture of what we're going to do.
+[18:40] So we are going to have a runtime that
+[18:42] has a couple of different tools. So we
+[18:45] have tools that are available locally uh
+[18:49] with this uh MCP server that it's uh
+[18:52] deployed in the same runtime container
+[18:54] locally to the agent and this MCP server
+[18:57] can look at some data and can analyze
+[19:01] some uh tables. Uh then we have another
+[19:05] tool that is also an MCP server but it
+[19:08] is hosted in its own agent core runtime.
+[19:13] So agent core runtime can host both
+[19:15] agents and tools and here we are going
+[19:17] to demonstrate that. So we are hosting
+[19:19] the agent as an MCP server. In this uh
+[19:23] in this tool here we can do get reviews,
+[19:26] we can get the products, we can do a
+[19:28] bunch of things that a customer support
+[19:30] agent would need. And then uh on top of
+[19:33] that we have a gateway that will check
+[19:36] for warranty supports and warranty
+[19:38] claims to see if a certain product still
+[19:41] has warranty. And uh all of this is
+[19:44] deployed inside of VPC. So runtime
+[19:47] everything is inside VPC and uh we are
+[19:50] using private link to the
+[19:52] communications. We are deploying
+[19:54] everything with a cloud form and we are
+[19:57] adding a bunch of text. Uh before I show
+[20:00] you real code, let's just uh look at the
+[20:04] data. So the data here is also pretty
+[20:06] complex. We have different systems. We
+[20:08] have data available on Amazon Aurora
+[20:12] Postgree SQL. So we if you want to ask
+[20:15] things about users, about products,
+[20:18] about orders, they are all on
+[20:21] PostgreSQL.
+[20:22] Uh then we also have some data on
+[20:25] Dynamob table. So when we are talking
+[20:27] about uh reviews when we're talking
+[20:29] about products those are on Dynamo DB
+[20:32] tables and uh exposed via gateway we
+[20:36] also have uh data on Dynamo DB for
+[20:39] warranty and customer profile. Now uh EK
+[20:43] is asking me why do we need uh all of
+[20:46] these different data exposed via gateway
+[20:49] not via gateway? Why do we have all of
+[20:52] those different ways of accessing data?
+[20:54] because we are talking about enterprise
+[20:57] uh use cases right so we are talking
+[20:59] about reusability we are talking about
+[21:00] different teams collaborating with each
+[21:03] other warranty is super common I need
+[21:06] that for customer support but EK also
+[21:09] needs that for IT support right like
+[21:12] someone has to actually work on the
+[21:14] claims so someone has to actually fix
+[21:16] the things so it's a tool that is shared
+[21:19] between different uh teams while when we
+[21:22] are talking about uh uh user here. So
+[21:25] when we are talking about like the
+[21:27] reviews, when we are talking about some
+[21:28] of those products, this is more specific
+[21:31] to this use case. For instance, in this
+[21:33] uh scenario here, you can have different
+[21:36] scenarios. Now, we also didn't h expose
+[21:40] the MCP server on the gateway, but
+[21:43] that's your homework, right? Like all
+[21:45] the code is available after you finish
+[21:47] today. uh you're super excited and you
+[21:50] want to have this MCP exposed on the
+[21:53] gateway, you can also change that and uh
+[21:56] build up on it.
+[21:58] Uh okay. So,
+[22:02] why don't you walk us through the code
+[22:04] for it? And I'm just going to change to
+[22:06] my ID here so that we can see a bit of
+[22:09] the code. But yeah, how are you
+[22:12] structuring all of this uh code?
+[22:15] >> Right. So uh here first of all if you
+[22:17] see under customer support assistant VPC
+[22:20] we have quite a bit of folders here. So
+[22:22] the first one that Myra is highlighting
+[22:24] right now is the agent folder. Here is
+[22:27] the main agent code the one that you
+[22:28] saw. Now here I have my docker file
+[22:31] which is used to build this container.
+[22:33] By the way all of this is through
+[22:35] GitHub. So whatever is on GitHub my code
+[22:38] build takes that builds it puts into a
+[22:41] ECR builds my runtime. This is the code
+[22:44] pipeline that you must be uh you must
+[22:46] have in your enterprises. So we have
+[22:49] docker file, we have main.py and main.py
+[22:52] is the entry point to my agent.
+[22:55] >> I just want to take a step back here to
+[22:57] say how amazing that is. That means that
+[22:59] you're having CI/CD pipelines. So you
+[23:02] can change in the code things are
+[23:04] getting improved every day. You can
+[23:06] trigger the pipeline. Your code build is
+[23:09] uh deployed again. Your agent is
+[23:11] updated. you have a new version,
+[23:13] everything is automated. That's
+[23:15] production readiness.
+[23:17] >> Yep. And how do I trigger that pipeline?
+[23:18] I just push push to my GitHub
+[23:20] repository. That triggers my pipeline.
+[23:22] That triggers a new version of my agent
+[23:24] on agent core runtime. Uh so that is
+[23:27] number one. Uh I also have MCP Dynamob
+[23:31] uh folder over there. That is my MCP
+[23:33] server. Uh now this server, it's a very
+[23:36] easy server. Uh if you want to go into
+[23:38] it, it's actually just querying my
+[23:40] Dynamob table. It's just read only MCP
+[23:42] server. I have deployed this using uh
+[23:45] fast MCP SDK. Uh and all of that code
+[23:48] you can see in main.py as well. Uh
+[23:51] finally under the cloud form I have all
+[23:54] the cloud for stacks and here I'm
+[23:56] following the best practices. Each of
+[23:58] these stacks are repeatable sort of uh
+[24:01] sort of stacks that you can use. If you
+[24:02] want to just do VPC stack, you have all
+[24:05] the VPC setup. If you just want MCP
+[24:07] Dynamo DB, you have the MCP server
+[24:09] stack. All of this is repeatable and
+[24:12] I've deployed uh I've uh created it as
+[24:15] such. When you deploy actually all you
+[24:17] have to do is run a script and it
+[24:19] deploys all of these cloud formations
+[24:21] into your AWS account and you will have
+[24:24] all of this running end to end
+[24:27] >> and this is all documented for you as
+[24:29] well. So you can uh go through the
+[24:31] readme and you can do deployments here.
+[24:33] You can do the standard deployment or
+[24:36] you can h create more h complex ones.
+[24:39] One thing that I want to highlight here
+[24:41] as well is that uh this is connecting
+[24:42] with agent core identity and this agent
+[24:45] core identity is using cognto. So here
+[24:48] you have to set an admin uh cognto user.
+[24:52] So you are passing your email and
+[24:54] passwords and those are uh securely
+[24:56] stored as a in the yeah as a secret
+[25:00] manager in this application so that you
+[25:02] can use that and you can connect with
+[25:04] your application. Uh we also have like
+[25:08] details of everything that it's deployed
+[25:10] in this stack uh and how to test the
+[25:14] different uh pipelines. So you can test
+[25:16] everything together but you can also
+[25:18] test uh connection to the agent test
+[25:21] gateway all of those as you would have
+[25:24] in a project that it's running
+[25:26] production. So the readmi here is a
+[25:29] fantastic job as well. Uh you also can
+[25:32] see a video of like the customer support
+[25:35] agent working as well. Uh but we will do
+[25:38] that live.
+[25:40] Uh cool. So we just saw Mark's agent and
+[25:44] we saw that Mark's agent had the import
+[25:47] of the SDK. It had the init in
+[25:49] initiation of the app. It had an entry
+[25:51] point and it would run the agent. It was
+[25:54] a very simple example. It's the same for
+[25:56] complex ones. So we still have all of
+[25:59] this when you're using the SDK. When we
+[26:02] are uh looking here at the uh agent that
+[26:05] is being deployed to runtime, you're
+[26:08] still going to import the agent core
+[26:11] app. You're still going to initiate this
+[26:15] app
+[26:17] here,
+[26:18] mark the entry point and have the run.
+[26:22] But this can be more complex as well,
+[26:25] right? So, EK, what are we doing with
+[26:27] lifespan here? What can you do?
+[26:30] >> Yeah, so uh let's talk about lifespan
+[26:32] events. So, lifespan events lets you
+[26:34] execute a piece of code before your
+[26:37] server is initialized and just before
+[26:40] your server is shut uh is shut down. So,
+[26:43] at two places. So, before it is
+[26:45] initialized and then finally before it
+[26:47] is shut down. So, it lets you do a lot
+[26:49] of things. For example, you want to
+[26:51] initialize some connection to resources
+[26:53] which take time and you want that to
+[26:55] happen once just before the
+[26:57] initialization of the server. You can do
+[26:59] that using lifespan. And then finally
+[27:01] once the agent uh has completed
+[27:04] processing and now the server is going
+[27:05] down you want to uh clean up some
+[27:08] resources or clean up some connections.
+[27:10] All of that you can do in the lifespan.
+[27:13] Here for this particular scenario what I
+[27:15] do is uh whenever initial uh whenever
+[27:18] the a uh the server is initialized I
+[27:21] create my MCP clients I start my
+[27:23] connection and just before it is shut
+[27:25] down I stop all of my connections. So
+[27:28] just following best practices here
+[27:30] starting and stopping of connections and
+[27:32] uh here you can see that uh in the
+[27:34] lifespan code as well if you scroll up
+[27:37] myra.
+[27:38] >> Yes. So this is important here because
+[27:40] we are creating a lo a local MCP server
+[27:44] right. It depends on your code. It
+[27:46] depends on what you want to have but it
+[27:48] is pretty flexible. So you can have a
+[27:50] bunch of different uh applications built
+[27:53] up with a agent core runtime.
+[27:58] Uh okay. So when we are talking about a
+[28:01] local MCP servers, we also need to have
+[28:04] those in the docker file, right? And
+[28:06] when we are talking about a starter
+[28:08] toolkit and I think here let's take a
+[28:10] step back and let's discuss all the
+[28:12] different ways you can interact with
+[28:14] agent core. So you can interact with
+[28:17] agent core using the basic APIs. You can
+[28:21] interact with agent core using the agent
+[28:24] core SDK which is an abstract
+[28:28] abstraction on top of it. And then you
+[28:30] can interact with agent core using the
+[28:32] starter toolkit which is even a bigger
+[28:35] uh abstraction on top of all of this
+[28:37] that makes it pretty easy to get started
+[28:39] and then you can also interact with
+[28:41] agent core using infrastructure as code.
+[28:43] when we are talking about the starter
+[28:46] toolkit h you don't need to create your
+[28:48] docker file because everything is done
+[28:50] for you because it is made to make your
+[28:52] life very easy so you can h create your
+[28:55] code you can deploy it and you can uh
+[28:58] just get things done really quickly
+[29:00] however when we are going to more
+[29:02] complex applications and you don't want
+[29:04] the standard docker file you want to
+[29:06] start doing more complex uh things you
+[29:08] want to start uh getting your MCP server
+[29:12] downloaded here for instance like EK is
+[29:14] doing in this example. You want to have
+[29:17] this control, you want to have this
+[29:19] flexibility, you want things to become
+[29:21] more complex. So this is also possible.
+[29:24] What we want to do with Asian core is
+[29:26] keep things super simple so that you can
+[29:29] have a great developer experience while
+[29:32] giving you a lot of freedom to customize
+[29:35] everything. So to build very complex
+[29:37] applications and here is a great example
+[29:40] of a EK building a more complex
+[29:42] application. So can you explain your
+[29:45] docker file here as well?
+[29:47] >> Sure. Yeah. So uh here if you see I have
+[29:50] a bunch of environment variables. As you
+[29:52] can see I have my region that I
+[29:53] configured. So I just do this for US
+[29:55] West 2. Of course you can do this for
+[29:57] other regions in the read me. If you see
+[30:00] right now it's compatible for US West 2
+[30:02] because of uh these environment
+[30:03] variables right here. uh then you see
+[30:05] the docker container being one. So just
+[30:08] telling that okay you're being part of
+[30:09] the docker container just following the
+[30:11] best practices here installing the
+[30:13] dependencies uh as you can see in line
+[30:15] 13 uh and then finally here if you see
+[30:18] on line 26 27 28 is where I install
+[30:22] first the requirements uh here I'm
+[30:25] running a strands app right so I want to
+[30:27] install the strands SDK the strands
+[30:29] tools SDK uh all the good stuff that I'm
+[30:32] doing inside the code I do that in
+[30:33] requirements txt then I install AWS open
+[30:37] telemetry DRO. This package alone lets
+[30:41] me export my hotel traces to agent core
+[30:44] observability and we'll be we'll be
+[30:46] showing showca uh we'll be showcasing
+[30:47] that too. This package alone once you
+[30:49] install it and you use it, you'll be
+[30:51] able to export all of your hotel traces
+[30:53] to agent core observability. Finally, I
+[30:55] install uh AWS Labs Postgress MCP
+[30:59] server. Now uh I install this once and
+[31:02] then inside the code I initialize the
+[31:04] connection. I talk to it and you will
+[31:07] see uh the run query whenever you see
+[31:09] the run query during the demo this is
+[31:11] the server that is being used and the
+[31:13] transport that I'm using here is std IO
+[31:16] so it's not streamable HTTP it's running
+[31:18] on the same server as the agent uh
+[31:21] another great point here that I wanted
+[31:23] wanted to highlight was since the agent
+[31:25] is running inside a VPC now with no
+[31:27] internet access uh I I I don't get to
+[31:31] download this inside the code I can do
+[31:33] that using ubx But uh I don't get to do
+[31:36] that because now it's a enterprise agent
+[31:39] core runtime, right? I don't have
+[31:42] internet access. I cannot download just
+[31:44] about anything from the net. So I
+[31:46] download here first in the docker file
+[31:49] and then start using it inside the code.
+[31:51] So that's a question that was asked you
+[31:53] know a couple of times in the recent
+[31:54] times about uh enterprise applications
+[31:57] that are within the VPC that need you
+[32:00] know that need this agent core
+[32:02] connectivity right
+[32:05] >> yep uh and I think I think we'll be
+[32:07] talking a little bit about that too when
+[32:08] we talk about gateway
+[32:10] >> uh but uh yeah okay so this was about
+[32:12] the docker file itself uh what is nextra
+[32:17] >> yes let's talk about uh now using agent
+[32:21] core runtime to deploy a MCP server.
+[32:25] Right? So we got our local MCP, we got
+[32:28] our local uh we got our agent, but we
+[32:31] also want to have a runtime deploying an
+[32:35] MCP service. So what changes here? How
+[32:38] different is that?
+[32:39] >> Uh not different at all actually. So
+[32:41] here what I do is I use the fast MCP
+[32:44] library. So you must have written uh
+[32:46] fast MCP code already. you already have
+[32:48] those fast MCP servers. How do you get
+[32:51] size session isolation, enterpriseg
+[32:53] grade security and all of the good stuff
+[32:54] just put into runtime. So here uh I've
+[32:56] not changed any line of code by the way.
+[32:58] This is uh as you would see in any uh
+[33:01] MCP code, right? So you see I have a few
+[33:04] tools defined. Uh I have my two tables
+[33:07] which is the reviews and products. Uh I
+[33:10] do read queries on them and so on and so
+[33:12] forth. One thing that I've added here is
+[33:15] on line 99, if you see, I've added a
+[33:17] middleware. And what middleware lets me
+[33:20] do is it captures the request when
+[33:22] they're coming in and captures the
+[33:24] responses when they're about to go out
+[33:26] from the server. All I'm doing there is
+[33:29] I'm just creating my open telemetry
+[33:31] traces so that I can actually see what's
+[33:33] going on inside my MCP server. So I log
+[33:36] everything. What tool is being invoked?
+[33:39] Uh what are the parameters? What are the
+[33:41] responses? all of that being part of uh
+[33:44] my agent observability. So uh yeah, I
+[33:48] mean this is this is you can do this
+[33:50] with any MCP code by the way. When you
+[33:53] want to deploy this, you either use a
+[33:55] starter toolkit or the docker file that
+[33:58] you can see here and just deploy it into
+[34:00] agent core runtime.
+[34:02] >> The MCP docker must be very complex,
+[34:04] right?
+[34:05] >> Uh you tell me
+[34:08] >> actually no is very simple. So it's
+[34:11] simple to deploy to uh runtime and it's
+[34:15] amazing that you didn't have to change
+[34:17] any lines of code. So it is like
+[34:20] building your MCP server but now it's on
+[34:23] runtime. Now it has enterprise security.
+[34:25] Now it's scalable and available, right?
+[34:28] So it's pretty awesome. Uh let's talk
+[34:31] about infrastructure as code. I I read
+[34:34] somewhere people asking if you can uh
+[34:36] deploy the agent core components as
+[34:39] infrastructure as code and the answer to
+[34:41] this question is yes you can. There are
+[34:44] new uh new cloud for
+[34:48] templates that allow you to deploy your
+[34:50] runtime that allows you to deploy your
+[34:52] gateway that allows you to deploy agent
+[34:55] core components as infrastructure as
+[34:57] code. So here uh what are you doing with
+[34:59] your runtime?
+[35:02] Yep. So here you can see first of all uh
+[35:04] I'm creating my AWS bedrock agent core
+[35:07] runtime uh resource. Uh I provide my
+[35:10] role. Uh definitely recommend uh diving
+[35:13] deep into that as well. Uh so that role
+[35:15] lets me execute uh code inside my
+[35:19] runtime with some certain privileges.
+[35:21] For example, if I want to query my
+[35:23] Dynamob table or secrets manager or
+[35:25] agent code identity more importantly. So
+[35:27] I have my role then I have VPC
+[35:30] uh and inside the VPC I provide security
+[35:33] group and subnet. Now this security
+[35:36] group and subnet has access uh has the
+[35:39] Aurora instance. So uh you'll see in the
+[35:42] demo we are running SQL queries on pro
+[35:44] Postgress Aurora uh server that is
+[35:48] inside a private subnet. It has no
+[35:51] internet access. So through this network
+[35:53] configuration I'm able to connect to it
+[35:55] uh without parsing the public internet.
+[35:58] Then I have my ECR repository as you can
+[36:02] see line 827 uh I have my ECR repository
+[36:05] then the authorization configuration on
+[36:08] 831. Right now I'm using uh custom jot
+[36:11] so I'm using uh oath 2.0 cognto to uh
+[36:15] manage inbound authentication. You can
+[36:17] use IM if you want. Uh but here I'm
+[36:19] using Cognto. And you'll see when you
+[36:22] log in into your in the demo through
+[36:24] email, password. This is what allows uh
+[36:27] inbound to your agent core runtime. And
+[36:30] finally, environment variables. So you
+[36:31] can pass environment variables. And this
+[36:33] can be the model ID. I want to use
+[36:35] sonnet 4 uh or the region, the MCP ARN,
+[36:39] provider ARN, Aurora secret ARN. All of
+[36:42] these you can pass. Finally, tagging
+[36:45] which is g uh which is great for variety
+[36:47] of purposes. For example, you want to
+[36:49] see what is the cost associated with uh
+[36:53] certain tags of yours. This can be
+[36:55] development environment, production
+[36:56] environment, test environment and so on
+[36:57] and so forth. So definitely recommend
+[36:59] tagging here all the way.
+[37:02] >> I saw a question in the chat about
+[37:04] having all of the hotel logs saved on S3
+[37:08] or somewhere. Uh here is the answer to
+[37:10] your question. So you can have a log
+[37:12] group on cloudatch and you can have all
+[37:15] of your hotel logs saved there. So with
+[37:17] that you can export it to any third
+[37:20] party tool you want to use and we also
+[37:23] have samples to do that on our GitHub
+[37:25] repository. Uh when you go to agent co
+[37:28] serverability third party integration
+[37:30] you can also see those there. M uh yeah
+[37:34] last thing before we go and see
+[37:36] everything on our AWS account that I
+[37:38] wanted to highlight here is that you can
+[37:40] also get a gateway uh here. So uh also
+[37:44] created with uh infrastructure as code
+[37:47] everything created uh with our cloud for
+[37:50] template here. Uh cloud for is great but
+[37:53] you can also do CDK you can also do
+[37:55] terraform. Uh we are uh working to get
+[37:58] all of those samples out and they will
+[38:00] be out on the repositories. So start
+[38:02] this repository and we are going to give
+[38:04] you more and more uh content there as
+[38:07] well. So we are working uh to make this
+[38:10] uh more digestible as well. You think
+[38:12] this is too complicated to get started?
+[38:14] No worry, we got you. We also have a
+[38:17] folder for cloud for templates that have
+[38:20] much simpler uh use cases. So you can
+[38:22] have a hello world agent there that
+[38:24] showcases the different uh
+[38:26] cloudformation templates and that can
+[38:28] get you started pretty quickly. Uh but
+[38:31] we are talking about real world
+[38:32] applications. Let's uh showcase them,
+[38:35] right? Let's go and have some fun on the
+[38:38] console.
+[38:41] Mara I wonder if I wonder if you want to
+[38:43] leave make sure we leave time to show uh
+[38:46] where this will all land as well. You
+[38:47] want to show the experience that uh is
+[38:50] offered by the chat uh as well.
+[38:53] >> Absolutely. And we are going to do some
+[38:55] live demo. It's not live if we don't try
+[38:57] and execute stuff by ourselves. So yeah,
+[39:01] here are all the cloud for templates
+[39:03] that have been deployed. I've already
+[39:05] deployed this because it takes a little
+[39:07] bit to get everything running. But
+[39:10] essentially what this will do is uh
+[39:12] create all the infrastructure that uh we
+[39:15] need. So it will create your uh
+[39:18] runtimes. So here for instance we are
+[39:20] talking about uh our agent itself. So
+[39:24] the customer support agent I've enabled
+[39:26] logging enabled tracing all of this
+[39:29] there by default. Uh we got a bunch of
+[39:32] tagging as well. So if you want to do
+[39:34] this tagging it is there. uh you can see
+[39:37] your cloudatch logs, you can uh see your
+[39:39] endpoints, all of this gets deployed for
+[39:41] you. uh then we also have gateway. So in
+[39:45] the gateway we are deploying our
+[39:47] gateway. We have our target as a lambda
+[39:50] function that can check the warranties
+[39:53] also a log enabled. So everything there
+[39:57] for you and we have our identity
+[40:01] providers here as well. So we have
+[40:03] identity for our MCP server and for
+[40:06] gateway here and yeah all of those uh
+[40:09] available here. Uh okay so let's go and
+[40:14] do some demo. Uh first of all uh we've
+[40:17] integrated identity. So we get Cognito
+[40:20] to uh work here and I need to create a
+[40:24] token. So I'm going to log uh to my
+[40:27] Cognto user. I got my customer support
+[40:30] here and now I'm going to start asking
+[40:34] some queries. So we are just uh starting
+[40:38] with a hi how are you and we get some
+[40:42] reply from the agent. So let's now ask a
+[40:45] question.
+[40:45] >> I I like the streaming response as well.
+[40:47] Right. So that's
+[40:49] >> yes and uh the visibility of what is
+[40:52] being done here. So for instance, I'm
+[40:54] asking to uh get a complete profile of a
+[40:58] customer with a customer ID including
+[41:01] their uh purchase history and details.
+[41:03] Right? So uh here it will first try to
+[41:06] get uh the customer profile and uh it
+[41:10] will give me the results for this
+[41:11] customer profile. So this is uh using
+[41:13] the gateway and then uh now it will run
+[41:17] a query to see what this uh customer is
+[41:20] doing from orders perspective. So in
+[41:23] this case it's using our local MCP to
+[41:27] run this query and see the recent
+[41:29] orders.
+[41:31] >> I think I think a great point here is uh
+[41:33] a lot of the times everyone is talking
+[41:34] about how to do text to SQL. Uh so just
+[41:37] with that MCP server that we installed
+[41:39] in the docker file and now we are using
+[41:40] with the agent we're able to do text to
+[41:43] SQL. We are converting language into SQL
+[41:47] queries and then executing them. So if
+[41:49] you see the results as well for this run
+[41:50] query, you'll see the text to SQL uh
+[41:53] output that you get out of your uh MySQL
+[41:56] Postgress SQL databases which is great.
+[41:59] It's so much easier to get started.
+[42:02] >> Absolutely. And it can get complex
+[42:04] because we do have our agentic uh AI,
+[42:08] right? So that means that our agent can
+[42:10] decide what to do and that means that
+[42:12] our agent can decide to uh check
+[42:15] different uh systems and invoke
+[42:17] different tools. So here I'm going to uh
+[42:20] be a bit more ambitious and I'm going to
+[42:23] ask a query to the agent that will
+[42:26] require lots of different tools. So I'm
+[42:28] going to ask about uh this laptop pro.
+[42:31] In this case, I'm passing the serial
+[42:33] number and reviews because of the way
+[42:35] our tools are implemented. Once you
+[42:38] implement better uh tooling
+[42:40] capabilities, you don't need those, but
+[42:42] in this case, we need uh but I'm going
+[42:44] to ask uh about this laptop. I'm going
+[42:47] to ask about customer reviews, inventory
+[42:49] statuses, and warranty information for
+[42:52] this serial number. So, in this case, we
+[42:54] are going to go to the warranty first.
+[42:57] We are going to get the serial number,
+[42:58] see the information about this one. We
+[43:01] are going to go to the reviews, see the
+[43:03] two reviews uh about this computer. So,
+[43:07] it's excellent. It has a good value.
+[43:09] >> And then the last one, it is h a bit
+[43:13] less uh less defined what it needs to
+[43:17] do. So uh in this case it needs to go to
+[43:20] the products table but we don't have
+[43:22] like APIs that are h exactly mapping to
+[43:27] this products table but we do have the
+[43:29] text to SQL and based on this text to
+[43:32] SQL now we can get this information so
+[43:35] we can uh see what is the information
+[43:37] about this product. So now we got our
+[43:40] product we have inventory we have
+[43:42] warranty status we have the reviews all
+[43:45] of this done for you. What if we want
+[43:48] >> it? It looked like uh those tools were
+[43:50] being executed in parallel. Was that uh
+[43:53] happening there?
+[43:54] >> Yeah, for a few of them. Yes.
+[43:56] >> Yeah.
+[43:56] >> Nice.
+[43:58] >> What about the metadata? Myra, we can
+[43:59] also see the metadata on the UI if you
+[44:01] want to showcase that as well. Uh on the
+[44:04] chat itself. So there is a metadata. Um
+[44:08] >> Oh,
+[44:09] >> yep.
+[44:09] >> Awesome.
+[44:10] >> So you can see how many tokens it
+[44:12] consumed and so on and so forth, which
+[44:13] is great for any debugging purposes. So,
+[44:16] so Ian for this demo here like how much
+[44:19] of uh schema did we have to define for
+[44:22] the agent to understand uh details about
+[44:24] the database
+[44:25] >> right? So uh for Aurora database uh what
+[44:29] my MCP server exposes is get schema as a
+[44:33] tool. So using strands what I do is I
+[44:37] load the schema of my Aurora database
+[44:39] during the initialization. So during the
+[44:41] lifespan I load the schema of my Aurora
+[44:44] database into strands. so that my agent
+[44:47] is aware of what the schemas look like
+[44:49] for all of the tables that are in SQL
+[44:52] and then it is much more aware and
+[44:54] that's why you see uh it just writes the
+[44:56] query once and gets a great response
+[44:58] right it it's not redoing it again and
+[45:00] again because it's aware of what the
+[45:01] schema looks like so uh yeah so but my
+[45:04] MCP server here uh comes to the win
+[45:06] because it exposes a tool to actually
+[45:09] get the schema of my Aurora databases
+[45:12] Aurora tables
+[45:14] >> awesome let's try and ask some more
+[45:17] difficult questions and I want to see
+[45:20] the whole customer journey for Jane.
+[45:24] Let's ask like the complete customer
+[45:25] journey for James Smith from
+[45:28] registration to her last interaction. So
+[45:31] here we are h starting to ask very
+[45:33] complicated queries right and we are
+[45:35] getting our agent to uh work and uh this
+[45:39] agent is going uh to the user database
+[45:42] it's getting information about uh Jane
+[45:45] it is going to the customer profile gets
+[45:47] more information about Jane again and h
+[45:52] it will tell us a lot about Jane right
+[45:56] like when did she join what's her
+[45:58] current status so she's a gold tier
+[46:01] a customer. She has ordered uh last
+[46:05] October and yeah like she still have
+[46:08] some pending order. Uh now
+[46:13] what about finding discrepancies right
+[46:16] like we're talking about different
+[46:18] tables that handle customer data. Uh
+[46:20] let's see if our agencies is smart
+[46:22] enough to find discrepancies in the
+[46:25] database.
+[46:27] So here we are getting the customer
+[46:29] information and then when we get the
+[46:31] customer information we are also getting
+[46:34] uh the customer ID and uh getting it
+[46:37] from the user table. So we have two
+[46:39] different tables and uh now we are
+[46:42] getting the orders as well and what we
+[46:45] can see is that there is a discrepancy.
+[46:47] So Alysia has two different emails and
+[46:51] yeah like also the order is not really
+[46:54] matching. So look how awesome your agent
+[46:57] can also help you debugging the quality
+[47:00] of your data and can help you finding uh
+[47:03] those kind of issues in your data.
+[47:08] >> Hey Myra, I'm wondering if you could pop
+[47:10] back to the architecture diagram and
+[47:12] kind of recap what we've seen here. This
+[47:14] is incredible uh how many different
+[47:16] pieces we've shown here. So much
+[47:19] different than uh my hello world uh that
+[47:22] we showed at the beginning here. This is
+[47:24] closer to a realworld scenario uh where
+[47:27] you need the security, you need the
+[47:29] scalability, the performance and the
+[47:30] repeatability. So
+[47:32] >> absolutely and here is the architecture
+[47:35] again. So we do have a tool that is
+[47:39] under the gateway that will check for
+[47:42] warranties that will get a customer
+[47:44] profile. We do have a local MCP that
+[47:48] will run the SQL queries that can access
+[47:51] our order databases and can get all of
+[47:53] this information about users and uh
+[47:56] orders and then we do have a a MCP
+[48:00] server running in an agent core runtime
+[48:03] that can get uh product reviews and can
+[48:05] get product informations. So a bunch of
+[48:09] very very important tooling for customer
+[48:12] support uh types of use cases right uh
+[48:16] so let's
+[48:17] >> one question that's coming in the chat
+[48:19] uh and Philipe has touched a point right
+[48:22] I mean he's saying uh can you make sure
+[48:24] agent will not accept any SQL injection
+[48:26] so maybe let's talk about let's talk
+[48:28] about uh SQL injection maybe security
+[48:31] some guardrails that we can include in
+[48:34] our architecture right so how would we
+[48:35] do
+[48:37] Absolutely. I mean you can add guard
+[48:39] rails to your agent. So adding
+[48:41] guardrails to avoid SQL injection is an
+[48:44] important one. H the other point here is
+[48:47] that our SQL are more for getting data.
+[48:50] It's not writing anything back in the
+[48:53] database. Uh so this is an important
+[48:56] point for writing things back in the
+[48:58] database. You need to have uh to be very
+[49:00] careful on what your agent is doing uh
+[49:03] there as well. And then of course like
+[49:06] all the identity uh parts of it is
+[49:08] really important and setting h like
+[49:12] writing your agent in the way that it
+[49:15] will uh work for your use case is really
+[49:18] important here.
+[49:21] Uh okay
+[49:24] let's take a look on our observability
+[49:27] here. So we just run a bunch of queries
+[49:30] for the last five minutes and let's just
+[49:33] take a look at what we got here. So we
+[49:35] got a bunch of traces because everything
+[49:37] is a trace here. Uh we got two uh agent
+[49:42] endpoints. We can see our sessions. We
+[49:44] can see our different uh traces. Uh we
+[49:48] can see the different uh agents as well.
+[49:50] So you can uh deep dive into the agent
+[49:54] core one and get information about uh
+[49:58] latency about token usage h any error
+[50:02] that you might have had uh throttling
+[50:05] all of this uh information is available
+[50:08] here. You can also deep dive on your
+[50:10] traces and everything. Uh but you can
+[50:13] also get information about a gateway. So
+[50:17] the gateway here we got two invocations
+[50:19] to it. You can see uh information about
+[50:22] latency. H all of this is available on
+[50:27] our observability capabilities here as
+[50:30] well.
+[50:32] Uh yes, I think this was uh a lot and
+[50:37] again like all of this code is available
+[50:39] for you on GitHub and you can uh
+[50:43] explore, you can play around, you can
+[50:45] change things, you can do the homework
+[50:47] of exposing the MCP server as a target
+[50:51] in the gateway as well. So like uh
+[50:54] changing the architecture is also pretty
+[50:57] uh important here. Uh but Mark, do you
+[51:00] want to talk a little bit more about
+[51:02] like agent core overall and about our
+[51:06] resources because we what we have is a
+[51:09] lot of resources for you to get started.
+[51:12] >> Sure. Why don't we flip back to uh my
+[51:14] screen for a minute and um you'll be
+[51:17] happy to know that uh my hello world uh
+[51:20] French translator learned a little
+[51:23] Portuguese here. Let's see how well it
+[51:24] does. You can you can judge it. Uh good
+[51:27] morning. How are you today? Let's see.
+[51:28] Uh, is that any good?
+[51:33] >> Not bad.
+[51:34] >> It didn't take that much time to get
+[51:36] back, right? So that's the latency is
+[51:37] low.
+[51:38] >> Yeah. Yeah. Uh, so let let's uh let's
+[51:42] remind folks what agent core uh offers
+[51:45] uh overall. So you're basically giving
+[51:49] uh your agent builders the opportunity
+[51:51] to
+[51:53] go with whatever they've got. if they're
+[51:55] comfortable with langraph crew AI
+[51:57] strands uh open AAI uh agents whatever
+[52:01] you want to use you can use your
+[52:03] framework define your own instructions
+[52:06] use your own tools and then host that in
+[52:08] agent core runtime and then uh take
+[52:11] advantage of memory to to deal to make
+[52:14] your you see how uh easily the
+[52:16] conversations in the agent were handled
+[52:19] you you can use agent core memory to do
+[52:20] short-term as well as automatically
+[52:24] make your agent more personalized by
+[52:26] taking all those events and and
+[52:28] summarizing them. Uh then the next time
+[52:30] you're coming back to your agent, you
+[52:32] can take advantage of what happened in
+[52:34] the past make for a much more positive
+[52:37] experience for users. Um everything is
+[52:41] under uh pinned by observability. All of
+[52:44] these services are giving you what Myra
+[52:46] was just showing you with traces and
+[52:49] sessions and spans and metrics. uh you
+[52:52] can see what's going on end to end
+[52:54] across your agents, your MCP servers, uh
+[52:58] gateways, identity, uh memory and and
+[53:01] more. uh agent core identity solves one
+[53:04] of the truly most difficult problems on
+[53:07] this uh whole uh agent spectrum is uh
+[53:11] yeah you can build some simple
+[53:13] prototypes when you need to be looking
+[53:15] at how is your user going to work with
+[53:17] an agent which is going to then use some
+[53:20] tools maybe local tools uh proprietary
+[53:23] tools third-party tools uh maybe talk to
+[53:26] other agents uh interoperate using A2A
+[53:30] you need an incredibly robust robust
+[53:32] identity capability to know the agent
+[53:35] identities, know their agent workloads,
+[53:37] handle inbound authorization
+[53:39] uh from uh uh users uh using agents and
+[53:44] then outbound authorization to get at
+[53:46] tools. All of this is covered for you uh
+[53:49] and flexibly letting you use your IDPS.
+[53:53] So if you're using Ping or Octa,
+[53:55] Microsoft Entra, whatever you'd like to
+[53:57] use, plugs right in. uh as well as
+[53:59] integrating with thirdparty
+[54:02] uh providers like Slack or Jira,
+[54:04] Salesforce, Service Now. All of those
+[54:07] credential providers can easily be uh uh
+[54:11] incorporated into agent core identity as
+[54:13] well. Uh so you're basically giving this
+[54:15] entire platform to your agent builders
+[54:18] to just accelerate the time to market as
+[54:22] well as let you trust uh your agents
+[54:25] because you know they're secure. you
+[54:27] know, you can look at observability to
+[54:29] understand what your agents been doing.
+[54:31] Um, and then, uh, I, uh, should mention
+[54:35] agent core gateway as well. Uh, we saw a
+[54:38] little bit of that today. Um, basically
+[54:42] with gateway, you're making every uh,
+[54:46] available resource more easily exposed
+[54:48] as MCP.
+[54:51] And I would like to highlight here as
+[54:53] well that you can use all of it together
+[54:55] or each piece individually. And for
+[54:58] today's demo, for instance, we had a
+[55:00] agent core runtime, we had gateway, we
+[55:02] had identity. We didn't add memory. We
+[55:05] could add memory. It would make our
+[55:06] customer support better uh to have these
+[55:09] interactions, but we chose not to. And
+[55:11] you can do that uh to your applications
+[55:14] as well. So everything together fits
+[55:17] pretty well and helps you creating very
+[55:19] powerful applications but you can also
+[55:21] use them individually and then you can
+[55:23] also uh match and h different
+[55:26] applications. So thinking about uh
+[55:29] different teams in an organization one
+[55:32] loves lingraphs and wants to create a
+[55:34] lot of agents with lingraph. The other
+[55:36] one loves the trends and it's creating
+[55:38] different applications and trends and we
+[55:40] have a third one that really is a fan of
+[55:42] crew AI. uh we can uh interact with all
+[55:46] of them. We can uh deploy all of them on
+[55:48] runtime and then you can use things like
+[55:50] HA to uh create complex applications
+[55:54] that will uh combine those agents and I
+[55:58] would like to also highlight that this
+[56:00] samples repository is really awesome and
+[56:02] it has a bunch of those examples. So we
+[56:04] also have like examples of multi- aent
+[56:07] collaboration combining langraph and
+[56:10] strands for instance. So you can see how
+[56:12] flexible uh this whole capability is. So
+[56:15] flexibility is something we really took
+[56:17] to heart and we really h implemented on
+[56:20] all of the different capabilities.
+[56:22] >> We have a couple of questions that are
+[56:24] coming up and maybe I'll just pop them
+[56:26] here. U like Amuseva is asking how do I
+[56:29] implement multi-tenency
+[56:31] uh you know how do I do this with this
+[56:33] architecture right? So maybe just maybe
+[56:34] speak about this for a second.
+[56:38] >> Yeah. So multi-tenants you could get
+[56:41] that uh on the tooling capabilities. So
+[56:44] having like different toolings available
+[56:46] for it. H gateway is a good way of doing
+[56:50] that. So you can uh have like gateway
+[56:53] getting the tools for your uh agent as
+[56:56] well. Uh then uh like custom header is a
+[57:01] a good one that Mark was mentioning
+[57:03] today, right? So you can pass the
+[57:05] tenency deck. uh when we are talking
+[57:07] about memory you have actor ids so you
+[57:10] have a bunch of different ways of also
+[57:13] getting this multi-tenency
+[57:16] uh mark ek what else
+[57:19] >> yeah I guess we'll see more demos I mean
+[57:21] samples in the in the GitHub repository
+[57:24] so please be sure to check that out um
+[57:27] to cover those topics right so yeah uh
+[57:30] let's go back to the resources that we
+[57:32] have here
+[57:33] >> yeah a few quick resources uh we've got
+[57:36] some pretty robust uh documentation
+[57:39] uh available. Uh we added quite a few
+[57:41] quick start uh examples where within
+[57:44] five minutes you can have something
+[57:46] fully running with runtime uh with
+[57:49] gateway with memory all each of the
+[57:51] different services and then uh in under
+[57:54] 15 minutes you can have an end toend
+[57:56] example running in your environment. Uh
+[57:58] so check out the quick starts the API
+[58:00] documentation it's all very good. Uh
+[58:02] we've got some really strong workshops.
+[58:05] These have been used by I don't know how
+[58:08] many thousands, many thousands of uh
+[58:10] builders already just in the last couple
+[58:12] of months. There's a getting started
+[58:14] workshop and then there's a deep dive
+[58:16] workshop. So check those out. Uh we're
+[58:18] happy to work with you uh to uh take you
+[58:21] through those as well, but they're
+[58:23] self-service also. Uh we've we've uh
+[58:26] beaten to death here the the samples
+[58:27] repo. Uh but we do love it. We think
+[58:30] it's pretty impressive. We've got a lot
+[58:31] of tutorials, some end to end examples,
+[58:33] some integrations. Uh check those out.
+[58:36] Let us know what else you'd like there.
+[58:38] And then uh we've got this series that
+[58:40] we've been contributing to here. So
+[58:42] there's a playlist out there to uh go
+[58:45] into runtime as a deep dive, go into
+[58:48] gateway, go into memory. Uh all of those
+[58:51] are are covered. Uh we've got we had the
+[58:54] introduction of agent core before and
+[58:56] and of course today's uh GA deep dive as
+[58:59] well. We'll have more to come as well.
+[59:01] Multi- aents, observability, there's a
+[59:04] bunch more that we need to talk about in
+[59:05] the coming weeks. So,
+[59:07] >> and a question for Isan, right? So, as
+[59:08] we wrap, as we come to closing, Ian, you
+[59:11] built this sample application here. How
+[59:13] long did this take for you to, you know,
+[59:15] between all the other things that uh
+[59:17] that you're doing? You know, how long
+[59:19] did this take to build this?
+[59:21] >> Great question. Uh, and I would say two
+[59:23] to three days. And most of the time I
+[59:25] actually spent on the front end uh and
+[59:27] managing my data so that the data is
+[59:28] correct. but might have found a problem
+[59:30] apparently with the email still. But
+[59:32] with agent code in the picture, I could
+[59:34] actually just sit back, relax, and focus
+[59:36] on what actually mattered. The system
+[59:38] prompts uh uh are tools responding
+[59:42] correctly, is my data correct and so on
+[59:43] and so forth. So yeah, two to three
+[59:45] days.
+[59:46] >> There you go folks, you heard it. So uh
+[59:48] you know built this in a couple of days.
+[59:50] So definitely explore agent core uh use
+[59:53] all the resources that are here to
+[59:55] explore start building agentic
+[59:57] applications is uh this is the best time
+[59:58] to build uh out there right
+[60:02] >> cool
+[60:03] >> thank you
+[60:03] >> thanks uh so we'll uh you know come back
+[60:06] to you next week with more uh show and
+[60:09] tell episodes and we'll dive deep into
+[60:10] the other resources that we have. Thanks
+[60:13] for watching.
+[60:19] [Music]
