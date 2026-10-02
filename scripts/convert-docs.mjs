@@ -341,6 +341,12 @@ const CATS = [
     return chapters.length ? [{ id: 'notes', title: "Nishant's Notes", icon: '✍️',
       description: 'Personal working notes.', contentBase: b, chapters }] : [];
   }, subtitle: 'Personal notes — drop any .md into doc_nishant_notes/' },
+  // eCommerce architecture interview prep — standalone course (not part of the
+  // AgentCore playlist). Source video: f-rl_4Pd8dw (AWS with Chetan).
+  { id: 'ecommerce-architecture', title: 'eCommerce Architecture on AWS', icon: '🛒', dir: 'ecommerce-architecture', src: path.join(ROOT, 'doc_ecommerce_architecture'), discover: (s, b) => discoverFlat(s, b, {
+    id: 'core-chapters', title: 'Core Chapters', icon: '🛒',
+    description: 'Design a complete e-commerce platform on AWS — cloud-agnostic first, then every AWS service mapped. Interview-ready.' }),
+    subtitle: 'Interview prep — design an eCommerce platform on AWS from scratch, layer by layer' },
 ];
 
 const registry = { categories: [] };

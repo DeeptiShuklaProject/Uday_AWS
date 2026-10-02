@@ -2804,6 +2804,42 @@
           ]
         }
       ]
+    },
+    {
+      "id": "ecommerce-architecture",
+      "title": "eCommerce Architecture on AWS",
+      "icon": "🛒",
+      "subtitle": "Interview prep — design an eCommerce platform on AWS from scratch, layer by layer",
+      "contentBase": "/ecommerce-architecture/",
+      "courses": [
+        {
+          "id": "core-chapters",
+          "title": "Core Chapters",
+          "description": "Design a complete e-commerce platform on AWS — cloud-agnostic first, then every AWS service mapped. Interview-ready.",
+          "icon": "🛒",
+          "contentBase": "/ecommerce-architecture/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Core_Architecture",
+              "title": "01 — Core Architecture",
+              "file": "Chapter_01_Core_Architecture.md",
+              "sectionCount": 10
+            },
+            {
+              "id": "Chapter_02_Search_Orders_Recommendations_Analytics",
+              "title": "02 — Search Orders Recommendations Analytics",
+              "file": "Chapter_02_Search_Orders_Recommendations_Analytics.md",
+              "sectionCount": 9
+            },
+            {
+              "id": "Chapter_03_Mapping_to_AWS_Services",
+              "title": "03 — Mapping To AWS Services",
+              "file": "Chapter_03_Mapping_to_AWS_Services.md",
+              "sectionCount": 12
+            }
+          ]
+        }
+      ]
     }
   ]
 }
