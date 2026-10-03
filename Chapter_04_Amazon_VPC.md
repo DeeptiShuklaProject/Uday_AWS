@@ -571,7 +571,7 @@ aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" \
 
 ---
 
-## 12-18. Production Architecture through DR
+## 12. Production Architecture
 
 ### Production VPC Config
 ```
@@ -599,6 +599,224 @@ Security:
   SGs: reference other SGs, not CIDRs
   NACLs: default allow (additional restriction only if needed)
   Flow Logs: enabled for audit and troubleshooting
+```
+
+### Production VPC Architecture
+```mermaid
+flowchart TD
+    Internet[Internet] <--> IGW[Internet Gateway]
+    
+    subgraph VPC["VPC 10.0.0.0/16"]
+        subgraph AZA["Availability Zone A"]
+            PubA["Public Subnet<br>10.0.1.0/24<br>ALB, NAT GW"]
+            PrivA["Private Subnet<br>10.0.3.0/24<br>EC2, ECS"]
+            DataA["Data Subnet<br>10.0.5.0/24<br>RDS, ElastiCache"]
+        end
+        subgraph AZB["Availability Zone B"]
+            PubB["Public Subnet<br>10.0.2.0/24<br>ALB, NAT GW"]
+            PrivB["Private Subnet<br>10.0.4.0/24<br>EC2, ECS"]
+            DataB["Data Subnet<br>10.0.6.0/24<br>RDS, ElastiCache"]
+        end
+        
+        NATGW_A["NAT GW A"] --> PubA
+        NATGW_B["NAT GW B"] --> PubB
+        PrivA -->|Route| NATGW_A
+        PrivB -->|Route| NATGW_B
+        
+        IGW <--> PubA
+        IGW <--> PubB
+        
+        S3EP["S3 Gateway Endpoint<br>(Free)"] -.-> PrivA & PrivB
+    end
+```
+
+---
+
+## 13. Security Best Practices
+
+1. **Custom VPC** — never use the default VPC for production
+2. **Private subnets for compute** — EC2, ECS, Lambda run in private subnets
+3. **Private subnets for data** — RDS, ElastiCache in isolated data subnets
+4. **Security Group referencing** — allow traffic from SG IDs, not CIDR ranges
+5. **Least privilege SG rules** — only open required ports to required sources
+6. **No SSH from 0.0.0.0/0** — use Systems Manager Session Manager or bastion in private subnet
+7. **NACLs as secondary defense** — use for broad subnet-level blocking (e.g., deny known malicious CIDRs)
+8. **VPC Flow Logs on all traffic** — send to CloudWatch Logs + S3 for analysis
+9. **VPC endpoints for AWS services** — avoid sending internal traffic over the internet
+10. **DNS hostnames + resolution** — required for VPC endpoints and private DNS
+
+### Security Group Layering Pattern
+```
+Internet → ALB SG (port 443 from 0.0.0.0/0)
+              ↓
+         App SG (port 8080 from ALB SG only)
+              ↓
+         DB SG (port 5432 from App SG only)
+              ↓
+         Cache SG (port 6379 from App SG only)
+
+Each layer only accepts traffic from the layer above.
+Never allow 0.0.0.0/0 except on ALB for HTTPS.
+```
+
+---
+
+## 14. High Availability
+
+```
+NAT Gateway HA:
+  - 1 NAT Gateway per AZ (not shared across AZs)
+  - Each private subnet routes to NAT GW in its own AZ
+  - If AZ-A fails, AZ-B NAT GW continues independently
+  - Cost: ~$33/month per NAT GW + $0.045/GB data
+
+Subnet Spanning:
+  - Minimum 2 AZs (3 AZs recommended for critical workloads)
+  - Each AZ has: public + private + data subnet
+  - All tiers (ALB, compute, database) span multiple AZs
+
+Route Table Isolation:
+  - Separate route table per AZ for private subnets
+  - Each private RT routes 0.0.0.0/0 to its own AZ's NAT GW
+  - Public subnets can share one route table (all point to IGW)
+
+DNS & Endpoints:
+  - VPC endpoints are regionally scoped (survive AZ failure)
+  - Gateway endpoints (S3, DynamoDB) work across all AZs automatically
+  - Interface endpoints: deploy in multiple AZs for HA
+```
+
+---
+
+## 15. Scalability
+
+```
+CIDR Planning for Growth:
+  - VPC CIDR: /16 (65,536 IPs) — plan for maximum growth
+  - Subnet CIDR: /24 (251 usable IPs per subnet, AWS reserves 5)
+  - Secondary CIDRs: can add up to 4 additional CIDR blocks to VPC
+  - Never use /28 subnets (only 11 usable IPs)
+
+Subnet Scalability:
+  - If a /24 fills up, create additional subnets in the same AZ
+  - Use secondary CIDRs (e.g., 100.64.0.0/16) for expansion
+  - Plan: 6 subnets minimum (public + private + data × 2 AZs)
+
+Network Throughput:
+  - IGW: no bandwidth limit (scales automatically)
+  - NAT GW: 100 Gbps burst, 45 Gbps sustained per gateway
+  - VPC peering: no bandwidth limit (same region)
+  - Interface endpoints: 10 Gbps per AZ
+
+Multi-Account Scaling:
+  - VPC peering: works for small number of VPCs
+  - Transit Gateway: hub-and-spoke for 10+ VPCs
+  - RAM (Resource Access Manager): share subnets across accounts
+  - Plan non-overlapping CIDRs: 10.0.0.0/16, 10.1.0.0/16, 10.2.0.0/16, etc.
+```
+
+---
+
+## 16. Monitoring & Observability
+
+```
+VPC Flow Logs:
+  - Enable on VPC level (captures all ENI traffic)
+  - Log destination: CloudWatch Logs (real-time analysis) + S3 (long-term storage)
+  - Fields: srcaddr, dstaddr, srcport, dstport, protocol, action (ACCEPT/REJECT)
+  - Use for: security audit, troubleshooting, compliance
+  - Cost: ingestion + storage charges
+
+CloudWatch Metrics:
+  - NAT Gateway: BytesOutToDestination, PacketsDropCount, ActiveConnectionCount
+  - VPN: TunnelState (0 = down, 1 = up), TunnelDataIn/Out
+  - Transit Gateway: BytesIn, BytesOut, PacketDropCount
+
+Network Monitoring:
+  - Reachability Analyzer: test path connectivity between resources
+  - Network Access Analyzer: identify unintended network access
+  - Traffic Mirroring: copy network traffic for deep packet inspection
+
+Alarms to Set:
+  NAT GW PacketsDropCount > 0 → alert (capacity issue)
+  NAT GW ErrorPortAllocation > 0 → alert (port exhaustion)
+  VPN TunnelState = 0 → alert (tunnel down)
+  Flow Log REJECT count spike → alert (possible attack)
+```
+
+---
+
+## 17. Cost Optimization
+
+```
+NAT Gateway Costs (biggest VPC expense):
+  - Hourly: $0.045/hour (~$33/month per gateway)
+  - Data processing: $0.045/GB
+  - Fix: S3 Gateway endpoint = FREE (saves $0.045/GB for S3 traffic)
+  - Fix: DynamoDB Gateway endpoint = FREE
+  - Fix: Interface endpoints for high-volume services (ECR, CloudWatch)
+  - Analysis: check NAT GW BytesOutToDestination — if S3 is top destination, add endpoint
+
+VPC Endpoint Costs:
+  - Gateway endpoints (S3, DynamoDB): FREE
+  - Interface endpoints: $0.01/hour (~$7.20/month) + $0.01/GB
+  - Only create interface endpoints for services you frequently access
+
+Data Transfer:
+  - Same AZ: free
+  - Cross-AZ: $0.01/GB each way ($0.02/GB round trip)
+  - Cross-region: $0.02/GB
+  - Minimize cross-AZ traffic: use AZ-aware routing
+
+IP Address Costs:
+  - Public IPv4 addresses: $0.005/hour per address (~$3.60/month)
+  - Elastic IPs (unattached): $0.005/hour (charge for NOT using them)
+  - Use private IPs + NAT GW where possible to reduce public IP costs
+
+Cost Reduction Checklist:
+  ✅ S3 Gateway endpoint (saves NAT costs)
+  ✅ DynamoDB Gateway endpoint (saves NAT costs)
+  ✅ Minimize public IPs (use private + NAT)
+  ✅ Release unused Elastic IPs
+  ✅ AZ-aware traffic routing
+  ✅ Review NAT GW data processing monthly
+```
+
+---
+
+## 18. Disaster Recovery
+
+```
+Single-Region DR:
+  - Multi-AZ subnets: survive AZ failure automatically
+  - NAT GW per AZ: independent outbound connectivity
+  - ALB spans AZs: automatic traffic redistribution
+
+Cross-Region DR:
+  - Replicate VPC design in DR region (same CIDR structure)
+  - Use Infrastructure as Code (CloudFormation/Terraform) for identical VPC
+  - Cross-region VPC peering for data replication traffic
+  - Route 53 health checks → failover routing to DR region
+
+Hybrid DR (On-Premises ↔ AWS):
+  - Primary: Site-to-Site VPN (quick to set up, internet-based)
+  - Production: AWS Direct Connect (dedicated, consistent latency)
+  - Both: use as backup for each other (VPN as DX failover)
+
+Recovery Strategies:
+  Strategy          | RTO      | Cost    | How
+  ─────────────────────────────────────────────────────
+  Backup & Restore  | Hours    | Low     | IaC deploys VPC in DR region
+  Pilot Light       | 30 min   | Medium  | VPC pre-built, core infra running
+  Warm Standby      | Minutes  | Higher  | Full VPC + scaled-down services
+  Active-Active     | Near-0   | Highest | Full VPC + full services both regions
+
+VPC DR Checklist:
+  - [ ] VPC design documented as IaC (CloudFormation/Terraform)
+  - [ ] DR region VPC uses non-overlapping CIDRs
+  - [ ] Cross-region peering or Transit Gateway configured
+  - [ ] Route 53 health checks + failover routing
+  - [ ] VPN/Direct Connect redundancy tested
 ```
 
 ---
@@ -661,6 +879,28 @@ aws ec2 create-vpc-endpoint \
 | 6 | SG allows too much | 0.0.0.0/0 on non-public ports | Reference SGs, not CIDRs |
 | 7 | Flow Logs not enabled | Not configured | Enable on VPC creation |
 | 8 | DNS resolution fails | DNS settings disabled | Enable DNS resolution + hostnames |
+
+---
+
+## 21. Real-World Scenario
+
+### Scenario: NAT Gateway Cost Spike Investigation
+
+**Event**: Monthly AWS bill shows NAT Gateway data processing charges jumped from $50 to $800.
+
+**Investigation**:
+1. CloudWatch → NAT Gateway → BytesOutToDestination → identify spike date
+2. VPC Flow Logs → filter by NAT Gateway ENI → identify top destination IPs
+3. Discovery: EC2 instances downloading large datasets from S3 via NAT Gateway
+4. Root cause: no S3 VPC Gateway endpoint — all S3 traffic routed through NAT ($0.045/GB)
+
+**Fix**:
+1. Created S3 Gateway VPC endpoint (free) → routes S3 traffic directly, bypassing NAT
+2. Created DynamoDB Gateway endpoint (also free)
+3. Added interface endpoints for ECR (container image pulls were also going through NAT)
+4. Result: NAT Gateway costs dropped from $800 to $60/month
+
+**Lesson**: Always create S3 and DynamoDB Gateway endpoints (free). Monitor NAT Gateway BytesOutToDestination monthly. Most "high NAT costs" are caused by S3 traffic.
 
 ---
 
@@ -730,9 +970,75 @@ A: The auto-assigned public IP is released. When you restart, a new public IP is
 **Q20: How many security groups can you attach to an instance?**
 A: Up to 5 security groups per ENI (network interface). All rules from all attached SGs are evaluated together. The instance is allowed if ANY of the attached SGs has a matching ALLOW rule.
 
-### Advanced & Scenario Questions (20)
+### Advanced Questions (10)
 
-**Q21-Q40**: *(Cover: CIDR planning for 50-account organization, Transit Gateway routing, VPN failover with Direct Connect, IPv6 dual-stack VPC, VPC sharing with RAM, PrivateLink service provider model, flow log analysis for security investigation, multi-region VPC architecture, network performance tuning with placement groups, troubleshooting asymmetric routing, NACL vs SG decision matrix, VPC endpoint policies, DNS forwarding hybrid scenarios, and network cost optimization)*
+**Q21: Design a CIDR strategy for a 50-account organization using AWS Organizations.**
+A: Use a structured allocation: 10.0.0.0/8 divided into /16 blocks per account. Example: Account 1 = 10.0.0.0/16, Account 2 = 10.1.0.0/16, etc. This gives 256 accounts with 65,536 IPs each. Rules: no overlapping CIDRs (required for peering/Transit Gateway), document allocation in a central IPAM registry, use AWS VPC IPAM for automated management. Reserve ranges for future accounts. Use 100.64.0.0/10 (shared address space) for secondary CIDRs if needed.
+
+**Q22: How does Transit Gateway work and when would you use it over VPC peering?**
+A: Transit Gateway (TGW) is a regional hub that connects VPCs, VPNs, and Direct Connect. Unlike VPC peering (point-to-point, non-transitive), TGW supports transitive routing — VPC-A can reach VPC-C through TGW without direct peering. Use TGW when: 10+ VPCs need connectivity, you need centralized routing control, or connecting VPNs to multiple VPCs. TGW supports route tables for segmentation (e.g., production VPCs can't reach dev VPCs). Cost: $0.05/hour per attachment + $0.02/GB data.
+
+**Q23: Design VPN failover with Direct Connect for hybrid connectivity.**
+A: Architecture: Primary path = Direct Connect (DX) for consistent, low-latency connectivity. Backup path = Site-to-Site VPN over internet. Configuration: 1) Create Virtual Private Gateway (VGW) attached to VPC. 2) DX connection via DX Gateway → VGW. 3) VPN connection → same VGW. 4) BGP routing: DX advertises routes with higher preference (shorter AS path). 5) If DX fails, BGP automatically shifts traffic to VPN tunnel. 6) Recovery: when DX is restored, BGP shifts back. For mission-critical: use 2 DX connections (different locations) + VPN as tertiary backup.
+
+**Q24: Explain IPv6 dual-stack VPC configuration.**
+A: Dual-stack VPC supports both IPv4 and IPv6 simultaneously. Configuration: 1) Associate an Amazon-provided /56 IPv6 CIDR to VPC. 2) Assign /64 IPv6 CIDR to each subnet. 3) Update route tables — add ::/0 route to IGW (IPv6 is always public, no NAT needed). 4) Security groups: add IPv6 rules (separate from IPv4). 5) Instances get both IPv4 private + IPv6 global address. 6) For IPv6-only private subnets: use Egress-Only Internet Gateway (outbound only, like NAT for IPv6). Use case: IoT devices, modern applications, IPv4 exhaustion.
+
+**Q25: How does VPC sharing with RAM work?**
+A: AWS Resource Access Manager (RAM) allows sharing VPC subnets across accounts in the same Organization. The owner account creates the VPC and subnets, then shares subnets with participant accounts. Participants can launch resources (EC2, RDS, Lambda) in shared subnets. Benefits: centralized network management, reduced NAT Gateway costs (shared), simplified peering. Limitations: participants can't modify the VPC/subnet/route table — only the owner can. Security groups are per-account (participants manage their own SGs).
+
+**Q26: Explain the PrivateLink service provider model.**
+A: PrivateLink allows you to expose your service to other VPCs/accounts privately. Provider side: 1) Deploy service behind a Network Load Balancer (NLB). 2) Create VPC Endpoint Service pointing to NLB. 3) Approve consumer connection requests. Consumer side: 1) Create Interface VPC Endpoint to the service. 2) Gets a private DNS name and ENI in their VPC. Traffic stays on AWS private network — never touches the internet. Use case: SaaS providers offering private connectivity, internal shared services across accounts.
+
+**Q27: How do you analyze VPC Flow Logs for a security investigation?**
+A: Steps: 1) Flow Logs → S3 → query with Athena. 2) Investigate rejected traffic: `SELECT srcaddr, dstport, COUNT(*) FROM flow_logs WHERE action='REJECT' GROUP BY srcaddr, dstport ORDER BY COUNT(*) DESC` — identifies port scanning. 3) Check for data exfiltration: `SELECT dstaddr, SUM(bytes) FROM flow_logs WHERE srcaddr LIKE '10.0.%' GROUP BY dstaddr ORDER BY SUM(bytes) DESC` — identifies large outbound transfers to unknown IPs. 4) Timeline analysis: filter by specific srcaddr/dstaddr and time range. 5) Correlate with CloudTrail for API-level context (who modified SGs?).
+
+**Q28: Design a multi-region VPC architecture for a global application.**
+A: Architecture per region: identical VPC layout using IaC (CloudFormation/Terraform). Inter-region connectivity: Transit Gateway peering (transitive) or VPC peering (direct, lower latency). DNS: Route 53 latency-based routing for user-facing traffic. Data replication: cross-region VPC peering for database replication traffic. Security: consistent SG rules across regions via IaC. Key decisions: same CIDR plan across regions (non-overlapping), centralized logging (VPC Flow Logs → central S3 bucket), consistent tagging.
+
+**Q29: When should you use NACLs vs relying only on Security Groups?**
+A: Security Groups (SGs) are sufficient for most cases — they're stateful, support SG referencing, and are easier to manage. Use NACLs in addition when: 1) You need explicit DENY rules (SGs only allow). 2) Blocking known malicious IP ranges at the subnet level. 3) Compliance requires network-level access control. 4) Defense-in-depth requirements. NACL gotchas: stateless (must allow return traffic explicitly — ephemeral ports 1024-65535), rules evaluated in order (lowest number first), one NACL per subnet. Production: use SGs as primary, NACLs only for broad blocking.
+
+**Q30: How do VPC endpoint policies work and when should you use them?**
+A: Endpoint policies are IAM resource policies attached to VPC endpoints. They control which AWS resources can be accessed through the endpoint. Example: S3 Gateway endpoint policy that restricts access to only your company's S3 buckets — prevents data exfiltration to external buckets. Syntax: standard IAM policy with Principal, Action, Resource. Default policy: full access (allow all). Best practice: restrict to specific buckets/resources for sensitive environments. Works on both Gateway and Interface endpoints.
+
+### Scenario-Based Questions (10)
+
+**Q31: Your EC2 instances in private subnets suddenly can't reach the internet. Walk through troubleshooting.**
+A: 1) Check NAT Gateway status — is it in "available" state? If "failed," recreate it. 2) Check route table — does the private subnet's RT have 0.0.0.0/0 → NAT Gateway? 3) Check NAT Gateway's subnet — is it in a public subnet with IGW route? 4) Check NAT Gateway's Elastic IP — is it still associated? 5) Check Security Group on EC2 — does it allow outbound traffic? 6) Check NACL — does it allow outbound traffic AND return traffic (ephemeral ports 1024-65535 inbound)? 7) Check NAT Gateway CloudWatch — PacketsDropCount > 0 means capacity issue.
+
+**Q32: After adding a VPC peering connection, instances in VPC-A still can't reach VPC-B. Why?**
+A: Most common causes: 1) Route tables not updated — both VPCs must have routes pointing the peer's CIDR to the peering connection. 2) Security groups don't allow traffic from the peer VPC's CIDR. 3) NACLs blocking traffic. 4) DNS resolution not enabled on the peering connection (can't resolve private DNS names across peers). 5) Overlapping CIDRs — peering can't be created if CIDRs overlap. Fix: verify routes in both VPCs, update SGs to allow peer CIDR, enable DNS resolution on peering.
+
+**Q33: Your VPN tunnel keeps flapping (going up and down). Diagnose and fix.**
+A: Common causes: 1) Idle timeout — AWS VPN tunnels drop after 10 seconds of inactivity. Fix: configure DPD (Dead Peer Detection) or send keep-alive pings. 2) Incorrect Phase 1/Phase 2 parameters — IKE version, encryption algorithm, DH group mismatch. Fix: align parameters on both sides. 3) NAT-T issues — if customer gateway is behind NAT, enable NAT Traversal. 4) BGP issues — if using dynamic routing, check BGP timers and route advertisements. 5) Internet instability — check ISP connectivity. Best practice: use 2 VPN tunnels (active/passive) for redundancy.
+
+**Q34: Design network security for a PCI-DSS compliant application on AWS.**
+A: 1) Dedicated VPC for cardholder data environment (CDE). 2) Three-tier subnet architecture: public (WAF/ALB), private (app), data (DB) — each in separate subnets. 3) NACLs: explicit deny lists + allow only required traffic. 4) SGs: strict port-level access, SG referencing only. 5) VPC Flow Logs: ALL traffic → S3 with 1-year retention. 6) No internet access for data tier — no NAT GW route for data subnets. 7) VPC endpoints for all AWS service access (no internet path). 8) Network segmentation: isolate CDE from non-CDE VPCs. 9) AWS Network Firewall or third-party IDS/IPS for traffic inspection.
+
+**Q35: How do you optimize network performance with placement groups?**
+A: Three types: 1) Cluster placement group — instances in same rack, same AZ. Lowest latency (~25 Gbps between instances). Use for HPC, tightly coupled workloads. 2) Spread placement group — instances on distinct hardware across AZs. Maximum fault isolation. Use for critical instances (max 7 per AZ). 3) Partition placement group — instances divided into logical partitions on separate racks. Use for distributed databases (Kafka, Cassandra). Network tuning: enable Enhanced Networking (ENA), use Elastic Fabric Adapter (EFA) for HPC, choose instances with higher network bandwidth.
+
+**Q36: Traffic between two subnets in the same VPC is being blocked. Both SGs allow the traffic. What's wrong?**
+A: If SGs allow the traffic, check NACLs. NACLs are stateless — you must explicitly allow return traffic. Common issue: NACL allows inbound on port 443, but doesn't allow outbound on ephemeral ports (1024-65535), so the response packets are dropped. Fix: ensure NACL allows outbound on ephemeral port range. Also check: are the subnets using the correct route table? The VPC "local" route should exist (it's added automatically and can't be removed). Verify no custom routes override the local route.
+
+**Q37: How do you implement DNS forwarding for hybrid cloud (VPC ↔ on-premises)?**
+A: Use Route 53 Resolver: 1) Inbound Endpoint — allows on-premises DNS to resolve AWS private hosted zone records. Deploy ENIs in your VPC, configure on-prem DNS to forward AWS domains to these IPs. 2) Outbound Endpoint — allows VPC instances to resolve on-prem domain records. Create forwarding rules (e.g., corp.example.com → on-prem DNS IPs). 3) Deploy endpoints in multiple AZs for HA. 4) Both require VPN or DX connectivity between VPC and on-prem. Cost: ~$0.125/hour per endpoint + $0.40 per million queries.
+
+**Q38: NAT Gateway ErrorPortAllocation alarm fired. What's happening and how do you fix it?**
+A: ErrorPortAllocation means the NAT Gateway has exhausted its available ports (64,000 ports per destination IP). Cause: many connections to the same destination IP (e.g., thousands of Lambdas connecting to one API endpoint). Fix: 1) Spread traffic across multiple destination IPs (use DNS with multiple A records). 2) Allocate additional Elastic IPs to the NAT Gateway (up to 8, giving 8 × 64,000 = 512,000 ports). 3) Reduce connection duration — close connections quickly, use HTTP keep-alive efficiently. 4) If traffic is to AWS services, use VPC endpoints to bypass NAT entirely.
+
+**Q39: You need to inspect all traffic entering and leaving your VPC. How?**
+A: Options: 1) AWS Network Firewall — managed stateful/stateless firewall service. Deploy in firewall subnet, route traffic through it via route table entries. Supports Suricata-compatible IPS rules. 2) Traffic Mirroring — copy network traffic to monitoring appliances for deep packet inspection. Works at ENI level. Use for IDS/IPS or forensic analysis. 3) Gateway Load Balancer (GWLB) — inline transparent inspection. Deploys third-party appliances (Palo Alto, Fortinet). Traffic is transparently routed through appliances. 4) VPC Flow Logs — metadata only (no payload), but useful for traffic analysis without full packet capture.
+
+**Q40: Your application latency increased after migrating from single-AZ to multi-AZ. Why?**
+A: Cross-AZ data transfer adds latency (~0.5-1ms per AZ hop). Common causes: 1) Application server in AZ-A calling database in AZ-B for every request. Fix: use AZ-aware connection routing or ensure app and DB are in the same AZ. 2) Microservices calling each other cross-AZ. Fix: implement AZ-aware service discovery. 3) Data transfer costs also increase ($0.01/GB cross-AZ). Solutions: AZ affinity in load balancer (cross-zone load balancing disabled), AZ-aware database connection strings, cache frequently accessed data locally. Trade-off: AZ affinity reduces latency but may reduce fault tolerance.
+
+---
+
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above — Q31 through Q40)*
 
 ---
 

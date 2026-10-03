@@ -182,7 +182,41 @@ flowchart TD
 
 ---
 
-## 7-8. Components & How It Works
+## 7. Important Components
+
+```
+Cost Explorer:
+  - Visualize and analyze AWS spending
+  - Filters: service, account, region, tag, instance type
+  - Forecasting: predict next month's spend
+  - Savings Plans recommendations
+  - Right-sizing recommendations (via Compute Optimizer)
+
+AWS Budgets:
+  - Set spending thresholds with alerts
+  - Types: Cost, Usage, Savings Plans, Reservation
+  - Actions: SNS notification, IAM policy restriction, SCP application
+  - Forecasted vs actual budget alerts
+```
+
+---
+
+## 8. How It Works
+
+```
+Cost Explorer Flow:
+  1. AWS records all resource usage and costs
+  2. Cost Explorer aggregates data (available after 24 hours)
+  3. Filter and group by: service, account, tag, region
+  4. View daily/monthly trends and forecasts
+  5. Export reports to S3 (CUR - Cost and Usage Report)
+
+Budget Flow:
+  1. Create budget with threshold (e.g., $1,000/month)
+  2. Set alert at 80% and 100% of budget
+  3. SNS notification when threshold crossed
+  4. Optional: auto-apply SCP to restrict new resource creation
+```
 
 ### Cost Explorer Query Examples
 
@@ -384,7 +418,123 @@ aws budgets create-budget --account-id $ACCOUNT_ID \
 
 ---
 
-## 13-21. Sections
+## 13. Security Best Practices
+
+1. **Restrict Cost Explorer access** -- not all users need to see spending
+2. **Budget alerts to finance team** -- multiple notification channels
+3. **Cost allocation tags** -- tag everything (Environment, Team, Project)
+4. **CUR encryption** -- encrypt Cost and Usage Reports in S3
+5. **Budget actions** -- auto-restrict spending with SCPs/IAM
+
+---
+
+## 14. High Availability
+
+```
+Cost Explorer & Budgets:
+  - Fully managed, global services
+  - No HA configuration needed
+  - Data available within 24 hours of usage
+```
+
+---
+
+## 15. Scalability
+
+```
+Limits:
+  - 20,000 budgets per account
+  - Cost Explorer: 13 months history (default)
+  - CUR: unlimited historical data in S3
+```
+
+---
+
+## 16. Monitoring & Observability
+
+```
+Budget Alerts:
+  - Email notifications via SNS
+  - Forecasted alerts (warn before exceeding)
+  - Actual alerts (already exceeded)
+
+Anomaly Detection:
+  - AWS Cost Anomaly Detection: ML-based
+  - Detects unusual spending patterns
+  - Sends alerts via SNS or email
+```
+
+---
+
+## 17. Cost Optimization
+
+```
+Using Cost Explorer for Optimization:
+  1. Identify top spending services (EC2, RDS, S3 usually top 3)
+  2. Check rightsizing recommendations (Compute Optimizer)
+  3. Review Savings Plans recommendations
+  4. Analyze data transfer costs (cross-AZ, cross-region)
+  5. Check for idle resources (running but unused)
+
+Savings Opportunities:
+  - Savings Plans: 30-60% on compute
+  - Reserved Instances: 30-60% on databases
+  - Spot Instances: up to 90% for fault-tolerant workloads
+  - S3 Intelligent-Tiering: automatic cost optimization
+  - Delete unused resources: EBS volumes, snapshots, EIPs
+```
+
+---
+
+## 18. Disaster Recovery
+
+```
+DR:
+  - Cost data is global (available in any region)
+  - CUR reports stored in S3 (replicate to DR region)
+  - Budgets recreate via CloudFormation in DR account
+```
+
+---
+
+## 19. Troubleshooting
+
+### Problem 1: Budget Alert Not Firing
+```
+Check:
+  1. SNS topic subscription confirmed?
+  2. Budget threshold set correctly?
+  3. Budget period (monthly/daily/annually)?
+  4. Wait: budgets update every 8-12 hours
+```
+
+---
+
+## 20. Common Production Problems
+
+| # | Problem | Root Cause | Prevention |
+|---|---------|------------|------------|
+| 1 | Unexpected high bill | No budget alerts set | Create budgets for every account |
+| 2 | Can't filter by team | No cost allocation tags | Enforce tagging via SCP |
+| 3 | Budget action too aggressive | SCP blocks critical resources | Test actions in dev first |
+
+---
+
+## 21. Real-World Scenario
+
+### Scenario: Cloud Costs Increased 40% Month-over-Month
+
+**Investigation**:
+1. Cost Explorer -> group by service -> identified EC2 as top increase
+2. Filter by instance type -> dev instances running 24/7
+3. Filter by tag -> team "Data Science" scaling up GPU instances
+4. No Savings Plans or Reserved Instances for new instances
+
+**Fix**:
+1. Instance Scheduler: stop dev instances nights/weekends (save 65%)
+2. Spot for data science training jobs (save 70%)
+3. Savings Plan for baseline compute
+4. Budget alert at $5,000/month with 80% warning
 
 ### Key Troubleshooting
 
@@ -445,6 +595,22 @@ A: Trusted Advisor checks for idle EC2, unused EBS, unattached EIPs. Cost Explor
 A: The most detailed cost dataset. Delivered to S3 as CSV/Parquet files. Includes every line item across all services. Query with Athena for custom cost analysis.
 
 ### Intermediate & Advanced Questions (20 more across difficulty levels covering RI strategies, Spot optimization, tagging governance, FinOps practices, chargeback models, multi-account cost allocation, anomaly detection, cost-aware architecture decisions, and interview scenarios)
+
+---
+
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above)*
+
+---
+
+## 24. Common Mistakes
+
+1. **No budgets set** -- surprised by month-end bills
+2. **No cost allocation tags** -- can't attribute costs to teams
+3. **Ignoring recommendations** -- Savings Plans and rightsizing ignored
+4. **No anomaly detection** -- sudden spikes go unnoticed
+5. **Not reviewing monthly** -- costs drift without regular review
 
 ---
 

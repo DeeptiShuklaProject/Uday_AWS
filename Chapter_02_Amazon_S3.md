@@ -1026,7 +1026,13 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 23. Common Mistakes
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above — Q31 through Q40)*
+
+---
+
+## 24. Common Mistakes
 
 1. **Public bucket for "testing"** — attackers scan for open S3 buckets constantly
 2. **No lifecycle rules** — paying full price for data accessed once a year
@@ -1041,7 +1047,7 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 24. Production Checklist
+## 25. Production Checklist
 
 - [ ] Block Public Access enabled at account level
 - [ ] Block Public Access enabled at bucket level
@@ -1062,7 +1068,7 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 25. Chapter Summary
+## 26. Chapter Summary
 
 Amazon S3 is the most used AWS service — virtually every architecture includes it. Key takeaways:
 

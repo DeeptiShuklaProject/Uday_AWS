@@ -193,7 +193,63 @@ flowchart LR
 
 ---
 
-## 7-10. CLI Commands & Practical
+## 7. Important Components
+
+```
+AssumeRole: get temporary credentials for a different role
+  - Cross-account access, service roles, federated users
+  - Returns: AccessKeyId, SecretAccessKey, SessionToken
+  - Duration: 15 min to 12 hours
+
+GetSessionToken: get temporary credentials for MFA-authenticated requests
+GetFederationToken: create federated user with custom policy
+AssumeRoleWithSAML: exchange SAML assertion for AWS credentials
+AssumeRoleWithWebIdentity: exchange OIDC token (Cognito, Google) for credentials
+```
+
+---
+
+## 8. How It Works
+
+```
+AssumeRole Flow:
+  1. Principal (user/role/service) calls sts:AssumeRole
+  2. STS validates: IAM policy allows, trust policy allows caller
+  3. STS returns temporary credentials (AccessKey + Secret + SessionToken)
+  4. Principal uses temporary credentials to call AWS APIs
+  5. Credentials expire after specified duration
+```
+
+---
+
+## 9. AWS Console Walkthrough
+
+### Switch Roles in Console
+1. Click username in top-right -> **Switch Role**
+2. Enter: Account ID, Role name, Display name
+3. Console now operates with assumed role permissions
+4. Switch back: click role name -> **Back to original**
+
+---
+
+## 10. AWS CLI Commands
+
+```bash
+# Assume role
+CREDS=$(aws sts assume-role \
+    --role-arn arn:aws:iam::ACCOUNT:role/CrossAccountRole \
+    --role-session-name my-session \
+    --duration-seconds 3600 \
+    --query 'Credentials')
+
+# Extract and export
+export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r .AccessKeyId)
+export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .SecretAccessKey)
+export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .SessionToken)
+
+# Verify identity
+aws sts get-caller-identity
+```
 
 ### AWS CLI — AssumeRole
 ```bash
@@ -262,7 +318,97 @@ aws sts get-caller-identity
 
 ---
 
-## 11-18. Practical through DR
+## 11. Hands-On Practical
+
+### Practical: Cross-Account Role Assumption
+```bash
+# In Account A: create role with trust policy for Account B
+# In Account B: assume the role
+aws sts assume-role --role-arn arn:aws:iam::ACCOUNT_A:role/SharedRole \
+    --role-session-name cross-account-test
+```
+
+---
+
+## 12. Production Architecture
+
+```
+STS Usage Patterns:
+  - Cross-account: central account assumes roles in workload accounts
+  - CI/CD: pipeline assumes deployment role in target account
+  - Federation: SAML/OIDC users get temporary AWS credentials
+  - Service roles: Lambda, ECS assume execution roles automatically
+```
+
+---
+
+## 13. Security Best Practices
+
+1. **Short session duration** -- minimize exposure window
+2. **External ID** -- prevent confused deputy attacks for cross-account
+3. **MFA required** -- condition in trust policy for sensitive roles
+4. **Condition keys** -- restrict by source IP, time, or service
+5. **Least privilege** -- temporary credentials should have minimal permissions
+6. **Session tags** -- pass attributes for ABAC (attribute-based access control)
+
+---
+
+## 14. High Availability
+
+```
+STS is a global service with regional endpoints:
+  - Use regional endpoints (sts.REGION.amazonaws.com) for lower latency
+  - Regional endpoints are independent (survive other region failures)
+  - Global endpoint (sts.amazonaws.com) routes to us-east-1
+```
+
+---
+
+## 15. Scalability
+
+```
+STS Limits:
+  - AssumeRole: no explicit rate limit (AWS-managed)
+  - GetSessionToken: high throughput
+  - Token size: max ~2,048 bytes for session policies
+```
+
+---
+
+## 16. Monitoring & Observability
+
+```
+CloudTrail:
+  - Every STS API call logged
+  - AssumeRole: logs who assumed, which role, session name
+  - Critical for: security audit, incident investigation
+
+Alarms:
+  - AssumeRole from unexpected source account -> alert
+  - AssumeRole failures spike -> potential attack
+  - Cross-account role assumption outside business hours -> alert
+```
+
+---
+
+## 17. Cost Optimization
+
+```
+STS is free -- no charges for API calls
+  - Temporary credentials are free
+  - Only pay for AWS services accessed using the credentials
+```
+
+---
+
+## 18. Disaster Recovery
+
+```
+STS DR:
+  - Use regional STS endpoints (survive us-east-1 outage)
+  - Activate regional endpoints in STS settings
+  - Trust policies should not hardcode regions
+```
 
 ### Production STS Patterns
 ```
@@ -305,7 +451,29 @@ Check:
 
 ---
 
-## 20-21. Common Problems & Scenario
+## 20. Common Production Problems
+
+| # | Problem | Root Cause | Prevention |
+|---|---------|------------|------------|
+| 1 | AccessDenied on AssumeRole | Trust policy doesn't allow caller | Check trust policy principal |
+| 2 | Token expired | Session duration too short | Increase duration, implement refresh |
+| 3 | Confused deputy | No external ID in trust policy | Always use external ID for third-party |
+| 4 | MFA required but not provided | Condition in trust policy requires MFA | Pass MFA serial + token code |
+
+---
+
+## 21. Real-World Scenario
+
+### Scenario: Cross-Account CI/CD Pipeline
+
+**Setup**: CodePipeline in DevOps account deploys to Dev, Staging, Prod accounts.
+
+**Implementation**:
+1. Each target account has a deployment role with trust policy for DevOps account
+2. CodePipeline assumes role in target account for each stage
+3. External ID used for additional security
+4. CloudTrail logs all cross-account AssumeRole calls
+5. IAM Access Analyzer monitors cross-account role usage
 
 | # | Problem | Root Cause | Prevention |
 |---|---------|------------|------------|
@@ -365,7 +533,23 @@ A: User authenticates with corporate IdP (AD). IdP sends SAML assertion to AWS. 
 **Q14: What is the difference between AssumeRoleWithSAML and AssumeRoleWithWebIdentity?**
 A: SAML: for enterprise IdPs (Active Directory, Okta). WebIdentity: for web/mobile apps (Google, Facebook, Amazon). Both return temporary credentials but use different identity sources.
 
-**Q15-Q20**: *(Cover: federation vs IAM users, MFA with STS, cross-region STS calls, token service endpoint optimization, and STS + Organizations SCPs.)*
+**Q15: When would you use federation instead of creating IAM users?**
+A: Use federation when: users already have identities elsewhere (corporate AD, Google, Okta), you don't want to manage passwords in AWS, you need SSO across multiple accounts, or for compliance (centralized identity). Use IAM users only for: service accounts that can't use roles, or very small teams with no existing IdP. Federation scales better and is more secure.
+
+**Q16: How does MFA work with STS AssumeRole?**
+A: The trust policy can include `aws:MultiFactorAuthPresent: true` and `aws:MultiFactorAuthAge` conditions. The caller must first authenticate with MFA (e.g., `aws sts get-session-token --serial-number MFA_ARN --token-code 123456`), then use those MFA-backed credentials to call `AssumeRole`. Without MFA, the AssumeRole call is denied. Use for: sensitive roles like production admin.
+
+**Q17: Are STS calls regional or global?**
+A: STS has a global endpoint (`sts.amazonaws.com`) and regional endpoints (`sts.us-east-1.amazonaws.com`). AWS recommends using regional endpoints for: lower latency, fault isolation (global endpoint is in us-east-1), and compliance. Enable STS in each Region via IAM console. Some services automatically use regional endpoints.
+
+**Q18: What are STS session tags and how are they used?**
+A: Tags passed during `AssumeRole` as key-value pairs. They become part of the session and can be used in IAM policy conditions (`aws:PrincipalTag/Project`). Use for: tenant isolation (`TenantId=abc`), cost allocation, and ABAC (Attribute-Based Access Control). Transitive tags persist when chaining roles. Maximum 50 session tags.
+
+**Q19: What is GetAccessKeyInfo used for?**
+A: Returns the account ID that owns an access key. Useful when investigating security incidents: "Which account does this leaked access key belong to?" Works for both long-term IAM user keys (AKIA prefix) and temporary STS credentials (ASIA prefix). Does not reveal the IAM entity — only the account.
+
+**Q20: What happens to STS credentials when the source IAM user is deleted?**
+A: Existing temporary credentials remain valid until they expire. Deleting the user does not immediately revoke issued STS tokens. To revoke: 1) Delete the user (prevents new tokens). 2) Add a deny-all inline policy on the role with a `DateLessThan` condition matching the compromise time. 3) Or use `aws:TokenIssueTime` condition to invalidate old sessions., and STS + Organizations SCPs.)*
 
 ### Advanced & Scenario Questions (20)
 
@@ -375,7 +559,67 @@ A: Use IAM Identity Center (SSO) for human access. For service-to-service: defin
 **Q22: A developer's temporary credentials are being used from an unexpected IP. Investigation?**
 A: 1) CloudTrail: find AssumeRole call, check source IP. 2) If compromised: revoke active sessions on the role. 3) Add IP condition to trust policy. 4) Investigate how credentials were exposed.
 
-**Q23-Q40**: *(Cover: break-glass access patterns, revoking STS sessions, confusion between IAM policies and trust policies, cross-account Lambda access, STS regional endpoints, credential forwarding risks, and temporary credentials in CI/CD.)*
+**Q23: What is a break-glass access pattern and how does STS support it?**
+A: Emergency access for when normal paths fail. Create a highly privileged role (`BreakGlassAdmin`) with MFA and ExternalId required. Only a few trusted principals can assume it. Log all usage with CloudTrail. Alert via EventBridge + SNS when assumed. Review and rotate ExternalId after each use. Normal operations use least-privilege roles; break-glass is the exception.
+
+**Q24: How do you revoke all active STS sessions for a compromised role?**
+A: Add an inline deny policy to the role with condition `aws:TokenIssueTime < <current_time>`. All tokens issued before that time are effectively denied. New AssumeRole calls get fresh tokens that pass the condition. This is the "revoke all sessions" button in the IAM console. Remember: this doesn't prevent re-assumption — update the trust policy to block the compromised principal too.
+
+**Q25: What is the difference between IAM policies and trust policies?**
+A: **IAM policies** (identity-based): define what actions the role can perform (permissions). Attached to the role itself. **Trust policies** (resource-based): define who can assume the role. Attached as the role's AssumeRolePolicyDocument. Both must allow the action. Common mistake: granting permissions in the trust policy — it only controls who can assume, not what they can do.
+
+**Q26: How does IAM Identity Center use STS under the hood?**
+A: When a user signs in via Identity Center and selects an account/permission set, Identity Center calls `AssumeRole` on the corresponding IAM role in the target account. The user gets temporary credentials scoped to that permission set. Session duration is configurable (1-12 hours). All of this is abstracted — users see a portal, but STS does the heavy lifting.
+
+**Q27: Explain role chaining limitations in detail.**
+A: Role chaining = assuming Role B from Role A's credentials. Limitation: maximum session duration is capped at 1 hour regardless of the role's configured maximum. Also, `aws:SourceIdentity` must be set on the first role and propagates through the chain (can't be changed). Chaining adds latency and makes debugging harder. Avoid long chains; use direct assumption where possible.
+
+**Q28: How do you implement cross-account access for 100+ accounts in an Organization?**
+A: 1) Use IAM Identity Center with permission sets (preferred — no per-account role management). 2) Or create a standard role (e.g., `OrgReadOnlyRole`) via CloudFormation StackSets across all accounts with a trust policy trusting the management/security account. 3) Use `aws:PrincipalOrgID` condition in trust policies. 4) Use SCP to enforce role naming and trust policy standards.
+
+**Q29: What is source identity and how does it help auditing?**
+A: `SourceIdentity` is set during the initial AssumeRole call and persists through role chaining. It identifies the original human or system (e.g., `john.doe`). CloudTrail logs include it, making it easy to trace actions back to the original actor even after multiple role assumptions. Once set, it cannot be changed in the chain.
+
+**Q30: How do you use STS with Lambda functions?**
+A: Lambda automatically assumes its execution role and gets temporary credentials (refreshed before expiry). For cross-account access, the Lambda function calls `sts.assume_role()` with the target role ARN. Cache the credentials for the session duration (not per-invocation). Use environment variables or Secrets Manager for ExternalId if needed.
+
+### Scenario-Based Questions (10)
+
+**Q31: A developer accidentally leaked temporary credentials on GitHub. What do you do?**
+A: 1) Identify the role from the access key (ASIA prefix → `GetAccessKeyInfo`). 2) Determine when the credentials expire. 3) Add an inline deny-all policy with `aws:TokenIssueTime < now` to the role to revoke all existing sessions. 4) Review CloudTrail for unauthorized actions during the exposure window. 5) Rotate any resources accessed. 6) Add GitHub secret scanning to prevent future leaks.
+
+**Q32: AssumeRole fails with "AccessDenied" but the trust policy looks correct. What do you check?**
+A: 1) The source principal has `sts:AssumeRole` permission for the role ARN. 2) The trust policy principal ARN is exact (no wildcards for cross-account). 3) ExternalId matches if required. 4) MFA condition is met if required. 5) SCP in the Organization doesn't deny cross-account assume. 6) The role's maximum session duration isn't conflicting. 7) The source account ID is correct in the trust policy.
+
+**Q33: You need to give a vendor temporary access to specific S3 buckets. How?**
+A: Create a role with a trust policy trusting the vendor's AWS account ID, require ExternalId (vendor-specific secret), and attach a policy granting only `s3:GetObject`/`s3:ListBucket` on the specific bucket ARNs. Set a short session duration (1 hour). Monitor with CloudTrail. Revoke by changing ExternalId or removing the trust policy entry.
+
+**Q34: CloudTrail shows AssumeRole calls from an unknown account. How do you investigate?**
+A: 1) Check the `sourceIdentity` and `userAgent` in CloudTrail. 2) Look at the trust policy to see which accounts are allowed. 3) If the account isn't authorized, immediately update the trust policy to remove it. 4) Revoke sessions with inline deny. 5) Check if the role was modified (trust policy change event in CloudTrail). 6) Verify SCP and guardrails. 7) Report to the security team.
+
+**Q35: Your application's STS credentials expire mid-operation causing failures. How do you fix?**
+A: 1) Request longer session duration (`--duration-seconds`, up to the role's max, typically 1-12 hours). 2) Implement credential refresh logic — before expiry, call AssumeRole again. 3) Use the AWS SDK's built-in credential provider chain which handles refresh automatically. 4) For role chaining, remember the 1-hour hard limit. 5) For long operations, use IAM user credentials (less preferred) or restructure the operation.
+
+**Q36: How do you prevent privilege escalation through role assumption?**
+A: 1) Trust policies should never use `*` as principal. 2) Limit `sts:AssumeRole` permissions to specific role ARNs. 3) Use permission boundaries on roles to cap maximum permissions. 4) Require MFA and ExternalId for sensitive roles. 5) Use SCPs to deny assumption of admin roles except from specific accounts. 6) Monitor with CloudTrail and alert on unexpected AssumeRole calls.
+
+**Q37: A CI/CD pipeline needs to deploy to dev, staging, and prod accounts. Design the STS flow.**
+A: Pipeline runs in a tools account. Three roles: `DevDeployRole`, `StagingDeployRole`, `ProdDeployRole` in respective accounts. Each trusts the pipeline's IAM role. DevDeploy and StagingDeploy: auto-assumed by the pipeline. ProdDeploy: requires manual approval step + MFA. Session tags: `Environment=prod`, `Pipeline=my-app`. CloudTrail logs which pipeline deployed what. SCPs prevent the pipeline role from accessing non-deployment resources.
+
+**Q38: You're seeing "ThrottlingException" on STS calls. How do you resolve?**
+A: STS has API rate limits. 1) Use regional endpoints (distribute load across regions). 2) Cache credentials instead of calling AssumeRole on every request. 3) Use SDK credential providers that cache automatically. 4) Reduce the number of distinct roles being assumed. 5) Implement exponential backoff. 6) Request a limit increase via AWS Support if legitimate usage is high.
+
+**Q39: How do you implement attribute-based access control (ABAC) with STS?**
+A: Pass session tags during AssumeRole: `--tags Key=Project,Value=phoenix Key=CostCenter,Value=1234`. IAM policies use `${aws:PrincipalTag/Project}` in conditions and resource ARNs: e.g., allow `s3:*` on `arn:aws:s3:::${aws:PrincipalTag/Project}-*`. This lets one role serve many projects — the tags determine which resources are accessible, not the policy. Reduces the number of roles needed.
+
+**Q40: When should you NOT use STS temporary credentials?**
+A: 1) AWS services that don't support temporary credentials (rare, legacy). 2) Very long-running operations (>12 hours) where credential refresh isn't possible. 3) IoT devices that need persistent credentials (use IoT certificates instead). 4) Third-party tools that only accept long-term access keys (push vendor to fix this). In almost all modern scenarios, temporary credentials via STS are the correct choice.ies, cross-account Lambda access, STS regional endpoints, credential forwarding risks, and temporary credentials in CI/CD.)*
+
+---
+
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above)*
 
 ---
 

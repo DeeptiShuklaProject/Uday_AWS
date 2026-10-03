@@ -431,7 +431,7 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=ResourceType,Attri
 
 ---
 
-## 12-18. Production through DR
+## 12. Production Architecture
 
 ### Production KMS Configuration
 ```
@@ -441,16 +441,130 @@ Keys:
   - Automatic rotation enabled
   - Alias for human-readable reference
 
-S3:   SSE-KMS with Bucket Key enabled
-EBS:  Default encryption enabled at account level
-RDS:  Encrypted at creation (CMK)
-EFS:  Encrypted at creation (CMK)
-SM:   Per-secret CMK (optional, default: aws/secretsmanager)
+Service Integration:
+  S3:   SSE-KMS with Bucket Key enabled
+  EBS:  Default encryption enabled at account level
+  RDS:  Encrypted at creation (CMK)
+  EFS:  Encrypted at creation (CMK)
+  SM:   Per-secret CMK (optional, default: aws/secretsmanager)
 
 Cross-account:
   - Key policy grants access to target account root
   - Target account IAM policy allows kms:Decrypt
   - Both must allow for cross-account to work
+```
+
+---
+
+## 13. Security Best Practices
+
+1. **Key policy least privilege** — separate key administrators from key users
+2. **Always keep root account access** — prevents lockout from your own keys
+3. **Enable automatic rotation** — rotates key material annually (old material preserved)
+4. **Use aliases** — human-readable names, easy key swapping without code changes
+5. **Use encryption context** — additional authentication data, logged in CloudTrail
+6. **CMK per application/classification** — granular access control and blast radius
+7. **ViaService conditions** — restrict key usage to specific AWS services only
+8. **Enable CloudTrail** — all KMS API calls are logged for audit
+9. **Never disable or delete without checking** — find all resources using the key first
+10. **Use Bucket Key for S3** — reduces KMS calls by 99%, reduces cost significantly
+
+---
+
+## 14. High Availability
+
+```
+KMS Built-in HA:
+  - KMS is a regional, managed service — multi-AZ by default
+  - Key material stored in FIPS 140-2 Level 3 validated HSMs
+  - Redundant copies across AZs within the region
+  - No single AZ failure can cause key loss
+  - 99.999999999% durability for key material
+
+Availability Considerations:
+  - KMS has request rate limits (per-second quotas)
+  - Default: 5,500-30,000 requests/second (varies by operation and region)
+  - Use data key caching to reduce dependency on KMS availability
+  - Bucket Key reduces S3-to-KMS calls (availability improvement)
+```
+
+---
+
+## 15. Scalability
+
+```
+Request Quotas:
+  - Symmetric encrypt/decrypt: 5,500-30,000 req/sec (region-dependent)
+  - GenerateDataKey: same shared quota as encrypt
+  - Can request quota increase via AWS Support
+
+Scaling Strategies:
+  - S3 Bucket Key: reduces per-object KMS calls to per-bucket
+  - Data key caching (AWS Encryption SDK): reuse data keys locally
+  - Batch operations: encrypt/decrypt multiple items with same data key
+  - Regional key replicas: Multi-Region keys reduce cross-region latency
+```
+
+---
+
+## 16. Monitoring & Observability
+
+```
+CloudTrail (mandatory for KMS audit):
+  - Every KMS API call logged: Encrypt, Decrypt, GenerateDataKey
+  - Includes: who called, when, which key, encryption context
+  - Use for: security audit, compliance, access investigation
+
+CloudWatch Metrics:
+  - None built-in for KMS (use CloudTrail + Athena for analytics)
+
+Alarms to Set:
+  - CloudTrail: alert on kms:DisableKey or kms:ScheduleKeyDeletion
+  - CloudTrail: alert on kms:PutKeyPolicy changes
+  - CloudTrail: alert on unauthorized kms:Decrypt attempts (AccessDenied)
+  - Custom metric: track KMS API call rates (prevent throttling)
+```
+
+---
+
+## 17. Cost Optimization
+
+```
+KMS Pricing:
+  - Customer Managed Key: $1/month/key
+  - AWS Managed Key: free (for the key itself)
+  - API calls: $0.03 per 10,000 requests
+  - Multi-Region replica keys: $1/month per replica
+
+Cost Reduction:
+  ✅ S3 Bucket Key: reduces API calls by 99% (biggest cost saver)
+  ✅ Data key caching: reuse data keys, fewer GenerateDataKey calls
+  ✅ Consolidate keys: don't create unnecessary keys
+  ✅ AWS Managed keys for services where CMK control isn't needed
+  ✅ Monitor API call volume: CloudTrail → identify excessive calls
+```
+
+---
+
+## 18. Disaster Recovery
+
+```
+Key Durability:
+  - KMS key material is regionally redundant (multi-AZ)
+  - Cannot export AWS-generated key material
+  - Deleted keys are gone FOREVER after waiting period
+
+DR Strategies:
+  - Multi-Region keys: same key material replicated across regions
+    → encrypt in us-east-1, decrypt in eu-west-1 with same key
+  - Cross-region snapshot copy: KMS re-encrypts with target region key
+  - Imported key material: you control backup (but you manage durability)
+
+Key Deletion Protection:
+  - 7-30 day mandatory waiting period
+  - Disable key instead of deleting (reversible)
+  - CloudTrail alert on ScheduleKeyDeletion
+  - Tag keys with "CanDelete: false" for critical keys
 ```
 
 ---
@@ -572,21 +686,84 @@ A: Create snapshot → copy snapshot with encryption → create volume from encr
 **Q15: Can you change the KMS key used by RDS?**
 A: No. RDS encryption key is set at creation and cannot be changed. To change: take snapshot → copy snapshot with new key → restore from copy.
 
-**Q16-Q20**: *(Cover: grants vs key policies, symmetric vs asymmetric keys, multi-region keys, KMS + CloudTrail integration, and custom key stores with CloudHSM.)*
+**Q16: What is the difference between KMS grants and key policies?**
+A: Key policies are static, resource-based policies that define long-term access to a key. Grants are programmatic, temporary delegations created with `CreateGrant` — ideal for AWS services (EBS, RDS) that need short-lived access on your behalf. Grants can be retired or revoked without editing the key policy, and they support grant constraints (encryption context). Use key policies for standing access, grants for dynamic, scoped delegation.
+
+**Q17: When would you use asymmetric keys instead of symmetric keys?**
+A: Symmetric keys (AES-256) never leave KMS and are used for most encryption (S3, EBS, RDS). Asymmetric keys (RSA, ECC) have a downloadable public key — use them when: 1) external parties without AWS credentials must encrypt data for you, 2) you need digital signatures (`Sign`/`Verify`) for code signing or JWTs, 3) you need key agreement (ECDH). Asymmetric keys do not support automatic rotation and cannot be used with most AWS service integrations.
+
+**Q18: What are multi-Region keys?**
+A: A set of interoperable keys in different Regions with the same key ID and key material. Data encrypted in us-east-1 can be decrypted in eu-west-1 by the replica key without a cross-Region call. Use for: DR, global DynamoDB tables, client-side encryption across Regions. Each replica has its own key policy. They are not global keys — you create a primary and explicitly replicate it.
+
+**Q19: How does KMS integrate with CloudTrail?**
+A: Every KMS API call (Encrypt, Decrypt, GenerateDataKey, CreateGrant, ScheduleKeyDeletion) is logged in CloudTrail with the caller identity, key ARN, encryption context, and source IP. Use it to audit who decrypted what, detect anomalous usage, and alert on dangerous actions (e.g., EventBridge rule on `ScheduleKeyDeletion` or `DisableKey`). Encryption context appears in plaintext in logs, so never put secrets in it.
+
+**Q20: What is a custom key store and when do you need one?**
+A: A custom key store backs KMS keys with key material held in your own AWS CloudHSM cluster (or an external key manager via XKS). Use when regulations require single-tenant HSMs under your exclusive control (FIPS 140-2 Level 3 with dedicated hardware) or keys held outside AWS. Trade-offs: higher cost (minimum 2 HSMs), you manage HSM availability, and no automatic rotation.
 
 ### Advanced Questions (10)
 
 **Q21: Design a KMS key strategy for a multi-account organization.**
 A: Central security account owns CMKs. Per-application keys (blast radius). Key policies grant access to specific workload accounts. Automatic rotation. CloudTrail logs all usage. AWS Config rule ensures encryption is enabled.
 
-**Q22-Q30**: *(Cover: envelope encryption implementation, KMS throttling at scale, key policy locked out recovery, BYOK scenarios, CMK vs multi-region key for DR, KMS + Terraform automation, and regulatory compliance with KMS.)*
+**Q22: Explain envelope encryption and how you would implement it.**
+A: KMS `Encrypt` is limited to 4 KB, so large data uses envelope encryption: 1) Call `GenerateDataKey` — KMS returns a plaintext data key and the same key encrypted under your CMK. 2) Encrypt data locally with the plaintext key (AES-GCM). 3) Discard the plaintext key from memory. 4) Store the encrypted data key alongside the ciphertext. To decrypt: call KMS `Decrypt` on the encrypted data key, then decrypt data locally. The AWS Encryption SDK implements this with data key caching.
+
+**Q23: Your application is getting ThrottlingException from KMS at scale. How do you fix it?**
+A: KMS has per-account, per-Region request quotas (5,500–100,000 rps depending on Region and operation). Fixes: 1) Enable S3 Bucket Keys to cut S3-driven calls by ~99%. 2) Use data key caching in the Encryption SDK. 3) Add exponential backoff with jitter. 4) Spread load across keys/Regions if needed. 5) Request a quota increase via Service Quotas. Monitor with the CloudWatch `ThrottleCount` metric.
+
+**Q24: Someone edited a key policy and now nobody can manage the key. How do you recover?**
+A: If the policy removed the root account statement and all admin principals, the key becomes unmanageable. Recovery requires opening a case with AWS Support, who can restore access after verifying account ownership. Prevention: always keep the `arn:aws:iam::<account>:root` statement, use the `BypassPolicyLockoutSafetyCheck=false` default, and manage key policies through IaC with code review.
+
+**Q25: When would you use BYOK (imported key material)?**
+A: When compliance requires keys generated in your own on-premises HSM, or you need the ability to delete key material instantly (`DeleteImportedKeyMaterial`) and re-import later. Trade-offs: you are responsible for durability of the original material (AWS cannot recover it), no automatic rotation, and you can set an expiration date. Process: create key with origin EXTERNAL → get wrapping public key and import token → wrap material → `ImportKeyMaterial`.
+
+**Q26: For DR, should you use separate per-Region CMKs or multi-Region keys?**
+A: Per-Region CMKs: stronger isolation, but every cross-Region copy (snapshots, S3 replication) must re-encrypt with the destination key. Multi-Region keys: data encrypted in the primary Region decrypts directly in the DR Region — simpler for client-side encrypted data and global tables. Choose multi-Region keys when application-level ciphertext must move between Regions; per-Region keys are fine for AWS-service-managed encryption that re-encrypts on copy.
+
+**Q27: How do you manage KMS keys with Terraform safely?**
+A: Use `aws_kms_key` with `enable_key_rotation = true`, `deletion_window_in_days = 30`, and an explicit `policy` that includes the root account and a key-admin role. Add `aws_kms_alias` for a stable name. Set `lifecycle { prevent_destroy = true }` to block accidental `terraform destroy`. Reference keys by alias or ARN in other modules, and keep key definitions in a separate state from workloads.
+
+**Q28: How does KMS help meet regulatory compliance (PCI DSS, HIPAA)?**
+A: KMS HSMs are FIPS 140-2 validated (Level 3 in most Regions). It provides: centralized key management, automatic annual rotation, separation of duties (key admins vs key users in key policy), full audit trail via CloudTrail, and enforced deletion waiting periods. Pair with AWS Config rules (`kms-cmk-not-scheduled-for-deletion`, encryption-enabled rules) and Audit Manager for evidence.
+
+**Q29: What is the difference between AWS managed keys and customer managed keys?**
+A: AWS managed keys (`aws/s3`, `aws/rds`) are created automatically, rotate yearly, and their policies cannot be edited — so you cannot share them cross-account or restrict usage. Customer managed keys give full control: custom key policies, grants, cross-account access, configurable rotation, disabling and deletion. Use customer managed keys for production and any cross-account scenario.
+
+**Q30: How would you enforce that all new S3 objects use a specific KMS key?**
+A: 1) Set bucket default encryption to SSE-KMS with the key ARN and enable Bucket Key. 2) Add a bucket policy that denies `s3:PutObject` when `s3:x-amz-server-side-encryption-aws-kms-key-id` does not equal your key ARN. 3) Use an SCP or Config rule to detect buckets without SSE-KMS. This prevents uploads with a different key or SSE-S3.
 
 ### Scenario-Based Questions (10)
 
 **Q31: A developer accidentally deleted a KMS key. How do you recover?**
 A: If within the waiting period (7-30 days): `aws kms cancel-key-deletion`. If past the waiting period: key material is permanently gone — data encrypted with it is unrecoverable. Prevention: remove ScheduleKeyDeletion permission from non-admin roles.
 
-**Q32-Q40**: *(Cover: AccessDenied troubleshooting, cost spike from KMS API calls, cross-region encrypted data migration, encryption context mismatch debugging, and compliance audit of key usage.)*
+**Q32: A Lambda function gets AccessDeniedException calling kms:Decrypt. How do you troubleshoot?**
+A: Check in order: 1) Key policy — does it allow the Lambda execution role (or delegate to IAM via the root statement)? 2) IAM policy on the role — does it allow `kms:Decrypt` on the key ARN? 3) Encryption context — does the call pass the same context used at encryption? 4) Is the key disabled or pending deletion? 5) Any SCP or VPC endpoint policy denying KMS? CloudTrail's `errorMessage` for the failed Decrypt event usually tells you which layer denied it.
+
+**Q33: Your KMS bill jumped 10x this month. How do you investigate?**
+A: Use Cost Explorer filtered on KMS by usage type to confirm it is request cost. Then query CloudTrail (Athena or CloudTrail Lake) grouping KMS events by `eventName`, `userIdentity`, and key ARN. Common causes: S3 without Bucket Keys on a high-volume bucket, a Lambda calling Decrypt on every invocation without caching, or a retry loop. Fix with Bucket Keys, data key caching, and caching decrypted secrets.
+
+**Q34: You need to move encrypted EBS snapshots to another Region. How?**
+A: KMS keys are Regional, so you must re-encrypt: `aws ec2 copy-snapshot --source-region us-east-1 --kms-key-id <dest-region-key> --encrypted`. The copy is decrypted with the source key and re-encrypted with the destination key. The calling role needs Decrypt on the source key and Encrypt/GenerateDataKey/CreateGrant on the destination key. For cross-account, share the source key with the target account first.
+
+**Q35: Decrypt fails with InvalidCiphertextException but permissions look correct. What is wrong?**
+A: Most often an encryption context mismatch — the context at decrypt must exactly match (keys and values, case-sensitive) what was used at encrypt. Other causes: ciphertext was corrupted (e.g., base64 encoding issues), or it was encrypted under a different key/Region. Compare the encryption context in the Encrypt and Decrypt CloudTrail events to spot the difference.
+
+**Q36: An auditor asks who decrypted customer data in the last 90 days. How do you answer?**
+A: Query CloudTrail for `Decrypt` and `GenerateDataKey` events on the relevant key ARN. With CloudTrail Lake or Athena over S3 logs, filter by `resources.ARN` and time range, and group by `userIdentity.arn`. If encryption context includes identifiers (e.g., `tenantId`), you can report per-customer access. Export results as audit evidence.
+
+**Q37: A key was disabled and production broke. How do you prevent this?**
+A: Immediately re-enable with `aws kms enable-key`. Prevention: restrict `kms:DisableKey` and `kms:ScheduleKeyDeletion` to a small break-glass admin role; add an SCP denying them for everyone else; create EventBridge rules alerting on these API calls; and use the CloudWatch metric/alarm for usage attempts on disabled keys.
+
+**Q38: How do you rotate to a completely new KMS key (not automatic rotation)?**
+A: Create the new key → update the alias to point to the new key ID (apps using the alias pick it up for new encryption) → keep the old key enabled so existing ciphertext can still be decrypted → optionally re-encrypt existing data with `ReEncrypt` or a batch job → once nothing references the old key (check CloudTrail), disable it, then schedule deletion.
+
+**Q39: A partner account needs to read objects in your SSE-KMS encrypted bucket. What do you configure?**
+A: Three things: 1) Bucket policy allowing the partner role `s3:GetObject`. 2) KMS key policy allowing the partner account `kms:Decrypt` (on a customer managed key — AWS managed `aws/s3` cannot be shared). 3) In the partner account, an IAM policy granting the role both `s3:GetObject` and `kms:Decrypt` on your key ARN.
+
+**Q40: How do you detect resources that are not encrypted with KMS across your organization?**
+A: Enable AWS Config with an organization aggregator and managed rules such as `s3-bucket-server-side-encryption-enabled`, `encrypted-volumes`, `rds-storage-encrypted`, and `cloudtrail-encryption-enabled`. Feed findings into Security Hub. Remediate with SSM Automation, and prevent new unencrypted resources with SCPs (e.g., deny `ec2:CreateVolume` when `ec2:Encrypted` is false).
 
 ---
 
