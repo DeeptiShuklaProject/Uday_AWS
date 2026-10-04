@@ -1,77 +1,75 @@
 # AWS Bedrock Course — Chapter 2
 
-*From laptop prototype to production in one chapter — based on the AWS Show & Tell episode "Building your first production-ready AI agent with Amazon Bedrock AgentCore" featuring Mark Roy (Agentic AI Tech Lead) and Ishan Kaushik — EK (Solutions Architect).*
+*From laptop prototype to production in one chapter — built from the AWS Show & Tell episode "Building your first production-ready AI agent with Amazon Bedrock AgentCore" with Mark Roy (Agentic AI Tech Lead) and Ishan "EK" Kaushik (Solutions Architect).*
 
 # 🤖 Amazon Bedrock AgentCore — Building & Deploying Production-Ready AI Agents
 
 ## 🎯 Learning Objectives
 
-By the end of this chapter, the learner will be able to:
+By the end of this chapter you will be able to:
 
-- Explain **what Amazon Bedrock AgentCore is** and the problem it solves
-- Describe the **major AgentCore building blocks**: Runtime, Gateway, Memory, Identity, Observability, Browser and Code Interpreter
-- Explain how **AgentCore Runtime** hosts agents securely at scale
-- Convert a local **Strands agent** into a production deployment with the AgentCore SDK
-- Use the **`agentcore` CLI** to configure, launch and invoke agents
-- Understand how **Gateway** exposes existing APIs and Lambda functions as MCP tools
-- Explain how **Memory** provides short-term and long-term context via Actor ID
-- Describe how **Identity** handles OAuth authentication for first-party and third-party tools
-- Use **Observability** in CloudWatch to trace agent behavior end to end
-- Assemble all components into a **production Customer Support Assistant**
+- Explain the **prototype-to-production gap** and why it kills agent projects
+- Name every **AgentCore building block**: Runtime, Gateway, Memory, Identity, Observability, Browser, Code Interpreter
+- Wrap a local **Strands agent** for **AgentCore Runtime** with the `BedrockAgentCoreApp` SDK
+- Run **`agentcore configure` → `launch` → `invoke`** — locally first, then to the cloud
+- Expose existing **Lambda functions** as **MCP tools** through **AgentCore Gateway**
+- Wire **short-term and long-term Memory** into an agent with Strands **hooks** and **Actor ID**
+- Use **Identity** to broker OAuth access to third-party services (Google Calendar)
+- Read agent behavior end-to-end in the **CloudWatch GenAI Observability** dashboard
 
 ---
 
-## 2.1 🤔 Why Is Getting Agents to Production So Hard?
+## 2.1 Why Getting Agents to Production Is So Hard
 
-2025 is being called **the year of agents** — everyone wants to build and deploy AI agents. And building a *prototype* is genuinely easy:
+![AWS Show & Tell — AgentCore episode](screenshots/c2s01.png)
 
-```
-Download any agent framework ──► Write a few lines on your laptop ──► Impressive demo for the C-suite ✅
-```
+2025 is being called the **year of agents** — everyone wants to build and deploy them. The hosts frame the episode around one question: *how do you deploy, secure, maintain and observe agents once the demo is over?*
 
-But getting that prototype into **production** is where teams struggle. An agent that only runs on a laptop produces **zero business value** — it is just an exciting demo.
+![Agent frameworks make prototypes easy](screenshots/c2s02.png)
+**What to notice** — agent frameworks (LangGraph, CrewAI, Strands, LangChain…) genuinely make it easy to build a PoC on your laptop. Download the framework, write a few lines, impress the C-suite. Prototyping is a *solved* problem — production is not.
+
+But a laptop demo produces **zero business value**. Mark lists what every team actually has to solve before an agent can go live:
+
+![The undifferentiated heavy lifting of agentic AI](screenshots/c2s03.png)
+**What to notice** — six boxes, none of them your business logic: **Security** (who can invoke the agent? what can it reach?), **Scalability** (one user → thousands of concurrent sessions), **Interoperability** (agents↔tools↔other agents), **Large payloads** (documents, images, long histories), **Long-running agents** (hours, not seconds), and **Observability** ("what is my agent actually doing?").
 
 > [!IMPORTANT]
-> **The Production Gap**: If you don't get your agents into production, you've produced no business value — only demos. Customers need agents that are secure, scalable, observable and trustworthy.
-
-The transcript calls this the **"undifferentiated heavy lifting"** of agentic AI — work that every team has to redo, that has nothing to do with the agent's actual business logic:
-
-![Getting agents to production is still too hard](screenshots/s01_production_gap.png)
-
-*Every team re-builds the same six things before an agent can go live.*
-
-| Production Challenge | What it means in practice |
-| :--- | :--- |
-| 🔐 **Security** | Who can invoke the agent? What can the agent access? How are credentials handled end to end? |
-| 📈 **Scalability** | One user on a laptop → thousands of concurrent sessions in the cloud |
-| 🔌 **Interoperability** | Agents, tools and other agents must talk to each other across frameworks |
-| 📦 **Large payloads** | Real workloads carry big inputs — documents, images, long histories |
-| ⏱️ **Long-running agents** | Deep research or multi-step automations can run for hours, not seconds |
-| 👁️ **Observability** | "What is my agent actually doing?" — you can't trust what you can't see |
-
-> [!TIP]
-> 💡 **Think About It**: Businesses are betting big on agents — these will be **mission-critical workloads** that people depend on every day. You cannot bet the business on an agent you can't secure, audit or observe.
+> **The Production Gap**: if you don't get your agents into production, you've produced no business value — only exciting demos. Businesses are betting on agents as *mission-critical workloads*; you cannot trust an agent you can't secure, audit or observe.
 
 ---
 
-## 2.2 ☁️ What is Amazon Bedrock AgentCore?
+## 2.2 What Is Amazon Bedrock AgentCore?
 
 > [!NOTE]
-> **Amazon Bedrock AgentCore** is a set of composable building blocks for **deploying and operating agents at scale, securely** — with **any framework and any model**. It launched in public preview to close the prototype-to-production gap.
+> **Amazon Bedrock AgentCore** is a set of composable building blocks for **deploying and operating agents at scale, securely** — with **any framework and any model**.
 
-Three headline benefits, straight from the episode:
+![AgentCore pillars — time to value, flexible, trusted](screenshots/c2s04.png)
+**What to notice** — three headline benefits straight from the episode:
 
-![AgentCore pillars — time to value, flexible, trusted](screenshots/s02_agentcore_pillars.png)
+- ⏱️ **Time to Value** — the goal isn't time-to-*prototype*, it's time-to-*production* (real business value)
+- 🔄 **Flexible** — any framework, any model, plus protocol flexibility: **MCP** and **A2A**
+- 🛡️ **Trusted** — secure, scalable, reliable agents an organization can actually bet on
 
-- ⏱️ **Time to Value** — build powerful AI agents without infrastructure and ops headaches; the goal isn't time-to-*prototype*, it's time-to-*production*
-- 🔄 **Flexible** — **any framework, any model**: Strands, LangGraph, CrewAI, LangChain… and models from Amazon Bedrock, SageMaker, OpenAI, Gemini or your own open-source models. Protocol flexibility too — **MCP** and **A2A**
-- 🛡️ **Trusted** — deploy secure, scalable, reliable agents your organization can actually trust and audit
+![Any model, any agent framework](screenshots/c2s05.png)
+**What to notice** — your agent is just code: **instructions + local tools + context**, powered by a model. AgentCore hosts it without forcing a proprietary rewrite — Strands today, LangGraph or CrewAI tomorrow; Bedrock models, SageMaker, OpenAI, Gemini or your own open-source models.
 
-### Any Framework. Any Model.
+> [!NOTE]
+> **Demo framework**: mostly **Strands** (AWS's open-source agent SDK — production-ready multi-agent systems in a few lines of code) — but everything shown works identically with LangGraph, CrewAI or LangChain. The hosts repeat this constantly: *any framework, any model*.
 
-Your agent is just code: **instructions + local tools + context + a model**. AgentCore hosts it without forcing you to rewrite to a proprietary framework:
+### The building blocks, one diagram
 
-![Any model, any agent framework](screenshots/s03_any_framework_any_model.png)
+![The complete AgentCore architecture](screenshots/c2s06.png)
+**What to notice** — AgentCore is **composable**. At the top, **Runtime** hosts the agent beside managed tools — **Gateway**, **Browser**, **Code Interpreter**. Underneath, the trust layer: **Identity**, **Memory**, **Observability**.
+
+| Building Block | What it does |
+| :--- | :--- |
+| ⚙️ **Runtime** | Secure, scalable hosting for agents — and even tools or MCP servers |
+| 🌐 **Gateway** | Exposes your **existing APIs** as **MCP** so they plug into any agent framework |
+| 🔐 **Identity** | End-to-end authN/authZ: user→agent, agent→agent, agent→first/third-party tools |
+| 🧠 **Memory** | Conversation memory **plus** managed long-term memory — preferences, facts, summaries |
+| 📊 **Observability** | The end-to-end picture: sessions, traces, tokens, errors, latency |
+| 🌍 **Browser** | Managed, secure browser automation — legacy systems, manual processes |
+| 💻 **Code Interpreter** | Secure sandbox for agent-generated code |
 
 ```mermaid
 flowchart LR
@@ -82,121 +80,81 @@ flowchart LR
     RT --> Core["Identity - Memory - Observability"]
 ```
 
-> [!NOTE]
-> **Demo frameworks used in the episode**: mostly **Strands** (AWS's open-source agent SDK for production-ready multi-agent systems in a few lines of code) — but everything shown works identically with LangGraph, CrewAI or LangChain.
-
 ---
 
-## 2.3 🧩 The AgentCore Building Blocks
+## 2.3 The Build — A Production Customer Support Assistant
 
-AgentCore is **composable** — take the pieces you need. First, managed tools alongside your runtime:
+The episode proves all of this with one real build: **a customer support assistant** wired into real enterprise resources.
 
-![Runtime plus managed tools — Gateway, Browser, Code Interpreter](screenshots/s04_runtime_and_tools.png)
+![Customer Support Assistant — the target architecture](screenshots/c2s07.png)
+**What to notice** — the numbered flow:
 
-Then the security, memory and observability layer completes the picture:
-
-![The complete AgentCore building blocks](screenshots/s05_agentcore_full_architecture.png)
-
-| Building Block | What it does (from the transcript) |
-| :--- | :--- |
-| ⚙️ **Runtime** | Secure, scalable, flexible hosting for agents — and even tools or MCP servers |
-| 🌐 **Gateway** | Takes your **existing APIs** and exposes them as **MCP** so they plug into any agent framework or coding assistant |
-| 🔐 **Identity** | End-to-end authentication & authorization: user → agent, agent → agent, agent → first-party and third-party tools |
-| 🧠 **Memory** | Ongoing conversation memory **plus** fully managed long-term memory — user preferences, session summaries, facts |
-| 📊 **Observability** | The end-to-end picture: what is the agent doing? Sessions, traces, tokens, errors, latency |
-| 🌍 **Browser** | Managed, secure browser automation — perfect for legacy systems and manual business processes |
-| 💻 **Code Interpreter** | Secure sandbox to run agent-generated code — data analysis and other workloads |
-
-> [!TIP]
-> 💡 **Why "composable" matters**: these are loosely coupled building blocks. Different teams can own different pieces, update tools in Gateway without touching agent code, and reuse the same infrastructure across many agents.
-
----
-
-## 2.4 🛠️ The Main Use Case — Customer Support Assistant
-
-The entire episode builds one real thing: **a production Customer Support Assistant**. Not a toy — an agent wired into real enterprise resources:
-
-![Customer Support Assistant architecture](screenshots/s06_customer_support_architecture.png)
-
-The resources already deployed in the demo account:
-
-![Existing AWS resources — Cognito, Lambda tools, Knowledge Base](screenshots/s10_aws_backend_resources.png)
+1. **Customer question** hits the **AgentCore Runtime** endpoint, authenticated via **Amazon Cognito**
+2. The agent calls **Gateway tools** — `check_warranty` and `get_customer_profile` — backed by **Lambda → DynamoDB**
+3. **AgentCore Memory** retrieves session history and past interactions for that user
+4. **AgentCore Identity** validates access and brokers **OAuth 2.0** for third-party services
+5. Everything emits **agent traces** to **AgentCore Observability**
 
 ```mermaid
 flowchart TD
-    Customer["Customer"] -->|customer question| Runtime["AgentCore Runtime"]
-    Runtime -->|agent response| Customer
+    Customer["Customer"] -->|question| Runtime["AgentCore Runtime"]
+    Runtime -->|response| Customer
     Runtime --> Agent["Customer Support Agent"]
-    Agent --> KB["Amazon Bedrock Knowledge Base<br/>warranty policies + device manuals"]
+    Agent --> KB["Bedrock Knowledge Base<br/>warranty policies + device manuals"]
     Agent --> GW["AgentCore Gateway"]
     GW --> L1["Lambda - check_warranty"]
     GW --> L2["Lambda - get_customer_profile"]
-    L1 --> DB1["DynamoDB - Warranty Table"]
-    L2 --> DB2["DynamoDB - Customer Profile Table"]
+    L1 --> DB1["DynamoDB - Warranty"]
+    L2 --> DB2["DynamoDB - Profiles"]
     Agent --> MEM["AgentCore Memory"]
     Agent --> IDP["AgentCore Identity"]
-    IDP --> OAuth["OAuth 2.0 - Cognito + Google"]
-    Runtime --> OBS["AgentCore Observability - traces"]
+    Runtime --> OBS["AgentCore Observability"]
 ```
 
-### The numbered flow (as shown in the episode)
-
-![Numbered request flow](screenshots/s07_customer_support_flow.png)
-
-1. **Customer question** arrives at the **AgentCore Runtime** endpoint, authenticated via **Amazon Cognito**
-2. The agent calls **Gateway tools** (`check_warranty`, `get_customer_profile`) backed by **Lambda → DynamoDB**
-3. **AgentCore Memory** retrieves the session and previous interactions for that user
-4. **AgentCore Identity** validates agent access and brokers **OAuth 2.0** credentials for third-party tools (like Google Calendar)
-5. Every step emits **agent traces** to **AgentCore Observability** in CloudWatch
-
-> [!NOTE]
-> The agent also uses **local tools** (`current_time`, `retrieve` against a Bedrock Knowledge Base of warranty policies and device manuals) — Gateway is for tools that *aren't* baked into the agent.
+The rest of this chapter follows the demo exactly — same order, same code, same console.
 
 ---
 
-## 2.5 ⚙️ AgentCore Runtime — Deep Dive
+## 2.4 The Toolbox — Samples Repo, SDK and Starter Kit
 
-Runtime is the first building block deployed in the demo. From the episode slide:
+Before touching code, EK shows where everything lives — three open-source resources:
 
-![AgentCore Runtime pillars](screenshots/s08_runtime_pillars.png)
+![amazon-bedrock-agentcore-samples on GitHub](screenshots/c2s08.png)
+**What to notice** — the `awslabs/amazon-bedrock-agentcore-samples` repo. `tutorials/` walks each building block step by step; `use-cases/` contains real-world implementations — including this exact **customer support assistant**.
 
-**Three headline capabilities:**
+![The Bedrock AgentCore SDK repo](screenshots/c2s09.png)
+**What to notice** — the SDK is **open source** (you can contribute). Its job in one line: *deploy local agents to production on AgentCore in a few lines of code.*
 
-- 🧩 **Framework & model independent deployment** — Strands, LangChain, LangGraph, CrewAI… Bedrock, SageMaker, OpenAI, Gemini… your code, your choices
-- 📦 **Use-case independent** — large payloads up to **100 MB** (text, images, audio, video), fast cold starts, and **long-running asynchronous workloads up to 8 hours** (with ways to go even longer)
-- 🔒 **Secure workload with enterprise-grade isolation** — true **session isolation** with persistent dedicated execution environments, plus built-in authentication and observability
+![The starter toolkit](screenshots/c2s10.png)
+**What to notice** — the **starter toolkit** wraps the SDK in `agentcore` CLI commands: `configure`, `launch`, `invoke`. One neat feature: **deploy locally first** for debugging — before touching the cloud.
 
-> [!IMPORTANT]
-> **Session isolation** is the security headline: each session runs completely independently — no leftover information in memory or filesystem can leak from one customer's session into another's. As agents get more *agency* to act autonomously, this guarantee matters enormously.
-
-### What `configure` → `launch` → `invoke` actually does
-
-![Runtime configure / launch / invoke flow](screenshots/s09_runtime_deploy_flow.png)
-
-```
-Your agent code + AgentCore Runtime decorator + Identity/Observability config
-        │
-        ▼  agentcore configure
-   Dockerfile generated
-        │
-        ▼  agentcore launch
-   Code zipped → S3 → CodeBuild → Docker image → Amazon ECR
-        │
-        ▼
-   AgentCore Runtime: Runtime Agent + Runtime Endpoint
-        │
-        ▼  invoke
-   User / Application → streaming responses
-```
-
-> [!TIP]
-> 💡 **Only two commands to remember**: `agentcore configure` and `agentcore launch`. All the backend plumbing — S3 artifacts, CodeBuild, ECR, endpoints — is handled by the SDK. That's the undifferentiated heavy lifting *removed*.
+| Resource | Purpose |
+| :--- | :--- |
+| 🧩 `amazon-bedrock-agentcore-samples` | Tutorials + complete use cases (incl. this assistant) |
+| ⚙️ `bedrock-agentcore` SDK | `BedrockAgentCoreApp` + auth/memory decorators, open source |
+| 🚀 `bedrock-agentcore-starter-toolkit` | `agentcore` CLI — configure / launch / invoke |
 
 ---
 
-## 2.6 🛠️ Building the Agent — From Local Strands to AgentCore
+## 2.5 From Local Development to Bedrock AgentCore
 
-### Step A — the plain local agent (life *before* AgentCore)
+The SDK contract in one slide:
+
+![From local development to Bedrock AgentCore](screenshots/c2s11.png)
+**What to notice** — left side: your agent wrapped in `BedrockAgentCoreApp` with an `@app.entrypoint` invoke function. Right side: the four CLI verbs — `configure`, `launch -l` (local), `launch` (cloud), `invoke`. Underneath: *agent-agnostic, session isolation, secure-by-default, any framework*.
+
+![The CLI verbs highlighted](screenshots/c2s12.png)
+**What to notice** — the whole production path is literally four commands. Everything behind them — containerization, CodeBuild, ECR, endpoints — is the SDK's job, not yours.
+
+---
+
+## 2.6 The Starting Point — A Plain Local Strands Agent
+
+![Strands Agents — production-ready multi-agent systems in a few lines of code](screenshots/c2s13.png)
+**What to notice** — the demo framework is **Strands**: build production-ready multi-agent AI systems in a few lines of code. (The earlier playlist episode goes deep on Strands itself.)
+
+![main.py — the local agent](screenshots/c2s14.png)
+**What to notice** — the complete local agent: `Agent` + `BedrockModel` (Claude Sonnet), two local tools — `current_time` and `retrieve` (which pulls from a **Bedrock Knowledge Base** via the `KNOWLEDGE_BASE_ID` env var), and the warranty question. ~20 lines total.
 
 ```python
 import os
@@ -205,30 +163,29 @@ from strands_tools import current_time, retrieve
 
 MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
 
-def create_agent():
-    return Agent(
-        model=MODEL_ID,
-        tools=[current_time, retrieve],   # retrieve → Amazon Bedrock Knowledge Base
-    )
-
-agent = create_agent()
-# Knowledge Base is wired via env var:
-#   KNOWLEDGE_BASE_ID=<your kb id>
+agent = Agent(
+    model=MODEL_ID,
+    tools=[current_time, retrieve],   # retrieve → Amazon Bedrock Knowledge Base
+)
+# Knowledge Base is wired via env var: KNOWLEDGE_BASE_ID=<your kb id>
 ```
 
-Asked *"What are the warranty support guidelines?"*, this agent calls the `retrieve` tool against a Bedrock Knowledge Base (warranty policies + device manuals) and streams a grounded answer. Great demo — still a laptop PoC.
+![Running locally — the warranty answer streams back](screenshots/c2s15.png)
+**What to notice** — asked *"What are the warranty support guidelines?"*, the agent chooses the `retrieve` tool, queries the Knowledge Base (warranty policies + device manuals), and **streams** the grounded answer back. Great demo — still a laptop PoC. *"You've officially impressed the C-suite. How do you get to production?"*
 
-### Step B — the same agent, production-ready (the only code added)
+---
+
+## 2.7 The Migration — Wrapping for AgentCore Runtime
+
+Here's the entire diff that turns the laptop agent into a production deployment:
+
+![The entrypoint migration — BedrockAgentCoreApp](screenshots/c2s16.png)
+**What to notice** — three additions only: `app = BedrockAgentCoreApp()`, one `@app.entrypoint` async function receiving **`payload`** (the user input — prompts, images, files) and **`context`** (which exposes `session_id` and later `actor_id`), and `app.run()`. The agent lazily initializes once, then streams events back to the caller.
 
 ```python
-import os
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from strands import Agent
-from strands_tools import current_time, retrieve
 
-MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
 app = BedrockAgentCoreApp()
-
 agent = None  # global for demo clarity — use context vars in production
 
 @app.entrypoint
@@ -236,89 +193,79 @@ async def invoke(payload, context):
     global agent
     if agent is None:
         agent = create_agent()
-
-    # payload  → user input (prompts, images, files)
-    # context  → session_id, and later actor_id (who the user is)
     user_prompt = payload.get("prompt", "")
     async for event in agent.stream_async(user_prompt):
-        yield event                       # streamed straight back to the caller
+        yield event                     # streamed straight to the caller
+
+app.run()
 ```
 
 > [!NOTE]
-> **The whole migration is**: wrap the app, define one `@app.entrypoint` function that receives `payload` + `context`, and stream the response. Any framework drops into the same shape — LangGraph or CrewAI instead of Strands.
+> **The whole migration is**: wrap the app, define one entry point, stream the response. Any framework drops into the same shape — LangGraph or CrewAI instead of Strands.
 
 ---
 
-## 2.7 ⚙️ Configure the Agent — `agentcore configure`
+## 2.8 Test Locally Before Deploying
 
-The starter-kit CLI walks through deployment configuration interactively. From the demo:
+Configure once (`agentcore configure` — entrypoint, execution role, ECR repo, requirements file, and auth: the demo picks **Cognito** over IAM), then the SDK's neatest trick — **launch locally first**:
 
-```bash
-agentcore configure --entrypoint main.py --name customer-support-demo
-```
-
-| Prompt in the wizard | What the demo used | Why it matters |
-| :--- | :--- | :--- |
-| **Entry point** | `main.py` | File containing your `@app.entrypoint` function |
-| **Execution role** | IAM role ARN | What the running agent is allowed to do in AWS |
-| **ECR repository** | Create new | `launch` builds an image and pushes it here |
-| **requirements.txt** | auto-detected | Dependencies baked into the container |
-| **Authorization** | Amazon Cognito | Inbound auth — who may invoke your agent (IAM is the alternative) |
-| **Discovery URL** | Cognito user-pool URL | Where the runtime validates tokens |
-| **Client ID** | Cognito app client | Which app clients are allowed |
-| **Audience** | client id | Token audience validation |
-
-> [!TIP]
-> 💡 The model ID (`claude-sonnet-4` in the demo) is just code/config — hardcode it, or pass it as an **environment variable** at launch time for flexibility.
-
----
-
-## 2.8 🧪 Practical Lab — Test Locally Before Deploying
-
-A favorite feature of the SDK: **launch locally first** — same code, running on localhost, perfect for debugging before touching the cloud.
-
-### Step 1 — Start the local runtime
+![agentcore launch -l — local mode](screenshots/c2s17.png)
+**What to notice** — `agentcore launch -l` builds and runs the container **locally** (needs Docker/Finch/Podman), exactly the same path the cloud uses — perfect for debugging. The agent boots on `localhost:8080`, and the same warranty question streams the same KB-grounded answer.
 
 ```bash
 agentcore launch --local
-```
-
-Expected output — the agent boots on localhost:
-
-```text
-Agent server running on http://localhost:8080
-Ready to accept invocations.
-```
-
-### Step 2 — Ask the warranty question
-
-```bash
 agentcore invoke --local '{"prompt": "What are the warranty support guidelines?"}'
 ```
 
-```text
-I'll search information about warranty support guidelines.
-[agent invokes the retrieve tool → Bedrock Knowledge Base]
-… streamed response: warranty terms, coverage periods, claim process …
-```
-
-### Step 3 — Debug like a developer
-
-```bash
-# Tail the runtime's CloudWatch logs to see what the agent is doing
-aws logs tail /aws/bedrock-agentcore/runtimes/<agent-id> --follow
-```
-
 > [!TIP]
-> 💡 **Why local-first matters**: you exercise the *same* entry point, payload handling and streaming path that production uses — so "works on my machine" actually means something here.
+> **Why local-first matters**: you exercise the *same* entry point, payload handling and streaming path that production uses — so "works on my machine" actually means something here.
 
 ---
 
-## 2.9 🚀 Deploy — `agentcore launch`
+## 2.9 Launch — The Deploy Pipeline Behind Two Verbs
+
+With local testing done, one command goes to the cloud:
 
 ```bash
 agentcore launch
 ```
+
+![agentcore launch — CodeBuild mode](screenshots/c2s18.png)
+**What to notice** — `agentcore launch` (CodeBuild mode — **recommended**) validates the execution role, ensures the ECR repo, creates a CodeBuild project, and uploads your project as a zip to the S3 artifact bucket. You never touch any of it.
+
+![The build progressing through CodeBuild stages](screenshots/c2s19.png)
+**What to notice** — QUEUED → PROVISIONING → PRE_BUILD → BUILD → POST_BUILD: CodeBuild builds the Docker image and pushes it to ECR. This is the undifferentiated heavy lifting happening *for* you.
+
+### What Runtime gives you, meanwhile
+
+While it builds, Mark zooms out on what Runtime actually is:
+
+![AgentCore Runtime — three pillars](screenshots/c2s20.png)
+**What to notice** —
+
+- 🧩 **Framework & model independent deployment** — Strands, LangChain, LangGraph, CrewAI; Bedrock, SageMaker, OpenAI, Gemini
+- 📦 **Use-case independent** — payloads up to **100 MB** (text, images, audio, video), fast cold starts, **long-running async workloads up to 8 hours** — and ways to go even longer. You can even host tools or MCP servers, not just agents
+- 🔒 **Enterprise-grade isolation** — persistent dedicated execution environments, built-in auth and observability
+
+> [!IMPORTANT]
+> **Session isolation** is the security headline: each session runs completely independently — no leftover information in memory or filesystem can leak from one customer's session into another's. As agents get more *agency* to act autonomously, this guarantee matters enormously.
+
+![The runtime deploy architecture](screenshots/c2s21.png)
+**What to notice** — the full picture of what just happened: your agent + `configure` → **Dockerfile** → `launch` → Docker image → **ECR** → **Runtime Agent** running as a process → a **Runtime Endpoint**. Now `invoke` calls hit a scalable cloud endpoint.
+
+```mermaid
+flowchart LR
+    Proj["Project Directory"] --> S3["S3 Artifact Bucket"]
+    S3 --> CB["AWS CodeBuild"]
+    CB --> Img["Docker Image"]
+    Img --> ECR["Amazon ECR"]
+    ECR --> RT["AgentCore Runtime"]
+    RT --> EP["Runtime Endpoint"]
+    User["User / App"] -->|invoke| EP
+```
+
+![CodeBuild Deployment Complete](screenshots/c2s22.png)
+**What to notice** — the successful output: Agent ARN, ECR image URI, and the handy `agentcore status` / `agentcore invoke` hints. Below it — the CloudWatch log paths and `aws logs tail … --follow` commands for tailing the runtime's logs while debugging.
 
 ```text
 Uploading project to S3…
@@ -329,42 +276,34 @@ Creating AgentCore Runtime…
 CloudWatch logs: /aws/bedrock-agentcore/runtimes/<agent-id>
 ```
 
-```mermaid
-flowchart LR
-    Proj["Project Directory"] --> S3["S3 Artifact Bucket"]
-    S3 --> CB["AWS CodeBuild"]
-    CB --> Img["Docker Image"]
-    Img --> ECR["Amazon ECR"]
-    ECR --> RT["AgentCore Runtime"]
-    RT --> EP["Agent Endpoint"]
-    User["User / App"] -->|invoke| EP
-```
-
-From the demo: the project directory is zipped → uploaded to an S3 artifact bucket → **CodeBuild** builds the Docker image → pushed to **ECR** → the **Runtime Agent** process starts and an **endpoint** is established. Multiple users can now hit it concurrently — *secure and scalable, all the joys of AgentCore*.
-
-### 💻 Chapter 02 Git Repository
-
-All the code in this chapter lives in open-source AWS repositories — clone them to follow along and run the Customer Support Assistant yourself:
-
-- 🧩 **Samples** — [github.com/awslabs/amazon-bedrock-agentcore-samples](https://github.com/awslabs/amazon-bedrock-agentcore-samples) — includes the complete **Customer Support Assistant** this chapter builds step by step
-- ⚙️ **Starter Toolkit** — [github.com/aws/bedrock-agentcore-starter-toolkit](https://github.com/aws/bedrock-agentcore-starter-toolkit) — the `agentcore` CLI used for `configure`, `launch` and `invoke`
-- 📦 **Strands SDK** — [github.com/strands-agents/sdk-python](https://github.com/strands-agents/sdk-python) — the agent framework this chapter productionizes
+> [!TIP]
+> **Only two commands to remember**: `agentcore configure` and `agentcore launch`. All backend resources — S3 artifacts, CodeBuild, ECR, endpoints — are handled by the SDK.
 
 ---
 
-## 2.10 📡 Invoking the Deployed Agent
+## 2.10 Invoking the Deployed Agent
 
-The CLI is for debugging; production calls the endpoint over HTTPS — exactly what a frontend UI would do:
+The CLI is for debugging; production calls the endpoint over HTTPS — exactly what a frontend UI would do. The demo's `test_agent.py`:
+
+![invoke_endpoint — building the URL and headers](screenshots/c2s23.png)
+**What to notice** — the invoke URL is built from the **agent ARN**, and every request carries an `Authorization: Bearer <token>` header (the Cognito JWT) plus a **session ID** header — remember session isolation.
+
+![Parsing the streamed SSE response](screenshots/c2s24.png)
+**What to notice** — `stream=True` and SSE parsing (`data:` lines) — tokens stream back chunk by chunk; wire the same loop into a chat UI.
+
+![Launching the client — auth flow starts](screenshots/c2s25.png)
+**What to notice** — the deployment is complete and the client script starts the **OAuth flow**: spins up a local callback server on `:8080` and opens the browser for sign-in.
+
+![Cognito hosted UI — sign in](screenshots/c2s26.png)
+**What to notice** — the Cognito hosted-UI login page. The demo uses a throwaway user; the access token comes back and gets **cached locally**, so subsequent runs skip the browser entirely.
+
+![Interactive session against the cloud endpoint](screenshots/c2s27.png)
+**What to notice** — "Access token acquired and saved" → an interactive session against the deployed agent. `Hi` → friendly response. This is the *cloud* endpoint now — not localhost.
+
+![The warranty answer, served from AWS](screenshots/c2s28.png)
+**What to notice** — *"What are the warranty support guidelines?"* → the agent invokes `retrieve` on the Knowledge Base and streams the grounded response — served from **AgentCore Runtime in AWS**, session-isolated and multi-user capable.
 
 ```python
-import requests
-
-AGENT_ARN = "arn:aws:bedrock-agentcore:us-east-1:<acct>:runtime/customer-support-demo"
-INVOKE_URL = (
-    "https://bedrock-agentcore.us-east-1.amazonaws.com"
-    f"/runtimes/{AGENT_ARN}/invocations/"
-)
-
 def invoke_agent(prompt: str, access_token: str, session_id: str):
     headers = {
         "Authorization": f"Bearer {access_token}",   # Cognito JWT
@@ -373,107 +312,48 @@ def invoke_agent(prompt: str, access_token: str, session_id: str):
     resp = requests.post(INVOKE_URL, headers=headers,
                          json={"prompt": prompt}, stream=True)
     for chunk in resp.iter_content(chunk_size=None):
-        print(chunk.decode(), end="")                 # streamed response
+        print(chunk.decode(), end="")
 ```
-
-- 🔑 **Bearer token** — obtained by signing in to the Cognito IdP (the demo opens the Cognito hosted UI, authenticates, caches the access token)
-- 🧵 **Session ID** — each conversation gets its own isolated session (remember: session isolation!)
-- 🌊 **`stream=True`** — tokens stream back to the caller; wire the same response into a chat UI
 
 > [!NOTE]
-> The demo ends with exactly this: a **Streamlit** chat front end (`localhost:8501`) talking to the deployed agent — same invoke path, prettier UI.
+> "You've moved well beyond the laptop — deployed in the cloud, multiple users hitting it concurrently, secure and scalable. All the joys and wonders of AgentCore." And it's **two commands**, not a week of infrastructure work.
 
 ---
 
-## 2.11 🌐 AgentCore Gateway + MCP — Unified, Agent-Ready Tools
+## 2.11 Wiring Gateway — Lambda Functions Become MCP Tools
 
-Agents are only useful with **tools**. And today, everything speaks **MCP** — agent frameworks and coding assistants support it natively: *plug in a URL and you instantly get a standard toolbox*.
+Agents are only useful with tools. The demo already has two **Lambda functions** reading DynamoDB (a Warranty table, a Customer Profile table). Time to expose them to the agent.
 
-![AgentCore Gateway pillars](screenshots/s11_gateway_pillars.png)
+![main.py — imports for the gateway-wired agent](screenshots/c2s29.png)
+**What to notice** — new imports: `MCPClient` + `streamablehttp_client` (any MCP client can connect to a gateway URL), `requires_access_token`, and `get_ssm_parameter` — the gateway URL is fetched from SSM Parameter Store rather than hardcoded.
 
-**What Gateway does** (from the episode):
+![A richer system prompt for a tool-using agent](screenshots/c2s30.png)
+**What to notice** — once the agent gains tools, a **more descriptive system prompt** matters: tell the agent it can query the Knowledge Base *and* call warranty/customer-profile tools. Good prompting = better tool selection.
 
-- 🧰 **Simplifies tool development** — transforms existing APIs into agent-ready tools with no custom code or infrastructure; supports **REST services via OpenAPI schema** and **AWS Lambda functions**
-- 🔐 **Secure & unified access** — cross-organizational tool sharing with enterprise-grade security; built-in **inbound and outbound authentication**
-- 🔍 **Intelligent discovery** — tools are exposed via **MCP**, plus built-in **semantic search** that matches tools to the task at hand
+![Access token via the identity decorator](screenshots/c2s31.png)
+**What to notice** — `requires_access_token` handles the machine-to-machine OAuth flow with the Cognito provider and **injects** the access token into the function — the token you'll pass to the MCP client.
 
-![Unified, secure, agent-ready tools over MCP](screenshots/s12_gateway_mcp_tools.png)
+### Creating the gateway
 
-```mermaid
-flowchart LR
-    Agent["Agent<br/>MCP Client"] -->|"/mcp - list tools / invoke / search"| GW["AgentCore Gateway"]
-    GW --> APIT["API Endpoint Target<br/>REST + OpenAPI schema"]
-    GW --> LT["AWS Lambda Target"]
-    APIT --> T123["Tools 1-3<br/>existing REST services"]
-    LT --> T456["Tools 4-6<br/>Lambda functions"]
-```
+![lambda_target_config — exposing a Lambda as a tool](screenshots/c2s32.png)
+**What to notice** — the target config for a Lambda target: `mcp.lambda.lambdaArn` plus a **`toolSchema`** (inline payload) — name, description, parameters. The schema is what tells the agent *what the tool does and what it takes*.
 
-### Demo tools — real enterprise resources
+![auth_config — inbound auth via Cognito](screenshots/c2s33.png)
+**What to notice** — the `customJWTAuthorizer` auth config (managed by the **Identity** building block): `allowedClients` and `discoveryUrl` of the Cognito IdP. MCP is easy to use — but you want to use it **securely**.
 
-| Gateway tool | Backing target | Data |
-| :--- | :--- | :--- |
-| `check_warranty` | AWS Lambda | DynamoDB — Warranty table |
-| `get_customer_profile` | AWS Lambda | DynamoDB — Customer Profile table |
+![create_gateway — protocolType MCP, CUSTOM_JWT](screenshots/c2s34.png)
+**What to notice** — one call: `create_gateway(name, roleArn, protocolType="MCP", authorizerType="CUSTOM_JWT", authorizerConfiguration=auth_config)` with the agent's execution role.
 
-### Built-in semantic search — the freebie
+![create_gateway_target + persisting to SSM](screenshots/c2s35.png)
+**What to notice** — `create_gateway_target` attaches the Lambda target with `credentialProviderType=GATEWAY_IAM_ROLE` (the gateway assumes a role to invoke your Lambda); then the gateway URL + ID are written back to SSM — that's the parameter the agent reads at startup.
 
-![Gateway semantic search](screenshots/s13_gateway_semantic_search.png)
+> [!TIP]
+> The **starter toolkit** can do most of this in a line or two — the demo deliberately shows the full SDK path so you see every option available.
 
-Without search, `list_tools` on a large gateway returns **hundreds of tools** — expensive, slow, and it kills accuracy. With Gateway's built-in search, a query like *"create a social media post"* returns **just the 4 most relevant tools**.
+### Plugging the gateway into the agent
 
-> [!IMPORTANT]
-> **The killer feature from the demo**: tools can be added or updated in **Gateway without changing agent code**. EK added `get_customer_profile` to the existing target, re-asked the question — and the *same deployed agent* immediately used the new tool. Loosely coupled = teams ship tools independently.
-
----
-
-## 2.12 🔬 Practical Lab — Wire Up Gateway Tools
-
-Goal: expose two Lambda-backed tools through Gateway and give the deployed agent access via an MCP client.
-
-### Step 1 — Define the target & auth config
-
-```python
-target_config = {
-    "lambdaArn": "arn:aws:lambda:us-east-1:<acct>:function:check_warranty",
-    "toolSchema": {                      # what the tool does + its parameters
-        "name": "check_warranty",
-        "description": "Check warranty status for a device serial number",
-        "parameters": {"serial_number": "string"},
-    },
-}
-
-auth_config = {                          # inbound auth — managed by Identity
-    "allowedClients": ["<cognito-client-id>"],
-    "discoveryUrl": "<cognito-discovery-url>",
-}
-```
-
-### Step 2 — Create the Gateway and attach the Lambda target
-
-```python
-gateway = client.create_gateway(name="support-gateway",
-                                roleArn=EXECUTION_ROLE,
-                                authorizerConfig=auth_config)
-
-client.create_gateway_target(gatewayId=gateway["gatewayId"],
-                             targetConfiguration=target_config)
-
-GATEWAY_URL = gateway["gatewayUrl"]      # …or fetch from SSM Parameter Store
-```
-
-### Step 3 — Get an access token (machine-to-machine OAuth)
-
-```python
-from bedrock_agentcore.identity import requires_access_token
-
-@requires_access_token(provider_name="cognito-provider",
-                       scopes=["openid"], auth_flow="M2M")
-def get_access_token(access_token=None):
-    global ACCESS_TOKEN
-    ACCESS_TOKEN = access_token          # injected by the decorator
-```
-
-### Step 4 — Plug the Gateway into the Strands agent
+![create_agent — MCPClient wired to the gateway URL](screenshots/c2s36.png)
+**What to notice** — the `MCPClient` connects to the gateway URL over **streamable HTTP** with the bearer token, plus a beefier system prompt and the local tools list (`current_time`, `retrieve`).
 
 ```python
 from strands.tools.mcp import MCPClient
@@ -484,137 +364,113 @@ mcp_client = MCPClient(
         GATEWAY_URL,
         headers={"Authorization": f"Bearer {ACCESS_TOKEN}"}),
 )
-
 mcp_client.start()
-tools = mcp_client.list_tools_sync()     # gateway tools, standardized
-agent = Agent(model=MODEL_ID,
-              system_prompt=SUPPORT_PROMPT,   # richer prompt = better tool use
+tools = mcp_client.list_tools_sync()    # gateway tools, standardized
+agent = Agent(model=MODEL_ID, system_prompt=SUPPORT_PROMPT,
               tools=[current_time, retrieve] + tools)
 ```
 
-### Step 5 — Test the tool through the agent
-
-```bash
-agentcore invoke '{"prompt": "What is my warranty status?"}'
-```
-
-```text
-Agent → check_warranty → Lambda → DynamoDB
-"Your warranty expired 254 days ago." 😬   # good news: Gateway works!
-```
-
-### Step 6 — The magic: add a tool *without touching agent code*
-
-```bash
-# Update the existing gateway target with a second tool
-python update_target.py --add get_customer_profile
-agentcore invoke '{"prompt": "Get the customer profile for customer ID 123."}'
-```
-
-```text
-"Here is the customer profile…"   # same deployed agent, brand-new tool ✅
-```
-
----
-
-## 2.13 🧠 AgentCore Memory — Short-Term & Long-Term
-
-Tools + runtime make agents useful; **memory makes them powerful**. Two flavors:
-
-![AgentCore Memory pillars](screenshots/s14_memory_pillars.png)
-
-| | **Short-Term Memory** | **Long-Term Memory** |
-| :--- | :--- | :--- |
-| Scope | Current conversation | Across sessions, per user |
-| Content | Chat messages, session state, events | User preferences, facts, conversation summaries |
-| How written | Agent posts events synchronously | Automatic, asynchronous extraction |
-| Retrieval | List events | Semantic search, keyword, namespace filters |
-
-![Short-term and long-term memory capabilities](screenshots/s15_memory_short_long_term.png)
+![The complete invoke path — token, entrypoint, streaming](screenshots/c2s37.png)
+**What to notice** — the full assembled app: `BedrockAgentCoreApp()`, `@requires_access_token` fetching the gateway token, `create_agent(access_token)`, and the `@app.entrypoint` invoke passing `session_id` through — then `agentcore launch` again to push the gateway-wired version.
 
 ```mermaid
 flowchart LR
-    Agent["Agent Events<br/>messages + agent state"] -->|sync| STM["Short-term Memory<br/>chat messages + session state"]
-    Agent -->|list events / retrieve memories| STM
-    STM -->|async extraction| LTM["Long-term Memory<br/>semantic - user preferences - summaries"]
-    Agent -->|semantic search| LTM
+    Agent["Agent<br/>MCP Client"] -->|"list_tools / invoke / search"| GW["AgentCore Gateway"]
+    GW --> APIT["API Endpoint Target<br/>REST + OpenAPI"]
+    GW --> LT["AWS Lambda Target"]
+    LT --> T1["check_warranty"]
+    LT --> T2["get_customer_profile"]
 ```
 
-### Actor ID — why memory is per-user
+---
 
-Long-term memory is namespaced by **Actor ID** (the user's identity — name, email, Cognito sub). One user's preferences never bleed into another's. That's how the same agent serves thousands of users *personally*.
+## 2.12 The Pillars Recap — Gateway, Memory, Identity
 
-### Wiring it up — Strands hooks (from the demo)
+While the build runs, Mark zooms out on the three blocks you're wiring — what each does and why it's a *pillar*, not a feature.
+
+![AgentCore Gateway — three pillars](screenshots/c2s38.png)
+**What to notice** — 🧰 **Simplify tool development** (transform existing APIs into agent-ready tools, no custom code — REST via OpenAPI, or Lambda), 🔐 **Secure & unified access** (cross-org tool sharing, inbound+outbound auth), 🔍 **Intelligent discovery** (tools over MCP + semantic search).
+
+![Gateway semantic search — 300 tools → 4 relevant ones](screenshots/c2s39.png)
+**What to notice** — the freebie: without search, a big gateway returns *hundreds* of tools — expensive, slow, accuracy-killing. Built-in semantic search narrows *"create a social media post"* to just the relevant few. And to a chat question: **yes — an API Gateway + Lambda microservice can absolutely become a gateway target**; REST services expose as MCP tools too.
+
+![AgentCore Memory — three pillars](screenshots/c2s40.png)
+**What to notice** — 🧠 **Short-term + long-term memory management** (session events now, extracted knowledge later), 🔒 **Fully managed & secure**, 🔎 **Retrieval & extraction** (semantic search, keyword, namespace, raw event listing).
+
+![Short-term vs long-term memory mechanics](screenshots/c2s41.png)
+**What to notice** — agent events are posted **synchronously** to short-term memory (chat messages + session state); in the background, **asynchronous extraction** produces the long-term store: semantic memories, user preferences, conversation summaries. The agent reads it back via semantic search — same trick as gateway search.
+
+![AgentCore Identity — three pillars](screenshots/c2s42.png)
+**What to notice** — 🔐 **Secure access** (agent→AWS resources and third-party services), 🤝 **Minimized consent fatigue** (token management handled for you), ⚡ **Accelerated development** — works with Cognito today, Okta/Entra ID and other IdPs too.
+
+---
+
+## 2.13 Gateway Live — Update Tools Without Redeploying
+
+The agent code, fully assembled:
+
+![main.py — the gateway-wired application top](screenshots/c2s43.png)
+**What to notice** — the finished `main.py` header: imports for `requires_access_token` + `streamablehttp_client`, `KNOWLEDGE_BASE_ID` env var, the SSM-fetched gateway URL, and the app/entrypoint structure. Same agent — now gateway-connected.
+
+![Warranty status via a Lambda tool — and an honest miss](screenshots/c2s44.png)
+**What to notice** — two answers in one session. *"What is my warranty status?"* → the agent calls `check_warranty` → **Lambda → DynamoDB** → *"expired 254 days ago"* 😬 (the good news: Gateway works). Then *"get customer profile"* → *"I don't have access to that tool"* — because it isn't a gateway target **yet**.
+
+![Customer profile — new tool, zero redeploy](screenshots/c2s45.png)
+**What to notice** — the killer moment. EK **updated the existing gateway target** to add `get_customer_profile`, re-asked the question with *the same deployed agent* — and the full CUST001 profile (John Smith, Premium tier) came back. **New tool, zero agent code changes, zero redeploy.**
+
+> [!IMPORTANT]
+> **Loose coupling is the enterprise story**: before Gateway, tools lived inside agent code — adding one meant editing and redeploying the agent. Now tools live in a shared gateway that dozens of teams can maintain and reuse independently. Same idea as API management, now for agents.
+
+---
+
+## 2.14 Memory — Wiring the Hook
+
+Tools + runtime make an agent useful; **memory makes it powerful**. EK pre-created an AgentCore memory and shows the wiring:
+
+![main.py — memory imports arrive](screenshots/c2s46.png)
+**What to notice** — the import block now includes the memory client and the custom **`memory_hook_provider`** — plus the usual Strands/MCP imports and the `KNOWLEDGE_BASE_ID` env var.
+
+![Importing MemoryHook into the app](screenshots/c2s47.png)
+**What to notice** — `from memory_hook_provider import MemoryHook`, then the app + `@app.entrypoint` structure. Hooks are a **Strands** concept: extension points on agent events where you attach behavior.
+
+![Inside the hook — on_agent_initialized](screenshots/c2s48.png)
+**What to notice** — the hook provider's `on_agent_initialized`: it calls `get_last_k_turns` (k=5) and fetches stored context for this **actor + session**, then injects the preferences/facts into the agent's `system_prompt` — so the agent never starts cold. The twin event, `on_message_add`, persists every message to short-term memory (long-term extraction happens asynchronously in the background).
 
 ```python
-from bedrock_agentcore.memory import MemoryClient, hooks
-
-memory_client = MemoryClient(region="us-east-1")
-memory_hook = hooks.MemoryHook(
-    memory_client=memory_client,
-    memory_id="customer-support-mem",
-    actor_id=actor_id,          # ← the user this memory belongs to
-    session_id=session_id,
-)
-
-#  on_agent_initiate → preload past preferences/facts/summaries into context
-#  on_message_add    → every user/agent message saved to short-term memory;
-#                      long-term extraction happens asynchronously
-
-def create_agent(actor_id, session_id):
-    return Agent(model=MODEL_ID, tools=tools,
-                 hooks=[memory_hook])
+# memory_hook_provider (simplified from the demo)
+#  on_agent_initialized → preload past preferences/facts/summaries into system_prompt
+#  on_message_add       → every user/agent message saved to short-term memory;
+#                         long-term extraction happens asynchronously
 ```
+
+![actor_id + session_id wiring in the entrypoint](screenshots/c2s49.png)
+**What to notice** — this is where **`actor_id`** appears: `actor_id = payload["actor_id"]` (who the user is), `session_id = context.session_id`, then `MemoryHook(memory_client, memory_id, actor_id, session_id)` passed into `create_agent`. Long-term memories are **namespaced per actor** — your preferences never bleed into another user's.
+
+![create_agent(access_token, memory_hook) + launch](screenshots/c2s50.png)
+**What to notice** — the hook is handed to the agent (`hooks=[memory_hook]`), and `agentcore launch` redeploys the memory-enabled version through the same CodeBuild pipeline.
 
 > [!NOTE]
-> Not a Strands user? LangGraph and CrewAI expose equivalent hooks/middleware — same idea: on agent start, inject memories; on each message, save events.
+> **Not a Strands user?** LangGraph and CrewAI expose equivalent hooks/middleware — same idea: on agent start, inject memories; on each message, save events. Memory is framework-agnostic.
 
 ---
 
-## 2.14 🧪 Memory in Action
+## 2.15 Identity — Reaching Third-Party Services
 
-The demo's proof, played across **two separate sessions**:
+Internal tools aren't enough — great agents also reach **Google Drive/Calendar/Gmail, Salesforce, Jira**. Identity brokers that access **securely, with user consent**. The demo couldn't fit the full Google run but shows the exact code:
 
-```text
-Session 1 (earlier, different sessionId)
-👤 User:  "My favorite device is Gaming Console Pro."
-          → stored via on_message_add → extracted to long-term memory
-             as a user preference for actor_id = EK
+![identity client — bedrock-agentcore-control](screenshots/c2s51.png)
+**What to notice** — `google_credentials_provider.py`: `boto3.client("bedrock-agentcore-control")` — credential providers are an **Identity**-managed resource; the provider name gets stored in SSM for the tool to look up.
 
-Session 2 (brand-new sessionId, same actor)
-👤 User:  "What is my favorite device?"
-🤖 Agent: "Your favorite device is the Gaming Console Pro."
-          → on_agent_initiate pulled the preference from long-term memory
-```
+![Provider lookup + cleanup helpers](screenshots/c2s52.png)
+**What to notice** — `get_provider_name_from_ssm` and `delete_ssm_param`: housekeeping so tools resolve the provider dynamically (and you can tear the demo down cleanly).
 
-> [!TIP]
-> 💡 **The user experience win**: nobody wants to re-explain their problem to a chatbot every session. A few lines of hook code → a hyper-personalized agent that remembers.
+![Creating the OAuth2 credential provider](screenshots/c2s53.png)
+**What to notice** — `create_oauth2_credential_provider` with `credentialProviderVendor="GoogleOauth2"` and your Google **client ID + client secret** (from your Google Cloud app — the repo README documents the setup). One-time setup; Identity holds the secrets.
 
----
-
-## 2.15 🔐 AgentCore Identity — Third-Party Services
-
-Internal tools aren't enough — great agents also reach **third-party services**: Google Drive/Calendar/Gmail, Salesforce, Jira. Identity brokers that access **securely, with user consent**.
-
-```mermaid
-flowchart TD
-    User["End User"] -->|sign in| Cognito["Amazon Cognito / IdP"]
-    Agent["Customer Support Agent"] -->|needs calendar| Tool["Calendar Tool"]
-    Tool -->|requires_access_token<br/>user federation| IDP["AgentCore Identity"]
-    IDP --> Cred["OAuth2 Credential Provider<br/>Google client id + secret"]
-    Cred --> Consent["Google OAuth Consent Screen"]
-    Consent --> Token["Google Access Token"]
-    Token --> GCal["Google Calendar API"]
-    GCal --> Agent
-```
-
-**How it works in code (from the demo):**
+![The calendar tool — USER_FEDERATION flow](screenshots/c2s54.png)
+**What to notice** — `tools/google.py`: `SCOPES` for calendar, an `on_auth_url` callback that surfaces the consent URL to the user, and the same `@requires_access_token` decorator — this time with `auth_flow="USER_FEDERATION"` and `force_authentication=True`.
 
 ```python
-# 1) One-time setup: create an OAuth2 credential provider in Identity
-#    → holds your Google OAuth client id + client secret
-
-# 2) In the tool, ask Identity for the user's Google token
 @requires_access_token(provider_name="google-provider",
                        scopes=["https://www.googleapis.com/auth/calendar"],
                        auth_flow="USER_FEDERATION")
@@ -623,31 +479,93 @@ def get_calendar_events(access_token=None):
     return calendar_api.list_events(access_token)
 ```
 
-![Demo UI — agent answers with the user's real calendar agenda](screenshots/s16_streamlit_demo.png)
+![create_calendar_event — building the Google client](screenshots/c2s55.png)
+**What to notice** — the tool fetches the user's Google token, wraps it as `Credentials`, and builds `build("calendar", "v3")` — standard Google API client code; the only new piece is where the token came from (Identity, with the user's consent).
 
-*The Streamlit demo: user asks "What is my agenda for today?" → agent returns the real calendar — gym session, client call, running, demo prep — via Identity-brokered OAuth.*
+```mermaid
+flowchart TD
+    User["End User"] -->|sign in| Cognito["Amazon Cognito / IdP"]
+    Agent["Customer Support Agent"] -->|needs calendar| Tool["Calendar Tool"]
+    Tool -->|"requires_access_token<br/>user federation"| IDP["AgentCore Identity"]
+    IDP --> Cred["OAuth2 Credential Provider<br/>Google client id + secret"]
+    Cred --> Consent["Google OAuth Consent Screen"]
+    Consent --> Token["Google Access Token"]
+    Token --> GCal["Google Calendar API"]
+    GCal --> Agent
+```
 
 > [!IMPORTANT]
-> **Consent is explicit**: the end user sees the Google authorization URL and approves the exact scopes. If *you* run the agent, it can only see *your* calendar; if the customer runs it, theirs. That's the whole point of Identity.
+> **Consent is explicit**: the end user sees the Google authorization URL and approves the exact scopes. If *you* run the agent it sees *your* calendar; the customer sees theirs. Agents need third-party data to be truly useful — Identity makes that access secure and per-user.
 
 ---
 
-## 2.16 📊 AgentCore Observability — "What Is My Agent Actually Doing?"
+## 2.16 Launch + The Long-Term Memory Proof
 
-The #1 pre-AgentCore customer complaint: agents were black boxes. The fix is live today as the **GenAI Observability dashboard in CloudWatch** (Bedrock AgentCore section).
+![ARM64 CodeBuild deployment complete](screenshots/c2s56.png)
+**What to notice** — the memory + gateway + identity version launches successfully: Agent ARN, ECR URI, `agentcore status`/`invoke` hints, and the CloudWatch log paths for tailing.
 
-**Dashboard metrics per agent:**
+![The memory payoff — "Gaming Console Pro"](screenshots/c2s57.png)
+**What to notice** — this is a **brand-new session ID**. Earlier, in a different session, the user taught the agent *"my favorite device is Gaming Console Pro"*. Now: *"What is my favorite device?"* → **"Gaming Console Pro"** — the `on_agent_initialized` hook pulled the preference from **long-term memory**. A few lines of hook code → a hyper-personalized agent that remembers across sessions.
 
-| Metric | What it tells you |
-| :--- | :--- |
-| 🧵 **Sessions** | How many isolated user sessions ran (demo: 5) |
-| 🔍 **Traces** | Every step of each invocation (demo: 19 traces) |
-| 🪙 **Token usage** | Model consumption & cost drivers |
-| ❌ **Errors / exceptions** | Failures surfaced immediately |
-| ⏱️ **Latency** | Response-time distribution |
-| 🚦 **Throttling** | Rate-limit events |
+> [!TIP]
+> **The UX win**: nobody wants to re-explain their problem to a chatbot every session. And EK's note — before AgentCore Memory existed, "we had to do a lot of coding to keep track of all these moving parts." Now it's a managed service.
 
-**Inside a trace** — the agent's *trajectory*: `InvokeAgentRuntime` → the Strands execution loop → Anthropic model calls → tool calls → response. Exactly the breadcrumb trail you need to audit, debug and trust an autonomous agent.
+---
+
+## 2.17 Identity in Action — Google Calendar, Live
+
+The full third-party flow, running in a Streamlit front end against the deployed agent:
+
+![Cognito sign-in for the Streamlit demo](screenshots/c2s58.png)
+**What to notice** — same Cognito hosted-UI sign-in as before — now gating the Streamlit app.
+
+![Streamlit — "Hi" works; the agenda request triggers OAuth](screenshots/c2s59.png)
+**What to notice** — *"Hi, my email is…"* → instant greeting (~4.8s). Then *"What is my agenda for today?"* → the agent surfaces an **authorization URL** — it's invoking the calendar tool, which needs the user's Google consent.
+
+![Google — choose an account](screenshots/c2s60.png)
+**What to notice** — the standard Google OAuth account picker. In production you'd redirect the user straight to this URL; the demo shows it explicitly so you see the consent step.
+
+![Google consent screen — exact calendar scopes](screenshots/c2s61.png)
+**What to notice** — the consent page lists exactly what the agent is asking for (see/edit/share calendars). Transparent, revocable, per-user — that's the point.
+
+![The agent returns the real agenda](screenshots/c2s62.png)
+**What to notice** — authorization successful → the agent reads the live calendar: **Gym 6–7, Client call 9–11, Running 4–5, Demo prep 5–8**. The agent answered with real third-party data via an Identity-brokered token.
+
+![The proof — the actual Google Calendar](screenshots/c2s63.png)
+**What to notice** — *"I'm not cheating here"* — the actual Google Calendar shows the same Gym and Client call entries the agent returned.
+
+![Agenda confirmed in the app](screenshots/c2s64.png)
+**What to notice** — the full agenda once more in Streamlit. Total added code: one credential provider + one decorated tool. That's the Identity pillar paying off.
+
+---
+
+## 2.18 Observability — "What Is My Agent Actually Doing?"
+
+The #1 pre-AgentCore complaint: agents were black boxes. The fix is live today — the **GenAI Observability dashboard in CloudWatch**, under *Bedrock AgentCore*:
+
+![GenAI Observability → Bedrock AgentCore](screenshots/c2s65.png)
+**What to notice** — CloudWatch → GenAI Observability → **Bedrock AgentCore** tab: *Enable & Configure*, *View Analytics*, *Troubleshoot & Analyze* — plus the Agents/Sessions/Traces views.
+
+![Overview — agents, sessions, traces, error rate](screenshots/c2s66.png)
+**What to notice** — the fleet overview: **2/2 agents**, **7 sessions**, **28 traces**, **0% error rate**, **0% throttle** — plus a runtime-metrics section per agent.
+
+![The agents table — per-agent metrics](screenshots/c2s67.png)
+**What to notice** — each agent/alias row: sessions, traces, errors, throttles, P95 span latency. `customersupportdemo` — the agent from this chapter — shows **5 sessions / 19 traces**.
+
+![Agent detail — sessions, invocations, latency](screenshots/c2s68.png)
+**What to notice** — drilling into `customersupportdemo.DEFAULT`: runtime sessions & invocations over time, **avg runtime latency ~1s** — the operational numbers you'd graph for any service.
+
+![Errors and latency by span](screenshots/c2s69.png)
+**What to notice** — the span table is the gold: `invoke_agent Strands Agents`, `execute_event_loop_cycle`, `Bedrock AgentCore.CreateEvent` (memory writes!), `chat us.anthropic.claude-sonnet`, `RetrieveMemoryRecords`, `ListEvents` — every internal step with its own error rate and P95 latency.
+
+![Sessions view — every conversation auditable](screenshots/c2s70.png)
+**What to notice** — the Sessions tab lists all 5 session IDs with traces/errors/throttles/P95 — each conversation is its own auditable unit.
+
+![Inside a session — its traces](screenshots/c2s71.png)
+**What to notice** — one session → its trace list. The trace here has **35 spans** at ~5.9s total — every step of that single request.
+
+![Inside a trace — the agent's trajectory](screenshots/c2s72.png)
+**What to notice** — opening the trace shows the **timeline of spans**: `POST /invocations` → `invoke_agent (Strands)` → `execute_event_loop` → `chat` (the Anthropic model call) → tool calls. This is the trajectory — which path the agent took, which model it called, which tools it used.
 
 ```mermaid
 flowchart LR
@@ -660,202 +578,89 @@ flowchart LR
 ```
 
 > [!TIP]
-> 💡 **Trusted agents = observable agents.** Autonomous is fine — as long as it's secure, under control, and auditable. Observability is the end-to-end picture that makes that real.
+> **Trusted agents = observable agents.** Autonomous is fine — as long as it's secure, under control and auditable. This dashboard is exactly what made "trust" real in the episode.
 
 ---
 
-## 2.17 🏗️ Complete Production Architecture — Putting It All Together
+## 2.19 The Complete Picture
 
-Everything from the demo, one picture:
+![The final architecture — every block in place](screenshots/c2s73.png)
+**What to notice** — the whole system, one slide: customer → Cognito-authenticated **Runtime** → the agent with its local tools (`retrieve`, calendar tools) → **Gateway** to the Lambda targets → **Memory** for session + long-term context → **Identity** validating access and brokering OAuth → **Observability** collecting every trace.
 
-```mermaid
-flowchart TD
-    User["Customer"] -->|HTTPS + Cognito JWT| EP["Runtime Endpoint"]
-    EP --> RT["AgentCore Runtime<br/>session-isolated"]
-    RT --> Agent["Customer Support Agent<br/>Strands + Claude Sonnet 4"]
-    Agent --> KB["Bedrock Knowledge Base"]
-    Agent --> GW["AgentCore Gateway - MCP"]
-    GW --> L1["check_warranty Lambda"]
-    GW --> L2["get_customer_profile Lambda"]
-    L1 --> D1["DynamoDB Warranty"]
-    L2 --> D2["DynamoDB Profiles"]
-    Agent --> MEM["AgentCore Memory<br/>short + long term by actor"]
-    Agent --> BRW["AgentCore Browser"]
-    Agent --> CI["AgentCore Code Interpreter"]
-    Agent --> IDP["AgentCore Identity"]
-    IDP --> GGL["Google Calendar + 3rd-party APIs"]
-    RT --> OBS["CloudWatch Observability<br/>sessions, traces, tokens, latency"]
-```
+| Layer | Service | Role in the demo |
+| :--- | :--- | :--- |
+| Hosting | **Runtime** | Session-isolated endpoint; configure→launch→invoke |
+| Tools (managed) | **Gateway** | Lambda targets → MCP; semantic search; update without redeploy |
+| Tools (built-in) | **Browser / Code Interpreter** | Managed tools — not shown live, same pattern |
+| Trust | **Identity** | Cognito inbound auth + OAuth brokers (Google) |
+| Context | **Memory** | STM events + LTM preferences, namespaced by actor_id |
+| Visibility | **Observability** | Sessions, traces, spans, latency in CloudWatch |
 
 > [!NOTE]
-> **Any framework, any model** — Strands + Claude today; LangGraph + Gemini tomorrow. Runtime doesn't care. And if you already built agents on Bedrock Agents, the new **import capability** can generate Strands + AgentCore code for you.
+> **"Don't try this at home — do what we showed you."** Everything in this chapter — deployment, isolation, OAuth, memory, observability — is a ton of heavy lifting to build yourself. AgentCore hands it to you composable: take the blocks you need. And if you already run Bedrock Agents, the new **import capability** can generate Strands + AgentCore code automatically.
 
-### Watch the original episode
+### 💻 Follow Along — Repos from the Episode
 
-<VideoSection youtubeId="wzIQDPFQx30" title="AWS Show & Tell — Building your first production-ready AI agent with Amazon Bedrock AgentCore" />
-
----
-
-## 2.18 🧠 Knowledge Check
-
-Q1: What is the main purpose of AgentCore Runtime?
-- A) To train foundation models from scratch
-- B) Secure, scalable hosting for agents and tools with session isolation (Correct)
-- C) To replace all agent frameworks with a single AWS framework
-- D) To store vector embeddings for knowledge bases
-
-**Explanation**: Runtime hosts any framework's agents (and even tools/MCP servers) at scale, with fast cold starts, 100MB payloads, 8-hour runs and full session isolation.
-
-Q2: Why is session isolation important?
-- A) It makes cold starts faster
-- B) It guarantees no information leaks between different users' sessions (Correct)
-- C) It increases the payload limit to 100MB
-- D) It enables MCP support
-
-**Explanation**: Dedicated execution environments per session mean no leftover memory or filesystem state can leak between sessions — critical for multi-customer workloads.
-
-Q3: What problem does AgentCore Gateway solve?
-- A) It routes HTTP traffic to EC2 instances
-- B) It exposes existing APIs and Lambda functions as standard MCP tools (Correct)
-- C) It stores agent conversation history
-- D) It builds Docker images
-
-**Explanation**: Gateway turns REST services (OpenAPI) and Lambda functions into MCP tools that plug into any agent framework or coding assistant.
-
-Q4: Why is MCP useful for AI agents?
-- A) It is a faster model inference protocol
-- B) It is a standard "USB plug-in" way for agents to discover and call tools (Correct)
-- C) It encrypts agent traffic
-- D) It replaces OAuth authentication
-
-**Explanation**: Agent frameworks and coding assistants natively support MCP — plug in a URL, get the whole toolbox in a standard way.
-
-Q5: What is the difference between short-term and long-term memory?
-- A) Short-term is faster hardware; long-term is cheaper
-- B) Short-term covers the current session's events; long-term extracts preferences, facts and summaries across sessions (Correct)
-- C) They are identical — just different namespaces
-- D) Long-term memory only works with Strands agents
-
-**Explanation**: Short-term keeps chat messages/session state synchronously; long-term asynchronously extracts durable knowledge retrievable via semantic search.
-
-Q6: Why is Actor ID important?
-- A) It encrypts the agent's code
-- B) It namespaces long-term memory per user so each user has their own preferences and facts (Correct)
-- C) It sets the Docker image name
-- D) It controls token pricing
-
-**Explanation**: Long-term memories are associated with an actor — one user's preferences never leak into another user's context.
-
-Q7: What does AgentCore Identity provide?
-- A) Only inbound username/password checks
-- B) End-to-end authentication and authorization for users, agents and tools — including OAuth to third-party services (Correct)
-- C) DNS registration for agent endpoints
-- D) Model evaluation scores
-
-**Explanation**: Identity secures user→agent, agent→agent and agent→tool flows, and brokers OAuth credentials for services like Google Calendar with explicit user consent.
-
-Q8: What information does AgentCore Observability provide?
-- A) Only billing data
-- B) Sessions, traces, token usage, errors, latency and throttling — the agent's full trajectory (Correct)
-- C) Source-code diffs between deployments
-- D) Cognito user counts
-
-**Explanation**: The CloudWatch GenAI dashboard shows per-agent sessions/traces and drills into each trace to reveal the agent's execution path.
-
-Q9: Can Gateway tools be updated without modifying agent code?
-- A) No — the agent must be rebuilt and relaunched
-- B) Yes — Gateway is loosely coupled; adding a target tool is picked up by the running agent (Correct)
-- C) Only during a maintenance window
-- D) Only for REST targets, not Lambda
-
-**Explanation**: In the demo, `get_customer_profile` was added to the existing gateway target and the *same deployed agent* used it immediately — zero code changes.
-
-Q10: What does `agentcore configure` do?
-- A) Launches the agent into production
-- B) Collects deployment settings — entrypoint, execution role, ECR, requirements file, and auth config (Correct)
-- C) Creates a Bedrock Knowledge Base
-- D) Opens the CloudWatch dashboard
-
-**Explanation**: `configure` is the interactive setup step; `launch` performs the actual build-and-deploy.
-
-Q11: What happens when you run `agentcore launch`?
-- A) The agent code runs only on localhost
-- B) The project is zipped to S3, CodeBuild builds a Docker image to ECR, and the Runtime endpoint is created (Correct)
-- C) It deletes the existing runtime
-- D) It only prints configuration
-
-**Explanation**: Launch drives the full deployment pipeline — S3 artifact, CodeBuild image build, ECR push, runtime agent + endpoint.
+- 🧩 **Samples** — [github.com/awslabs/amazon-bedrock-agentcore-samples](https://github.com/awslabs/amazon-bedrock-agentcore-samples) — includes the complete Customer Support Assistant
+- ⚙️ **Starter Toolkit** — [github.com/aws/bedrock-agentcore-starter-toolkit](https://github.com/aws/bedrock-agentcore-starter-toolkit) — the `agentcore` CLI
+- 📦 **Strands SDK** — [github.com/strands-agents/sdk-python](https://github.com/strands-agents/sdk-python)
+- 🔐 **AgentCore SDK** — open source; `BedrockAgentCoreApp`, `requires_access_token`, memory hooks
 
 ---
 
-## 🔧 Troubleshooting & Common Issues
+## 🧠 Knowledge Check
+
+<Quiz question="What makes AgentCore Runtime production-grade vs running an agent on your laptop?" options={["It rewrites your agent for a proprietary framework","Session-isolated execution environments, fast cold starts, 100MB payloads, and runs up to 8 hours — with any framework/model","It only supports Strands agents","It removes the need for any IAM configuration"]} answerIndex={1} explanation="Runtime hosts agents in dedicated per-session environments — no information leaks between users — and supports any framework, any model, large payloads and long-running work." />
+
+<Quiz question="After agentcore configure + launch, what is the correct production invoke path?" options={["agentcore invoke --local","SSH into the runtime and run the agent manually","POST to the runtime endpoint with a Cognito Bearer token + session ID header","Create an API Gateway in front of the runtime"]} answerIndex={2} explanation="The deployed agent is invoked over HTTPS with the Cognito JWT and a session-ID header — that's what a frontend UI uses. The CLI exists for debugging." />
+
+<Quiz question="In the demo, get_customer_profile was added to the gateway target and the agent used it immediately. Why did that work without redeploying?" options={["The agent polls for new tools every minute","Gateway is loosely coupled — tools live in the gateway, not the agent; updating the target changes what the gateway exposes via MCP","The agent was restarted automatically","Lambda hot-reloaded the function"]} answerIndex={1} explanation="Tools live behind the gateway's MCP endpoint, not inside agent code. Add/update a target and any MCP-connected agent sees the new tool set — teams ship tools independently of agent releases." />
+
+<Quiz question="Why does long-term memory need an actor_id rather than just a session_id?" options={["actor_id encrypts the memory store","Sessions are per-conversation; memories are namespaced per user so preferences/facts persist across all of a user's sessions","actor_id is required by MCP","It only matters for multi-agent systems"]} answerIndex={1} explanation="Sessions come and go; the actor is the person. LTM keyed by actor means 'favorite device' learned in session 1 is available in session 57 — and never leaks to another user." />
+
+<Quiz question="How does the calendar tool get the user's Google credentials?" options={["The user pastes their Google password into the chat","requires_access_token with USER_FEDERATION — Identity brokers OAuth2 consent and injects the user's Google token","The agent uses a shared service-account token for all users","Cognito directly issues Google tokens"]} answerIndex={1} explanation="The OAuth2 credential provider (Google client id+secret) + USER_FEDERATION flow produces a per-user token after explicit consent. Each user grants access to their own calendar." />
+
+<Quiz question="The GenAI Observability dashboard showed 19 traces for the demo agent. What does opening one trace reveal?" options={["The agent's source code","The agent's trajectory — invocations → Strands loop → model calls → tool calls, with per-span latency and errors","Only token counts","The CloudFormation template that deployed it"]} answerIndex={1} explanation="Traces decompose into spans — POST /invocations, invoke_agent, execute_event_loop_cycle, chat (model call), memory events — showing exactly which path each request took." />
+
+---
+
+## 🔧 Common Issues You Might Hit
 
 ### Agent can't see a new tool
-
 The tool was added to the Gateway target but the agent still says "I don't have access". Confirm the MCP client connection is established before `list_tools_sync()`, and that the bearer token is still valid — expired tokens silently return empty tool lists.
 
 ### Authentication failed when invoking
-
-The runtime was configured with Cognito authorization — invoke calls must carry a valid `Authorization: Bearer <jwt>` header from the Cognito IdP, plus a session ID header. Check the discovery URL, client ID and audience values used at `agentcore configure` time.
+The runtime was configured with Cognito authorization — invoke calls must carry a valid `Authorization: Bearer <jwt>` header plus the session-ID header. Check the discovery URL, client ID and audience from `agentcore configure`.
 
 ### Memory returns nothing in a new session
-
-Long-term extraction is **asynchronous** — a brand-new session may precede extraction completing. Also verify `actor_id` matches the earlier session's actor; memories are namespaced per actor, not per session.
+Long-term extraction is **asynchronous** — a brand-new session may precede extraction completing. Also verify `actor_id` matches the earlier session; memories are namespaced per actor, not per session.
 
 ### Launch succeeds but the endpoint times out
-
-Check the CloudWatch log group for the runtime (`aws logs tail … --follow`) — dependency issues in `requirements.txt` and missing IAM permissions on the execution role are the usual suspects.
+Tail the runtime's CloudWatch log group (`aws logs tail … --follow`) — `requirements.txt` issues and missing IAM permissions on the execution role are the usual suspects.
 
 ---
 
-## 🔬 Practical Lab — Build a Production-Ready Customer Support Agent
+## 🔬 End-to-End Path — Rebuild the Assistant Yourself
 
-**Objective**: take the demo's journey end-to-end — local Strands agent → AgentCore Runtime → Gateway tools → Memory → Identity → Observability.
+**Objective**: the demo's journey end-to-end — local Strands agent → Runtime → Gateway tools → Memory → Identity → Observability.
 
-**Prerequisites**: AWS account + credentials, AgentCore starter kit/SDK installed, a Bedrock Knowledge Base with warranty docs, two Lambda functions (`check_warranty`, `get_customer_profile`) reading DynamoDB tables, a Cognito user pool.
+**Prerequisites**: AWS account + credentials, starter toolkit installed, a Bedrock Knowledge Base with warranty docs, two Lambda functions (`check_warranty`, `get_customer_profile`) reading DynamoDB, a Cognito user pool.
 
-### Step 1 — Build and test the local agent
-
-Create `main.py` with the Strands agent (`current_time` + `retrieve` tools, `KNOWLEDGE_BASE_ID` env var). Run it locally and ask *"What are the warranty support guidelines?"* — verify a KB-grounded streamed answer.
-
-### Step 2 — AgentCore-ify the code
-
-Wrap with `BedrockAgentCoreApp`, add the `@app.entrypoint` invoke function using `payload` + `context.session_id`, and stream events back.
-
-### Step 3 — Configure and launch
-
-```bash
-agentcore configure --entrypoint main.py --name customer-support-demo
-agentcore launch --local        # smoke-test on localhost first
-agentcore launch                # deploy: S3 → CodeBuild → ECR → Runtime endpoint
-```
-
-### Step 4 — Invoke the deployed agent
-
-Get a Cognito access token, then POST to the runtime invocations URL with the bearer token + a session ID. Confirm streaming responses from the cloud endpoint.
-
-### Step 5 — Create the Gateway and add Lambda targets
-
-Create the gateway with the OAuth inbound-auth config, add the `check_warranty` Lambda target with its tool schema, connect via an MCP client, and ask *"What is my warranty status?"* Then add `get_customer_profile` to the target and verify — **no agent code change**.
-
-### Step 6 — Add memory
-
-Create an AgentCore memory, wire the Strands `MemoryHook` (`on_agent_initiate` + `on_message_add`) with `actor_id` + `session_id`. In session 1 teach a preference ("My favorite device is Gaming Console Pro"); in a new session ask *"What is my favorite device?"*
-
-### Step 7 — Add a third-party tool via Identity
-
-Create a Google OAuth2 credential provider, annotate the calendar tool with `@requires_access_token` (user federation flow), run the consent flow once, then ask *"What is my agenda for today?"*
-
-### Step 8 — Observe everything
-
-Open the CloudWatch GenAI dashboard → Bedrock AgentCore → your agent: sessions, traces, token usage, errors, latency, throttling. Drill into a trace and follow the trajectory.
+1. **Local agent** — `main.py` with `current_time` + `retrieve`, `KNOWLEDGE_BASE_ID` env var; ask the warranty question.
+2. **AgentCore-ify** — `BedrockAgentCoreApp` + `@app.entrypoint` invoke, stream events back.
+3. **Configure & launch** — `agentcore configure` → `agentcore launch -l` (local smoke test) → `agentcore launch` (S3 → CodeBuild → ECR → endpoint).
+4. **Invoke** — Cognito token + session ID header, POST to the invocations URL.
+5. **Gateway** — create gateway (CUSTOM_JWT auth), add Lambda target + toolSchema, connect via MCPClient, ask *"What is my warranty status?"* Then add `get_customer_profile` to the target — **no redeploy**.
+6. **Memory** — wire `MemoryHook` with `actor_id` + `session_id`; teach a preference in session 1, recall it in session 2.
+7. **Identity** — Google OAuth2 credential provider + `@requires_access_token` (USER_FEDERATION); run consent once; ask *"What is my agenda?"*
+8. **Observe** — CloudWatch → GenAI Observability → Bedrock AgentCore: sessions, traces, spans, latency.
 
 ### ✅ Verification Checklist
 
 - Local agent answers warranty questions via the Knowledge Base
 - `agentcore launch` completes and the endpoint streams responses
-- `check_warranty` and `get_customer_profile` work through Gateway — the second added *without* redeploying
-- New session recalls the user's favorite device via long-term memory
+- `check_warranty` and `get_customer_profile` work — the second added **without redeploying**
+- A new session recalls the user's favorite device via long-term memory
 - Google agenda returned after OAuth consent
 - CloudWatch shows sessions, traces and metrics for the agent
 
@@ -863,13 +668,13 @@ Open the CloudWatch GenAI dashboard → Bedrock AgentCore → your agent: sessio
 
 ## 🏆 Chapter 2 Summary
 
-In this chapter, we learned:
+- **The production gap**: prototypes are easy; security, scale, interoperability, payloads, long runs and observability are the hard parts. AgentCore removes that undifferentiated heavy lifting.
+- **Runtime**: any framework, any model — session isolation, 100MB payloads, 8-hour runs. Two commands: `configure`, `launch` (with `-l` for local debugging).
+- **Gateway**: existing APIs/Lambdas → MCP tools with OAuth and built-in semantic search. Update tools without touching agent code.
+- **Memory**: STM events + LTM preferences/facts/summaries, namespaced by Actor ID, retrieved semantically; wired via Strands hooks.
+- **Identity**: Cognito inbound auth + OAuth credential providers broker third-party access with explicit per-user consent.
+- **Observability**: CloudWatch GenAI dashboard — sessions, traces, spans, tokens, errors, latency. Trusted agents are observable agents.
 
-- **The production gap**: prototypes are easy — security, scale, interoperability, payload size, long runs and observability are the hard parts. AgentCore removes that undifferentiated heavy lifting.
-- **AgentCore Runtime**: deploy and run agents — any framework, any model — with session isolation, 100MB payloads and up to 8-hour workloads. Two commands: `agentcore configure`, `agentcore launch`.
-- **AgentCore Gateway**: connect existing APIs and Lambda functions to agents through MCP — with OAuth security and built-in semantic tool search. Update tools without touching agent code.
-- **AgentCore Memory**: maintain short-term session context and long-term knowledge — preferences, facts, summaries — namespaced by Actor ID and retrieved semantically.
-- **AgentCore Identity**: secure authentication and authorization end to end — Cognito for inbound calls, OAuth credential providers for third-party services like Google Calendar.
-- **AgentCore Observability**: understand and monitor agent behavior in CloudWatch — sessions, traces, tokens, errors, latency and the full execution trajectory.
-- **Browser & Code Interpreter**: managed tools for automating web/legacy workflows and safely running agent-generated code.
-- **The big picture**: Runtime + Gateway + Memory + Identity + Observability = a production Customer Support Assistant that is secure, scalable, personalized and fully auditable.
+### Watch the Original Episode
+
+<VideoSection youtubeId="wzIQDPFQx30" title="AWS Show & Tell — Building your first production-ready AI agent with Amazon Bedrock AgentCore" />
