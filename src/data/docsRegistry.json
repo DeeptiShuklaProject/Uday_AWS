@@ -2800,6 +2800,12 @@
               "title": "05 — AgentCore Gateway Connecting Agents To Tools",
               "file": "Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools.md",
               "sectionCount": 20
+            },
+            {
+              "id": "Chapter_06_AgentCore_Identity_Secure_Agent_Workflows",
+              "title": "06 — AgentCore Identity Secure Agent Workflows",
+              "file": "Chapter_06_AgentCore_Identity_Secure_Agent_Workflows.md",
+              "sectionCount": 11
             }
           ]
         }
