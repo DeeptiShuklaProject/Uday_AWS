@@ -347,6 +347,16 @@ const CATS = [
     id: 'core-chapters', title: 'Core Chapters', icon: '🛒',
     description: 'Design a complete e-commerce platform on AWS — cloud-agnostic first, then every AWS service mapped. Interview-ready.' }),
     subtitle: 'Interview prep — design an eCommerce platform on AWS from scratch, layer by layer' },
+  // Microservices on AWS — two hidden sources merged into the composite
+  // 'microservices-aws' category below (one card, one section per video).
+  { id: 'microservices-choose', title: 'Lambda vs ECS vs EKS', icon: '⚖️', dir: 'microservices-choose', hidden: true, src: path.join(ROOT, 'doc_microservices_choose'), discover: (s, b) => discoverFlat(s, b, {
+    id: 'core-chapters', title: 'Core Chapters', icon: '⚖️',
+    description: 'Where to run microservices — Lambda vs ECS Fargate vs EKS, with the cost and cold-start math.' }),
+    subtitle: 'The platform decision — Lambda vs ECS Fargate vs EKS' },
+  { id: 'microservices-reinvent', title: 'Build & Operate Microservices', icon: '🚀', dir: 'microservices-reinvent', hidden: true, src: path.join(ROOT, 'doc_microservices_reinvent'), discover: (s, b) => discoverFlat(s, b, {
+    id: 'core-chapters', title: 'Core Chapters', icon: '🚀',
+    description: 're:Invent session — a modern microservice built on EKS+Lambda+SQS+DynamoDB, provisioned and observed.' }),
+    subtitle: 're:Invent — build a modern microservice and operate it at scale' },
 ];
 
 const registry = { categories: [] };
@@ -441,6 +451,39 @@ if (playlistCourses.length) {
   });
   const n = playlistCourses.reduce((a, c) => a + c.chapters.length, 0);
   console.log(`✅ aws-agentcore: ${playlistCourses.length} sections, ${n} chapters (composite)`);
+}
+
+/* ───────────── Microservices on AWS (composite category) ─────────────
+ * One landing card, two sidebar sections — one per source video. Same
+ * reuse-in-place mechanism as aws-agentcore: each section keeps its own
+ * contentBase so no chapter files are duplicated.
+ */
+const MS_SECTIONS = [
+  { id: 'choose-platform', title: 'Choose the Platform — Lambda vs ECS vs EKS', icon: '⚖️', from: 'microservices-choose',
+    description: 'Event-driven functions vs serverless containers vs Kubernetes — the 3-question decision, cost math and cold starts.' },
+  { id: 'build-and-operate', title: 'Build & Operate — re:Invent Session', icon: '🚀', from: 'microservices-reinvent',
+    description: 'A real microservice on EKS+Lambda+SQS+DynamoDB — provisioned with CloudFormation, broken live, then observed and rightsized.' },
+];
+
+const msCourses = MS_SECTIONS.map(sec => {
+  const src = discovered[sec.from];
+  if (!src) { console.warn(`⚠️  microservices-aws: missing source category '${sec.from}'`); return null; }
+  const chapters = allChaptersOf(sec.from);
+  if (!chapters.length) { console.warn(`⚠️  microservices-aws: no chapters for '${sec.id}'`); return null; }
+  return {
+    id: sec.id, title: sec.title, icon: sec.icon,
+    description: sec.description, contentBase: src.base, chapters,
+  };
+}).filter(Boolean);
+
+if (msCourses.length) {
+  registry.categories.push({
+    id: 'microservices-aws', title: 'Microservices on AWS', icon: '🧩',
+    subtitle: 'Choose the right platform (Lambda vs ECS vs EKS), then build & operate a real microservice — re:Invent session',
+    contentBase: '/microservices-choose/', courses: msCourses,
+  });
+  const n = msCourses.reduce((a, c) => a + c.chapters.length, 0);
+  console.log(`✅ microservices-aws: ${msCourses.length} sections, ${n} chapters (composite)`);
 }
 
 writeFileSync(path.join(ROOT, 'src', 'data', 'docsRegistry.json'), JSON.stringify(registry, null, 2));

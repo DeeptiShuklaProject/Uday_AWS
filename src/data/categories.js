@@ -31,6 +31,7 @@ const CAT_COLORS = {
   'agentcore-tool-controls':    { color: '#65a30d', colorBg: '#ecfccb' },
   'agentcore-episodic-memory':  { color: '#a21caf', colorBg: '#fae8ff' },
   'ecommerce-architecture':     { color: '#be185d', colorBg: '#fce7f3' },
+  'microservices-aws':          { color: '#7c3aed', colorBg: '#ede9fe' },
 };
 
 export const categories = [

@@ -2781,7 +2781,7 @@
               "id": "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents",
               "title": "02 — Bedrock AgentCore Production Ready Agents",
               "file": "Chapter_02_Bedrock_AgentCore_Production_Ready_Agents.md",
-              "sectionCount": 22
+              "sectionCount": 24
             },
             {
               "id": "Chapter_03_Building_Agentic_AI_Applications_with_Strands_Agents_and_MCP",
@@ -2836,6 +2836,63 @@
               "title": "03 — Mapping To AWS Services",
               "file": "Chapter_03_Mapping_to_AWS_Services.md",
               "sectionCount": 12
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "microservices-aws",
+      "title": "Microservices on AWS",
+      "icon": "🧩",
+      "subtitle": "Choose the right platform (Lambda vs ECS vs EKS), then build & operate a real microservice — re:Invent session",
+      "contentBase": "/microservices-choose/",
+      "courses": [
+        {
+          "id": "choose-platform",
+          "title": "Choose the Platform — Lambda vs ECS vs EKS",
+          "icon": "⚖️",
+          "description": "Event-driven functions vs serverless containers vs Kubernetes — the 3-question decision, cost math and cold starts.",
+          "contentBase": "/microservices-choose/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Three_Platforms",
+              "title": "01 — Three Platforms",
+              "file": "Chapter_01_Three_Platforms.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_02_Decision_Framework",
+              "title": "02 — Decision Framework",
+              "file": "Chapter_02_Decision_Framework.md",
+              "sectionCount": 8
+            }
+          ]
+        },
+        {
+          "id": "build-and-operate",
+          "title": "Build & Operate — re:Invent Session",
+          "icon": "🚀",
+          "description": "A real microservice on EKS+Lambda+SQS+DynamoDB — provisioned with CloudFormation, broken live, then observed and rightsized.",
+          "contentBase": "/microservices-reinvent/",
+          "chapters": [
+            {
+              "id": "Chapter_01_Modern_Microservice",
+              "title": "01 — Modern Microservice",
+              "file": "Chapter_01_Modern_Microservice.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_02_Space_Migration_App",
+              "title": "02 — Space Migration App",
+              "file": "Chapter_02_Space_Migration_App.md",
+              "sectionCount": 8
+            },
+            {
+              "id": "Chapter_03_Observability_Operations",
+              "title": "03 — Observability Operations",
+              "file": "Chapter_03_Observability_Operations.md",
+              "sectionCount": 10
             }
           ]
         }
