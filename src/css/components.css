@@ -573,6 +573,17 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+/* Static ```terminal replay blocks (markdown fences → one card) */
+.terminal-static .terminal-body {
+  min-height: 0;
+  max-height: none;
+}
+.terminal-static .terminal-prompt {
+  margin-top: var(--space-2);
+}
+.terminal-static .terminal-prompt:first-child {
+  margin-top: 0;
+}
 .terminal-error {
   color: #f7768e;
 }

@@ -489,6 +489,113 @@ flowchart TD
 
 The interaction flow: the user asks the personal assistant something → its model decides which specialist fits → the specialist runs its own tool loop → the result flows back up to the supervisor → the supervisor writes the final answer. A single question can even fan out to *two* specialists — *"what's on my calendar today, and what's happening in Manhattan?"* pulls from both the calendar agent and the search agent.
 
+### The Sample, End to End — strands-agents/samples
+
+This exact project ships in the official samples repo — the walkthrough below follows it from GitHub page to a running multi-agent CLI. Full source: [`strands-agents/samples` → `python/04-industry-use-cases/productivity/personal-assistant`](https://github.com/strands-agents/samples/tree/main/python/04-industry-use-cases/productivity/personal-assistant) · companion repo: [`strands-agents/harness-sdk`](https://github.com/strands-agents/harness-sdk)
+
+![strands-agents/sdk-python on GitHub](screenshots/c3s01.png)
+**What to notice** — the `strands-agents/sdk-python` repo README: *"A model-driven approach to building AI agents in just a few lines of code"* — Documentation, Samples, Python SDK, Tools, Agent Builder, MCP Server are the key links.
+
+![Quick Start — install + first agent](screenshots/c3s02.png)
+**What to notice** — the entire getting-started surface: `pip install strands-agents strands-agents-tools`, then `Agent(tools=[calculator])` — the same calculator one-liner the chapter opened with.
+
+![Feature overview](screenshots/c3s03.png)
+**What to notice** — the SDK's feature checklist: lightweight agent loop, model-agnostic providers (Bedrock, Anthropic, LiteLLM, Ollama, OpenAI), multi-agent + streaming support, and native MCP client support — everything this chapter used.
+
+![sdk-python repository layout](screenshots/c3s04.png)
+**What to notice** — the repo itself: `src/strands`, `tests`, `docs` — a small, readable codebase you can actually study end to end.
+
+![strands-agents/samples — the examples repo](screenshots/c3s05.png)
+**What to notice** — the companion `samples` repo: `01-tutorials`, `02-samples`, `03-integrations`, `04-UX-demos`. Our project lives at **`02-samples/05-personal-assistant`**.
+
+![Personal Assistant — architecture overview](screenshots/c3s06.png)
+**What to notice** — the README's own architecture diagram: User → **Personal Assistant Agent** → three specialists. Calendar Assistant owns 4 custom tools + `current_time` and reads/writes a **SQLite database**; Search Agent calls a **Perplexity MCP server**; Code Assistant gets `python_repl`, `editor`, `shell`, `journal`.
+
+![Architecture detail + agent tools](screenshots/c3s07.png)
+**What to notice** — the bottom half of the diagram: every agent invokes **Amazon Bedrock LLMs** in AWS Cloud, and the tools panel makes the distinction explicit — *custom* tools are just functions; *built-in* tools come from `strands-agents-tools`.
+
+![README — agent tools list](screenshots/c3s08.png)
+**What to notice** — the README breaks down each specialist's toolkit: Calendar (create/list/update appointments, daily agenda), Coding (Python REPL, Editor, Shell, Journal), Search (Perplexity-powered web search via MCP).
+
+![Project files — 05-personal-assistant](screenshots/c3s09.png)
+**What to notice** — the folder is small and complete: `personal_assistant.py` (supervisor), `calendar_assistant.py`, `search_assistant.py`, `code_assistant.py`, `calendar_tools/` (the custom tool package), `constants.py`, `appointments.db`, `requirements.txt`. A multi-agent system in ~6 files.
+
+### Setup
+
+![Installation — clone, venv, AWS credentials](screenshots/c3s10.png)
+**What to notice** — three setup steps: clone the repo, `python -m venv .venv` + activate, then configure AWS credentials (`aws configure` or `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`/`AWS_DEFAULT_REGION` env vars) — the agents call Bedrock, so credentials are required.
+
+![Perplexity API key + quick start](screenshots/c3s11.png)
+**What to notice** — one extra env var for the search agent: `PERPLEXITY_API_KEY` (the MCP server reads it). Quick start is a single command: `python -u calendar_assistant.py`.
+
+![pip install running](screenshots/c3s12.png)
+**What to notice** — `pip install -r requirements.txt` pulling `strands-agents`, `strands-agents-tools`, `mcp`, `python-dotenv` and friends.
+
+### The Specialists, Live
+
+![Running the calendar assistant — welcome banner](screenshots/c3s13.png)
+**What to notice** — `python -u calendar_assistant.py` boots an interactive CLI: welcome banner, capability list (create/list/update appointments, daily agenda, current time), tips (date formats, appointment IDs) and a `You:` prompt — a real REPL, not a one-shot call.
+
+![Calendar assistant answering an agenda query](screenshots/c3s14.png)
+**What to notice** — *"What's my agenda for today?"* → the agent calls `current_time` to resolve "today", then `get_agenda` against SQLite and returns the formatted schedule. Tool composition, decided by the model, not by code you wrote.
+
+`calendar_assistant` itself is a **`@tool`-decorated function** whose body creates an inner `Agent` and calls it — the *agents-as-tools* pattern: to the supervisor, this whole specialist looks like one callable tool. `STRANDS_TOOL_CONSOLE_MODE = "enabled"` produces the rich tool-call logging you saw in the terminal, and `trace_attributes={"session.id": SESSION_ID}` (from `constants.py`) tags every run for observability. The `__main__` block is a real REPL — banner, tips, `while True: input("You: ")`, graceful `exit`/`KeyboardInterrupt` handling:
+
+<GitHubExplorer repo="strands-agents/samples" ref="main" expanded="true" title="calendar_assistant.py — a specialist agent wrapped as a @tool" files={[
+  { "path": "python/04-industry-use-cases/productivity/personal-assistant/calendar_assistant.py", "label": "calendar_assistant.py", "highlights": [[1, 15], [18, 40], [55, 80]], "note": "@tool wrapper → inner Agent with custom + built-in tools → interactive __main__ loop." },
+  { "path": "python/04-industry-use-cases/productivity/personal-assistant/constants.py", "label": "constants.py", "highlights": [], "note": "Shared constants — SESSION_ID, model IDs — imported by every agent file." }
+]} />
+
+This agent's tools come from an **external MCP server over stdio**: `MCPClient(lambda: stdio_client(StdioServerParameters(command=…, args=[…])))` launches the Perplexity server as a subprocess with `PERPLEXITY_API_KEY` in `env`, `list_tools_sync()` discovers what it exposes, and those tools go straight into `Agent(tools=tools)` — same API whether tools are local, built-in, or remote:
+
+<GitHubExplorer repo="strands-agents/samples" ref="main" expanded="true" title="search_assistant.py — an agent whose tools live in an MCP server" files={[
+  { "path": "python/04-industry-use-cases/productivity/personal-assistant/search_assistant.py", "label": "search_assistant.py", "highlights": [[1, 20], [30, 55], [60, 90]], "note": "stdio_client + StdioServerParameters → MCPClient → list_tools_sync() → Agent(tools=…)." }
+]} />
+
+The third specialist needs zero custom tool code: `from strands_tools import python_repl, editor, shell, journal` — its `system_prompt` casts it as *"a software expert and coder — write, debug, test, and iterate on software"*, then it's the same `@tool`-wrapper + interactive CLI pattern:
+
+<GitHubExplorer repo="strands-agents/samples" ref="main" expanded="true" title="code_assistant.py — built-in tools only, no custom code" files={[
+  { "path": "python/04-industry-use-cases/productivity/personal-assistant/code_assistant.py", "label": "code_assistant.py", "highlights": [[1, 15], [20, 45], [60, 85]], "note": "python_repl + editor + shell + journal straight from strands_tools — the tool list IS the implementation." }
+]} />
+
+![Code assistant running — capability menu](screenshots/c3s29.png)
+**What to notice** — the code assistant's CLI menu: Python REPL for running code, Code Editor for files, Shell Access for commands, Journal for notes — plus tips on being specific about requirements.
+
+![calendar_tools package in the explorer](screenshots/c3s30.png)
+**What to notice** — `calendar_tools/` is a normal Python package: one file per tool (`create_appointment.py`, `list_appointments.py`, `update_appointment.py`, `get_agenda.py`, `delete_appointment.py`) — importing the package gives you the tool functions.
+
+Each tool file is a `@tool` function with a docstring-driven contract — `create_appointment.py` parses the date, inserts into SQLite, and returns a confirmation the agent reads back:
+
+<GitHubExplorer repo="strands-agents/samples" ref="main" expanded="true" title="calendar_tools/create_appointment.py — a custom tool, the whole file" files={[
+  { "path": "python/04-industry-use-cases/productivity/personal-assistant/calendar_tools/create_appointment.py", "label": "create_appointment.py", "highlights": [[1, 10], [15, 40]], "note": "The docstring Args/Returns IS the tool schema the model reads — write it like an API contract." }
+]} />
+
+![Code assistant — tools + tips](screenshots/c3s31.png)
+**What to notice** — the tool inventory printed at startup; the tips even suggest *"Create a Python script that…"* — prompt-engineering guidance shipped inside the CLI.
+
+![Agent inspecting calendar_tools via shell](screenshots/c3s32.png)
+**What to notice** — mid-demo the code assistant runs `ls`/`tree` on `calendar_tools/` through its **shell tool** — the file tree you saw in the explorer, discovered by the agent itself.
+
+![Command Execution Complete — tool telemetry](screenshots/c3s33.png)
+**What to notice** — `STRANDS_TOOL_CONSOLE_MODE` output: a shell command completes with an execution summary (commands run, succeeded/failed, duration) and the result streams back into the conversation — full visibility into every tool call.
+
+![Agent reasoning — missing __init__.py](screenshots/c3s34.png)
+**What to notice** — the interesting failure: the agent inspects the package, notices `__init__.py` is missing for proper imports, and reasons *"I need to create an `__init__.py`…"* then reaches for the **editor tool** — the agent debugging and fixing its own codebase.
+
+### The Supervisor — Agents as Tools
+
+The payoff file: `personal_assistant_agent = Agent(model, system_prompt="You are a personal assistant. Use the agents and tools at your disposal to assist the user", tools=[calendar_assistant, search_assistant, code_assistant, …])`. Three entire agents, three entries in a `tools` list — that's the whole orchestration:
+
+<GitHubExplorer repo="strands-agents/samples" ref="main" expanded="true" title="personal_assistant.py — the supervisor, orchestrating 3 agents" files={[
+  { "path": "python/04-industry-use-cases/productivity/personal-assistant/personal_assistant.py", "label": "personal_assistant.py", "highlights": [[1, 20], [25, 50], [60, 90]], "note": "tools=[calendar_assistant, search_assistant, code_assistant] — agents as tools, the entire pattern in one list." }
+]} />
+
+![Personal assistant starting up](screenshots/c3s36.png)
+**What to notice** — `python -u personal_assistant.py` initializes all three specialists in sequence (Calendar → Search → Code) and reports *"All specialized agents are available!"* before the prompt.
+
+![Delegation live — a calendar question routed correctly](screenshots/c3s37.png)
+**What to notice** — *"Hi, what appointments do I have next week?"* → the supervisor calls the **calendar assistant** (which itself calls `current_time` + `list_appointments`), then summarizes: *"Wednesday, June 18, 2025 at 5:00 PM — Strands Agents Showcase Meeting… that's your only scheduled appointment."* One question → supervisor → specialist → tools → answer — the full agents-as-tools loop working end to end.
+
 ---
 
 ## 3.14 📅 The Calendar Assistant — A Specialist in Action

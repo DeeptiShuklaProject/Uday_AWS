@@ -153,52 +153,36 @@ The SDK contract in one slide:
 ![Strands Agents — production-ready multi-agent systems in a few lines of code](screenshots/c2s13.png)
 **What to notice** — the demo framework is **Strands**: build production-ready multi-agent AI systems in a few lines of code. (The earlier playlist episode goes deep on Strands itself.)
 
-![main.py — the local agent](screenshots/c2s14.png)
-**What to notice** — the complete local agent: `Agent` + `BedrockModel` (Claude Sonnet), two local tools — `current_time` and `retrieve` (which pulls from a **Bedrock Knowledge Base** via the `KNOWLEDGE_BASE_ID` env var), and the warranty question. ~20 lines total.
+The complete local agent — `Agent` + `BedrockModel` (Claude Sonnet), two local tools — `current_time` and `retrieve` (which pulls from a **Bedrock Knowledge Base** via the `KNOWLEDGE_BASE_ID` env var), and the warranty question. ~20 lines total:
 
-```python
-import os
-from strands import Agent
-from strands_tools import current_time, retrieve
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="main.py — the plain local agent (life before AgentCore)" files={[
+  { "path": "main.py", "src": "/bedrock-deepti/code/main_local.py", "label": "main.py", "highlights": [[6, 10], [21, 21]], "note": "Recreated from the demo — KNOWLEDGE_BASE_ID comes from SSM, retrieve() queries the Bedrock Knowledge Base." }
+]} />
 
-MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
+Run it locally and the warranty answer streams back — the agent chose `retrieve`, hit the Knowledge Base, and grounded every claim:
 
-agent = Agent(
-    model=MODEL_ID,
-    tools=[current_time, retrieve],   # retrieve → Amazon Bedrock Knowledge Base
-)
-# Knowledge Base is wired via env var: KNOWLEDGE_BASE_ID=<your kb id>
+```terminal
+$ python main.py
+I'll search for information about warranty support guidelines.
+
+Warranty Support Guidelines (from knowledge base):
+- Standard warranty: 12 months from date of purchase
+- Premium tier: 24 months + accidental damage coverage
+- Claims require proof of purchase and device serial number
+… streamed response continues …
 ```
 
-![Running locally — the warranty answer streams back](screenshots/c2s15.png)
-**What to notice** — asked *"What are the warranty support guidelines?"*, the agent chooses the `retrieve` tool, queries the Knowledge Base (warranty policies + device manuals), and **streams** the grounded answer back. Great demo — still a laptop PoC. *"You've officially impressed the C-suite. How do you get to production?"*
+*Great demo — still a laptop PoC. "You've officially impressed the C-suite. How do you get to production?"*
 
 ---
 
 ## 2.7 The Migration — Wrapping for AgentCore Runtime
 
-Here's the entire diff that turns the laptop agent into a production deployment:
+Here's the entire diff that turns the laptop agent into a production deployment — three additions only: `app = BedrockAgentCoreApp()`, one `@app.entrypoint` async function receiving **`payload`** (the user input — prompts, images, files) and **`context`** (which exposes `session_id` and later `actor_id`), and `app.run()`:
 
-![The entrypoint migration — BedrockAgentCoreApp](screenshots/c2s16.png)
-**What to notice** — three additions only: `app = BedrockAgentCoreApp()`, one `@app.entrypoint` async function receiving **`payload`** (the user input — prompts, images, files) and **`context`** (which exposes `session_id` and later `actor_id`), and `app.run()`. The agent lazily initializes once, then streams events back to the caller.
-
-```python
-from bedrock_agentcore.runtime import BedrockAgentCoreApp
-
-app = BedrockAgentCoreApp()
-agent = None  # global for demo clarity — use context vars in production
-
-@app.entrypoint
-async def invoke(payload, context):
-    global agent
-    if agent is None:
-        agent = create_agent()
-    user_prompt = payload.get("prompt", "")
-    async for event in agent.stream_async(user_prompt):
-        yield event                     # streamed straight to the caller
-
-app.run()
-```
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="main.py — the migration, every line added" files={[
+  { "path": "main.py", "src": "/bedrock-deepti/code/main_runtime.py", "label": "main.py", "highlights": [[7, 7], [22, 22], [33, 33]], "note": "app + @app.entrypoint + app.run() — that's the whole migration. Recreated from the demo." }
+]} />
 
 > [!NOTE]
 > **The whole migration is**: wrap the app, define one entry point, stream the response. Any framework drops into the same shape — LangGraph or CrewAI instead of Strands.
@@ -209,13 +193,19 @@ app.run()
 
 Configure once (`agentcore configure` — entrypoint, execution role, ECR repo, requirements file, and auth: the demo picks **Cognito** over IAM), then the SDK's neatest trick — **launch locally first**:
 
-![agentcore launch -l — local mode](screenshots/c2s17.png)
-**What to notice** — `agentcore launch -l` builds and runs the container **locally** (needs Docker/Finch/Podman), exactly the same path the cloud uses — perfect for debugging. The agent boots on `localhost:8080`, and the same warranty question streams the same KB-grounded answer.
+```terminal
+$ agentcore launch -l
+Launching Bedrock AgentCore (local mode)
+Build and run container locally — requires Docker/Finch/Podman
+Perfect for development and testing.
+✅ Container started — agent listening on http://localhost:8080
 
-```bash
-agentcore launch --local
-agentcore invoke --local '{"prompt": "What are the warranty support guidelines?"}'
+$ agentcore invoke --local '{"prompt": "What are the warranty support guidelines?"}'
+Standard warranty: 12 months from date of purchase. Premium tier:
+24 months + accidental damage…
 ```
+
+The agent boots on `localhost:8080` — same entry point, same payload handling, same streaming path the cloud will use. The warranty question streams the same KB-grounded answer.
 
 > [!TIP]
 > **Why local-first matters**: you exercise the *same* entry point, payload handling and streaming path that production uses — so "works on my machine" actually means something here.
@@ -226,15 +216,22 @@ agentcore invoke --local '{"prompt": "What are the warranty support guidelines?"
 
 With local testing done, one command goes to the cloud:
 
-```bash
-agentcore launch
+```terminal
+$ agentcore launch
+Launching Bedrock AgentCore (codebuild mode — recommended)
+✅ ECR repository ready:      customersupportdemo
+✅ Execution role validated:  arn:aws:iam::…:role/AgentCoreRuntimeRole
+✅ CodeBuild project created: bedrock-agentcore-customersupportdemo
+Uploading source → s3://bedrock-agentcore-codebuild-…/source.zip
+
+Phase: QUEUED        (queued for 4s)
+Phase: PROVISIONING  (build host allocated)
+Phase: PRE_BUILD     (ecr login, buildspec)
+Phase: BUILD         (docker build → docker push to ECR)
+Phase: POST_BUILD    (image scan, cleanup)
 ```
 
-![agentcore launch — CodeBuild mode](screenshots/c2s18.png)
-**What to notice** — `agentcore launch` (CodeBuild mode — **recommended**) validates the execution role, ensures the ECR repo, creates a CodeBuild project, and uploads your project as a zip to the S3 artifact bucket. You never touch any of it.
-
-![The build progressing through CodeBuild stages](screenshots/c2s19.png)
-**What to notice** — QUEUED → PROVISIONING → PRE_BUILD → BUILD → POST_BUILD: CodeBuild builds the Docker image and pushes it to ECR. This is the undifferentiated heavy lifting happening *for* you.
+QUEUED → PROVISIONING → PRE_BUILD → BUILD → POST_BUILD: CodeBuild builds the Docker image and pushes it to ECR — the undifferentiated heavy lifting happening *for* you.
 
 ### What Runtime gives you, meanwhile
 
@@ -264,17 +261,24 @@ flowchart LR
     User["User / App"] -->|invoke| EP
 ```
 
-![CodeBuild Deployment Complete](screenshots/c2s22.png)
-**What to notice** — the successful output: Agent ARN, ECR image URI, and the handy `agentcore status` / `agentcore invoke` hints. Below it — the CloudWatch log paths and `aws logs tail … --follow` commands for tailing the runtime's logs while debugging.
+```terminal
+✅ CodeBuild Deployment Complete
+Agent Name:   customersupportdemo
+Agent ARN:    arn:aws:bedrock-agentcore:us-east-1:<acct>:runtime/customersupportdemo-XXXX
+ECR URI:      <acct>.dkr.ecr.us-east-1.amazonaws.com/customersupportdemo:latest
 
-```text
-Uploading project to S3…
-CodeBuild: building container image…
-Pushing image to Amazon ECR…
-Creating AgentCore Runtime…
-✅ Deployment complete — endpoint ready
-CloudWatch logs: /aws/bedrock-agentcore/runtimes/<agent-id>
+Next steps:
+  agentcore status
+  agentcore invoke '{"prompt": "hi"}'
+
+Agent logs:
+  aws logs tail /aws/bedrock-agentcore/runtimes/customersupportdemo-XXXX \
+      --log-stream-name-prefix "<date>/runtime-logs" --follow
+  aws logs tail /aws/bedrock-agentcore/runtimes/customersupportdemo-XXXX \
+      --log-stream-name-prefix "<date>/runtime-logs" --since 1h
 ```
+
+**What to notice** — Agent ARN, ECR image URI, `agentcore status`/`invoke` hints, and the CloudWatch log-tail commands for debugging live invocations.
 
 > [!TIP]
 > **Only two commands to remember**: `agentcore configure` and `agentcore launch`. All backend resources — S3 artifacts, CodeBuild, ECR, endpoints — are handled by the SDK.
@@ -285,35 +289,40 @@ CloudWatch logs: /aws/bedrock-agentcore/runtimes/<agent-id>
 
 The CLI is for debugging; production calls the endpoint over HTTPS — exactly what a frontend UI would do. The demo's `test_agent.py`:
 
-![invoke_endpoint — building the URL and headers](screenshots/c2s23.png)
-**What to notice** — the invoke URL is built from the **agent ARN**, and every request carries an `Authorization: Bearer <token>` header (the Cognito JWT) plus a **session ID** header — remember session isolation.
+The invoke URL is built from the **agent ARN**, and every request carries an `Authorization: Bearer <token>` header (the Cognito JWT) plus a **session ID** header — remember session isolation. `stream=True` + SSE parsing (`data:` lines) means tokens stream back chunk by chunk — wire the same loop into a chat UI:
 
-![Parsing the streamed SSE response](screenshots/c2s24.png)
-**What to notice** — `stream=True` and SSE parsing (`data:` lines) — tokens stream back chunk by chunk; wire the same loop into a chat UI.
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="test_agent.py — the production invoke client" files={[
+  { "path": "test/test_agent.py", "src": "/bedrock-deepti/code/test_agent.py", "label": "test_agent.py", "highlights": [[9, 11], [13, 17], [24, 26]], "note": "ARN-escaped invoke URL + Bearer JWT + runtime session-id header + SSE stream parsing. Recreated from the demo." }
+]} />
 
-![Launching the client — auth flow starts](screenshots/c2s25.png)
-**What to notice** — the deployment is complete and the client script starts the **OAuth flow**: spins up a local callback server on `:8080` and opens the browser for sign-in.
+Running it kicks off the **OAuth flow** — the script fetches the Cognito discovery URL, spins up a local callback server on `:8080`, and opens the browser:
+
+```terminal
+$ python test/test_agent.py customersupportdemo
+Fetching Cognito discovery URL…
+Starting auth flow — local callback server listening on localhost:8080
+Opening browser to sign in…
+```
 
 ![Cognito hosted UI — sign in](screenshots/c2s26.png)
 **What to notice** — the Cognito hosted-UI login page. The demo uses a throwaway user; the access token comes back and gets **cached locally**, so subsequent runs skip the browser entirely.
 
-![Interactive session against the cloud endpoint](screenshots/c2s27.png)
-**What to notice** — "Access token acquired and saved" → an interactive session against the deployed agent. `Hi` → friendly response. This is the *cloud* endpoint now — not localhost.
+```terminal
+Access token acquired and saved.
 
-![The warranty answer, served from AWS](screenshots/c2s28.png)
-**What to notice** — *"What are the warranty support guidelines?"* → the agent invokes `retrieve` on the Knowledge Base and streams the grounded response — served from **AgentCore Runtime in AWS**, session-isolated and multi-user capable.
+Connected → customersupportdemo (session: a1b2c3d4-…)
 
-```python
-def invoke_agent(prompt: str, access_token: str, session_id: str):
-    headers = {
-        "Authorization": f"Bearer {access_token}",   # Cognito JWT
-        "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id": session_id,
-    }
-    resp = requests.post(INVOKE_URL, headers=headers,
-                         json={"prompt": prompt}, stream=True)
-    for chunk in resp.iter_content(chunk_size=None):
-        print(chunk.decode(), end="")
+You: hi
+Agent: Hello! I'm your Customer Support Agent. I can help with warranty
+       questions, device profiles, and more. How can I help you today?
+
+You: What are the warranty support guidelines?
+Agent: *invokes retrieve() → Knowledge Base: warranty policies + device manuals*
+       Standard warranty: 12 months from date of purchase. Premium tier:
+       24 months + accidental damage. Claims require proof of purchase…
 ```
+
+An interactive session against the deployed agent — the **cloud** endpoint now, not localhost: same code, same KB retrieval, served from **AgentCore Runtime in AWS**, session-isolated and multi-user capable.
 
 > [!NOTE]
 > "You've moved well beyond the laptop — deployed in the cloud, multiple users hitting it concurrently, secure and scalable. All the joys and wonders of AgentCore." And it's **two commands**, not a week of infrastructure work.
@@ -324,54 +333,30 @@ def invoke_agent(prompt: str, access_token: str, session_id: str):
 
 Agents are only useful with tools. The demo already has two **Lambda functions** reading DynamoDB (a Warranty table, a Customer Profile table). Time to expose them to the agent.
 
-![main.py — imports for the gateway-wired agent](screenshots/c2s29.png)
-**What to notice** — new imports: `MCPClient` + `streamablehttp_client` (any MCP client can connect to a gateway URL), `requires_access_token`, and `get_ssm_parameter` — the gateway URL is fetched from SSM Parameter Store rather than hardcoded.
+New imports: `MCPClient` + `streamablehttp_client` (any MCP client can connect to a gateway URL), `requires_access_token`, and `get_ssm_parameter` — the gateway URL is fetched from SSM rather than hardcoded. Once the agent gains tools, a **more descriptive system prompt** matters — tell the agent it can query the KB *and* call warranty/customer-profile tools (good prompting = better tool selection). And `requires_access_token` handles the M2M OAuth flow with the Cognito provider, **injecting** the access token you'll pass to the MCP client:
 
-![A richer system prompt for a tool-using agent](screenshots/c2s30.png)
-**What to notice** — once the agent gains tools, a **more descriptive system prompt** matters: tell the agent it can query the Knowledge Base *and* call warranty/customer-profile tools. Good prompting = better tool selection.
-
-![Access token via the identity decorator](screenshots/c2s31.png)
-**What to notice** — `requires_access_token` handles the machine-to-machine OAuth flow with the Cognito provider and **injects** the access token into the function — the token you'll pass to the MCP client.
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="main.py — the gateway-wired agent, top half" files={[
+  { "path": "main.py", "src": "/bedrock-deepti/code/main_gateway.py", "label": "main.py", "highlights": [[5, 6], [17, 18], [33, 35]], "note": "MCPClient + requires_access_token imports, richer system prompt, M2M token decorator. Recreated from the demo." }
+]} />
 
 ### Creating the gateway
 
-![lambda_target_config — exposing a Lambda as a tool](screenshots/c2s32.png)
-**What to notice** — the target config for a Lambda target: `mcp.lambda.lambdaArn` plus a **`toolSchema`** (inline payload) — name, description, parameters. The schema is what tells the agent *what the tool does and what it takes*.
+The target config for a Lambda target: `mcp.lambda.lambdaArn` plus a **`toolSchema`** (name, description, parameters — it's what tells the agent *what the tool does and what it takes*). The `customJWTAuthorizer` auth config (managed by the **Identity** block): `allowedClients` + `discoveryUrl` of the Cognito IdP — MCP is easy to use, but you want to use it **securely**. Then `create_gateway(protocolType="MCP", authorizerType="CUSTOM_JWT")`, `create_gateway_target` with `GATEWAY_IAM_ROLE` outbound creds, and the gateway URL + ID written back to SSM — the parameter the agent reads at startup:
 
-![auth_config — inbound auth via Cognito](screenshots/c2s33.png)
-**What to notice** — the `customJWTAuthorizer` auth config (managed by the **Identity** building block): `allowedClients` and `discoveryUrl` of the Cognito IdP. MCP is easy to use — but you want to use it **securely**.
-
-![create_gateway — protocolType MCP, CUSTOM_JWT](screenshots/c2s34.png)
-**What to notice** — one call: `create_gateway(name, roleArn, protocolType="MCP", authorizerType="CUSTOM_JWT", authorizerConfiguration=auth_config)` with the agent's execution role.
-
-![create_gateway_target + persisting to SSM](screenshots/c2s35.png)
-**What to notice** — `create_gateway_target` attaches the Lambda target with `credentialProviderType=GATEWAY_IAM_ROLE` (the gateway assumes a role to invoke your Lambda); then the gateway URL + ID are written back to SSM — that's the parameter the agent reads at startup.
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="Gateway setup — Lambda target config, JWT auth, create + persist" files={[
+  { "path": "setup_gateway.py", "src": "/bedrock-deepti/code/gateway_setup_demo.py", "label": "setup_gateway.py", "highlights": [[10, 30], [33, 38], [40, 47]], "note": "toolSchema defines what the agent sees; CUSTOM_JWT + GATEWAY_IAM_ROLE = secure both directions. Recreated from the demo." }
+]} />
 
 > [!TIP]
 > The **starter toolkit** can do most of this in a line or two — the demo deliberately shows the full SDK path so you see every option available.
 
 ### Plugging the gateway into the agent
 
-![create_agent — MCPClient wired to the gateway URL](screenshots/c2s36.png)
-**What to notice** — the `MCPClient` connects to the gateway URL over **streamable HTTP** with the bearer token, plus a beefier system prompt and the local tools list (`current_time`, `retrieve`).
+The `MCPClient` connects to the gateway URL over **streamable HTTP** with the bearer token — `list_tools_sync()` returns the gateway tools, standardized. The full assembled app: `BedrockAgentCoreApp()`, `@requires_access_token` fetching the gateway token, `create_agent(access_token)`, and `@app.entrypoint` passing `session_id` through — then `agentcore launch` again to push the gateway-wired version:
 
-```python
-from strands.tools.mcp import MCPClient
-from mcp.client.streamable_http import streamablehttp_client
-
-mcp_client = MCPClient(
-    lambda: streamablehttp_client(
-        GATEWAY_URL,
-        headers={"Authorization": f"Bearer {ACCESS_TOKEN}"}),
-)
-mcp_client.start()
-tools = mcp_client.list_tools_sync()    # gateway tools, standardized
-agent = Agent(model=MODEL_ID, system_prompt=SUPPORT_PROMPT,
-              tools=[current_time, retrieve] + tools)
-```
-
-![The complete invoke path — token, entrypoint, streaming](screenshots/c2s37.png)
-**What to notice** — the full assembled app: `BedrockAgentCoreApp()`, `@requires_access_token` fetching the gateway token, `create_agent(access_token)`, and the `@app.entrypoint` invoke passing `session_id` through — then `agentcore launch` again to push the gateway-wired version.
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="main.py — MCPClient to gateway + entrypoint (bottom half)" files={[
+  { "path": "main.py", "src": "/bedrock-deepti/code/main_gateway_agent.py", "label": "main.py", "highlights": [[11, 18], [20, 20], [25, 25]], "note": "list_tools_sync() merges gateway tools with local tools; the bearer token flows through create_agent. Recreated from the demo." }
+]} />
 
 ```mermaid
 flowchart LR
@@ -409,14 +394,35 @@ While the build runs, Mark zooms out on the three blocks you're wiring — what 
 
 The agent code, fully assembled:
 
-![main.py — the gateway-wired application top](screenshots/c2s43.png)
-**What to notice** — the finished `main.py` header: imports for `requires_access_token` + `streamablehttp_client`, `KNOWLEDGE_BASE_ID` env var, the SSM-fetched gateway URL, and the app/entrypoint structure. Same agent — now gateway-connected.
+The finished `main.py` — imports for `requires_access_token` + `streamablehttp_client`, the `KNOWLEDGE_BASE_ID` env var, the SSM-fetched gateway URL, and the app/entrypoint structure. Same agent — now gateway-connected:
 
-![Warranty status via a Lambda tool — and an honest miss](screenshots/c2s44.png)
-**What to notice** — two answers in one session. *"What is my warranty status?"* → the agent calls `check_warranty` → **Lambda → DynamoDB** → *"expired 254 days ago"* 😬 (the good news: Gateway works). Then *"get customer profile"* → *"I don't have access to that tool"* — because it isn't a gateway target **yet**.
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="main.py — the complete gateway-wired application" files={[
+  { "path": "main.py", "src": "/bedrock-deepti/code/main_gateway.py", "label": "main.py — top", "highlights": [[17, 18], [33, 35]], "note": "Config + prompt + token acquisition. Recreated from the demo." },
+  { "path": "main.py", "src": "/bedrock-deepti/code/main_gateway_agent.py", "label": "main.py — agent + app", "highlights": [[11, 20], [25, 35]], "note": "MCPClient → gateway → tools merged into the agent; entrypoint streams. Recreated from the demo." }
+]} />
 
-![Customer profile — new tool, zero redeploy](screenshots/c2s45.png)
-**What to notice** — the killer moment. EK **updated the existing gateway target** to add `get_customer_profile`, re-asked the question with *the same deployed agent* — and the full CUST001 profile (John Smith, Premium tier) came back. **New tool, zero agent code changes, zero redeploy.**
+Two answers in one session — the first proves Gateway works, the second is an honest miss:
+
+```terminal
+You: What is my warranty status?
+Agent: *calls check_warranty → Lambda → DynamoDB warranty table*
+       Your device warranty expired 254 days ago.
+
+You: get customer profile
+Agent: I'm sorry, I don't have access to a customer profile tool.
+```
+
+Then the killer moment — EK **updated the existing gateway target** to add `get_customer_profile`, re-asked with *the same deployed agent*, and got the full profile back:
+
+```terminal
+You: get customer profile
+Agent: *calls get_customer_profile → Lambda → DynamoDB*
+       Customer CUST001 — John Smith, Premium tier.
+       Devices: Gaming Console Pro, SmartWatch X2.
+       Premium support entitlements active.
+```
+
+**New tool, zero agent code changes, zero redeploy.**
 
 > [!IMPORTANT]
 > **Loose coupling is the enterprise story**: before Gateway, tools lived inside agent code — adding one meant editing and redeploying the agent. Now tools live in a shared gateway that dozens of teams can maintain and reuse independently. Same idea as API management, now for agents.
@@ -427,27 +433,20 @@ The agent code, fully assembled:
 
 Tools + runtime make an agent useful; **memory makes it powerful**. EK pre-created an AgentCore memory and shows the wiring:
 
-![main.py — memory imports arrive](screenshots/c2s46.png)
-**What to notice** — the import block now includes the memory client and the custom **`memory_hook_provider`** — plus the usual Strands/MCP imports and the `KNOWLEDGE_BASE_ID` env var.
+The import block gains the memory client and a custom **`memory_hook_provider`** — hooks are a **Strands** concept: extension points on agent events where you attach behavior. `on_agent_initialized` calls `get_last_k_turns` (k=5) for this **actor + session** and injects preferences/facts into `system_prompt` — the agent never starts cold; `on_message_added` persists every message to short-term memory (long-term extraction runs asynchronously). And this is where **`actor_id`** appears — `payload["actor_id"]` + `context.session_id` build the `MemoryHook`; long-term memories are **namespaced per actor**, so your preferences never bleed into another user's:
 
-![Importing MemoryHook into the app](screenshots/c2s47.png)
-**What to notice** — `from memory_hook_provider import MemoryHook`, then the app + `@app.entrypoint` structure. Hooks are a **Strands** concept: extension points on agent events where you attach behavior.
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="Memory wiring — the hook provider + the entrypoint" files={[
+  { "path": "memory_hook_provider.py", "src": "/bedrock-deepti/code/memory_hook_provider.py", "label": "memory_hook_provider.py", "highlights": [[22, 35], [37, 46]], "note": "on_agent_initialized injects past context into the system prompt; on_message_added writes every message to STM." },
+  { "path": "main.py", "src": "/bedrock-deepti/code/main_memory.py", "label": "main.py — memory version", "highlights": [[31, 38], [40, 44]], "note": "actor_id from payload + session_id from context → MemoryHook → hooks=[memory_hook]. Recreated from the demo." }
+]} />
 
-![Inside the hook — on_agent_initialized](screenshots/c2s48.png)
-**What to notice** — the hook provider's `on_agent_initialized`: it calls `get_last_k_turns` (k=5) and fetches stored context for this **actor + session**, then injects the preferences/facts into the agent's `system_prompt` — so the agent never starts cold. The twin event, `on_message_add`, persists every message to short-term memory (long-term extraction happens asynchronously in the background).
+Then the same command redeploys the memory-enabled version through the same CodeBuild pipeline:
 
-```python
-# memory_hook_provider (simplified from the demo)
-#  on_agent_initialized → preload past preferences/facts/summaries into system_prompt
-#  on_message_add       → every user/agent message saved to short-term memory;
-#                         long-term extraction happens asynchronously
+```terminal
+$ agentcore launch
+✅ CodeBuild Deployment Complete
+Agent ARN: arn:aws:bedrock-agentcore:us-east-1:<acct>:runtime/customersupportdemo-XXXX
 ```
-
-![actor_id + session_id wiring in the entrypoint](screenshots/c2s49.png)
-**What to notice** — this is where **`actor_id`** appears: `actor_id = payload["actor_id"]` (who the user is), `session_id = context.session_id`, then `MemoryHook(memory_client, memory_id, actor_id, session_id)` passed into `create_agent`. Long-term memories are **namespaced per actor** — your preferences never bleed into another user's.
-
-![create_agent(access_token, memory_hook) + launch](screenshots/c2s50.png)
-**What to notice** — the hook is handed to the agent (`hooks=[memory_hook]`), and `agentcore launch` redeploys the memory-enabled version through the same CodeBuild pipeline.
 
 > [!NOTE]
 > **Not a Strands user?** LangGraph and CrewAI expose equivalent hooks/middleware — same idea: on agent start, inject memories; on each message, save events. Memory is framework-agnostic.
@@ -458,29 +457,12 @@ Tools + runtime make an agent useful; **memory makes it powerful**. EK pre-creat
 
 Internal tools aren't enough — great agents also reach **Google Drive/Calendar/Gmail, Salesforce, Jira**. Identity brokers that access **securely, with user consent**. The demo couldn't fit the full Google run but shows the exact code:
 
-![identity client — bedrock-agentcore-control](screenshots/c2s51.png)
-**What to notice** — `google_credentials_provider.py`: `boto3.client("bedrock-agentcore-control")` — credential providers are an **Identity**-managed resource; the provider name gets stored in SSM for the tool to look up.
+Two files make it happen. `google_credentials_provider.py` uses `boto3.client("bedrock-agentcore-control")` — credential providers are an **Identity**-managed resource — to create an OAuth2 provider with `credentialProviderVendor="GoogleOauth2"` and your Google **client ID + secret** (one-time setup; Identity holds the secrets), and stores the provider name in SSM. `tools/google.py` uses the same `@requires_access_token` decorator — this time with `auth_flow="USER_FEDERATION"` and `force_authentication=True` — so the token returned is *this user's* Google credential; then it's standard `Credentials` + `build("calendar", "v3")` client code:
 
-![Provider lookup + cleanup helpers](screenshots/c2s52.png)
-**What to notice** — `get_provider_name_from_ssm` and `delete_ssm_param`: housekeeping so tools resolve the provider dynamically (and you can tear the demo down cleanly).
-
-![Creating the OAuth2 credential provider](screenshots/c2s53.png)
-**What to notice** — `create_oauth2_credential_provider` with `credentialProviderVendor="GoogleOauth2"` and your Google **client ID + client secret** (from your Google Cloud app — the repo README documents the setup). One-time setup; Identity holds the secrets.
-
-![The calendar tool — USER_FEDERATION flow](screenshots/c2s54.png)
-**What to notice** — `tools/google.py`: `SCOPES` for calendar, an `on_auth_url` callback that surfaces the consent URL to the user, and the same `@requires_access_token` decorator — this time with `auth_flow="USER_FEDERATION"` and `force_authentication=True`.
-
-```python
-@requires_access_token(provider_name="google-provider",
-                       scopes=["https://www.googleapis.com/auth/calendar"],
-                       auth_flow="USER_FEDERATION")
-def get_calendar_events(access_token=None):
-    # access_token → THIS user's Google credentials, obtained with consent
-    return calendar_api.list_events(access_token)
-```
-
-![create_calendar_event — building the Google client](screenshots/c2s55.png)
-**What to notice** — the tool fetches the user's Google token, wraps it as `Credentials`, and builds `build("calendar", "v3")` — standard Google API client code; the only new piece is where the token came from (Identity, with the user's consent).
+<GitHubExplorer repo="awslabs/amazon-bedrock-agentcore-samples" ref="main" expanded="true" title="Identity — the Google credential provider + calendar tools" files={[
+  { "path": "google_credentials_provider.py", "src": "/bedrock-deepti/code/google_credentials_provider.py", "label": "google_credentials_provider.py", "highlights": [[7, 7], [26, 37]], "note": "create_oauth2_credential_provider holds YOUR Google app secrets; provider name persists to SSM." },
+  { "path": "tools/google.py", "src": "/bedrock-deepti/code/tools_google.py", "label": "tools/google.py", "highlights": [[10, 10], [23, 30], [35, 36]], "note": "USER_FEDERATION + on_auth_url: consent URL surfaces to the user, per-user token flows into the Google client. Recreated from the demo." }
+]} />
 
 ```mermaid
 flowchart TD
@@ -501,11 +483,27 @@ flowchart TD
 
 ## 2.16 Launch + The Long-Term Memory Proof
 
-![ARM64 CodeBuild deployment complete](screenshots/c2s56.png)
-**What to notice** — the memory + gateway + identity version launches successfully: Agent ARN, ECR URI, `agentcore status`/`invoke` hints, and the CloudWatch log paths for tailing.
+The memory + gateway + identity version launches successfully:
 
-![The memory payoff — "Gaming Console Pro"](screenshots/c2s57.png)
-**What to notice** — this is a **brand-new session ID**. Earlier, in a different session, the user taught the agent *"my favorite device is Gaming Console Pro"*. Now: *"What is my favorite device?"* → **"Gaming Console Pro"** — the `on_agent_initialized` hook pulled the preference from **long-term memory**. A few lines of hook code → a hyper-personalized agent that remembers across sessions.
+```terminal
+$ agentcore launch
+✅ CodeBuild Deployment Complete (arm64)
+Agent Name: customersupportdemo
+Agent ARN:  arn:aws:bedrock-agentcore:us-east-1:<acct>:runtime/customersupportdemo-XXXX
+ECR URI:    <acct>.dkr.ecr.us-east-1.amazonaws.com/customersupportdemo:latest
+
+Next steps: agentcore status / agentcore invoke '{"prompt": "hi"}'
+Agent logs: /aws/bedrock-agentcore/runtimes/customersupportdemo-XXXX
+```
+
+Then the payoff — a **brand-new session ID**. Earlier, in a different session, the user taught the agent *"my favorite device is Gaming Console Pro"*:
+
+```terminal
+You: What is my favorite device?
+Agent: Your favorite device is the Gaming Console Pro.
+```
+
+The `on_agent_initialized` hook pulled the preference from **long-term memory** — a few lines of hook code → a hyper-personalized agent that remembers across sessions.
 
 > [!TIP]
 > **The UX win**: nobody wants to re-explain their problem to a chatbot every session. And EK's note — before AgentCore Memory existed, "we had to do a lot of coding to keep track of all these moving parts." Now it's a managed service.

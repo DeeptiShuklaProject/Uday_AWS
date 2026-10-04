@@ -493,12 +493,20 @@ function tryCommands(body, hTitle) {
   fs.forEach((f, i) => {
     if (!SHELL_LANGS.has(f.lang)) { prevEnd = f.end; return; }
     const next = fs[i + 1];
-    let expected;
+    let expected, command = f.code.trim();
     if (next && OUTPUT_LANGS.has(next.lang) && next.index - f.end < 600 && f.lang !== next.lang) {
       expected = next.code.trim() || undefined;
     }
+    if (f.lang === 'terminal') {
+      // Static replay blocks: `$` lines are commands, the rest is output.
+      // Pure-output blocks (chat transcripts etc.) aren't commands at all.
+      const cmdLines = f.code.split('\n').filter(l => /^\$\s?/.test(l));
+      if (!cmdLines.length) { prevEnd = f.end; return; }
+      command = cmdLines.map(l => l.replace(/^\$\s?/, '')).join('\n');
+      expected = f.code.split('\n').filter(l => !/^\$\s?/.test(l)).join('\n').trim() || expected;
+    }
     cmds.push({
-      command: f.code.trim(),
+      command,
       category: catFor(f.index),
       explanation: explFor(f.index, prevEnd) || undefined,
       expectedOutput: expected,
@@ -738,6 +746,39 @@ function wrapMermaid(html) {
       `<span class="diagram-titlebar-icon">📐</span>` +
       `<span class="diagram-title">Architecture Diagram</span>` +
       `</div><div class="diagram-scroll"><pre><code class="language-mermaid">${code}</code></pre></div></div>`);
+}
+
+// ```terminal fences → one static terminal card: lines starting with `$`
+// become prompt lines (the `.terminal-prompt::before` supplies the `$`),
+// everything else renders as output — command + output in ONE block.
+function wrapTerminal(html) {
+  return html.replace(/<pre><code class="language-terminal">([\s\S]*?)<\/code><\/pre>/g,
+    (_, code) => {
+      const lines = code.replace(/\n$/, '').split('\n');
+      let body = '';
+      let out = [];
+      const flush = () => {
+        if (out.length) {
+          body += `<div class="terminal-output">${out.join('\n')}</div>`;
+          out = [];
+        }
+      };
+      lines.forEach(l => {
+        if (/^\$\s?/.test(l)) {
+          flush();
+          body += `<div class="terminal-prompt">${l.replace(/^\$\s?/, '')}</div>`;
+        } else {
+          out.push(l);
+        }
+      });
+      flush();
+      return `<div class="terminal terminal-static"><div class="terminal-header">` +
+        `<span class="terminal-dot terminal-dot-red"></span>` +
+        `<span class="terminal-dot terminal-dot-yellow"></span>` +
+        `<span class="terminal-dot terminal-dot-green"></span>` +
+        `<span class="terminal-title">Terminal</span>` +
+        `</div><div class="terminal-body">${body}</div></div>`;
+    });
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -1046,7 +1087,7 @@ export function markdownToModule(md, { id, imageBaseUrl = '', title: titleOverri
   codeExamples, quiz, interview, topic, prog } = {}) {
   if (!md) return null;
   const lines = md.split('\n');
-  const render = chunk => alerts(wrapMermaid(resolveMediaUrls(marked.parse(chunk.trim()), imageBaseUrl)));
+  const render = chunk => alerts(wrapTerminal(wrapMermaid(resolveMediaUrls(marked.parse(chunk.trim()), imageBaseUrl))));
 
   // ── Title: first H1 ──
   let title = titleOverride || 'Chapter';
