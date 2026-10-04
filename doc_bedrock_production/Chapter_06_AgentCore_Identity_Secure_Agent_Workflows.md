@@ -345,6 +345,7 @@ The demos followed the official Identity samples — the same four links from th
 - 🚀 **Identity — Getting Started** — [docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-getting-started.html](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-getting-started.html) — the setup path this chapter followed
 - 🐍 **AgentCore SDK for Python** — [github.com/aws/bedrock-agentcore-sdk-python](https://github.com/aws/bedrock-agentcore-sdk-python) — `BedrockAgentCoreApp`, `@requires_access_token`, the identity client
 - 📓 **Identity samples** — [awslabs/agentcore-samples → 01-tutorials/03-AgentCore-identity](https://github.com/awslabs/agentcore-samples/tree/main/01-tutorials/03-AgentCore-identity) — the GitHub inspector, standalone and gateway notebooks from this chapter
+- ▶️ **Watch the episode** — [Secure your agent workflows | AWS Show & Tell](https://www.youtube.com/watch?v=wv2doVDF7KQ&list=PLhr1KZpdzukfZdp5SGgm2yBPglHNHn-Ig&index=5) — the source video for this chapter
 
 ---
 
