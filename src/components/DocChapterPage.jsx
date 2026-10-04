@@ -130,14 +130,20 @@ export default function DocChapterPage() {
   }, [lesson]);
 
   // Restore a #section deep-link once the lesson renders. Retry while
-  // lazy images/markdown settle the layout.
+  // lazy images/markdown settle the layout. Falls back to a
+  // [data-section-id] substring match so links may carry just the
+  // stable slug fragment ("2-6-the-starting-point…") without the
+  // positional "sec-N-" prefix.
   useEffect(() => {
     if (!lesson || !pendingAnchor.current) return;
-    const el = document.getElementById(pendingAnchor.current);
+    const el = document.getElementById(pendingAnchor.current)
+      || document.querySelector(`[data-section-id*="${pendingAnchor.current}"]`);
     if (!el) return;
     pendingAnchor.current = null;
-    [80, 400, 1200].forEach(ms =>
+    [80, 400, 1200, 2400].forEach(ms =>
       setTimeout(() => el.scrollIntoView({ block: 'start' }), ms));
+    el.classList.add('hi-flash');
+    setTimeout(() => el.classList.remove('hi-flash'), 2400);
   }, [lesson]);
 
   // Jump to top on chapter switch (instant — global smooth-scroll would

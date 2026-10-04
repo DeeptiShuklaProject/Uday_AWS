@@ -47,6 +47,17 @@ The mental model for the whole chapter. Four parties: **User → Application →
 > [!IMPORTANT]
 > The resource owner's distrust is the key insight: **you don't trust the agent**. The agent claims to act for a user — the resource needs cryptographic proof that isn't manufactured by agent code. That's what Identity provides.
 
+<Conversation title="How Fay frames it — the host ⇄ lead-engineer exchange" speakers={[
+  { id: "trevor", name: "Trevor", role: "host", avatar: "🎙️", side: "left", color: "#38bdf8" },
+  { id: "fay",    name: "Fay Yuan", role: "lead engineer, Identity", avatar: "🔒", side: "right", color: "#fb923c" },
+]} messages={[
+  { who: "trevor", text: "I already authenticate users — my app has Cognito. What's new about agents?" },
+  { who: "fay",    text: "Two things. First, an agent isn't a fixed pipeline — a model decides at runtime which tools and APIs it calls. So 'who is allowed to invoke it' is only half the story.", note: "inbound authN + authZ ≠ the whole problem" },
+  { who: "fay",    text: "Second — the resource on the other side never met your user. When the agent calls GitHub, GitHub's question is: which agent is this, and on whose behalf? And it shouldn't just take the agent's word for it." },
+  { who: "trevor", text: "So the agent has to prove itself AND the user behind it?" },
+  { who: "fay",    text: "Exactly. Think of it like zero trust for agents — we don't trust hop to hop. Every hop you need to show proof. That's why the identity directory gives the agent its own verifiable identity, and the token vault only releases third-party credentials when both proofs check out.", note: "the triangle: user → agent → resource, proof at every hop" },
+]} />
+
 ---
 
 ## 6.3 The Four Building Blocks
@@ -67,10 +78,48 @@ Everything Identity launched with at the New York Summit:
 
 ## 6.4 The End-to-End Flow — and Where It Sits in the Stack
 
-Identity is a standalone service **and** woven into Runtime and Gateway:
+Identity is a standalone service **and** woven into Runtime and Gateway — the same "AgentCore for production-ready agents" architecture from the slide, interactive (drag to pan, scroll to zoom, click any component):
 
-![AgentCore full architecture](screenshots/c6s04.png)
-**What to notice** — where Identity sits: Runtime hosts the agent, Gateway fronts the tools, **Identity handles the auth on both sides**, Memory holds context, Observability watches it all. Use Identity inside Runtime/Gateway (automatic) **or** call it directly for agents running anywhere else.
+<FlowDiagram title="AgentCore for production-ready agents — any model, any framework" theme="dark" viewBox={{ w: 920, h: 560 }} nodes={[
+  { id: "app",    label: "App",        sub: "your client",       icon: "🖥️", type: "client",   x: 30,  y: 150, w: 150, h: 58,
+    detail: { description: "The application the user talks to — a web app, CLI or chat UI that invokes the agent on Runtime.", bullets: ["Invokes Runtime over HTTPS", "Carries the user's inbound JWT"] } },
+  { id: "model",  label: "Any model",  sub: "Bedrock / any FM",  icon: "✨", type: "trigger",  x: 30,  y: 290, w: 150, h: 58,
+    detail: { description: "Any foundation model — Claude, Nova, or a non-Bedrock model. AgentCore is model-agnostic." } },
+  { id: "rt",     label: "AgentCore Runtime", icon: "🧠", type: "group", group: true, x: 240, y: 40, w: 330, h: 350 },
+  { id: "fw",     label: "Any framework",    sub: "Strands · LangGraph · CrewAI", icon: "🧰", type: "compute", x: 260, y: 95,  w: 290, h: 50,
+    detail: { description: "No migration required — your agent keeps its framework and its own tools." } },
+  { id: "instr",  label: "Agent instructions", icon: "📄", type: "compute", x: 260, y: 165, w: 290, h: 50 },
+  { id: "tools",  label: "Agent local tools",  icon: "🔧", type: "compute", x: 260, y: 235, w: 290, h: 50 },
+  { id: "ctx",    label: "Agent context",      icon: "🗄️", type: "storage", x: 260, y: 305, w: 290, h: 50 },
+  { id: "svc",    label: "AgentCore services", icon: "🧩", type: "group", group: true, x: 640, y: 40, w: 270, h: 235 },
+  { id: "gw",     label: "AgentCore Gateway",            icon: "🌐", type: "network", x: 660, y: 82,  w: 230, h: 48,
+    detail: { description: "Turns Lambda, OpenAPI and Smithy APIs into governed MCP tools — inbound JWT auth, per-target outbound credentials.", bullets: ["Chapter 5 covered this in depth"] } },
+  { id: "browser",label: "AgentCore Browser",            icon: "🌐", type: "network", x: 660, y: 140, w: 230, h: 48 },
+  { id: "ci",     label: "AgentCore Code Interpreter",   icon: "⚙️", type: "compute", x: 660, y: 198, w: 230, h: 48 },
+  { id: "ident",  label: "AgentCore Identity", sub: "this chapter", icon: "🔒", type: "security", x: 640, y: 300, w: 270, h: 56,
+    detail: { description: "Inbound authorizer + agent identity directory + outbound token vault + observability.", bullets: ["Inbound: any IdP — Cognito, Entra, Okta", "Outbound: OAuth2 + API-key credential providers", "The focus of this chapter"] } },
+  { id: "mem",    label: "AgentCore Memory", icon: "🧠", type: "storage", x: 60, y: 460, w: 260, h: 56,
+    detail: { description: "Short + long-term memory — session context and per-actor preferences across sessions." } },
+  { id: "obs",    label: "AgentCore Observability", icon: "📊", type: "monitoring", x: 460, y: 460, w: 450, h: 56,
+    detail: { description: "OTel traces, CloudWatch GenAI dashboards, CloudTrail audit — every hop visible." } },
+]} edges={[
+  { from: "app",   to: "rt",    label: "invoke" },
+  { from: "rt",    to: "app",   animated: true },
+  { from: "model", to: "rt" },
+  { from: "rt",    to: "svc",   label: "tools" },
+  { from: "svc",   to: "rt",    animated: true },
+  { from: "rt",    to: "ident", label: "auth" },
+  { from: "ident", to: "rt",    animated: true },
+  { from: "rt",    to: "mem" },
+  { from: "rt",    to: "obs" },
+  { from: "mem",   to: "obs",   dashed: true },
+  { from: "obs",   to: "svc",   dashed: true },
+  { from: "obs",   to: "ident", dashed: true },
+]} />
+
+**What to notice** — where Identity sits: Runtime hosts the agent, Gateway fronts the tools, **Identity handles the auth on both sides**, Memory holds context, Observability watches it all (the dashed edges). Use Identity inside Runtime/Gateway (automatic) **or** call it directly for agents running anywhere else. Click any component for the detail panel — compare with the original slide:
+
+![AgentCore for production-ready agents — the original slide](screenshots/c6s04.png)
 
 The full interaction sequence Fay walks through:
 
@@ -254,6 +303,16 @@ The standalone demo: a **research agent** that searches via **Perplexity** (API 
 ## 6.7 Identity Through AgentCore Gateway (Antonio)
 
 Bonus demo: the same identity story, now for **tools behind Gateway**. Inbound JWT controls who calls the gateway; outbound config controls how the gateway authenticates to each target.
+
+<Conversation title="Why bother with Gateway auth? — the host ⇄ Antonio exchange" speakers={[
+  { id: "trevor",  name: "Trevor",  role: "host",         avatar: "🎙️", side: "left",  color: "#38bdf8" },
+  { id: "antonio", name: "Antonio", role: "principal SA", avatar: "🌐", side: "right", color: "#34d399" },
+]} messages={[
+  { who: "trevor",  text: "Chapter 5 gave my tools a gateway. They're locked down now, right?" },
+  { who: "antonio", text: "Halfway. The gateway fronts your tools, but nothing yet stops any caller who knows the URL. First job: attach a JWT authorizer — Cognito in this demo — so only tokens your IdP issued get through the door." },
+  { who: "trevor",  text: "And the other half?" },
+  { who: "antonio", text: "Outbound. Each target authenticates its own way — the Lambda target goes over an IAM role, a REST API might want an API key, Google or Salesforce want OAuth. You declare it per target and the gateway handles the handshake. Same two-sided story as Runtime, just at the tool boundary.", note: "inbound: who calls the gateway · outbound: how the gateway reaches each target" },
+]} />
 
 ![The order-management example architecture](screenshots/c6s28.png)
 **What to notice** — the concrete setup: Cognito (inbound OAuth token) → Gateway → **IAM role** outbound → a Lambda target exposing the orders tools.

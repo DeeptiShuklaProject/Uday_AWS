@@ -10,6 +10,43 @@ The video below is the opener of the series: a complete, end-to-end walkthrough 
 
 <VideoSection youtubeId="wzIQDPFQx30" title="Building your first production-ready AI agent with Amazon Bedrock AgentCore | AWS Show & Tell" />
 
+### 🗺️ The Story in One Picture — From a Simple AI Agent to a Production-Ready AI Employee
+
+This is the exact journey the opener video — and this course — follows. Each numbered step maps to a chapter:
+
+<HotspotImage
+  src="/bedrock-deepti/screenshots/c1_story_journey.jpg"
+  alt="Story: from a simple AI agent to a production-ready AI employee — the 10-step AgentCore journey"
+  caption="Interactive map — click a numbered step (or Tab + Enter) to jump to the section that covers it."
+  hotspots={[
+    { x: 0.5,  y: 12, w: 24, h: 29, label: "Step 1: Customers need support",                  tip: "① Customers need support",        to: "1-6-what-can-you-build-with-amazon-bedrock" },
+    { x: 25,   y: 12, w: 24, h: 29, label: "Step 2: Create a local agent with Strands",       tip: "② Local Strands agent",           to: "/courses/bedrock-to-production/core-chapters/Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#2-6-the-starting-point-a-plain-local-strands-agent" },
+    { x: 49.5, y: 12, w: 24, h: 29, label: "Step 3: Deploy with AgentCore Runtime",           tip: "③ Deploy → AgentCore Runtime",    to: "/courses/bedrock-to-production/core-chapters/Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-9-configure-launch-invoke" },
+    { x: 74,   y: 12, w: 25.5, h: 29, label: "Step 4: Connect tools with AgentCore Gateway",  tip: "④ Gateway connects tools",        to: "/courses/bedrock-to-production/core-chapters/Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-4-what-is-amazon-bedrock-agentcore-gateway" },
+    { x: 0.5,  y: 43, w: 24, h: 29, label: "Step 5: Tool execution — Lambda and DynamoDB",    tip: "⑤ Lambda → DynamoDB",             to: "/courses/bedrock-to-production/core-chapters/Chapter_05_AgentCore_Gateway_Connecting_Agents_to_Tools#5-9-lambda-target-turning-lambda-into-mcp" },
+    { x: 25,   y: 43, w: 24, h: 29, label: "Step 6: Add a tool without changing agent code",  tip: "⑥ New tool, no redeploy",         to: "/courses/bedrock-to-production/core-chapters/Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#2-13-gateway-live-update-tools-without-redeploying" },
+    { x: 49.5, y: 43, w: 24, h: 29, label: "Step 7: Give the agent a memory",                 tip: "⑦ AgentCore Memory",              to: "/courses/bedrock-to-production/core-chapters/Chapter_02_Bedrock_AgentCore_Production_Ready_Agents#2-14-memory-wiring-the-hook" },
+    { x: 74,   y: 43, w: 25.5, h: 29, label: "Step 8: Secure access with Identity and OAuth", tip: "⑧ Identity / OAuth",              to: "/courses/bedrock-to-production/core-chapters/Chapter_06_AgentCore_Identity_Secure_Agent_Workflows#6-2-the-identity-triangle-inbound-agent-outbound" },
+    { x: 0.5,  y: 74, w: 48, h: 24, label: "Step 9: Monitor everything with CloudWatch",      tip: "⑨ Observability",                 to: "/courses/bedrock-to-production/core-chapters/Chapter_04_AgentCore_Runtime_Prototype_to_Production#4-15-observability-tracing" },
+    { x: 50,   y: 74, w: 49.5, h: 24, label: "Step 10: Production-ready AI agent architecture", tip: "⑩ Production-ready architecture", to: "1-8-core-bedrock-concepts-architecture" },
+  ]}
+/>
+
+**What to notice** — the journey in order:
+
+1. **The problem** — customers need support; questions pile up.
+2. **A local agent** — Strands + a Knowledge Base answers warranty/guideline questions on your laptop.
+3. **Deploy to the cloud** — `agentcore configure` / `agentcore launch` puts the agent on **AgentCore Runtime** (Ch 4).
+4. **Connect tools** — **AgentCore Gateway** becomes the single bridge to `check_warranty`, `get_customer_profile`, … (Ch 5).
+5. **Tool execution** — Gateway → **Lambda** → **DynamoDB**; the agent calls tools without knowing the plumbing.
+6. **New tools, zero agent changes** — add a tool to the gateway, the agent can use it immediately.
+7. **Memory** — **AgentCore Memory** remembers across sessions ("Your favorite device is Gaming Console Pro").
+8. **Secure access** — **AgentCore Identity** brokers OAuth to Google Calendar and other third-party services (Ch 6).
+9. **Observe everything** — **CloudWatch GenAI dashboard**: sessions, traces, token usage, errors, latency, full trace view.
+10. **Production-ready AI employee** — scalable, secure, remembers users, uses external tools, fully monitored.
+
+Keep this map in mind — every chapter deep-dives one of these steps.
+
 ---
 
 ## Chapter Goal

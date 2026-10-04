@@ -9,3 +9,6 @@ export { default as ChallengeSection } from './ChallengeSection';
 export { default as TroubleshootingSection } from './TroubleshootingSection';
 export { default as InterviewSection } from './InterviewSection';
 export { default as NextSection } from './NextSection';
+export { default as FlowDiagramSection } from './FlowDiagramSection';
+export { default as ConversationalNotesSection } from './ConversationalNotesSection';
+export { default as HotspotImageSection } from './HotspotImageSection';

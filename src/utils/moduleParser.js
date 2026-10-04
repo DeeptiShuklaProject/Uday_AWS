@@ -201,6 +201,60 @@ function transformCustomTags(body) {
       });
       return '\n\n';
     },
+    // <FlowDiagram title="…" nodes={[{id,label,sub,icon,type,x,y,w,h,detail}]}
+    //   edges={[{from,to,label,animated,dashed,twoWay}]} /> → interactive
+    // React-Flow-style architecture canvas (pan/zoom/click-inspect).
+    FlowDiagram: () => {
+      const a = parseAttrs(attrStr);
+      extras.push({
+        type: 'flowdiagram', icon: '🧩',
+        title: unescapeCode(a.title || 'Architecture'),
+        content: {
+          title: unescapeCode(a.title || 'Architecture'),
+          hint: unescapeCode(a.hint || ''),
+          theme: a.theme === 'light' ? 'light' : 'dark',
+          viewBox: evalLiteral(a.viewBox) || undefined,
+          nodes: evalLiteral(a.nodes) || [],
+          edges: evalLiteral(a.edges) || [],
+        },
+      });
+      return '\n\n';
+    },
+    // <Conversation title="…" speakers={[{id,name,role,avatar,side,color}]}
+    //   messages={[{who,text,note}]} /> → chat-style dialogue widget.
+    Conversation: () => {
+      const a = parseAttrs(attrStr);
+      extras.push({
+        type: 'conversation', icon: '💬',
+        title: unescapeCode(a.title || 'Conversational Notes'),
+        content: {
+          title: unescapeCode(a.title || 'Conversational Notes'),
+          hint: unescapeCode(a.hint || ''),
+          speakers: evalLiteral(a.speakers) || [],
+          messages: evalLiteral(a.messages) || [],
+          autoPlay: a.autoPlay !== 'false',
+          stepMs: Number(evalLiteral(a.stepMs)) || undefined,
+        },
+      });
+      return '\n\n';
+    },
+    // <HotspotImage src="…" hotspots={[{x,y,w,h,label,to,num,tip}]} />
+    // → image with clickable % -positioned regions that scroll to
+    //   section anchors or navigate to route paths.
+    HotspotImage: () => {
+      const a = parseAttrs(attrStr);
+      extras.push({
+        type: 'hotspotimage', icon: '🖱️',
+        title: unescapeCode(a.title || ''),
+        content: {
+          src: unescapeCode(a.src || ''),
+          alt: unescapeCode(a.alt || ''),
+          caption: unescapeCode(a.caption || ''),
+          hotspots: evalLiteral(a.hotspots) || [],
+        },
+      });
+      return '\n\n';
+    },
     // <LanguageComparison>/<MonacoPlayground> codeExamples={{py:…, java:…}}
     // → real multi-tab code widget instead of a prose callout.
     LanguageComparison: () => codePlayground(attrStr, extras),

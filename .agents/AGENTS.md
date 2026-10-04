@@ -27,6 +27,15 @@ Whenever building or modifying UI components:
 4. **Universal Compatibility**:
    - Every component MUST be reusable across different courses without editing source code.
 
+## Strict Side-by-Side Replacement Rule
+
+Whenever a static visual (screenshot, diagram image, PNG) is replaced or upgraded by an interactive widget or generated asset (`FlowDiagram`, exported `.svg`, mermaid, `Conversation`, `ImageGallery`, etc.):
+
+1. **NEVER delete the original image** — keep `![alt](screenshots/xx.png)` in the markdown.
+2. **Order is widget/SVG first, original image immediately after** — so the reader sees interactive → original and can compare fidelity.
+3. The original image keeps its caption; a short note ("compare with the original slide") ties them together.
+4. Applies to every future chapter and course, not just bedrock-to-production.
+
 ## Content Architecture
 
 ### Markdown Chapter Files

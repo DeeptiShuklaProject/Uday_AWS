@@ -1,5 +1,5 @@
 import {
-  HtmlSection, DiagramSection, QuizSection, CommandSection, TerminalSection,
+  HtmlSection, DiagramSection, QuizSection, CommandSection, TerminalSection, FlowDiagramSection, ConversationalNotesSection, HotspotImageSection,
   CodeSection, LabSection, ChallengeSection, TroubleshootingSection,
   InterviewSection, NextSection,
 } from './slides';
@@ -11,6 +11,7 @@ const SECTION_ICONS = {
   terminal: '💻', code: '👨‍💻', command: '⌨️', 'expected-output': '📤',
   'what-happened': '🔍', troubleshooting: '🔧', quiz: '🧠', challenge: '🏆',
   cleanup: '🧹', next: '➡️', text: '📝', interview: '🎙️', storyteller: '🎬',
+  flowdiagram: '🧩', conversation: '💬', hotspotimage: '🖱️',
 };
 
 const HTML_TYPES = new Set(['text', 'why', 'concept', 'expected-output', 'what-happened', 'cleanup']);
@@ -37,6 +38,9 @@ export default function SlideRenderer({ section }) {
       case 'storyteller':     return <AgentFlowStoryteller title={c?.title} />;
       case 'interview':       return <InterviewSection content={c} />;
       case 'codeexplorer':    return <CodeExplorerSection content={c} />;
+      case 'flowdiagram':     return <FlowDiagramSection content={c} />;
+      case 'conversation':    return <ConversationalNotesSection content={c} />;
+      case 'hotspotimage':    return <HotspotImageSection content={c} />;
       case 'next':            return <NextSection content={c} />;
       default:                return <HtmlSection content={c} />;
     }

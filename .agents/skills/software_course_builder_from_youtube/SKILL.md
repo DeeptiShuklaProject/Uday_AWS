@@ -63,6 +63,8 @@ Chapter skeleton: `# Course — Chapter N` + `# 🚀 Title` · `## 🎬 About Th
 
 **Honesty rules**: note ASR artifacts, demo errors the video hit, "coming soon" features that since shipped, moved repo paths. Never fabricate output or features.
 
+**STRICT — side-by-side rule**: when an interactive widget or generated SVG replaces a screenshot/diagram, NEVER remove the original image. Order: new widget/SVG first, original `![…](screenshots/…)` immediately after, so the reader can compare. Applies to `FlowDiagram`, exported `.svg`, mermaid, `Conversation` — every visual upgrade.
+
 ### 5 — Widget menu (pick the best tool for each idea)
 
 | Widget | Trigger in markdown | Use for |
@@ -72,11 +74,14 @@ Chapter skeleton: `# Course — Chapter N` + `# 🚀 Title` · `## 🎬 About Th
 | `Quiz` | `<Quiz question options={[…]} answerIndex explanation />` | Knowledge checks (3–6 per chapter) |
 | `ConceptCard` + family | `<ConceptCard title>body</ConceptCard>` · `InfoCard` `TipCard` `WarningCard` `NoteCard` `KeyTakeaways` | Callouts — "why it matters", honest caveats, trade-offs |
 | `mermaid` | ```` ```mermaid flowchart ```` | Every architecture/flow/comparison worth a diagram |
+| `FlowDiagram` | `<FlowDiagram title theme="dark" viewBox={{w,h}} nodes={[{id,label,sub,icon,type,x,y,w,h,group,detail:{description,bullets}}]} edges={[{from,to,label,animated,dashed}]} />` | React-Flow-style interactive canvas — drag-pan, wheel zoom, controls, minimap, click-inspect panel. Template: `templates/FlowDiagram.template.md`. **STRICT: keep the original screenshot immediately after the widget — never replace** |
 | Terminal | ```` ```bash ```` fence + ```` ```text ```` fence | Commands + real expected output → simulated interactive terminal |
 | Code block | ```` ```python ```` | Short inline excerpts (<~15 lines); longer → explorer |
 | `AgentFlowStoryteller` | `<AgentFlowStoryteller title="…" />` | Animated agent-loop intro (model+tools=agent) |
 | `ImageGallery` | `<ImageGallery images={[{src,title,caption}]} />` | Grouped diagram sets |
+| `HotspotImage` | `<HotspotImage src="…" hotspots={[{x,y,w,h,label,to,tip,num}]} />` | Clickable % -positioned regions over an image — hover glow + tooltip, click → pop + smooth-scroll + hash update + flash. `to`: in-page slug fragment (`"1-6-…"`, resolved via `[data-section-id*=frag]` — survives index shifts) or `/courses/…#frag` route |
 | `LanguageComparison` / `MonacoPlayground` | `codeExamples={{py:"…",java:"…"}}` | Multi-language code playgrounds |
+| `Conversation` | `<Conversation title speakers={[{id,name,role,avatar,side,color}]} messages={[{who,text,note}]} />` | Dialogue from the video → chat-style card with auto-reveal + 💡 takeaway notes. Great for host⇄engineer exchanges that explain a concept better than prose. **No markdown inside `text`** — plain text only |
 | `FlashCard` | `<FlashCard cards={[{q,a}]} />` | Interview-prep Q&A accordion |
 | `InteractiveConceptCard` | title/subtitle/difficulty/estimatedTime/tags | Concept overview cards |
 | `CodeExecutionPlayer` | `code` + `steps` | Step-by-step code walkthrough |
@@ -117,3 +122,5 @@ After it verifies, do a second pass over every chapter with fresh eyes:
 - **convert-docs.mjs wipes `public/<dir>`** and re-mirrors from each category's `src` — all sources are in-repo `doc_*` dirs, so a regen is safe. Edit `doc_*/`, then regen (or hand-mirror a single file into `public/`).
 - Git Bash heredocs eat `\\` in Windows paths — write .mjs/.py with file tools.
 - Explorers: `expanded="true"` opens on scroll; only multi-file explorers claim ←→ keys on mount (fixed in `GitHubPreciseCodeExplorerModal.jsx`).
+- **SVG `height="100%"` is a lie**: `<svg height="100%">` inside a fixed-height div silently renders at SVG's 150px default — content clips below ~150px with no error. Always set `viewBox` + `style={{height:'auto', aspectRatio}}` instead.
+- `FlowDiagram` nodes: `type` drives palette (security=red, compute=orange, storage=blue, monitoring=pink, network=cyan, trigger=yellow, client=gray, group=dashed container). Edges auto-anchor to facing sides; `group` nodes are non-clickable containers — declare them before their children.

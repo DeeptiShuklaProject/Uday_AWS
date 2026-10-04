@@ -299,3 +299,132 @@ Port 5176 is in use, trying another one...
 [2m6:59:48 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
 [2m9:49:44 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
 [2m9:53:32 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m10:13:18 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m10:13:18 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m11:27:48 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:27:48 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:27:48 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:27:49 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:27:49 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m11:28:05 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:28:55 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m11:34:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:34:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:34:11 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:34:11 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:39:02 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:39:03 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:39:28 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:39:29 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:39:29 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:41:57 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:41:58 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:41:58 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:41:59 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:41:59 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/FlowDiagramSection.jsx[22m
+[2m11:42:11 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:43:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:43:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:43:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:43:34 AM[22m [31m[1m[vite][22m[39m [31mInternal server error: C:\Users\nishu\workspace\AWS_REACT_DEVIN\src\components\SlideRenderer.jsx: Unexpected token, expected "jsxTagEnd" (56:52)
+
+[0m [90m 54 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 55 |[31m       )}
+[31m[1m>[22m[31m[90m 56 |[31m       [33m<[31m[33mdiv[31m className[33m=[31m[32m"lesson-section-body"[31m[33m>[31m{body}[33m<[31m[33m/[31m[33md[31m
+ [90m    |[31m                                                     [31m[1m^[22m[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/Users/nishu/workspace/AWS_REACT_DEVIN/src/components/SlideRenderer.jsx[39m:56:52
+[33m  54 |          </div>
+  55 |        )}
+  56 |        <div className="lesson-section-body">{body}</d
+     |                                                      ^[39m
+      at constructor (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:369:19)
+      at JSXParserMixin.raise (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:6622:19)
+      at JSXParserMixin.unexpected (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:6642:16)
+      at JSXParserMixin.expect (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:6922:12)
+      at JSXParserMixin.jsxParseClosingElementAt (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:4698:10)
+      at JSXParserMixin.jsxParseElementAt (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:4713:37)
+      at JSXParserMixin.jsxParseElementAt (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:4716:32)
+      at JSXParserMixin.jsxParseElement (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:4767:17)
+      at JSXParserMixin.parseExprAtom (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:4777:19)
+      at JSXParserMixin.parseExprSubscripts (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11107:23)
+      at JSXParserMixin.parseUpdate (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11092:21)
+      at JSXParserMixin.parseMaybeUnary (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11072:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10925:61)
+      at JSXParserMixin.parseExprOps (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10930:23)
+      at JSXParserMixin.parseMaybeConditional (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10907:23)
+      at JSXParserMixin.parseMaybeAssign (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10857:21)
+      at C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10826:39
+      at JSXParserMixin.allowInAnd (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12460:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10826:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12527:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11706:28)
+      at JSXParserMixin.parseExprAtom (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11362:23)
+      at JSXParserMixin.parseExprAtom (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:4782:20)
+      at JSXParserMixin.parseExprSubscripts (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11107:23)
+      at JSXParserMixin.parseUpdate (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11092:21)
+      at JSXParserMixin.parseMaybeUnary (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:11072:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10925:61)
+      at JSXParserMixin.parseExprOps (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10930:23)
+      at JSXParserMixin.parseMaybeConditional (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10907:23)
+      at JSXParserMixin.parseMaybeAssign (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10857:21)
+      at JSXParserMixin.parseExpressionBase (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10810:23)
+      at C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10806:39
+      at JSXParserMixin.allowInAnd (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12455:16)
+      at JSXParserMixin.parseExpression (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:10806:17)
+      at JSXParserMixin.parseReturnStatement (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13176:28)
+      at JSXParserMixin.parseStatementContent (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12832:21)
+      at JSXParserMixin.parseStatementLike (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12801:17)
+      at JSXParserMixin.parseStatementListItem (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12781:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13350:61)
+      at JSXParserMixin.parseBlockBody (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13343:10)
+      at JSXParserMixin.parseBlock (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13331:10)
+      at JSXParserMixin.parseFunctionBody (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12134:24)
+      at JSXParserMixin.parseFunctionBodyAndFinish (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12120:10)
+      at C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13479:12
+      at JSXParserMixin.withSmartMixTopicForbiddingContext (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12437:14)
+      at JSXParserMixin.parseFunction (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13478:10)
+      at JSXParserMixin.parseExportDefaultExpression (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13941:19)
+      at JSXParserMixin.parseExport (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:13862:25)
+      at JSXParserMixin.parseStatementContent (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12912:27)
+      at JSXParserMixin.parseStatementLike (C:\Users\nishu\workspace\AWS_REACT_DEVIN\node_modules\@babel\parser\lib\index.js:12801:17)
+[2m11:43:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m11:43:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m11:43:35 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:43:35 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m11:43:35 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m11:44:02 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m11:44:02 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m11:44:06 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:44:06 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m11:44:46 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m11:44:50 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:44:50 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m11:46:38 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m11:46:38 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m11:46:41 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:46:41 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m12:34:32 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m12:34:33 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m12:34:35 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:34:35 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m12:37:13 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/slides/HtmlSection.jsx[22m
+[2m12:37:32 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m12:47:41 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m12:47:41 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m12:47:42 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m12:47:42 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SlideRenderer.jsx[22m
+[2m12:48:03 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m12:48:04 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m12:48:04 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:48:04 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m12:48:13 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/css/components.css[22m
+[2m12:48:45 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m12:48:49 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:48:49 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m12:50:56 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/DocChapterPage.jsx[22m
+[2m12:50:57 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:50:57 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
+[2m12:52:09 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocChapterPage.jsx, /src/components/DocCoursePage.jsx[22m
+[2m12:52:14 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/DocChapterPage.jsx[22m Could not Fast Refresh ("docProgressId" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:52:14 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/DocCoursePage.jsx, /src/components/ConceptCodePage.jsx[22m
