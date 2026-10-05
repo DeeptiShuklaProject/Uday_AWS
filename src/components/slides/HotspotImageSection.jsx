@@ -56,6 +56,15 @@ export default function HotspotImageSection({ content }) {
     }
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     flash(el);
+    // The scroll-spy reports the deepest section whose top has crossed
+    // mid-viewport; for targets shorter than that band it can overwrite
+    // this hash with a later section as the smooth scroll settles.
+    // Re-assert the intended target once the scroll has finished.
+    if (sid) setTimeout(() => {
+      if (window.location.hash !== `#${sid}`) {
+        window.history.replaceState(null, '', `#${sid}`);
+      }
+    }, 1500);
   };
 
   if (!c.src) return null;

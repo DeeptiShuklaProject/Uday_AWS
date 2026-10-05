@@ -2806,6 +2806,18 @@
               "title": "06 — AgentCore Identity Secure Agent Workflows",
               "file": "Chapter_06_AgentCore_Identity_Secure_Agent_Workflows.md",
               "sectionCount": 11
+            },
+            {
+              "id": "Chapter_07_AgentCore_Browser_and_Code_Interpreter_Tools",
+              "title": "07 — AgentCore Browser And Code Interpreter Tools",
+              "file": "Chapter_07_AgentCore_Browser_and_Code_Interpreter_Tools.md",
+              "sectionCount": 42
+            },
+            {
+              "id": "Chapter_08_AgentCore_Memory",
+              "title": "08 — AgentCore Memory",
+              "file": "Chapter_08_AgentCore_Memory.md",
+              "sectionCount": 28
             }
           ]
         }

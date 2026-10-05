@@ -1,0 +1,31 @@
+{
+  "testId": "QA-001",
+  "testName": "Homepage Load Test",
+  "testType": "UI/Functional",
+  "priority": "High",
+  "description": "Verify that the homepage loads correctly with all essential elements",
+  "preconditions": [
+    "Browser is open",
+    "Internet connection is available"
+  ],
+  "testSteps": [
+    {
+      "step": 1,
+      "action": "Navigate to the application URL",
+      "data": "https://don1s5671hvet.cloudfront.net",
+      "expectedResult": "Page loads successfully within 5 seconds"
+    },
+    {
+      "step": 2,
+      "action": "Verify page title",
+      "data": "",
+      "expectedResult": "Page title contains 'QA Test App'"
+    },
+    {
+      "step": 3,
+      "action": "Check main heading",
+      "data": "",
+      "expectedResult": "Main heading 'Welcome to our QA Test Application' is visible"
+    }
+  ]
+}

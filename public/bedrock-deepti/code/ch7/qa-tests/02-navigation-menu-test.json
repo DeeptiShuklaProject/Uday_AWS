@@ -1,0 +1,25 @@
+{
+  "testId": "QA-002",
+  "testName": "Navigation Menu Functionality Test",
+  "testType": "UI/Functional",
+  "priority": "High",
+  "description": "Verify that all navigation menu items are clickable and functional",
+  "preconditions": [
+    "Homepage is loaded successfully",
+    "All navigation elements are visible"
+  ],
+  "testSteps": [
+    {
+      "step": 1,
+      "action": "Click on 'Home' navigation link",
+      "data": "",
+      "expectedResult": "Page remains on homepage or refreshes to homepage"
+    },
+    {
+      "step": 2,
+      "action": "Click on 'Products' navigation link",
+      "data": "",
+      "expectedResult": "Page scrolls to or navigates to products section"
+    }
+  ]
+}

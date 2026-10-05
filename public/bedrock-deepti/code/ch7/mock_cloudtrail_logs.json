@@ -1,0 +1,32 @@
+{
+  "Records": [
+    {
+      "EventTime": "2024-01-15T10:30:00Z",
+      "EventName": "GetMetricStatistics",
+      "EventSource": "monitoring.amazonaws.com",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDACKCEVSQ6C2EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/alice",
+        "accountId": "123456789012",
+        "userName": "alice"
+      },
+      "sourceIPAddress": "198.51.100.45",
+      "awsRegion": "us-west-2",
+      "responseElements": null
+    },
+    {
+      "EventName": "GetMetricStatistics",
+      "EventSource": "monitoring.amazonaws.com",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDACKCEVSQ6C2EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/bob",
+        "userName": "bob"
+      },
+      "sourceIPAddress": "203.0.113.12",
+      "awsRegion": "us-east-1",
+      "responseElements": null
+    }
+  ]
+}

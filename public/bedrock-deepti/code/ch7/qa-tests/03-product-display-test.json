@@ -1,0 +1,28 @@
+{
+  "testSteps": [
+    {
+      "step": 5,
+      "action": "Verify category filters",
+      "data": "",
+      "expectedResult": "Categories like 'Electronics > Phones', 'Clothing > Pants' are displayed"
+    },
+    {
+      "step": 6,
+      "action": "Verify stock status display",
+      "data": "",
+      "expectedResult": "Stock numbers are shown (e.g., '42 in stock', '15 in stock')"
+    },
+    {
+      "step": 7,
+      "action": "Check featured badges",
+      "data": "",
+      "expectedResult": "Featured products show blue 'Featured' badge"
+    }
+  ],
+  "testData": {
+    "expectedProducts": ["Smartphone", "Laptop", "Smart Watch", "Tablet", "Jeans", "Sneakers"],
+    "expectedCategories": ["Electronics", "Clothing", "Books", "Home & Garden", "Sports", "Beauty"],
+    "expectedResults": "All products display with correct images, pricing, ratings, and product information",
+    "actualResults": ""
+  }
+}
