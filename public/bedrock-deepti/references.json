@@ -246,6 +246,32 @@
         },
         { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/06-workshops/02-AgentCore-gateway", "title": "Gateway workshop — Lambda/OpenAPI/Smithy notebooks and specs" }
       ]
+    },
+    "Chapter_10_AgentCore_Observability#10-5": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-observe-evaluate-optimize-your-agent/01-observe/.env.example", "title": ".env.example — the ADOT environment contract" },
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/06-observe-evaluate-optimize-your-agent/01-observe", "title": "01-observe — the observability sample folder" }
+      ]
+    },
+    "Chapter_10_AgentCore_Observability#10-6": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/02-host-your-agent/01-runtime/01-hosting-agents/04-observability-with-strands/utils/travel_agent.py", "title": "travel_agent.py — observable-by-default Runtime agent" }
+      ]
+    },
+    "Chapter_10_AgentCore_Observability#10-11": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-observe-evaluate-optimize-your-agent/01-observe/baggage_context.py", "title": "baggage_context.py — BaggageSpanProcessor demo" }
+      ]
+    },
+    "Chapter_10_AgentCore_Observability#10-12": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-observe-evaluate-optimize-your-agent/01-observe/custom_span_creation.py", "title": "custom_span_creation.py — custom spans + trace_attributes" }
+      ]
+    },
+    "Chapter_10_AgentCore_Observability#10-13": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-observe-evaluate-optimize-your-agent/01-observe/data_protection.py", "title": "data_protection.py — guardrail + CW data-protection policy" }
+      ]
     }
   }
 }

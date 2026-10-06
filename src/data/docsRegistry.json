@@ -2824,6 +2824,12 @@
               "title": "09 — AgentCore GA Deep Dive",
               "file": "Chapter_09_AgentCore_GA_Deep_Dive.md",
               "sectionCount": 40
+            },
+            {
+              "id": "Chapter_10_AgentCore_Observability",
+              "title": "10 — AgentCore Observability",
+              "file": "Chapter_10_AgentCore_Observability.md",
+              "sectionCount": 37
             }
           ]
         }
