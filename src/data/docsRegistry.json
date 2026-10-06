@@ -2818,6 +2818,12 @@
               "title": "08 — AgentCore Memory",
               "file": "Chapter_08_AgentCore_Memory.md",
               "sectionCount": 28
+            },
+            {
+              "id": "Chapter_09_AgentCore_GA_Deep_Dive",
+              "title": "09 — AgentCore GA Deep Dive",
+              "file": "Chapter_09_AgentCore_GA_Deep_Dive.md",
+              "sectionCount": 40
             }
           ]
         }

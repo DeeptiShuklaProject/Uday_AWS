@@ -118,6 +118,9 @@ After it verifies, do a second pass over every chapter with fresh eyes:
 ## Pitfalls (hard-won)
 
 - **Heading+code-fence trap**: `##` headings containing `code|examples?|demo|walkthrough|implement|yaml|dockerfile|script|program|snippet` + a code fence → section renders ONLY the fence; prose/images die. Rename the heading ("Coding" ≠ "code").
+- **Title-echo drop**: a `##` heading that restates the module's `#` title (e.g. `# … Generally Available` + `## 9.1 … Generally Available`) is silently dropped — the section simply never appears. Keep section headings distinct from the chapter H1.
+- **Labs never render inline** — by design: `lab`-typed sections are stripped from the section flow and feed the Lab Notes modal via `extractPracticalLabs` (`## …lab…` H2+ headings all qualify). Don't try to force an inline lab card; author `## 🧪 Practical Lab` + `### Steps` and verify with `extractPracticalLabs` instead.
+- `<Conversation>` → a `conversation`-typed widget section (chat-style card); plain text only inside `messages[].text`.
 - `Q&A|interview|quiz|terminal|challenge|lab` headings also become typed sections — keep prose out of them or split the section.
 - **convert-docs.mjs wipes `public/<dir>`** and re-mirrors from each category's `src` — all sources are in-repo `doc_*` dirs, so a regen is safe. Edit `doc_*/`, then regen (or hand-mirror a single file into `public/`).
 - Git Bash heredocs eat `\\` in Windows paths — write .mjs/.py with file tools.
