@@ -20,7 +20,7 @@ By the end of this chapter you will be able to:
 - 🤖 Follow **two demos** — the Kiro MCP-server-built French→Portuguese translator, and the VPC customer-support assistant (Aurora + DynamoDB + Gateway + Identity)
 - 🔭 Read the **GenAI Observability dashboards** — sessions, traces, token usage, per-span latency, gateway metrics
 
-**Episode timeline covered:** the full video, `00:32 → 1:00:19` — *"Amazon Bedrock AgentCore is Generally Available | AWS Show & Tell."*
+**Episode covered:** the full video — *"Amazon Bedrock AgentCore is Generally Available | AWS Show & Tell."*
 
 ---
 
@@ -34,7 +34,7 @@ The launch-announcement title card. Host **Anil Ladinti** (senior solutions arch
 
 ### What the speaker explains
 
-`00:41` — Anil: *"We have a very special episode — it's AgentCore general availability, and we want to cover a whole lot of details. We have packed demos."* `01:12` — Mark Roy jokes about the pace: *"Now with agent years, every few days is a full agent year."*
+Anil: *"We have a very special episode — it's AgentCore general availability, and we want to cover a whole lot of details. We have packed demos."* — Mark Roy jokes about the pace: *"Now with agent years, every few days is a full agent year."*
 
 ### Key takeaway
 
@@ -52,11 +52,11 @@ The problem slide: agents built on laptops that never reach production — trapp
 
 ### What the speaker explains
 
-`03:39` — Mark: *"Customers are getting trapped in prototype purgatory. Agents are living on laptops — no real business value because of all of the challenges."* `04:03` — the historical parallel: *"Just like with the introduction of the cloud back in 2006, customers needed enterprise scale, enterprise security, enterprise time-to-value. With agents we need the same exact thing."*
+Mark: *"Customers are getting trapped in prototype purgatory. Agents are living on laptops — no real business value because of all of the challenges."* — the historical parallel: *"Just like with the introduction of the cloud back in 2006, customers needed enterprise scale, enterprise security, enterprise time-to-value. With agents we need the same exact thing."*
 
 ### Technical explanation
 
-`04:25` — the four pillars that make AgentCore *"a comprehensive agentic platform"*:
+The four pillars that make AgentCore *"a comprehensive agentic platform"*:
 
 - **Build it the way you want** — pick your agent framework, pick your model, pick your protocols. *"We're open to using OTel for observability — meeting customers where they're at."* (Transcript note: ASR renders "OTel"/"hotel" — it means **OpenTelemetry**.)
 - **Enterprise-level security** — *"you can't trust your agents unless you've got security figured out."*
@@ -80,7 +80,7 @@ The services wheel above is the platform at a glance — every primitive around 
 
 ### What the speaker explains
 
-`05:26` — Mark: *"The biggest focus has been introducing all the things you would expect with a GA platform — and for enterprises that tends to be more and more security."*
+Mark: *"The biggest focus has been introducing all the things you would expect with a GA platform — and for enterprises that tends to be more and more security."*
 
 ![Slide — "Enterprise Readiness — Common to all services": VPC and PrivateLink · Infrastructure as Code · Tags · 5 new regions (BOM, CMH, DUB, NRT, SIN)](screenshots/c9s06.png)
 
@@ -90,7 +90,7 @@ Four platform-wide additions that apply to **every** AgentCore service — not j
 
 ### Technical explanation
 
-| GA feature | What it means (`05:34`–`06:47`) |
+| GA feature | What it means |
 |---|---|
 | **VPC + PrivateLink** | *"You can run all of your agents in a fully secure environment"* — traffic never crosses the public internet |
 | **Infrastructure as code** | *"Repeatable deployments, repeatable creation of agents, gateways and so forth — just like any of your traditional workloads"* — CloudFormation today, CDK/Terraform samples coming |
@@ -117,9 +117,9 @@ Six Runtime additions shipped between the July preview and GA.
 
 ### What the speaker explains
 
-`06:54` — Mark calls Runtime *"the most fundamental part of the platform — the piece that really emphasizes bring-your-own agent framework, bring your agent code, pick your model — a secure, scalable, fully managed way to host your agents."*
+Mark calls Runtime *"the most fundamental part of the platform — the piece that really emphasizes bring-your-own agent framework, bring your agent code, pick your model — a secure, scalable, fully managed way to host your agents."*
 
-Then the new features (`07:43`–`08:30`):
+Then the new features:
 
 - **Automatic IAM role creation** — *"giving it least-privilege access to only the pieces that you need"* — the Starter Toolkit does it for you.
 - **Stop-session API** — *"if you want to tightly manage your agents, make sure they're not going too far, we've got APIs for that."*
@@ -129,9 +129,9 @@ Then the new features (`07:43`–`08:30`):
 
 ### Technical explanation — the spectrum
 
-`08:38` — Maira nails the design intent: *"I love how easy it is to get started but also how much flexibility you get. It's the full spectrum — get your IAM role created automatically, enterprise-grade security — then you want to move to production, have a CI/CD pipeline, infrastructure as code… you can build up incrementally."*
+Maira nails the design intent: *"I love how easy it is to get started but also how much flexibility you get. It's the full spectrum — get your IAM role created automatically, enterprise-grade security — then you want to move to production, have a CI/CD pipeline, infrastructure as code… you can build up incrementally."*
 
-And Runtime hosts **more than agents** (`09:22`): *"we also let you make your own MCP servers and host those using Runtime — same long-running workloads, large payloads."*
+And Runtime hosts **more than agents**: *"we also let you make your own MCP servers and host those using Runtime — same long-running workloads, large payloads."*
 
 ### Key takeaway
 
@@ -149,7 +149,7 @@ Runtime's protocol triptych: agents invoke over **HTTP**, tools connect over **M
 
 ### What the speaker explains
 
-`07:11` — Mark: *"You've asked for A2A support and that's one of our big deliverables for GA."* `09:46` — Maira on the mechanics: *"Native A2A capability — built-in agent card support, agent-to-agent communication with JSON-RPC. You can really easily take your A2A code, host it in Runtime, get all the benefits of AgentCore Runtime for those workloads, and get your interoperability."*
+Mark: *"You've asked for A2A support and that's one of our big deliverables for GA."* — Maira on the mechanics: *"Native A2A capability — built-in agent card support, agent-to-agent communication with JSON-RPC. You can really easily take your A2A code, host it in Runtime, get all the benefits of AgentCore Runtime for those workloads, and get your interoperability."*
 
 ### Technical explanation
 
@@ -179,9 +179,9 @@ Four Memory additions on top of the Chapter-8 foundations (short-term events + t
 
 ### What the speaker explains
 
-`10:08` — Mark: *"We've got fully managed short-term and long-term memory — you've asked for customizations. Now you have a fully customizable self-managed strategy. We give you built-in ones for session summaries and user preferences; if you've got your own ideas — or want migrations from other memory platforms — that's doable with custom strategies and the batch APIs to inject long-term memory."*
+Mark: *"We've got fully managed short-term and long-term memory — you've asked for customizations. Now you have a fully customizable self-managed strategy. We give you built-in ones for session summaries and user preferences; if you've got your own ideas — or want migrations from other memory platforms — that's doable with custom strategies and the batch APIs to inject long-term memory."*
 
-`10:40` — the integration ask: *"You want these as easy as possible to integrate with your agent framework — we've taken care of that with LangChain, LangGraph and more. And we've got metadata filtering for short-term memory."*
+The integration ask: *"You want these as easy as possible to integrate with your agent framework — we've taken care of that with LangChain, LangGraph and more. And we've got metadata filtering for short-term memory."*
 
 ### Technical explanation
 
@@ -208,9 +208,9 @@ Two Gateway additions — one new target type, one new auth option.
 
 ### What the speaker explains
 
-`10:56` — Mark: *"AgentCore Gateway takes all of your existing APIs and tools and exposes them as MCP — they plug right into your coding assistants, plug right into your agents. We heard you loud and clear: you wanted **MCP server as a new target type**. Now you can create gateways that add OpenAPI REST services, Lambda and existing MCP servers all within the same gateway — full security benefits, full search benefits."*
+Mark: *"AgentCore Gateway takes all of your existing APIs and tools and exposes them as MCP — they plug right into your coding assistants, plug right into your agents. We heard you loud and clear: you wanted **MCP server as a new target type**. Now you can create gateways that add OpenAPI REST services, Lambda and existing MCP servers all within the same gateway — full security benefits, full search benefits."*
 
-`11:33` — the auth ask: *"A lot of our enterprise customers have a huge investment in IAM. Although MCP has OAuth as a standard protocol, they also wanted to support MCP using IAM authorization — we've got you covered."*
+The auth ask: *"A lot of our enterprise customers have a huge investment in IAM. Although MCP has OAuth as a standard protocol, they also wanted to support MCP using IAM authorization — we've got you covered."*
 
 ### Technical explanation
 
@@ -239,7 +239,7 @@ The two doc-serving MCP servers the team built so your **coding assistant** know
 
 ### What the speaker explains
 
-`12:02` — Mark: *"We wanted to make it even easier to get started — with Strands agents, with AgentCore, and with any agent framework. So we've got a new MCP server — just drag it into whatever coding assistant you're using, and it knows about AgentCore."* `12:50` — Maira: *"Even though we don't remember all the launches — they're coming every day — our MCP server does."*
+Mark: *"We wanted to make it even easier to get started — with Strands agents, with AgentCore, and with any agent framework. So we've got a new MCP server — just drag it into whatever coding assistant you're using, and it knows about AgentCore."* — Maira: *"Even though we don't remember all the launches — they're coming every day — our MCP server does."*
 
 ### Technical explanation
 
@@ -266,7 +266,7 @@ Mark's Kiro workspace: a Strands agent (`french_translator_agent.py`) on the lef
 
 ### What the speaker explains
 
-`13:15` — Mark sets up: *"Kiro is AWS's coding assistant — like Claude Code, Cursor, and more. I've added the Strands agents MCP server, and our MCP server for AgentCore — you can just pop that right in."* `14:12` — the build: *"About a half hour ago I asked Kiro to make me a simple Strands agent to do English-to-French translations. It did that for me."*
+Mark sets up: *"Kiro is AWS's coding assistant — like Claude Code, Cursor, and more. I've added the Strands agents MCP server, and our MCP server for AgentCore — you can just pop that right in."* — the build: *"About a half hour ago I asked Kiro to make me a simple Strands agent to do English-to-French translations. It did that for me."*
 
 ![Kiro's MCP configuration — mcp.json with the agentcoremcpserver and strands-agents MCP servers, autoApprove on search_docs/fetch_doc](screenshots/c9s13.png)
 
@@ -274,7 +274,7 @@ The `mcp.json` above is the entire setup: two stdio MCP servers, doc-search tool
 
 ### Technical explanation — local first, then cloud
 
-`14:28` — the local test: typing *"hi there"* into the CLI-built agent returns *"Salut!"* (screenshot below). Then the money move: *"I asked Kiro — take that simple Strands agent and make it ready for AgentCore. It looked up all the information about AgentCore and figured out that all it really needs is two lines of code — a decorator to make an entry point, and run the app."*
+The local test: typing *"hi there"* into the CLI-built agent returns *"Salut!"* (screenshot below). Then the money move: *"I asked Kiro — take that simple Strands agent and make it ready for AgentCore. It looked up all the information about AgentCore and figured out that all it really needs is two lines of code — a decorator to make an entry point, and run the app."*
 
 ![Local terminal — the translator running locally: "English: hi there → Translating → Salut!"](screenshots/c9s14.png)
 
@@ -287,13 +287,13 @@ app = BedrockAgentCoreApp()
 
 @app.entrypoint
 def invoke(payload):
-    # your agent logic here — return the response
-    ...
+ # your agent logic here — return the response
+ ...
 
 app.run()
 ```
 
-`15:11` — *"It was able to automatically configure the app, deploy it to the cloud, and then we can run that here."* `15:30` — the punchline: *"All of this — I didn't write a single line of code."*
+*"It was able to automatically configure the app, deploy it to the cloud, and then we can run that here."* — the punchline: *"All of this — I didn't write a single line of code."*
 
 ### Key takeaway
 
@@ -311,7 +311,7 @@ The payoff shot: Kiro's edit summary (*"13 changes accepted"* — system prompts
 
 ### What the speaker explains
 
-`15:37` — the live-test moment: *"Hey Kira, why not make this support Portuguese instead? … Please update it to translate to Portuguese."* The crowd waits through the live redeploy — *"this is what we get for doing a live demo"* — and near the episode's end (`51:12`) the verdict: *"My hello world French translator learned a little Portuguese. Let's see how well it does — 'Good morning, how are you today?' … Not bad — and the latency is low."*
+The live-test moment: *"Hey Kira, why not make this support Portuguese instead? … Please update it to translate to Portuguese."* The crowd waits through the live redeploy — *"this is what we get for doing a live demo"* — and near the episode's end the verdict: *"My hello world French translator learned a little Portuguese. Let's see how well it does — 'Good morning, how are you today?' … Not bad — and the latency is low."*
 
 ### Why it matters
 
@@ -333,36 +333,36 @@ The samples repo entry for the complex demo: **Customer Support Assistant — Pr
 
 ### What the speaker explains
 
-`17:39` — Maira: *"All of these examples are available on our GitHub samples repository — quick starts and end-to-end use cases. This customer support assistant is one of my favorites that Eashan put together. We have VPC support, infrastructure as code — everything deployed with CloudFormation templates. For folks asking about CDK and Terraform — don't worry, it's also available; we just wanted to demonstrate one of them."*
+Maira: *"All of these examples are available on our GitHub samples repository — quick starts and end-to-end use cases. This customer support assistant is one of my favorites that Eashan put together. We have VPC support, infrastructure as code — everything deployed with CloudFormation templates. For folks asking about CDK and Terraform — don't worry, it's also available; we just wanted to demonstrate one of them."*
 
 ![Architecture diagram — AgentCore Runtime running a Strands agent with a co-deployed MCP server (stdio) and a second runtime hosting an MCP server, both inside a private VPC; Gateway fronts warranty/profile tools; Aurora PostgreSQL and DynamoDB behind VPC interface endpoints](screenshots/c9s17.png)
 
 ### Technical explanation — the moving parts
 
-`18:40` — Maira walks the diagram:
+Maira walks the diagram:
 
 - **Agent runtime** — Strands agent *plus* a **co-deployed MCP server in the same container** (stdio transport) that can run SQL against Aurora PostgreSQL (users, products, orders)
 - **Second AgentCore Runtime** — hosting a standalone **FastMCP server** for DynamoDB (reviews, products)
 - **AgentCore Gateway** — exposes warranty checks and customer profiles (DynamoDB) as MCP tools
-- **Everything inside the VPC** — *"runtime, everything is inside VPC, and we are using PrivateLink for the communications"* (`19:44`)
+- **Everything inside the VPC** — *"runtime, everything is inside VPC, and we are using PrivateLink for the communications"*
 - **CloudFormation + tagging throughout**
 
 ```mermaid
 flowchart LR
-    UI["💬 Chat UI<br/>(Cognito login)"] -->|JWT| R1["AgentCore Runtime A<br/>Strands agent"]
-    subgraph VPC["🔒 Private VPC — no public internet"]
-        R1 -->|stdio| M1["Local MCP<br/>awslabs postgres server"]
-        M1 --> AU[("Aurora PostgreSQL<br/>users · orders")]
-        R1 -->|MCP over PrivateLink| R2["AgentCore Runtime B<br/>FastMCP server"]
-        R2 --> DD[("DynamoDB<br/>reviews · products")]
-    end
-    R1 --> GW["AgentCore Gateway"]
-    GW --> L["Lambda + DynamoDB<br/>warranty · customer profile"]
+ UI["💬 Chat UI<br/>(Cognito login)"] -->|JWT| R1["AgentCore Runtime A<br/>Strands agent"]
+ subgraph VPC["🔒 Private VPC — no public internet"]
+ R1 -->|stdio| M1["Local MCP<br/>awslabs postgres server"]
+ M1 --> AU[("Aurora PostgreSQL<br/>users · orders")]
+ R1 -->|MCP over PrivateLink| R2["AgentCore Runtime B<br/>FastMCP server"]
+ R2 --> DD[("DynamoDB<br/>reviews · products")]
+ end
+ R1 --> GW["AgentCore Gateway"]
+ GW --> L["Lambda + DynamoDB<br/>warranty · customer profile"]
 ```
 
 ### Why it matters
 
-`20:43` — Anil asks the enterprise question: *"Why do we need all these different ways of accessing data?"* Maira's answer is the architecture lesson: *"We're talking about reusability — different teams collaborating. Warranty is super common: customer support needs it, IT support needs it — it's a tool shared between teams (that's why it's behind the Gateway). Reviews and products are more specific to this use case."* **Shared tools → Gateway. Use-case-specific tools → local/Runtime MCP.**
+Anil asks the enterprise question: *"Why do we need all these different ways of accessing data?"* Maira's answer is the architecture lesson: *"We're talking about reusability — different teams collaborating. Warranty is super common: customer support needs it, IT support needs it — it's a tool shared between teams (that's why it's behind the Gateway). Reviews and products are more specific to this use case."* **Shared tools → Gateway. Use-case-specific tools → local/Runtime MCP.**
 
 ### Key takeaway
 
@@ -392,7 +392,7 @@ flowchart LR
 
 ### Why it matters — the hidden teaching point
 
-`21:40` — Maira leaves deliberate homework: *"We didn't expose the MCP server on the gateway — that's your homework. All the code is available; if you want to have this MCP exposed on the gateway, you can change that and build on it."* The sample is intentionally structured so you can re-route a Runtime-hosted MCP server through the Gateway's new MCP target type (§9.7).
+Maira leaves deliberate homework: *"We didn't expose the MCP server on the gateway — that's your homework. All the code is available; if you want to have this MCP exposed on the gateway, you can change that and build on it."* The sample is intentionally structured so you can re-route a Runtime-hosted MCP server through the Gateway's new MCP target type (§9.7).
 
 ### Key takeaway
 
@@ -403,7 +403,7 @@ flowchart LR
 ## 9.13 Agent Internals — Lifespan Events & Local MCP Clients
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="customer-support-assistant-vpc/agent/main.py — MCP clients, lifespan, entrypoint" files={[
-  { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/agent/main.py", "label": "agent/main.py", "highlights": [[127, 182], [201, 215], [240, 277]], "note": "127–182: MCP client construction — gateway (streamable HTTP, Bearer token) + aurora (stdio postgres MCP). 201–215: the lifespan manager — yield is the serve boundary, clients are stopped on shutdown. 240–277: @app.entrypoint strands_agent_bedrock, the invocation handler." }
+ { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/agent/main.py", "label": "agent/main.py", "highlights": [[127, 182], [201, 215], [240, 277]], "note": "127–182: MCP client construction — gateway (streamable HTTP, Bearer token) + aurora (stdio postgres MCP). 201–215: the lifespan manager — yield is the serve boundary, clients are stopped on shutdown. 240–277: @app.entrypoint strands_agent_bedrock, the invocation handler." }
 ]} />
 
 *Compare with the original screenshot:*
@@ -416,27 +416,27 @@ The customer-support agent's `main.py` — same skeleton as the translator (`Bed
 
 ### What the speaker explains
 
-`25:40` — Maira connects the demos: *"Mark's agent had the SDK import, the app, an entry point and run — it's the same for complex ones. You still import the AgentCore app, initiate it, mark the entry point and run."* Then asks Eashan (`26:22`): *"What are we doing with lifespan here?"*
+Maira connects the demos: *"Mark's agent had the SDK import, the app, an entry point and run — it's the same for complex ones. You still import the AgentCore app, initiate it, mark the entry point and run."* Then asks Eashan: *"What are we doing with lifespan here?"*
 
-`26:30` — Eashan: *"Lifespan events let you execute code before your server is initialized, and just before it is shut down. For example, you want to initialize connections to resources which take time — you want that to happen once. Before the server goes down you want to clean up resources or connections."* `27:13` — in this sample: *"Whenever the server is initialized I create my MCP clients, start my connection; just before it shuts down I stop all of my connections."*
+Eashan: *"Lifespan events let you execute code before your server is initialized, and just before it is shut down. For example, you want to initialize connections to resources which take time — you want that to happen once. Before the server goes down you want to clean up resources or connections."* — in this sample: *"Whenever the server is initialized I create my MCP clients, start my connection; just before it shuts down I stop all of my connections."*
 
 ### Technical explanation
 
 ```python
 app = BedrockAgentCoreApp()
 
-@app.lifespan            # runs once per container: init + cleanup
+@app.lifespan # runs once per container: init + cleanup
 async def lifespan(app):
-    mcp_clients = start_mcp_connections()   # stdio + remote MCP clients
-    yield                                   # ← server serves invocations here
-    stop_mcp_connections(mcp_clients)
+ mcp_clients = start_mcp_connections() # stdio + remote MCP clients
+ yield # ← server serves invocations here
+ stop_mcp_connections(mcp_clients)
 
 @app.entrypoint
 def invoke(payload, context):
-    return agent(payload["prompt"])
+ return agent(payload["prompt"])
 ```
 
-`27:38` — Maira's framing: *"We're creating a local MCP server right inside — it depends on your code, it's flexible. You can have a bunch of different applications built with AgentCore Runtime."*
+Maira's framing: *"We're creating a local MCP server right inside — it depends on your code, it's flexible. You can have a bunch of different applications built with AgentCore Runtime."*
 
 *A second zoom of the same file — the entrypoint lines from the viewer above:*
 
@@ -451,7 +451,7 @@ def invoke(payload, context):
 ## 9.14 Building the Container Image — VPC-Aware Tooling
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="customer-support-assistant-vpc/agent/Dockerfile — everything installed at build time" files={[
-  { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/agent/Dockerfile", "label": "agent/Dockerfile", "highlights": [[13, 20], [26, 28], [34, 37]], "note": "13–20: system dependencies. 26–28: requirements.txt + aws-opentelemetry-distro + awslabs-postgres-mcp-server — baked in because the VPC has no internet egress. 34–37: EXPOSE 8080/8000 and the opentelemetry-instrument CMD." }
+ { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/agent/Dockerfile", "label": "agent/Dockerfile", "highlights": [[13, 20], [26, 28], [34, 37]], "note": "13–20: system dependencies. 26–28: requirements.txt + aws-opentelemetry-distro + awslabs-postgres-mcp-server — baked in because the VPC has no internet egress. 34–37: EXPOSE 8080/8000 and the opentelemetry-instrument CMD." }
 ]} />
 
 *Compare with the original screenshot:*
@@ -460,17 +460,17 @@ def invoke(payload, context):
 
 ### What you are seeing
 
-The multi-step `Dockerfile`: env vars (region `us-west-2`), `requirements.txt` (Strands SDK + tools), the **AWS OpenTelemetry distro** — *"this package alone lets me export my OTel traces to AgentCore observability"* (`30:37`) — and `awslabs.postgres-mcp-server` installed **at image build time**.
+The multi-step `Dockerfile`: env vars (region `us-west-2`), `requirements.txt` (Strands SDK + tools), the **AWS OpenTelemetry distro** — *"this package alone lets me export my OTel traces to AgentCore observability"* — and `awslabs.postgres-mcp-server` installed **at image build time**.
 
 ### What the speaker explains — the VPC constraint
 
-`31:18` — Eashan on why tools are baked into the image: *"Since the agent is running inside a VPC now with no internet access, I don't get to download this inside the code — I could do that using uvx, but I can't, because now it's an enterprise AgentCore Runtime. I don't have internet access. So I download it here first in the Dockerfile, then start using it inside the code."*
+Eashan on why tools are baked into the image: *"Since the agent is running inside a VPC now with no internet access, I don't get to download this inside the code — I could do that using uvx, but I can't, because now it's an enterprise AgentCore Runtime. I don't have internet access. So I download it here first in the Dockerfile, then start using it inside the code."*
 
 ### Technical explanation
 
-- **stdio transport** (`31:09`) — the Postgres MCP server runs as a child process of the agent in the *same* container — no network hop for the hottest tool.
+- **stdio transport** — the Postgres MCP server runs as a child process of the agent in the *same* container — no network hop for the hottest tool.
 - **Build-time vs runtime installs** — anything fetched at runtime (uvx/pip download) fails inside a no-egress VPC; everything must arrive via the image.
-- **The four ways to touch AgentCore** (`28:14`) — basic APIs → **SDK** (abstraction) → **Starter Toolkit** (bigger abstraction, builds the image for you) → **infrastructure as code**. *"With the starter toolkit you don't need to create your Dockerfile — but when you want control, you write it yourself."*
+- **The four ways to touch AgentCore** — basic APIs → **SDK** (abstraction) → **Starter Toolkit** (bigger abstraction, builds the image for you) → **infrastructure as code**. *"With the starter toolkit you don't need to create your Dockerfile — but when you want control, you write it yourself."*
 
 ### Key takeaway
 
@@ -481,7 +481,7 @@ The multi-step `Dockerfile`: env vars (region `us-west-2`), `requirements.txt` (
 ## 9.15 Hosting an MCP Server on Runtime — Zero Code Changes
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="customer-support-assistant-vpc/mcp_dynamodb/main.py — FastMCP + OTel middleware" files={[
-  { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/mcp_dynamodb/main.py", "label": "mcp_dynamodb/main.py", "highlights": [[22, 56], [58, 88], [91, 95], [99, 145]], "note": "22–56: OpenTelemetryMiddleware — spans every tool call in/out. 58–88: get_table_names resolves DynamoDB tables from SSM parameters. 91–95: FastMCP init + middleware registration. 99+: the read-only DynamoDB tools (get_reviews, get_products, …)." }
+ { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/mcp_dynamodb/main.py", "label": "mcp_dynamodb/main.py", "highlights": [[22, 56], [58, 88], [91, 95], [99, 145]], "note": "22–56: OpenTelemetryMiddleware — spans every tool call in/out. 58–88: get_table_names resolves DynamoDB tables from SSM parameters. 91–95: FastMCP init + middleware registration. 99+: the read-only DynamoDB tools (get_reviews, get_products, …)." }
 ]} />
 
 *Compare with the original screenshot:*
@@ -494,11 +494,11 @@ The standalone MCP server: plain **FastMCP** code — boto3 DynamoDB reads, a ha
 
 ### What the speaker explains
 
-`32:39` — Eashan: *"How different is hosting an MCP server on Runtime? Not different at all. I use the FastMCP library — you must have written FastMCP code already. How do you get session isolation, enterprise-grade security and all the good stuff? Just put it into Runtime. I've not changed any line of code."*
+Eashan: *"How different is hosting an MCP server on Runtime? Not different at all. I use the FastMCP library — you must have written FastMCP code already. How do you get session isolation, enterprise-grade security and all the good stuff? Just put it into Runtime. I've not changed any line of code."*
 
-`33:15` — on the middleware: *"It captures requests when they're coming in and responses when they're about to go out. All I'm doing is creating my OpenTelemetry traces so I can actually see what's going on inside my MCP server — what tool is invoked, what parameters, what responses — all part of my agent observability."*
+On the middleware: *"It captures requests when they're coming in and responses when they're about to go out. All I'm doing is creating my OpenTelemetry traces so I can actually see what's going on inside my MCP server — what tool is invoked, what parameters, what responses — all part of my agent observability."*
 
-`34:05` — Maira's takeaway: *"You didn't have to change any lines of code — it's your MCP server, but now on Runtime: enterprise security, scalable and available."*
+Maira's takeaway: *"You didn't have to change any lines of code — it's your MCP server, but now on Runtime: enterprise security, scalable and available."*
 
 *A zoom of the same file — the SSM resolution block highlighted in the viewer above:*
 
@@ -518,13 +518,13 @@ The `get_table_names` helper above is a production detail worth copying: table n
 
 ### What you are seeing
 
-Eight purpose-scoped stacks — *"each of these stacks are repeatable… if you just want VPC, you have all the VPC setup; if you just want MCP DynamoDB, you have the MCP server stack"* (`23:54`).
+Eight purpose-scoped stacks — *"each of these stacks are repeatable… if you just want VPC, you have all the VPC setup; if you just want MCP DynamoDB, you have the MCP server stack"*.
 
 ### What the speaker explains
 
-`34:36` — Maira: *"People ask if you can deploy AgentCore components as infrastructure as code — yes you can. There are new CloudFormation templates for runtime, for gateway, for AgentCore components."*
+Maira: *"People ask if you can deploy AgentCore components as infrastructure as code — yes you can. There are new CloudFormation templates for runtime, for gateway, for AgentCore components."*
 
-`35:02` — Eashan walks the runtime stack (`agent-server-stack.yaml`, screenshot below):
+Eashan walks the runtime stack (`agent-server-stack.yaml`, screenshot below):
 
 - **`AWS::BedrockAgentCore::Runtime` resource** — container image from ECR
 - **Execution role** — *"lets me execute code inside my runtime with certain privileges — query DynamoDB, Secrets Manager, AgentCore Identity"*
@@ -534,7 +534,7 @@ Eight purpose-scoped stacks — *"each of these stacks are repeatable… if you 
 - **Tags** — *"great for cost — dev, production, test environments. Definitely recommend tagging all the way."*
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="customer-support-assistant-vpc/cloudformation/agent-server-stack.yaml — the AgentRuntime resource" files={[
-  { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/cloudformation/agent-server-stack.yaml", "label": "agent-server-stack.yaml", "highlights": [[852, 882]], "note": "852+: AWS::BedrockAgentCore::Runtime — DependsOn CodeBuildTrigger (the CI/CD hook), NetworkMode VPC with security groups/subnets, ECR ContainerUri, CustomJWTAuthorizer (Cognito user pool + allowed clients), and MODEL_ID/MCP_* environment variables." }
+ { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/cloudformation/agent-server-stack.yaml", "label": "agent-server-stack.yaml", "highlights": [[852, 882]], "note": "852+: AWS::BedrockAgentCore::Runtime — DependsOn CodeBuildTrigger (the CI/CD hook), NetworkMode VPC with security groups/subnets, ECR ContainerUri, CustomJWTAuthorizer (Cognito user pool + allowed clients), and MODEL_ID/MCP_* environment variables." }
 ]} />
 
 *Compare with the original screenshot:*
@@ -543,17 +543,17 @@ Eight purpose-scoped stacks — *"each of these stacks are repeatable… if you 
 
 ### Technical explanation — the pipeline
 
-`22:33` — the CI/CD loop: *"All of this is through GitHub. Whatever is on GitHub, my CodeBuild takes, builds, puts into ECR, builds my runtime."* `23:18` — trigger: *"I just push to my GitHub repository — that triggers a new version of my agent on AgentCore Runtime."* `23:02` — Maira: *"That's production readiness."*
+The CI/CD loop: *"All of this is through GitHub. Whatever is on GitHub, my CodeBuild takes, builds, puts into ECR, builds my runtime."* — trigger: *"I just push to my GitHub repository — that triggers a new version of my agent on AgentCore Runtime."* — Maira: *"That's production readiness."*
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="customer-support-assistant-vpc/deploy.sh — one script, eight stacks" files={[
-  { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/deploy.sh", "label": "deploy.sh", "highlights": [[23, 26], [178, 210]], "note": "23–26: the only knobs — MODEL_ID (Claude Haiku 4.5), REGION (us-west-2), admin email/password for the Cognito user. 178–210: deploy_stack() — uploads templates to the S3 bucket, validates required params, then deploys the nested CloudFormation stack." }
+ { "path": "02-use-cases/01-conversational-agents/customer-support-assistant-vpc/deploy.sh", "label": "deploy.sh", "highlights": [[23, 26], [178, 210]], "note": "23–26: the only knobs — MODEL_ID (Claude Haiku 4.5), REGION (us-west-2), admin email/password for the Cognito user. 178–210: deploy_stack() — uploads templates to the S3 bucket, validates required params, then deploys the nested CloudFormation stack." }
 ]} />
 
 *Compare with the original screenshot:*
 
 ![deploy.sh — parameters for model, region, environment, email and password; supported region us-west-2](screenshots/c9s24.png)
 
-One `deploy.sh` (`24:09`) rolls out all eight stacks end-to-end; the README documents per-stack and full deploys, testing hooks for the agent and gateway individually.
+One `deploy.sh` rolls out all eight stacks end-to-end; the README documents per-stack and full deploys, testing hooks for the agent and gateway individually.
 
 ### Key takeaway
 
@@ -567,7 +567,7 @@ One `deploy.sh` (`24:09`) rolls out all eight stacks end-to-end; the README docu
 
 ### What you are seeing
 
-`39:01` — Maira in the AWS console: *"Here are all the CloudFormation templates that have been deployed — I already deployed this because it takes a bit to get everything running."* Eight nested stacks, all `CREATE_COMPLETE`.
+Maira in the AWS console: *"Here are all the CloudFormation templates that have been deployed — I already deployed this because it takes a bit to get everything running."* Eight nested stacks, all `CREATE_COMPLETE`.
 
 ![CloudFormation console — the customer-support-vpc-dev stack events: nested stacks AgentServerStack, MCPServerStack, AuroraStack, GatewayStack, DynamoDBStack all CREATE_COMPLETE; resources like ECRImageNotification and XRayTracesSetUp](screenshots/c9s31.png)
 
@@ -575,7 +575,7 @@ One `deploy.sh` (`24:09`) rolls out all eight stacks end-to-end; the README docu
 
 ### What the speaker explains
 
-`39:18` — on the runtime: *"Here's our customer support agent — I've enabled logging, enabled tracing, all of this by default. We've got a bunch of tagging as well. You can see your CloudWatch logs, your endpoints — all deployed for you."* `39:41` — *"then we have our gateway — deploying our gateway, our target as a Lambda function that checks warranties, also logs enabled. And we have our identity providers — identity for our MCP server and for the gateway."*
+On the runtime: *"Here's our customer support agent — I've enabled logging, enabled tracing, all of this by default. We've got a bunch of tagging as well. You can see your CloudWatch logs, your endpoints — all deployed for you."* — *"then we have our gateway — deploying our gateway, our target as a Lambda function that checks warranties, also logs enabled. And we have our identity providers — identity for our MCP server and for the gateway."*
 
 ![AgentCore console — Identity: the inbound/outbound authorization model diagram and OAuth client list](screenshots/c9s36.png)
 
@@ -583,7 +583,7 @@ One `deploy.sh` (`24:09`) rolls out all eight stacks end-to-end; the README docu
 
 ### Technical explanation — the auth chain
 
-`40:14` — the demo starts with real auth: *"We've integrated identity, so we get Cognito to work here, and I need to create a token — I'm going to log in to my Cognito user."* The chat UI's login screen below is Cognito's hosted UI — the JWT it returns is what the Runtime's `customJWTAuthorizer` validates on every invoke.
+The demo starts with real auth: *"We've integrated identity, so we get Cognito to work here, and I need to create a token — I'm going to log in to my Cognito user."* The chat UI's login screen below is Cognito's hosted UI — the JWT it returns is what the Runtime's `customJWTAuthorizer` validates on every invoke.
 
 ![The demo frontend's Cognito hosted-UI sign-in page (localhost:5173)](screenshots/c9s38.png)
 
@@ -599,23 +599,23 @@ One `deploy.sh` (`24:09`) rolls out all eight stacks end-to-end; the README docu
 
 ### What the speaker explains
 
-`40:47` — first real query: *"Get a complete profile of a customer with customer ID, including their purchase history and details."* The trace shows the plan: **gateway** `get_customer_profile` → **local MCP** `run_query` for orders. `41:31` — Eashan: *"A lot of the time everyone talks about how to do text-to-SQL — just with that MCP server installed in the Dockerfile, we're able to do text-to-SQL: converting language into SQL queries and executing them."*
+First real query: *"Get a complete profile of a customer with customer ID, including their purchase history and details."* The trace shows the plan: **gateway** `get_customer_profile` → **local MCP** `run_query` for orders. — Eashan: *"A lot of the time everyone talks about how to do text-to-SQL — just with that MCP server installed in the Dockerfile, we're able to do text-to-SQL: converting language into SQL queries and executing them."*
 
 ![Chat UI — the CUST001 profile answer with the tool calls visible: get_customer_profile via the Gateway, then run_query via the local MCP against Aurora](screenshots/c9s39.png)
 
 ### Technical explanation — a harder query
 
-`42:31` — the multi-tool query: *"customer reviews, inventory status and warranty information for this laptop's serial number."* The agent fans out — warranty via Gateway → reviews via the DynamoDB MCP → product/inventory via text-to-SQL where no dedicated tool exists (`43:17`: *"we don't have APIs exactly mapping to the products table, but we do have text-to-SQL"*). `43:50` — Anil spots it: *"It looked like those tools were being executed in parallel"* — *"for a few of them, yes."*
+The multi-tool query: *"customer reviews, inventory status and warranty information for this laptop's serial number."* The agent fans out — warranty via Gateway → reviews via the DynamoDB MCP → product/inventory via text-to-SQL where no dedicated tool exists (: *"we don't have APIs exactly mapping to the products table, but we do have text-to-SQL"*). — Anil spots it: *"It looked like those tools were being executed in parallel"* — *"for a few of them, yes."*
 
-`44:10` — metadata on the UI: *"you can see how many tokens it consumed — great for debugging."*
+Metadata on the UI: *"you can see how many tokens it consumed — great for debugging."*
 
-`44:25` — the schema trick behind the good SQL: *"My MCP server exposes `get_schema` as a tool. Using Strands, I load the schema of my Aurora database during the lifespan — so my agent is aware of what the schemas look like. That's why it writes the query once and gets a great response — it's not redoing it."*
+The schema trick behind the good SQL: *"My MCP server exposes `get_schema` as a tool. Using Strands, I load the schema of my Aurora database during the lifespan — so my agent is aware of what the schemas look like. That's why it writes the query once and gets a great response — it's not redoing it."*
 
 ![Chat UI — the data-consistency check on CUST004: the agent finds an email mismatch and a lifetime-value mismatch between the users table and the customer profile](screenshots/c9s40.png)
 
 ### The unexpected win — data-quality agent
 
-`46:13` — the discrepancy query: *"Let's see if our agent is smart enough to find discrepancies in the database."* It is — comparing the users table against the customer profile it surfaces **two different emails and a mismatched lifetime value** for the same customer. *"Your agent can help you debug the quality of your data and find those kinds of issues."*
+The discrepancy query: *"Let's see if our agent is smart enough to find discrepancies in the database."* It is — comparing the users table against the customer profile it surfaces **two different emails and a mismatched lifetime value** for the same customer. *"Your agent can help you debug the quality of your data and find those kinds of issues."*
 
 ### Key takeaway
 
@@ -629,11 +629,11 @@ One `deploy.sh` (`24:09`) rolls out all eight stacks end-to-end; the README docu
 
 ### What you are seeing
 
-The **GenAI Observability** dashboards — *"we just ran a bunch of queries for the last five minutes; let's take a look"* (`49:30`). Agents overview: sessions, traces, error and throttle rates at a glance.
+The **GenAI Observability** dashboards — *"we just ran a bunch of queries for the last five minutes; let's take a look"*. Agents overview: sessions, traces, error and throttle rates at a glance.
 
 ### What the speaker explains
 
-`49:37` — *"We got a bunch of traces because everything is a trace. Two agent endpoints, our sessions, our different traces, our different agents — you can deep dive into the AgentCore one and get latency, token usage, errors, throttling."*
+*"We got a bunch of traces because everything is a trace. Two agent endpoints, our sessions, our different traces, our different agents — you can deep dive into the AgentCore one and get latency, token usage, errors, throttling."*
 
 ![The Sessions/Traces/Errors/Throttles time-series panels](screenshots/c9s42.png)
 
@@ -643,11 +643,11 @@ The **GenAI Observability** dashboards — *"we just ran a bunch of queries for 
 
 The per-span table is where production debugging lives: `execute_event_loop_cycle` ≈ **6.3 s** end-to-end while `execute_tool … get_customer_profile` ≈ **868 ms** — most latency is model reasoning, not tool calls. That's the kind of decomposition impossible without OTel-instrumented runtimes.
 
-`50:05` — and it's not just agents: *"you can also get information about a gateway — here we got two invocations, latency, all available on our observability capabilities."*
+And it's not just agents: *"you can also get information about a gateway — here we got two invocations, latency, all available on our observability capabilities."*
 
 ![The Gateways observability tab — dev-customer-support-vpc with 2 invocations, 0 throttles, 0 errors](screenshots/c9s44.png)
 
-`37:02` — the S3/export question answered on air: *"You can have a log group on CloudWatch with all of your OTel logs saved there — with that you can export it to any third-party tool you want. We have samples on GitHub for third-party integration."*
+The S3/export question answered on air: *"You can have a log group on CloudWatch with all of your OTel logs saved there — with that you can export it to any third-party tool you want. We have samples on GitHub for third-party integration."*
 
 ### Key takeaway
 
@@ -661,20 +661,20 @@ The per-span table is where production debugging lives: `execute_event_loop_cycl
 
 ### What the speaker explains
 
-`51:45` — Mark's recap: *"You're giving your agent builders the opportunity to go with whatever they've got — LangGraph, CrewAI, Strands, OpenAI agents — define your own instructions, use your own tools, host that in AgentCore Runtime."*
+Mark's recap: *"You're giving your agent builders the opportunity to go with whatever they've got — LangGraph, CrewAI, Strands, OpenAI agents — define your own instructions, use your own tools, host that in AgentCore Runtime."*
 
 - **Memory** — *"make your agent more personalized by taking all those events and summarizing them — the next time they come back you take advantage of what happened in the past."*
 - **Observability** — *"everything underpinned by traces, sessions, spans, metrics — end to end across agents, MCP servers, gateways, identity, memory."*
-- **Identity** (`53:07`) — *"one of the truly most difficult problems: agent identities, agent workloads, inbound authorization from users, outbound authorization to tools. Flexibly letting you use your IdPs — Ping, Okta, Microsoft Entra — plus third-party credential providers like Slack, Jira, Salesforce, ServiceNow."*
+- **Identity** — *"one of the truly most difficult problems: agent identities, agent workloads, inbound authorization from users, outbound authorization to tools. Flexibly letting you use your IdPs — Ping, Okta, Microsoft Entra — plus third-party credential providers like Slack, Jira, Salesforce, ServiceNow."*
 - **Gateway** — *"making every available resource more easily exposed as MCP."*
 
 ### Technical explanation — adopt à la carte
 
-`54:58` — Maira: *"You can use all of it together or each piece individually. Today's demo had Runtime, Gateway, Identity — we didn't add Memory. We could have — it would make the customer support better — but we chose not to."* And multi-tenancy (`56:38`): separate tool catalogs per tenant via **Gateway**, tenancy context via **custom headers**, per-user memory via **actor IDs**.
+Maira: *"You can use all of it together or each piece individually. Today's demo had Runtime, Gateway, Identity — we didn't add Memory. We could have — it would make the customer support better — but we chose not to."* And multi-tenancy: separate tool catalogs per tenant via **Gateway**, tenancy context via **custom headers**, per-user memory via **actor IDs**.
 
 ### The honest number
 
-`59:21` — Eashan on how long the whole VPC demo took to build: *"Two to three days. Most of the time I spent on the front end and managing my data — with AgentCore I could sit back, relax, and focus on what actually mattered: system prompts, are tools responding correctly, is my data correct."*
+Eashan on how long the whole VPC demo took to build: *"Two to three days. Most of the time I spent on the front end and managing my data — with AgentCore I could sit back, relax, and focus on what actually mattered: system prompts, are tools responding correctly, is my data correct."*
 
 ### Key takeaway
 
@@ -688,7 +688,7 @@ The per-span table is where production debugging lives: `execute_event_loop_cycl
 
 ### What the speaker explains
 
-`57:36` — Mark closes with the path in:
+Mark closes with the path in:
 
 - **Docs** — *"quick starts where within five minutes you can have something fully running with Runtime, Gateway, Memory — and under 15 minutes an end-to-end example in your environment."*
 - **Workshops** — *"used by many thousands of builders in just the last couple of months — a getting-started workshop and a deep-dive workshop."*

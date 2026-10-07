@@ -19,7 +19,7 @@ By the end of this chapter you will be able to:
 - ⚙️ Explain **why generated code needs a sandbox** — and what the Code Interpreter's per-session microVM isolates
 - 📊 Walk through Rahul's **CloudTrail security-analysis demo** — S3 import, `execute_python` tool, and a generated report
 
-**Episode timeline covered:** the full video, `00:33 → 58:39` — *"AgentCore Browser Tool & Code Interpreter | AWS Show & Tell."*
+**Episode covered:** the full video — *"AgentCore Browser Tool & Code Interpreter | AWS Show & Tell."*
 
 ---
 
@@ -33,7 +33,7 @@ The episode's title card: *"Amazon Bedrock AgentCore — Tools Deep Dive."* The 
 
 ### What the speaker explains
 
-`00:33` — Anil opens the episode: *"Hello everyone, welcome to another episode of AWS Show and Tell."* `02:23` — *"We are doing a deep dive series on Bedrock AgentCore. Today we are going to cover... Bedrock AgentCore Browser, Code Interpreter — we call these tools."*
+Anil opens the episode: *"Hello everyone, welcome to another episode of AWS Show and Tell."* — *"We are doing a deep dive series on Bedrock AgentCore. Today we are going to cover... Bedrock AgentCore Browser, Code Interpreter — we call these tools."*
 
 ### Technical explanation
 
@@ -59,7 +59,7 @@ The agenda: a quick AgentCore refresher, then a deep dive into the Browser Tool 
 
 ### What the speaker explains
 
-`03:07` — Kosti: *"Three main areas: a quick refresher of what Bedrock AgentCore is... then capabilities, use cases, how it works, and a demo of the tools — browser and code interpreter."*
+Kosti: *"Three main areas: a quick refresher of what Bedrock AgentCore is... then capabilities, use cases, how it works, and a demo of the tools — browser and code interpreter."*
 
 ### Technical explanation
 
@@ -81,7 +81,7 @@ The AgentCore platform picture: **Runtime** (serverless, isolated agent hosting)
 
 ### What the speaker explains
 
-`03:34` — Kosti recaps the customer journey: *"They start with an open-source framework — LangGraph, LangChain, CrewAI, Google ADK. They build agents, add tools. But then they need to productionize these agents in a more deterministic, secure and scalable way. That is why we launched AgentCore Runtime."* And `04:15`: *"An agent is not just good by itself — it's actually as good as the tools that it has."*
+Kosti recaps the customer journey: *"They start with an open-source framework — LangGraph, LangChain, CrewAI, Google ADK. They build agents, add tools. But then they need to productionize these agents in a more deterministic, secure and scalable way. That is why we launched AgentCore Runtime."* And : *"An agent is not just good by itself — it's actually as good as the tools that it has."*
 
 ### Technical explanation
 
@@ -92,7 +92,7 @@ The AgentCore platform picture: **Runtime** (serverless, isolated agent hosting)
 
 ### Why it matters
 
-This slide positions the tools correctly: they are **not required** — everything is modular (*"you can pick and choose"*, as Kosti says at `57:41`) — but they solve the two hardest "real-world access" problems: the web and code execution.
+This slide positions the tools correctly: they are **not required** — everything is modular (*"you can pick and choose"*, as Kosti says) — but they solve the two hardest "real-world access" problems: the web and code execution.
 
 ### Key takeaway
 
@@ -110,7 +110,7 @@ The title card marking the first half of the episode: **AgentCore Browser Tool**
 
 ### What the speaker explains
 
-`05:50` — the pivot: *"Let's dive deep on the browser piece... why do agents need browsing? Same question applies — why do humans need browsing?"*
+The pivot: *"Let's dive deep on the browser piece... why do agents need browsing? Same question applies — why do humans need browsing?"*
 
 ### Key takeaway
 
@@ -128,7 +128,7 @@ Three columns of reasons an agent might need a real browser: **web navigation & 
 
 ### What the speaker explains
 
-`06:10` — Kosti: *"Same reasons we as humans need browsers — we navigate the web, buy things, test that a website works, do competitive analysis on prices, read reports. Agents need it for the same reasons — multi-step forms, back-office automation, QA testing, accessing ERPs, scraping the web to produce reports."*
+Kosti: *"Same reasons we as humans need browsers — we navigate the web, buy things, test that a website works, do competitive analysis on prices, read reports. Agents need it for the same reasons — multi-step forms, back-office automation, QA testing, accessing ERPs, scraping the web to produce reports."*
 
 ### Technical explanation
 
@@ -154,7 +154,7 @@ Five capability cards for the managed browser: **fully managed & serverless** (s
 
 ### What the speaker explains
 
-`07:36` — Kosti walks the list: *"A fully managed headless browser, fully serverless... sub-second latency spin-up... deterministic or fully stochastic with an LLM deciding the next step... sessions up to eight hours... a dedicated microVM — nobody will reuse it... fully observable with a live-view endpoint, human takeover, and recording... we only charge for CPU and memory at the per-second level."*
+Kosti walks the list: *"A fully managed headless browser, fully serverless... sub-second latency spin-up... deterministic or fully stochastic with an LLM deciding the next step... sessions up to eight hours... a dedicated microVM — nobody will reuse it... fully observable with a live-view endpoint, human takeover, and recording... we only charge for CPU and memory at the per-second level."*
 
 ### Technical explanation
 
@@ -185,17 +185,17 @@ The three technologies that make the managed browser work: **CDP** (Chrome DevTo
 
 ### What the speaker explains
 
-`11:20` — Kosti: *"The browser is Chrome-based... driven by CDP — lower-level commands like navigate, dispatch key events, domain-exposed events on page, network, runtime, input. CDP can be verbose and brittle, so open-source libraries like Playwright and Puppeteer generate those CDP commands for you. Lastly there's DCV — it captures the Chromium window, compresses it, sends it over a websocket for live view, human takeover, and it's the one recorded in real time."*
+Kosti: *"The browser is Chrome-based... driven by CDP — lower-level commands like navigate, dispatch key events, domain-exposed events on page, network, runtime, input. CDP can be verbose and brittle, so open-source libraries like Playwright and Puppeteer generate those CDP commands for you. Lastly there's DCV — it captures the Chromium window, compresses it, sends it over a websocket for live view, human takeover, and it's the one recorded in real time."*
 
 ### Technical explanation
 
 ```mermaid
 flowchart LR
-    A["Your agent code"] -- "friendly API calls" --> B["Playwright / Puppeteer / NovaAct"]
-    B -- "generates CDP commands" --> C["CDP over WebSocket"]
-    C --> D["Chromium browser<br/>inside AgentCore microVM"]
-    D -- "rendered frames" --> E["DCV server"]
-    E -- "compressed live stream" --> F["Live view / human takeover / recording"]
+ A["Your agent code"] -- "friendly API calls" --> B["Playwright / Puppeteer / NovaAct"]
+ B -- "generates CDP commands" --> C["CDP over WebSocket"]
+ C --> D["Chromium browser<br/>inside AgentCore microVM"]
+ D -- "rendered frames" --> E["DCV server"]
+ E -- "compressed live stream" --> F["Live view / human takeover / recording"]
 ```
 
 ![Original screenshot of the three-terms slide](screenshots/c7s07.png)
@@ -215,12 +215,12 @@ Every browser-integration decision maps to one of these three layers: **how your
 ## 7.8 How It Works — the Six-Step Agentic Loop
 
 <HotspotImage src="/bedrock-deepti/screenshots/c7s08.png" title="AgentCore Browser — How it works (click each numbered step)" hotspots={[
-  { "num": 1, "x": 16, "y": 66, "w": 9, "h": 9, "label": "Query", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "End user asks — e.g. 'search for shoes on amazon.com'" },
-  { "num": 2, "x": 36, "y": 66, "w": 9, "h": 9, "label": "Invoke LLM", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "Agent calls the LLM with the query + current screenshot" },
-  { "num": 3, "x": 56, "y": 66, "w": 9, "h": 9, "label": "Tool use", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "LLM picks the browser tool and the next action" },
-  { "num": 4, "x": 72, "y": 40, "w": 10, "h": 10, "label": "Command Translation", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "Playwright/NovaAct converts the action into CDP commands" },
-  { "num": 5, "x": 84, "y": 40, "w": 10, "h": 10, "label": "Execution", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "CDP commands run on the Chromium inside the microVM" },
-  { "num": 6, "x": 72, "y": 74, "w": 10, "h": 10, "label": "Screenshot", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "Result screenshot returns to the LLM — the loop repeats" }
+ { "num": 1, "x": 16, "y": 66, "w": 9, "h": 9, "label": "Query", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "End user asks — e.g. 'search for shoes on amazon.com'" },
+ { "num": 2, "x": 36, "y": 66, "w": 9, "h": 9, "label": "Invoke LLM", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "Agent calls the LLM with the query + current screenshot" },
+ { "num": 3, "x": 56, "y": 66, "w": 9, "h": 9, "label": "Tool use", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "LLM picks the browser tool and the next action" },
+ { "num": 4, "x": 72, "y": 40, "w": 10, "h": 10, "label": "Command Translation", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "Playwright/NovaAct converts the action into CDP commands" },
+ { "num": 5, "x": 84, "y": 40, "w": 10, "h": 10, "label": "Execution", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "CDP commands run on the Chromium inside the microVM" },
+ { "num": 6, "x": 72, "y": 74, "w": 10, "h": 10, "label": "Screenshot", "to": "7-8-how-it-works-the-six-step-agentic-loop", "tip": "Result screenshot returns to the LLM — the loop repeats" }
 ]} />
 
 ### What you are seeing
@@ -229,7 +229,7 @@ The "How it works" slide: a numbered loop where a **user query** hits the agent,
 
 ### What the speaker explains
 
-`13:47` — Kosti traces it with an example: *"Search for some shoes on amazon.com. The agent uses LLM-driven instructions — from NovaAct or a library like browser-use, Puppeteer, Playwright — to instruct the browser what to do. The LLM reasons based on what it sees on the screen: 'click here.' The browser executes the command, takes a screenshot, sends it back... a continuous feedback loop until the goal is achieved."*
+Kosti traces it with an example: *"Search for some shoes on amazon.com. The agent uses LLM-driven instructions — from NovaAct or a library like browser-use, Puppeteer, Playwright — to instruct the browser what to do. The LLM reasons based on what it sees on the screen: 'click here.' The browser executes the command, takes a screenshot, sends it back... a continuous feedback loop until the goal is achieved."*
 
 ### Technical explanation
 
@@ -237,13 +237,13 @@ This is the **observe → decide → act** loop that defines agentic browsing:
 
 ```mermaid
 flowchart TD
-    Q["1️⃣ User query"] --> A["2️⃣ Agent invokes LLM<br/>query + last screenshot"]
-    A --> T["3️⃣ LLM picks next tool action<br/>'click the search box'"]
-    T --> C["4️⃣ Library translates to CDP<br/>Page.navigate / Input.dispatchMouseEvent"]
-    C --> B["5️⃣ Chromium executes inside<br/>the AgentCore browser session"]
-    B --> S["6️⃣ Screenshot + DOM state<br/>streamed back to agent"]
-    S --> A
-    S -.->|"goal reached"| R["✅ Answer / workflow result"]
+ Q["1️⃣ User query"] --> A["2️⃣ Agent invokes LLM<br/>query + last screenshot"]
+ A --> T["3️⃣ LLM picks next tool action<br/>'click the search box'"]
+ T --> C["4️⃣ Library translates to CDP<br/>Page.navigate / Input.dispatchMouseEvent"]
+ C --> B["5️⃣ Chromium executes inside<br/>the AgentCore browser session"]
+ B --> S["6️⃣ Screenshot + DOM state<br/>streamed back to agent"]
+ S --> A
+ S -.->|"goal reached"| R["✅ Answer / workflow result"]
 ```
 
 ### Why it matters
@@ -266,7 +266,7 @@ The infrastructure view: on the left, your agent (NovaAct / Playwright / Browser
 
 ### What the speaker explains
 
-`15:21` — Kosti: *"NovaAct or the specific library using Playwright is issuing CDP commands, which we consume through a WebSocket endpoint, perform on the browser — and through the DCV server we send a live-stream endpoint into our observability, or you can use that endpoint in your own applications."*
+Kosti: *"NovaAct or the specific library using Playwright is issuing CDP commands, which we consume through a WebSocket endpoint, perform on the browser — and through the DCV server we send a live-stream endpoint into our observability, or you can use that endpoint in your own applications."*
 
 ### Technical explanation
 
@@ -297,7 +297,7 @@ A comparison of the two ways to call the Browser Tool: **Boto3** (the general AW
 
 ### What the speaker explains
 
-`16:08` — Veda: *"Two ways to get started. One is our good old Boto3 SDK — lower-level APIs: create the browser tool, start a session, and so on. We also offer the AgentCore Python SDK — higher-level constructs, so you write less code using the same set of APIs and get started faster."*
+Veda: *"Two ways to get started. One is our good old Boto3 SDK — lower-level APIs: create the browser tool, start a session, and so on. We also offer the AgentCore Python SDK — higher-level constructs, so you write less code using the same set of APIs and get started faster."*
 
 ### Technical explanation
 
@@ -322,7 +322,7 @@ The lifecycle checklist: **① create a Browser resource** (a configuration obje
 
 ### What the speaker explains
 
-`17:47` — Veda: *"First step: create a browser resource. By default, when you go to AgentCore built-in tools, you already have one — it's a configuration resource: network settings, S3 settings for saved recordings. Then you start browser sessions — those ephemeral execution environments. In your code you generate the WebSocket URL and signed headers — required to connect over CDP. Optionally generate a pre-signed live-view URL and set up a DCV client to embed the live view in your application. Then the agent performs the browser tasks, and finally you stop the session — resources are released and you're not charged."*
+Veda: *"First step: create a browser resource. By default, when you go to AgentCore built-in tools, you already have one — it's a configuration resource: network settings, S3 settings for saved recordings. Then you start browser sessions — those ephemeral execution environments. In your code you generate the WebSocket URL and signed headers — required to connect over CDP. Optionally generate a pre-signed live-view URL and set up a DCV client to embed the live view in your application. Then the agent performs the browser tasks, and finally you stop the session — resources are released and you're not charged."*
 
 ### Technical explanation
 
@@ -348,7 +348,7 @@ The AWS console's AgentCore overview page — the entry point to everything in t
 
 ### What the speaker explains
 
-`20:51` — Veda begins the demo: *"Here I'm on the AWS console for AgentCore. If you navigate over here you have the built-in tools — and you have both the Code Interpreter and the Browser Tool here."*
+Veda begins the demo: *"Here I'm on the AWS console for AgentCore. If you navigate over here you have the built-in tools — and you have both the Code Interpreter and the Browser Tool here."*
 
 ![AWS console — Built-in tools list, with browser tool resources and their sessions](screenshots/c7s13.png)
 
@@ -364,7 +364,7 @@ A browser resource detail page: ARN, tool ID, an **example code** snippet for co
 
 ### What the speaker explains
 
-`21:06` — Veda: *"I talked about the browser resource — you specify network settings and so on. I have all these browser resources created in my account. If I click on one, you see all the browser sessions — the actual sessions with the Chrome browser opened up; these were all terminated after use. You can have multiple concurrent sessions — really useful to parallelize workflows."*
+Veda: *"I talked about the browser resource — you specify network settings and so on. I have all these browser resources created in my account. If I click on one, you see all the browser sessions — the actual sessions with the Chrome browser opened up; these were all terminated after use. You can have multiple concurrent sessions — really useful to parallelize workflows."*
 
 ### Key takeaway
 
@@ -382,11 +382,11 @@ The test target: a fake retail web app ("QA Test App") hosted on S3 + CloudFront
 
 ### What the speaker explains
 
-`21:48` — Veda's motivation for agentic QA: *"Two reasons. One — you can test your web application from a human perspective: how would my end users actually experience it? Two — before agents, you'd write Playwright or Selenium scripts, which are brittle: when the UI changes they break and need maintenance. Now you give instructions in natural language and the agent tests from a human perspective."* Then `23:26`: *"I built a fake web application — a retail website — hosted on an S3 bucket with CloudFront."*
+Veda's motivation for agentic QA: *"Two reasons. One — you can test your web application from a human perspective: how would my end users actually experience it? Two — before agents, you'd write Playwright or Selenium scripts, which are brittle: when the UI changes they break and need maintenance. Now you give instructions in natural language and the agent tests from a human perspective."* Then : *"I built a fake web application — a retail website — hosted on an S3 bucket with CloudFront."*
 
 ### Technical explanation
 
-The interesting design choice: **the test cases themselves were generated by a coding agent** — *"I used a coding agent to look at all my front-end code and generate natural-language test cases"* (`24:11`). The QA pipeline is agents all the way down: one agent writes the tests, another (NovaAct) executes them.
+The interesting design choice: **the test cases themselves were generated by a coding agent** — *"I used a coding agent to look at all my front-end code and generate natural-language test cases"*. The QA pipeline is agents all the way down: one agent writes the tests, another (NovaAct) executes them.
 
 ### Key takeaway
 
@@ -405,9 +405,9 @@ The `qa-tests/` folder with five generated suites (`01-homepage-load-test.json` 
 ### Code from this screenshot
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="qa-tests/ — the natural-language test suites shown on screen" files={[
-  { "path": "qa-tests/01-homepage-load-test.json", "src": "/bedrock-deepti/code/ch7/qa-tests/01-homepage-load-test.json", "label": "01-homepage-load-test.json", "highlights": [[12, 30]], "note": "Transcribed from the on-screen file — steps 1–3 are readable; the original continues below the fold." },
-  { "path": "qa-tests/02-navigation-menu-test.json", "src": "/bedrock-deepti/code/ch7/qa-tests/02-navigation-menu-test.json", "label": "02-navigation-menu-test.json", "note": "Transcribed from the on-screen file — header + first steps are readable; the original continues below the fold." },
-  { "path": "qa-tests/03-product-display-test.json", "src": "/bedrock-deepti/code/ch7/qa-tests/03-product-display-test.json", "label": "03-product-display-test.json", "note": "Transcribed from the lower half shown on screen — steps 5–7 and the testData block are readable." }
+ { "path": "qa-tests/01-homepage-load-test.json", "src": "/bedrock-deepti/code/ch7/qa-tests/01-homepage-load-test.json", "label": "01-homepage-load-test.json", "highlights": [[12, 30]], "note": "Transcribed from the on-screen file — steps 1–3 are readable; the original continues below the fold." },
+ { "path": "qa-tests/02-navigation-menu-test.json", "src": "/bedrock-deepti/code/ch7/qa-tests/02-navigation-menu-test.json", "label": "02-navigation-menu-test.json", "note": "Transcribed from the on-screen file — header + first steps are readable; the original continues below the fold." },
+ { "path": "qa-tests/03-product-display-test.json", "src": "/bedrock-deepti/code/ch7/qa-tests/03-product-display-test.json", "label": "03-product-display-test.json", "note": "Transcribed from the lower half shown on screen — steps 5–7 and the testData block are readable." }
 ]} />
 
 ![Original screenshot — the test file in VS Code, steps 1–3 visible](screenshots/c7s18.png)
@@ -418,7 +418,7 @@ The `qa-tests/` folder with five generated suites (`01-homepage-load-test.json` 
 
 ### What the speaker explains
 
-`24:15` — Veda: *"I used a coding agent to look at all my front-end code and generate natural-language test cases — homepage load testing, a set of QA tests. The action is 'navigate to the application URL', and this is the expected result. The next step: verify the page title. All in natural language."*
+Veda: *"I used a coding agent to look at all my front-end code and generate natural-language test cases — homepage load testing, a set of QA tests. The action is 'navigate to the application URL', and this is the expected result. The next step: verify the page title. All in natural language."*
 
 ### Technical explanation
 
@@ -445,14 +445,14 @@ The top of `run_tests.py`: environment setup, the four test-suite paths, and `ru
 ### Code from this screenshot
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="run_tests.py — the multiprocessing test runner" files={[
-  { "path": "run_tests.py", "src": "/bedrock-deepti/code/ch7/run_tests.py", "label": "run_tests.py", "highlights": [[16, 21], [38, 49]], "note": "Transcribed from the two on-screen captures — the seam between them is marked; nothing invented." }
+ { "path": "run_tests.py", "src": "/bedrock-deepti/code/ch7/run_tests.py", "label": "run_tests.py", "highlights": [[16, 21], [38, 49]], "note": "Transcribed from the two on-screen captures — the seam between them is marked; nothing invented." }
 ]} />
 
 ![Original screenshot — run_tests.py bottom: run_test_wrapper's return and the multiprocessing main block](screenshots/c7s21.png)
 
 ### What the speaker explains
 
-`25:03` — Veda: *"This is where I'm taking all those individual test JSON files and creating multiple processes for my testing agent — NovaAct — to take the natural-language prompts and run those tests on the AgentCore browser. One process for each test suite."*
+Veda: *"This is where I'm taking all those individual test JSON files and creating multiple processes for my testing agent — NovaAct — to take the natural-language prompts and run those tests on the AgentCore browser. One process for each test suite."*
 
 ### Technical explanation
 
@@ -475,16 +475,16 @@ Two details worth stealing: a **single-file escape hatch** (`python run_tests.py
 ### Code from this screenshot
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="test_runner.py — the BrowserClient → NovaAct wiring Veda walks through" files={[
-  { "path": "test_runner.py", "src": "/bedrock-deepti/code/ch7/test_runner.py", "label": "test_runner.py", "highlights": [[13, 20], [31, 49]], "note": "Transcribed from the on-screen captures — the seam inside the NovaAct constructor is marked; nothing invented." }
+ { "path": "test_runner.py", "src": "/bedrock-deepti/code/ch7/test_runner.py", "label": "test_runner.py", "highlights": [[13, 20], [31, 49]], "note": "Transcribed from the on-screen captures — the seam inside the NovaAct constructor is marked; nothing invented." }
 ]} />
 
 ![Original screenshot — the AssertTrue helper and nova.act loop](screenshots/c7s23.png)
 
 ### What the speaker explains
 
-`25:52` — Veda, line by line: *"I'm importing the browser client class from the bedrock-agentcore SDK… initializing a `BrowserClient` for the region… starting a browser session against the browser tool that has my network config and S3 recording settings — if you don't specify, it uses the default tool, but that has no record/replay… generating the WebSocket URL and signed headers so my agent can connect… then initializing NovaAct — an agentic SDK specialized for browser automation, Nova-based LLM, understands screenshots and works at the DOM level — passing the starting page, the CDP endpoint URL, and the signed headers."*
+Veda, line by line: *"I'm importing the browser client class from the bedrock-agentcore SDK… initializing a `BrowserClient` for the region… starting a browser session against the browser tool that has my network config and S3 recording settings — if you don't specify, it uses the default tool, but that has no record/replay… generating the WebSocket URL and signed headers so my agent can connect… then initializing NovaAct — an agentic SDK specialized for browser automation, Nova-based LLM, understands screenshots and works at the DOM level — passing the starting page, the CDP endpoint URL, and the signed headers."*
 
-And on `AssertTrue` (`29:42`): *"For QA testing I want to assert — based on the natural-language instructions — whether it actually passes or fails. That's where we send the natural-language prompt to NovaAct, and it runs CDP commands on the AgentCore browser."*
+And on `AssertTrue`: *"For QA testing I want to assert — based on the natural-language instructions — whether it actually passes or fails. That's where we send the natural-language prompt to NovaAct, and it runs CDP commands on the AgentCore browser."*
 
 ### Technical explanation
 
@@ -514,7 +514,7 @@ The run begins: `python run_tests.py` prints *"Running 4 test suites in parallel
 
 ### What the speaker explains
 
-`30:42` — Veda: *"I'm just running the tests — it started four different test suites and all of them are running in parallel."*
+Veda: *"I'm just running the tests — it started four different test suites and all of them are running in parallel."*
 
 ```bash
 $ python run_tests.py
@@ -553,7 +553,7 @@ The console's **live browser session** view: the DCV stream of the actual Chromi
 
 ### What the speaker explains
 
-`31:01` — Veda: *"Let's head to the AgentCore page — you can see four different live-view sessions have come up. When I click on this it actually shows the browser live view running on the AgentCore browser — it's typing out, this is all NovaAct typing on the agent browser, testing based on the instructions it was given."* And `31:45`: *"This live view can also be embedded in your own applications — you don't have to navigate to the AWS console."*
+Veda: *"Let's head to the AgentCore page — you can see four different live-view sessions have come up. When I click on this it actually shows the browser live view running on the AgentCore browser — it's typing out, this is all NovaAct typing on the agent browser, testing based on the instructions it was given."* And : *"This live view can also be embedded in your own applications — you don't have to navigate to the AWS console."*
 
 ![Live view — the agent navigated to the products page with filters](screenshots/c7s28.png)
 
@@ -577,7 +577,7 @@ The final tally in the terminal: one suite reports `Passed: 4/4 steps (100.0%) �
 
 ### What the speaker explains
 
-`32:03` — Veda: *"It's still running — takes a few minutes. It's thinking and acting; I have some tests passing and some failing — I deliberately designed it that way. Because I parallelized, it finished fairly quickly — you could run hundreds of tests like this. Two test suites passed, two failed… and here you see the thinking steps — the agent thinks, then acts — 'click on contact navigation' — then looks at the screenshots and acts again. That's the agentic loop."*
+Veda: *"It's still running — takes a few minutes. It's thinking and acting; I have some tests passing and some failing — I deliberately designed it that way. Because I parallelized, it finished fairly quickly — you could run hundreds of tests like this. Two test suites passed, two failed… and here you see the thinking steps — the agent thinks, then acts — 'click on contact navigation' — then looks at the screenshots and acts again. That's the agentic loop."*
 
 ### Technical explanation
 
@@ -599,7 +599,7 @@ The **session replay** view: a playback UI with speed controls (2x/4x/8x), a tim
 
 ### What the speaker explains
 
-`33:19` — Veda: *"Because I enabled recording and replay, I'm able to view the recorded session — this is observability. This is not a video recording — we captured the DOM actions and reconstructed the replay."*
+Veda: *"Because I enabled recording and replay, I'm able to view the recorded session — this is observability. This is not a video recording — we captured the DOM actions and reconstructed the replay."*
 
 ![Replay details — Actions tab (focus, click events) with per-action Play buttons, plus CDP(589), Console, Network, Page DOM tabs](screenshots/c7s31.png)
 
@@ -609,7 +609,7 @@ The replay inspector: **Actions(2)** lists each agent action (`focus` at 0:22, `
 
 ### What the speaker explains
 
-`34:09` — Veda: *"It gives page-level details — inspect the page DOM, see the actual CDP commands the browser received. Network traffic is zero because mine is a front-end-only app — a typical app shows network logs. And the agent actions — what did the agent do. I can play it, focus at that point, and see the click happen."*
+Veda: *"It gives page-level details — inspect the page DOM, see the actual CDP commands the browser received. Network traffic is zero because mine is a front-end-only app — a typical app shows network logs. And the agent actions — what did the agent do. I can play it, focus at that point, and see the click happen."*
 
 ![Replay — Page DOM tab showing the reconstructed DOM snapshot](screenshots/c7s32.png)
 
@@ -621,13 +621,13 @@ Replaying DOM events instead of video is the clever part: **every CDP command is
 
 ### Why it matters
 
-Anil closes the loop at `35:12`: *"You can optimize paths — try different models, deconstruct the actions that took the agent to the goal."* Replay is the data source for that optimization.
+Anil closes the loop: *"You can optimize paths — try different models, deconstruct the actions that took the agent to the goal."* Replay is the data source for that optimization.
 
 ### Key takeaway
 
 > **Recording = DOM + CDP + agent actions, reconstructed — every click is inspectable, not just watchable.**
 
-<ConceptCard title="💰 Side note — pricing, answered live">A chat question at `35:38`: *"Is there a free tier?"* Kosti: during preview the service is free to experiment with; once billing switched on (announced for Oct 7) it joins the AWS Free Tier ($200 credit for new accounts), then per-second CPU/memory billing applies.</ConceptCard>
+<ConceptCard title="💰 Side note — pricing, answered live">A chat question: *"Is there a free tier?"* Kosti: during preview the service is free to experiment with; once billing switched on (announced for Oct 7) it joins the AWS Free Tier ($200 credit for new accounts), then per-second CPU/memory billing applies.</ConceptCard>
 
 ---
 
@@ -641,20 +641,20 @@ The slide that opens the second tool: *"Why do agents need Code Interpreter tool
 
 ### What the speaker explains
 
-`37:08` — Kosti: *"Agents generate all kinds of code, and once they generate that code they need somewhere to validate that it runs correctly. If they run that code in the same hosting environment the agent is hosted on, there's danger that bugs will bring down the agent. So when someone needs to validate that agent-generated code actually works, they can dynamically spin up a Code Interpreter environment — isolated, low-latency — and run the code as needed."*
+Kosti: *"Agents generate all kinds of code, and once they generate that code they need somewhere to validate that it runs correctly. If they run that code in the same hosting environment the agent is hosted on, there's danger that bugs will bring down the agent. So when someone needs to validate that agent-generated code actually works, they can dynamically spin up a Code Interpreter environment — isolated, low-latency — and run the code as needed."*
 
 ### Technical explanation
 
 ```mermaid
 flowchart LR
-    subgraph bad["❌ Without a sandbox"]
-        A1["Agent host"] --> C1["Generated code runs<br/>in the same environment"]
-        C1 --> D1["Bug can take down<br/>the agent itself"]
-    end
-    subgraph good["✅ With Code Interpreter"]
-        A2["Agent"] --> C2["Generated code →<br/>isolated microVM session"]
-        C2 --> D2["Real result returns;<br/>agent host stays safe"]
-    end
+ subgraph bad["❌ Without a sandbox"]
+ A1["Agent host"] --> C1["Generated code runs<br/>in the same environment"]
+ C1 --> D1["Bug can take down<br/>the agent itself"]
+ end
+ subgraph good["✅ With Code Interpreter"]
+ A2["Agent"] --> C2["Generated code →<br/>isolated microVM session"]
+ C2 --> D2["Real result returns;<br/>agent host stays safe"]
+ end
 ```
 
 ### Why it matters
@@ -677,9 +677,9 @@ The capability sheet: **fully managed serverless** (low startup latency, session
 
 ### What the speaker explains
 
-`38:07` — Kosti on the superpowers: *"Agents can become data analysts. They can reason about what code is needed, generate it, execute it, dynamically automate processes — even when there's no API or tool for the task. It's a sandbox to validate generated code, perform mathematics — portfolio math, pricing — and ensure the math isn't hallucinated but actually adds up. Advanced analytics, reports, PDFs, CSVs — all of that."*
+Kosti on the superpowers: *"Agents can become data analysts. They can reason about what code is needed, generate it, execute it, dynamically automate processes — even when there's no API or tool for the task. It's a sandbox to validate generated code, perform mathematics — portfolio math, pricing — and ensure the math isn't hallucinated but actually adds up. Advanced analytics, reports, PDFs, CSVs — all of that."*
 
-`39:37` — on features: *"Fully managed and serverless… low latency… real-time and long-running executions up to eight hours… an isolated microVM every time you instantiate a session… configurable to deploy in your own VPC. Payload size is 100 MB, and you can import large files directly from S3 — up to 5 GB — so you can process Excel, CSV, JSON. Pre-built Python, JavaScript, TypeScript and a lot of libraries. And every execution has logging and CloudWatch messages associated with it."*
+On features: *"Fully managed and serverless… low latency… real-time and long-running executions up to eight hours… an isolated microVM every time you instantiate a session… configurable to deploy in your own VPC. Payload size is 100 MB, and you can import large files directly from S3 — up to 5 GB — so you can process Excel, CSV, JSON. Pre-built Python, JavaScript, TypeScript and a lot of libraries. And every execution has logging and CloudWatch messages associated with it."*
 
 ### Technical explanation
 
@@ -705,18 +705,18 @@ The math point deserves emphasis: an LLM *predicts* an answer; executed code *co
 
 ### What the speaker explains
 
-`39:18` — Kosti: *"In the ideal case you mix and match the Browser Tool and the Code Interpreter — navigate and dynamically automate processes with both of them."*
+Kosti: *"In the ideal case you mix and match the Browser Tool and the Code Interpreter — navigate and dynamically automate processes with both of them."*
 
 ```mermaid
 flowchart LR
-    subgraph B["🌐 Browser Tool"]
-        B1["Navigate"] --> B2["Interact"] --> B3["Automate"]
-    end
-    subgraph C["⚙️ Code Interpreter"]
-        C1["Process"] --> C2["Calculate"] --> C3["Analyze / Report"]
-    end
-    B3 -- "scraped data, downloaded files" --> C1
-    C3 -- "results, reports, decisions" --> A["🤖 Agent"]
+ subgraph B["🌐 Browser Tool"]
+ B1["Navigate"] --> B2["Interact"] --> B3["Automate"]
+ end
+ subgraph C["⚙️ Code Interpreter"]
+ C1["Process"] --> C2["Calculate"] --> C3["Analyze / Report"]
+ end
+ B3 -- "scraped data, downloaded files" --> C1
+ C3 -- "results, reports, decisions" --> A["🤖 Agent"]
 ```
 
 ### Technical explanation
@@ -732,18 +732,18 @@ The two tools are complementary I/O: the browser **gets data out of the web** (n
 ## 7.24 Under the Hood — the Leap-Year Question
 
 <FlowDiagram title="Code Interpreter — the request path (click a node for details)" theme="dark" viewBox={{ "w": 1200, "h": 420 }} nodes={[
-  { "id": "user", "label": "User", "sub": "\"leap years 1957–2023?\"", "icon": "👤", "type": "client", "x": 20, "y": 150, "w": 150, "h": 80, "detail": { "description": "The end user asks a question that needs computation, not recall.", "bullets": ["Natural-language query", "No API exists for 'count leap years'", "LLM alone would likely hallucinate"] } },
-  { "id": "agent", "label": "Agent", "sub": "Strands / your framework", "icon": "🤖", "type": "compute", "x": 210, "y": 150, "w": 160, "h": 80, "detail": { "description": "The agent decides it needs to compute an answer rather than guess one.", "bullets": ["Selects the Code Interpreter tool", "Never runs generated code on its own host"] } },
-  { "id": "llm", "label": "LLM", "sub": "generates Python / JS / TS", "icon": "🧠", "type": "security", "x": 410, "y": 150, "w": 160, "h": 80, "detail": { "description": "The model writes the code — it does not answer the question.", "bullets": ["Generates e.g. a leap-year loop in Python", "Code is sent to the session, not run locally"] } },
-  { "id": "session", "label": "CI Session (microVM)", "sub": "interpreter + filesystem + shell", "icon": "📦", "type": "storage", "x": 610, "y": 130, "w": 210, "h": 120, "detail": { "description": "The isolated per-session execution environment.", "bullets": ["Code Interpreter runtime", "Filesystem: import / read / process / write files", "Shell commands on the underlying system", "Isolated microVM — destroyed after the session"] } },
-  { "id": "obs", "label": "Observability", "sub": "CloudTrail + CloudWatch", "icon": "📊", "type": "monitoring", "x": 610, "y": 300, "w": 210, "h": 70, "detail": { "description": "Every execution is logged and metered.", "bullets": ["CloudTrail log per invocation", "CloudWatch metrics"] } },
-  { "id": "result", "label": "Result → Agent → User", "sub": "computed, not hallucinated", "icon": "✅", "type": "trigger", "x": 880, "y": 150, "w": 200, "h": 80, "detail": { "description": "The real computed output flows back through the agent to the user.", "bullets": ["Tool result returns to the LLM", "Agent composes the final answer"] } }
+ { "id": "user", "label": "User", "sub": "\"leap years 1957–2023?\"", "icon": "👤", "type": "client", "x": 20, "y": 150, "w": 150, "h": 80, "detail": { "description": "The end user asks a question that needs computation, not recall.", "bullets": ["Natural-language query", "No API exists for 'count leap years'", "LLM alone would likely hallucinate"] } },
+ { "id": "agent", "label": "Agent", "sub": "Strands / your framework", "icon": "🤖", "type": "compute", "x": 210, "y": 150, "w": 160, "h": 80, "detail": { "description": "The agent decides it needs to compute an answer rather than guess one.", "bullets": ["Selects the Code Interpreter tool", "Never runs generated code on its own host"] } },
+ { "id": "llm", "label": "LLM", "sub": "generates Python / JS / TS", "icon": "🧠", "type": "security", "x": 410, "y": 150, "w": 160, "h": 80, "detail": { "description": "The model writes the code — it does not answer the question.", "bullets": ["Generates e.g. a leap-year loop in Python", "Code is sent to the session, not run locally"] } },
+ { "id": "session", "label": "CI Session (microVM)", "sub": "interpreter + filesystem + shell", "icon": "📦", "type": "storage", "x": 610, "y": 130, "w": 210, "h": 120, "detail": { "description": "The isolated per-session execution environment.", "bullets": ["Code Interpreter runtime", "Filesystem: import / read / process / write files", "Shell commands on the underlying system", "Isolated microVM — destroyed after the session"] } },
+ { "id": "obs", "label": "Observability", "sub": "CloudTrail + CloudWatch", "icon": "📊", "type": "monitoring", "x": 610, "y": 300, "w": 210, "h": 70, "detail": { "description": "Every execution is logged and metered.", "bullets": ["CloudTrail log per invocation", "CloudWatch metrics"] } },
+ { "id": "result", "label": "Result → Agent → User", "sub": "computed, not hallucinated", "icon": "✅", "type": "trigger", "x": 880, "y": 150, "w": 200, "h": 80, "detail": { "description": "The real computed output flows back through the agent to the user.", "bullets": ["Tool result returns to the LLM", "Agent composes the final answer"] } }
 ]} edges={[
-  { "from": "user", "to": "agent", "label": "1. query", "animated": true },
-  { "from": "agent", "to": "llm", "label": "2. invoke + tool select", "animated": true },
-  { "from": "llm", "to": "session", "label": "3. generated code", "animated": true },
-  { "from": "session", "to": "obs", "label": "telemetry", "dashed": true },
-  { "from": "session", "to": "result", "label": "4. tool result", "animated": true }
+ { "from": "user", "to": "agent", "label": "1. query", "animated": true },
+ { "from": "agent", "to": "llm", "label": "2. invoke + tool select", "animated": true },
+ { "from": "llm", "to": "session", "label": "3. generated code", "animated": true },
+ { "from": "session", "to": "obs", "label": "telemetry", "dashed": true },
+ { "from": "session", "to": "result", "label": "4. tool result", "animated": true }
 ]} />
 
 ![Original screenshot — the under-the-hood slide: query → LLM → tool selection → Code Interpreter session → telemetry → result](screenshots/c7s36.png)
@@ -754,7 +754,7 @@ The interactive diagram above recreates the slide; the original shows: a user qu
 
 ### What the speaker explains
 
-`41:44` — Kosti: *"Imagine the end user asks the agent: how many leap years between 1957 and 2023? If the agent directly uses the LLM without code execution, it will most probably hallucinate. So the LLM generates code — Python, TypeScript or JavaScript — and you execute it in the Code Interpreter session. But the session doesn't only execute code — it lets you interact with the underlying microVM via a filesystem: import, read, process files, run shell commands, write files — on the environment and the system it's hosted on."*
+Kosti: *"Imagine the end user asks the agent: how many leap years between 1957 and 2023? If the agent directly uses the LLM without code execution, it will most probably hallucinate. So the LLM generates code — Python, TypeScript or JavaScript — and you execute it in the Code Interpreter session. But the session doesn't only execute code — it lets you interact with the underlying microVM via a filesystem: import, read, process files, run shell commands, write files — on the environment and the system it's hosted on."*
 
 ### Technical explanation
 
@@ -776,7 +776,7 @@ The comparison slide: **System / pre-built** interpreter vs **Custom** interpret
 
 ### What the speaker explains
 
-`43:13` — Kosti: *"There are two types. The pre-built Code Interpreter — you can very quickly instantiate a session; it's a sandbox-only environment where you can access only that microVM plus S3, and it has no access to other AWS resources — it comes with our own sandbox-only configuration. But if you want to deploy in your VPC, enable public access, or give an IAM role with permissions to other AWS resources — DynamoDB or other databases — you can do that; you just customize it with our API."*
+Kosti: *"There are two types. The pre-built Code Interpreter — you can very quickly instantiate a session; it's a sandbox-only environment where you can access only that microVM plus S3, and it has no access to other AWS resources — it comes with our own sandbox-only configuration. But if you want to deploy in your VPC, enable public access, or give an IAM role with permissions to other AWS resources — DynamoDB or other databases — you can do that; you just customize it with our API."*
 
 ### Technical explanation
 
@@ -787,7 +787,7 @@ The comparison slide: **System / pre-built** interpreter vs **Custom** interpret
 | AWS access | microVM + **S3 only** | IAM role → DynamoDB, databases, … |
 | Best for | untrusted LLM code, quick wins | workloads needing private/Cloud resources |
 
-The demo uses the **pre-built** interpreter — Rahul confirms at `54:00`: *"We're using the system Code Interpreter — absolutely no configuration; sandbox; super easy for untrusted LLM-generated code."*
+The demo uses the **pre-built** interpreter — Rahul confirms: *"We're using the system Code Interpreter — absolutely no configuration; sandbox; super easy for untrusted LLM-generated code."*
 
 ### Key takeaway
 
@@ -798,14 +798,14 @@ The demo uses the **pre-built** interpreter — Rahul confirms at `54:00`: *"We'
 ## 7.26 The Custom Path in Eight Steps — Interactive
 
 <HotspotImage src="/bedrock-deepti/screenshots/c7s38.png" title="Custom Code Interpreter — the 8-step request path (click each number)" hotspots={[
-  { "num": 1, "x": 4, "y": 20, "w": 7, "h": 8, "label": "Query", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "User query arrives at the agent" },
-  { "num": 2, "x": 20, "y": 20, "w": 7, "h": 8, "label": "Create Custom CI", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Custom resource: IAM execution role + network config" },
-  { "num": 3, "x": 38, "y": 20, "w": 7, "h": 8, "label": "CI Resource", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "The durable custom interpreter configuration" },
-  { "num": 4, "x": 55, "y": 20, "w": 7, "h": 8, "label": "Start Session", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Start a session and invoke the interpreter" },
-  { "num": 5, "x": 70, "y": 40, "w": 8, "h": 9, "label": "Execution Request", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Session mapping + response processing" },
-  { "num": 6, "x": 82, "y": 40, "w": 8, "h": 9, "label": "Execution Response", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "The sandbox returns the computed result" },
-  { "num": 7, "x": 70, "y": 66, "w": 8, "h": 9, "label": "Tool Result", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Result flows back to the agent" },
-  { "num": 8, "x": 38, "y": 66, "w": 8, "h": 9, "label": "Final Result", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Agent composes the answer for the user" }
+ { "num": 1, "x": 4, "y": 20, "w": 7, "h": 8, "label": "Query", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "User query arrives at the agent" },
+ { "num": 2, "x": 20, "y": 20, "w": 7, "h": 8, "label": "Create Custom CI", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Custom resource: IAM execution role + network config" },
+ { "num": 3, "x": 38, "y": 20, "w": 7, "h": 8, "label": "CI Resource", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "The durable custom interpreter configuration" },
+ { "num": 4, "x": 55, "y": 20, "w": 7, "h": 8, "label": "Start Session", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Start a session and invoke the interpreter" },
+ { "num": 5, "x": 70, "y": 40, "w": 8, "h": 9, "label": "Execution Request", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Session mapping + response processing" },
+ { "num": 6, "x": 82, "y": 40, "w": 8, "h": 9, "label": "Execution Response", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "The sandbox returns the computed result" },
+ { "num": 7, "x": 70, "y": 66, "w": 8, "h": 9, "label": "Tool Result", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Result flows back to the agent" },
+ { "num": 8, "x": 38, "y": 66, "w": 8, "h": 9, "label": "Final Result", "to": "7-26-the-custom-path-in-eight-steps-interactive", "tip": "Agent composes the answer for the user" }
 ]} />
 
 ### What you are seeing
@@ -832,7 +832,7 @@ The top of Rahul's Jupyter notebook: *"CloudTrail Security Analysis Demo"* with 
 
 ### What the speaker explains
 
-`44:20` — Rahul takes over: *"Let's get to the demo. Consider the use case Kosti described — data analysis. We'll analyze CloudTrail data — mock data — from an AWS account and try to find interesting activities, things you may want to double-click on — through agents."* And `45:04`: *"Similar to the Browser Tool, you can use Code Interpreter with Boto3 or the AgentCore Python SDK — we're using the SDK. You can also use the tools as custom tools or, with Strands, as native tools. To show more detail we're using Code Interpreter as a custom tool."*
+Rahul takes over: *"Let's get to the demo. Consider the use case Kosti described — data analysis. We'll analyze CloudTrail data — mock data — from an AWS account and try to find interesting activities, things you may want to double-click on — through agents."* And : *"Similar to the Browser Tool, you can use Code Interpreter with Boto3 or the AgentCore Python SDK — we're using the SDK. You can also use the tools as custom tools or, with Strands, as native tools. To show more detail we're using Code Interpreter as a custom tool."*
 
 ### Key takeaway
 
@@ -856,20 +856,20 @@ from strands import Agent, tool
 from strands.models import BedrockModel
 
 code_client = CodeInterpreter('us-west-2')
-code_client.start(session_timeout_seconds=900)   # 15-minute session (up to 8h max)
+code_client.start(session_timeout_seconds=900) # 15-minute session (up to 8h max)
 
 config = {
-    'aws_region': 'us-west-2',
-    's3_bucket': 'cloudtrail-awslogs-9-22-2025',
-    's3_prefix': 'sample-logs/',
-    's3_max_files': 500
+ 'aws_region': 'us-west-2',
+ 's3_bucket': 'cloudtrail-awslogs-9-22-2025',
+ 's3_prefix': 'sample-logs/',
+ 's3_max_files': 500
 }
 s3_client = boto3.client('s3', region_name=config['aws_region'])
 ```
 
 ### What the speaker explains
 
-`45:45` — Rahul: *"We're importing the Code Interpreter from the SDK, plus Strands for the agent. To get started you specify your region and a timeout — 900 seconds here, though sessions can run up to eight hours. Super fast — the session is available and we can start using it in our agent."*
+Rahul: *"We're importing the Code Interpreter from the SDK, plus Strands for the agent. To get started you specify your region and a timeout — 900 seconds here, though sessions can run up to eight hours. Super fast — the session is available and we can start using it in our agent."*
 
 ### Key takeaway
 
@@ -888,12 +888,12 @@ The mock dataset: a JSON `Records` array of CloudTrail-style events — `EventNa
 ### Code from this screenshot
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="mock_cloudtrail_logs.json — the sample CloudTrail events shown on screen" files={[
-  { "path": "mock_cloudtrail_logs.json", "src": "/bedrock-deepti/code/ch7/mock_cloudtrail_logs.json", "label": "mock_cloudtrail_logs.json", "highlights": [[3, 13]], "note": "Transcribed from the on-screen file — two sample records are readable; the real file holds 42 events." }
+ { "path": "mock_cloudtrail_logs.json", "src": "/bedrock-deepti/code/ch7/mock_cloudtrail_logs.json", "label": "mock_cloudtrail_logs.json", "highlights": [[3, 13]], "note": "Transcribed from the on-screen file — two sample records are readable; the real file holds 42 events." }
 ]} />
 
 ### What the speaker explains
 
-`46:35` — Rahul: *"These are mocked-up CloudTrail logs, slightly processed to de-identify information. Line items in JSON format that we want to analyze via the agent… 42 CloudTrail events total that we'll analyze."*
+Rahul: *"These are mocked-up CloudTrail logs, slightly processed to de-identify information. Line items in JSON format that we want to analyze via the agent… 42 CloudTrail events total that we'll analyze."*
 
 ### Key takeaway
 
@@ -921,18 +921,18 @@ The retrieval output: `📂 Found 2 objects` → `Processing file: sample-logs/m
 
 ```python
 cloudtrail_events = get_cloudtrail_from_s3(
-    config['s3_bucket'], config['s3_prefix'], config['s3_max_files'])
+ config['s3_bucket'], config['s3_prefix'], config['s3_max_files'])
 
 if not cloudtrail_events:
-    print("❌ No CloudTrail events retrieved.")
-    # … prints the 4 remediation hints shown on screen
+ print("❌ No CloudTrail events retrieved.")
+ # … prints the 4 remediation hints shown on screen
 else:
-    print(f"📊 Ready to analyze {len(cloudtrail_events)} real CloudTrail events")
+ print(f"📊 Ready to analyze {len(cloudtrail_events)} real CloudTrail events")
 ```
 
 ### What the speaker explains
 
-`47:17` — Rahul: *"Helper functions to identify how many logs we have and get them into a variable — retrieving the logs, doing basic diagnostics. In this S3 bucket there are 42 CloudTrail events we'll analyze."*
+Rahul: *"Helper functions to identify how many logs we have and get them into a variable — retrieving the logs, doing basic diagnostics. In this S3 bucket there are 42 CloudTrail events we'll analyze."*
 
 ### Technical explanation
 
@@ -956,13 +956,13 @@ Three small cells: staging `cloudtrail_logs.txt` from the events JSON; the `call
 
 ```python
 files_to_create = [{"path": "cloudtrail_logs.txt",
-                    "text": json.dumps(cloudtrail_events)}]
+ "text": json.dumps(cloudtrail_events)}]
 
 def call_tool(tool_name: str, arguments: Dict[str, Any]) -> str:
-    """Helper function to invoke sandbox tools"""
-    response = code_client.invoke(tool_name, arguments)
-    for event in response["stream"]:
-        return json.dumps(event["result"])
+ """Helper function to invoke sandbox tools"""
+ response = code_client.invoke(tool_name, arguments)
+ for event in response["stream"]:
+ return json.dumps(event["result"])
 
 writing_files = call_tool("writeFiles", {"content": files_to_create})
 listing_files = call_tool("listFiles", {"path": ""})
@@ -976,7 +976,7 @@ The confirmation output: `{"text": "Successfully wrote all 1 files", "isError": 
 
 ### What the speaker explains
 
-`48:00` — Rahul: *"You have the ability to write directly into the Code Interpreter session — we're streaming the logs into the session's local filesystem because that's where the agent will write and execute code. `call_tool` invokes the operations the library provides; `writeFiles` puts the file in; `listFiles` confirms it was actually written."*
+Rahul: *"You have the ability to write directly into the Code Interpreter session — we're streaming the logs into the session's local filesystem because that's where the agent will write and execute code. `call_tool` invokes the operations the library provides; `writeFiles` puts the file in; `listFiles` confirms it was actually written."*
 
 ### Technical explanation
 
@@ -1010,22 +1010,22 @@ Use Python to create fast, simple analysis. Keep code minimal and efficient. Sta
 
 @tool
 def execute_python(code: str, description: str = "") -> str:
-    """Execute Python code in the sandbox for CloudTrail security analysis"""
-    if description:
-        code = f"# {description}\n{code}"
-    print(f"\n🔍 Generated Code for: {description}")
-    print(f"```python\n{code}\n```")
-    response = code_client.invoke("executeCode", {
-        "code": code, "language": "python", "clearContext": False})
-    for event in response["stream"]:
-        return json.dumps(event["result"])
+ """Execute Python code in the sandbox for CloudTrail security analysis"""
+ if description:
+ code = f"# {description}\n{code}"
+ print(f"\n🔍 Generated Code for: {description}")
+ print(f"```python\n{code}\n```")
+ response = code_client.invoke("executeCode", {
+ "code": code, "language": "python", "clearContext": False})
+ for event in response["stream"]:
+ return json.dumps(event["result"])
 ```
 
 ![Notebook — the tail of execute_python: the executeCode invoke and result unwrap](screenshots/c7s48.png)
 
 ### What the speaker explains
 
-`49:44` — Rahul: *"A basic system prompt optimized for speed — the model should be an analyst and give interesting findings. Then we define the tool plugged into the agent: annotate the function as `@tool` — and the most important part, we use the `invoke` method the library provides to send the code to the session for execution. This is verbose on purpose; with Strands it's one line as a native tool."*
+Rahul: *"A basic system prompt optimized for speed — the model should be an analyst and give interesting findings. Then we define the tool plugged into the agent: annotate the function as `@tool` — and the most important part, we use the `invoke` method the library provides to send the code to the session for execution. This is verbose on purpose; with Strands it's one line as a native tool."*
 
 ### Technical explanation
 
@@ -1050,10 +1050,10 @@ Cell 8.3 output and the agent config: `BedrockModel("us.anthropic.claude-3-7-son
 ```python
 model = BedrockModel(model_id="us.anthropic.claude-3-7-sonnet-20250219-v1:0")
 agent = Agent(
-    model=model,
-    tools=[execute_python],
-    system_prompt=SYSTEM_PROMPT,
-    callback_handler=None
+ model=model,
+ tools=[execute_python],
+ system_prompt=SYSTEM_PROMPT,
+ callback_handler=None
 )
 
 query = """Analyze CloudTrail logs in 'cloudtrail_logs.txt' and create a
@@ -1066,12 +1066,12 @@ ANALYSIS TASKS:
 5. Find any critical issues
 6. Generate threat summary
 
-DELIVERABLES: …"""   # continues below the fold on screen
+DELIVERABLES: …""" # continues below the fold on screen
 ```
 
 ### What the speaker explains
 
-`50:46` — Rahul: *"We define the model — Claude 3.7 Sonnet — the tool we just defined, the system prompt, and that's it from agent configuration. Then we invoke: the query asks for top-five services, threat summaries, and a report once analysis is done."*
+Rahul: *"We define the model — Claude 3.7 Sonnet — the tool we just defined, the system prompt, and that's it from agent configuration. Then we invoke: the query asks for top-five services, threat summaries, and a report once analysis is done."*
 
 ### Key takeaway
 
@@ -1089,7 +1089,7 @@ The agent invocation cell executing, with streamed output starting to appear.
 
 ### What the speaker explains
 
-`51:26` — Rahul, as it runs: *"Based on the prompt it understands what's needed — I also asked it to look at the format of the logs first, then generate code. It's writing Python; the agent uses the tool to send it to the session, execute it, look at the output, give it back, and iteratively change the generated code until it achieves the goal — analyzing the logs."*
+Rahul, as it runs: *"Based on the prompt it understands what's needed — I also asked it to look at the format of the logs first, then generate code. It's writing Python; the agent uses the tool to send it to the session, execute it, look at the output, give it back, and iteratively change the generated code until it achieves the goal — analyzing the logs."*
 
 ![Notebook — the LLM's first generated code block executes in the sandbox](screenshots/c7s51.png)
 
@@ -1124,21 +1124,21 @@ file_response = call_tool("readFiles", {"paths": ["cloudtrail_security_report.md
 file_data = json.loads(file_response)
 
 with open("cloudtrail_security_report.md", "w") as f:
-    f.write(file_data["content"][0]["resource"]["text"])
+ f.write(file_data["content"][0]["resource"]["text"])
 
 # Cleanup
 def cleanup():
-    try:
-        code_client.stop()
-        print("✅ Code Interpreter session stopped successfully!")
-    except Exception as e:
-        print(f"⚠️ Cleanup warning: {e}")
+ try:
+ code_client.stop()
+ print("✅ Code Interpreter session stopped successfully!")
+ except Exception as e:
+ print(f"⚠️ Cleanup warning: {e}")
 cleanup()
 ```
 
 ### What the speaker explains
 
-`52:16` — Rahul: *"I asked it to create a report in Markdown format — it will be generated on the filesystem within the Code Interpreter environment. Using the read capabilities, you read objects back. That's what I'm doing — reading the markdown report."*
+Rahul: *"I asked it to create a report in Markdown format — it will be generated on the filesystem within the Code Interpreter environment. Using the read capabilities, you read objects back. That's what I'm doing — reading the markdown report."*
 
 ### Key takeaway
 
@@ -1158,7 +1158,7 @@ The generated Markdown report rendered: **Top 3 Security Findings**, **Critical 
 
 ### What the speaker explains
 
-`53:00` — Rahul: *"This is a very specific — and actually common — use case: Code Interpreter with an agent doing data processing. You could go further — one agent analyzing open/exposed IPs, another hunting unauthenticated calls, a supervisor synthesizing it all. Lots of possibilities."* And `53:58` the reminder: *"We're using the system Code Interpreter — zero configuration, sandboxed, perfect for untrusted LLM-generated code."*
+Rahul: *"This is a very specific — and actually common — use case: Code Interpreter with an agent doing data processing. You could go further — one agent analyzing open/exposed IPs, another hunting unauthenticated calls, a supervisor synthesizing it all. Lots of possibilities."* And the reminder: *"We're using the system Code Interpreter — zero configuration, sandboxed, perfect for untrusted LLM-generated code."*
 
 ### Why it matters
 
@@ -1171,7 +1171,7 @@ Everything in that report — the event counts, the brute-force table, the threa
 ### The full demo file
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="cloudtrail_security_analysis_demo.py — all notebook cells assembled (transcribed from the episode)" files={[
-  { "path": "cloudtrail_security_analysis_demo.py", "src": "/bedrock-deepti/code/ch7/cloudtrail_security_analysis_demo.py", "label": "cloudtrail_security_analysis_demo.py", "highlights": [[8, 17], [88, 97], [100, 117], [120, 133], [142, 155]], "note": "All cells transcribed from the on-screen notebook — cells that ran past the bottom of the screen are marked; nothing invented." }
+ { "path": "cloudtrail_security_analysis_demo.py", "src": "/bedrock-deepti/code/ch7/cloudtrail_security_analysis_demo.py", "label": "cloudtrail_security_analysis_demo.py", "highlights": [[8, 17], [88, 97], [100, 117], [120, 133], [142, 155]], "note": "All cells transcribed from the on-screen notebook — cells that ran past the bottom of the screen are marked; nothing invented." }
 ]} />
 
 ---
@@ -1180,9 +1180,9 @@ Everything in that report — the event counts, the brute-force table, the threa
 
 ### What the speaker explains
 
-`55:29` — Veda on browser use cases: *"QA testing is very popular — maintaining Playwright or Selenium scripts is time-consuming and needs expertise; this is easy to start and parallelizes. Then general workflow automation — so much work happens in browsers; forms, ERPs, apps with no documented APIs — the web interface is the only way. And web scraping / getting information from the web."*
+Veda on browser use cases: *"QA testing is very popular — maintaining Playwright or Selenium scripts is time-consuming and needs expertise; this is easy to start and parallelizes. Then general workflow automation — so much work happens in browsers; forms, ERPs, apps with no documented APIs — the web interface is the only way. And web scraping / getting information from the web."*
 
-`57:05` — Kosti's closing point: *"Everything we described is fully modular — you don't have to use Runtime or Code Interpreter or Browser together. Pick and choose, build your solution on top of AgentCore."*
+Kosti's closing point: *"Everything we described is fully modular — you don't have to use Runtime or Code Interpreter or Browser together. Pick and choose, build your solution on top of AgentCore."*
 
 ### Key takeaway
 
@@ -1198,7 +1198,7 @@ Everything in that report — the event counts, the brute-force table, the threa
 
 <Quiz question="What does the Browser session replay actually record?" options={["A compressed video of the screen","DOM actions, CDP events, network and agent actions — reconstructed at playback","Only the LLM's decisions","Server-side screenshots every second"]} answerIndex={1} explanation="'This is not a video recording — we captured the DOM actions and reconstructed the replay' — which is why every action is inspectable with per-action Play buttons." />
 
-<Quiz question="Why can't agent-generated code run on the agent's own host?" options={["It would be slower","A bug in untrusted generated code can bring down the agent itself","The host lacks Python","Licensing restrictions"]} answerIndex={1} explanation="Kosti's framing at 37:34 — generated code is unvalidated, so it gets an isolated, dynamically created microVM session instead." />
+<Quiz question="Why can't agent-generated code run on the agent's own host?" options={["It would be slower","A bug in untrusted generated code can bring down the agent itself","The host lacks Python","Licensing restrictions"]} answerIndex={1} explanation="Kosti's framing — generated code is unvalidated, so it gets an isolated, dynamically created microVM session instead." />
 
 <Quiz question="In the CloudTrail demo, what does execute_python actually do?" options={["Runs Python on the notebook kernel","Sends the LLM-generated code to the sandbox via code_client.invoke('executeCode') and returns the result","Compiles the query to SQL","Writes the report file"]} answerIndex={1} explanation="The @tool-annotated bridge: LLM emits code → invoke('executeCode') in the microVM → streamed result back to the agent — feeding the observe→decide→act loop." />
 

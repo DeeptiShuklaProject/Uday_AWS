@@ -20,7 +20,7 @@ By the end of this chapter you will be able to:
 - 🔄 Trace the **asynchronous extraction pipeline** — extract → consolidate (add/update/skip) → embed & index
 - 💻 Follow **two demos**: LangGraph checkpointing via `AgentCoreMemorySaver`, and a Strands customer-support agent with all three strategies
 
-**Episode timeline covered:** the full video, `00:33 → 60:11` — *"AgentCore Memory Deep Dive | AWS Show & Tell."*
+**Episode covered:** the full video — *"AgentCore Memory Deep Dive | AWS Show & Tell."*
 
 ---
 
@@ -34,11 +34,11 @@ The episode's title card. Host **Anil Nadimi** (senior SA, Princeton NJ) is join
 
 ### What the speaker explains
 
-`01:57` — Anil: *"We are going to dive deep into AgentCore Memory. We've been doing this deep-dive series on the different suite of services AgentCore offers. Memory is a central component of agentic applications — Mani and Akarsha are going to break it down for us."*
+Anil: *"We are going to dive deep into AgentCore Memory. We've been doing this deep-dive series on the different suite of services AgentCore offers. Memory is a central component of agentic applications — Mani and Akarsha are going to break it down for us."*
 
 ### Technical explanation
 
-`02:49` — Mani's framing of the service: *"AgentCore Memory is a service for agent memory management. It makes it easier for developers to build context-aware agents by eliminating the complex memory infrastructure management, while providing full control over what exactly the AI agent remembers."*
+Mani's framing of the service: *"AgentCore Memory is a service for agent memory management. It makes it easier for developers to build context-aware agents by eliminating the complex memory infrastructure management, while providing full control over what exactly the AI agent remembers."*
 
 ### Key takeaway
 
@@ -56,7 +56,7 @@ The core problem slide: a not-equal sign between **Technical Capability** (AI ag
 
 ### What the speaker explains
 
-`03:21` — Mani: *"Till today we have focused on creating technically amazing agents — lots of tools, lots of capabilities. But however good they are at humanlike responses, they are fundamentally stateless. Imagine every time you talk to a friend and they forgot everything about your previous conversation — that would be frustrating."* `03:53` — *"The ability to remember is the foundation of meaningful human relationships. We remember past conversations, learn preferences over time, build shared context — that's what deepens connections. That's what we want to replicate in our agents."*
+Mani: *"Till today we have focused on creating technically amazing agents — lots of tools, lots of capabilities. But however good they are at humanlike responses, they are fundamentally stateless. Imagine every time you talk to a friend and they forgot everything about your previous conversation — that would be frustrating."* — *"The ability to remember is the foundation of meaningful human relationships. We remember past conversations, learn preferences over time, build shared context — that's what deepens connections. That's what we want to replicate in our agents."*
 
 ### Technical explanation
 
@@ -64,7 +64,7 @@ Without memory, every session is a cold start: the agent can't learn preferences
 
 ### Why it matters
 
-`04:38` — Mani's bold claim: *"2026 is going to be the year of context engineering. It's going to make a fundamental shift on everything that's agentic in nature."*
+Mani's bold claim: *"2026 is going to be the year of context engineering. It's going to make a fundamental shift on everything that's agentic in nature."*
 
 ### Key takeaway
 
@@ -82,13 +82,13 @@ The context-engineering loop: many kinds of inputs (instructions, user messages,
 
 ### What the speaker explains
 
-`05:10` — Akarsha: *"We have all these different kinds of context and we can engineer it so many ways — and context is the only thing that impacts whether we get a brilliant response or complete hallucinations. Agents handle complex tasks, long-running sessions for hours, and tool feedback piles up in that context window."*
+Akarsha: *"We have all these different kinds of context and we can engineer it so many ways — and context is the only thing that impacts whether we get a brilliant response or complete hallucinations. Agents handle complex tasks, long-running sessions for hours, and tool feedback piles up in that context window."*
 
-`05:53` — the key observation: *"Most of the time when agentic systems mess up it's one of two reasons — the model itself, but honestly models are getting so much better that's less prominent now — or the context itself."*
+The key observation: *"Most of the time when agentic systems mess up it's one of two reasons — the model itself, but honestly models are getting so much better that's less prominent now — or the context itself."*
 
 ### Technical explanation
 
-Mani puts the obvious question on the table (`06:36`): *"Models handle millions of tokens — why curate context at all?"* Akarsha's answer has three parts:
+Mani puts the obvious question on the table: *"Models handle millions of tokens — why curate context at all?"* Akarsha's answer has three parts:
 
 1. **Misdirection** — too much or wrong context can pull the model the wrong way; *"if we want agents to perform in all corner cases, the context window must be precise, accurate and complete."*
 2. **Cost** — *"imagine every call giving millions of tokens."*
@@ -110,16 +110,16 @@ The pivot slide — it's not enough for an agent to store things; it must be *sm
 
 ### What the speaker explains
 
-Answering a chat question (`08:43`), Akarsha gives two concrete cases:
+Answering a chat question, Akarsha gives two concrete cases:
 
 - **Customer support** — the agent fetches from data APIs *and* vector stores (*"RAG is still alive — not going anywhere"*), plus personalization; context grows fast and must stay *relevant*.
 - **Deep research** — long-running agents (5 minutes to over an hour) accumulate enormous context; *"you're adding extra load on the model to figure out what's relevant."*
 
-`11:50` — the preference example: *"If I code in Python, that's repetitive input every time. Why can't my agent just remember I code in Python?"* — and beyond preferences, the agent should learn *how* you like answers structured across follow-ups.
+The preference example: *"If I code in Python, that's repetitive input every time. Why can't my agent just remember I code in Python?"* — and beyond preferences, the agent should learn *how* you like answers structured across follow-ups.
 
 ### Why it matters
 
-`12:21` — *"We don't have to just remember — we have to be smart about what our agents are remembering."* That line is the whole design philosophy of the service.
+*"We don't have to just remember — we have to be smart about what our agents are remembering."* That line is the whole design philosophy of the service.
 
 ### Key takeaway
 
@@ -137,13 +137,13 @@ The two-layer model: **short-term memory** as the raw event store for an ongoing
 
 ### What the speaker explains
 
-`13:14` — Akarsha on short-term: *"Think of it as raw memory — the ongoing conversation: user questions, agent responses, tool information, and most importantly the agent state — so it can resume if something goes bad, for checkpointing. Two important things: who the actor is — who these messages belong to — and we call these raw items **events**."*
+Akarsha on short-term: *"Think of it as raw memory — the ongoing conversation: user questions, agent responses, tool information, and most importantly the agent state — so it can resume if something goes bad, for checkpointing. Two important things: who the actor is — who these messages belong to — and we call these raw items **events**."*
 
-`14:40` — on long-term: *"It maintains processed information — not just raw messages. If I say I like to code in Python, it should store that and remember across many sessions — or a summary of previous conversations so a returning user gets 'we talked about this last time.'"*
+On long-term: *"It maintains processed information — not just raw messages. If I say I like to code in Python, it should store that and remember across many sessions — or a summary of previous conversations so a returning user gets 'we talked about this last time.'"*
 
 ### Technical explanation — the travel-agent example
 
-`15:26` — *"I'm planning a vacation Nov 5–10, I like beaches and cabins in the forest."* Those raw turns go to short-term memory; the extraction pulls out *"user prefers beaches / water activities"* into long-term memory, where it persists across all future sessions.
+*"I'm planning a vacation Nov 5–10, I like beaches and cabins in the forest."* Those raw turns go to short-term memory; the extraction pulls out *"user prefers beaches / water activities"* into long-term memory, where it persists across all future sessions.
 
 | | **Short-term (events)** | **Long-term (records)** |
 |---|---|---|
@@ -169,9 +169,9 @@ The architecture in one slide: the agent's activity lands as **raw events** in s
 
 ### What the speaker explains
 
-`17:13` — Akarsha: *"Short-term acts like the raw storage — capturing everything happening right now: user interactions, session attributes, retrievable instantly. Real-time. It's your agent's working memory. And here's where it gets powerful — these events are also processed through a memory extraction module and stored into long-term memory as memory records: learned facts or concepts, depending on how you configure it."*
+Akarsha: *"Short-term acts like the raw storage — capturing everything happening right now: user interactions, session attributes, retrievable instantly. Real-time. It's your agent's working memory. And here's where it gets powerful — these events are also processed through a memory extraction module and stored into long-term memory as memory records: learned facts or concepts, depending on how you configure it."*
 
-`18:01` — why use it: *"Completely serverless with minimal setup — literally a couple of lines of code. Built-in encryption in transit and at rest — we're dealing with user data. Flexible namespaces — define how memory is shared across agents or users. Flexible time-to-live settings. And logging to observe everything."*
+Why use it: *"Completely serverless with minimal setup — literally a couple of lines of code. Built-in encryption in transit and at rest — we're dealing with user data. Flexible namespaces — define how memory is shared across agents or users. Flexible time-to-live settings. And logging to observe everything."*
 
 ### Key takeaway
 
@@ -182,12 +182,12 @@ The architecture in one slide: the agent's activity lands as **raw events** in s
 ## 8.7 Short-Term Memory — the Six Constructs
 
 <HotspotImage src="/bedrock-deepti/screenshots/c8s07.png" title="Short-term memory concepts — click each construct" hotspots={[
-  { "num": 1, "x": 8, "y": 28, "w": 14, "h": 12, "label": "Memory ID", "to": "8-7-short-term-memory-the-six-constructs", "tip": "The memory resource — created once; all events live inside it" },
-  { "num": 2, "x": 27, "y": 28, "w": 14, "h": 12, "label": "Actor ID", "to": "8-7-short-term-memory-the-six-constructs", "tip": "Who the events belong to — user ID, agent ID, or a combination" },
-  { "num": 3, "x": 46, "y": 28, "w": 14, "h": 12, "label": "Session ID", "to": "8-7-short-term-memory-the-six-constructs", "tip": "Groups related events — by conversation or time period" },
-  { "num": 4, "x": 65, "y": 28, "w": 14, "h": 12, "label": "Payload", "to": "8-7-short-term-memory-the-six-constructs", "tip": "A conversational message or a blob (agent state JSON)" },
-  { "num": 5, "x": 8, "y": 55, "w": 14, "h": 12, "label": "Timestamp", "to": "8-7-short-term-memory-the-six-constructs", "tip": "When the event happened — ordering & filtering" },
-  { "num": 6, "x": 27, "y": 55, "w": 14, "h": 12, "label": "Branch", "to": "8-7-short-term-memory-the-six-constructs", "tip": "Alternate conversation paths within one session" }
+ { "num": 1, "x": 8, "y": 28, "w": 14, "h": 12, "label": "Memory ID", "to": "8-7-short-term-memory-the-six-constructs", "tip": "The memory resource — created once; all events live inside it" },
+ { "num": 2, "x": 27, "y": 28, "w": 14, "h": 12, "label": "Actor ID", "to": "8-7-short-term-memory-the-six-constructs", "tip": "Who the events belong to — user ID, agent ID, or a combination" },
+ { "num": 3, "x": 46, "y": 28, "w": 14, "h": 12, "label": "Session ID", "to": "8-7-short-term-memory-the-six-constructs", "tip": "Groups related events — by conversation or time period" },
+ { "num": 4, "x": 65, "y": 28, "w": 14, "h": 12, "label": "Payload", "to": "8-7-short-term-memory-the-six-constructs", "tip": "A conversational message or a blob (agent state JSON)" },
+ { "num": 5, "x": 8, "y": 55, "w": 14, "h": 12, "label": "Timestamp", "to": "8-7-short-term-memory-the-six-constructs", "tip": "When the event happened — ordering & filtering" },
+ { "num": 6, "x": 27, "y": 55, "w": 14, "h": 12, "label": "Branch", "to": "8-7-short-term-memory-the-six-constructs", "tip": "Alternate conversation paths within one session" }
 ]} />
 
 ### What you are seeing
@@ -196,27 +196,27 @@ The six constructs that define every short-term-memory event: **Memory ID**, **A
 
 ### What the speaker explains
 
-`19:06` — Akarsha walks through them one by one:
+Akarsha walks through them one by one:
 
 - **Memory ID** — *"you create the memory resource first; it spins up the infrastructure and gives you a memory ID — the space where you write messages."*
 - **Actor ID** — *"who the messages belong to — a user ID, an agent ID, or a combination; I've even seen project ID + user ID."*
 - **Session ID** — *"a group of related events — define it by related events or by time period."*
 - **Payload** — *"a conversation message… or just a JSON blob storing the entire agent state."*
 - **Timestamp** — ordering for retrieval.
-- **Branch** (`21:15`) — *"supports alternate paths. Don't provide a branch and everything goes to `main`; provide one and you get edit-a-message, alternate conversation paths, concurrent event streams."*
+- **Branch** — *"supports alternate paths. Don't provide a branch and everything goes to `main`; provide one and you get edit-a-message, alternate conversation paths, concurrent event streams."*
 
 ### Technical explanation — branching in practice
 
-`22:38` — the multi-agent example: *"Once the destination is finalized, a flight agent works the flight branch while a hotel agent works the hotel branch — parallel work on the same memory resource with a soft separation of concerns."*
+The multi-agent example: *"Once the destination is finalized, a flight agent works the flight branch while a hotel agent works the hotel branch — parallel work on the same memory resource with a soft separation of concerns."*
 
 ```mermaid
 flowchart TD
-    M["main branch — shared conversation"] --> F["flights branch<br/>(flight agent)"]
-    M --> H["hotels branch<br/>(hotel agent)"]
-    M --> A["activities branch<br/>(activities agent)"]
-    F --> R["merged back — full itinerary"]
-    H --> R
-    A --> R
+ M["main branch — shared conversation"] --> F["flights branch<br/>(flight agent)"]
+ M --> H["hotels branch<br/>(hotel agent)"]
+ M --> A["activities branch<br/>(activities agent)"]
+ F --> R["merged back — full itinerary"]
+ H --> R
+ A --> R
 ```
 
 ### Key takeaway
@@ -235,9 +235,9 @@ The event model: two payload kinds land in short-term memory — **conversationa
 
 ### What the speaker explains
 
-`23:45` — Akarsha: *"Conversational events — chat messages, user input, agent responses, tool messages — are what actually enrich your long-term memory, because that's where meaningful interaction data lies. The blob mostly stores session information — those events are *not* extracted as insights later: checkpoints and session state."*
+Akarsha: *"Conversational events — chat messages, user input, agent responses, tool messages — are what actually enrich your long-term memory, because that's where meaningful interaction data lies. The blob mostly stores session information — those events are *not* extracted as insights later: checkpoints and session state."*
 
-And the clarification everyone needs (`24:57`): *"Checkpoints are snapshots of your application state — think fault tolerance and recovery; pick back up where you left off. Session state is user-specific data across multiple requests — session ID, agent state, that kind of thing."*
+And the clarification everyone needs: *"Checkpoints are snapshots of your application state — think fault tolerance and recovery; pick back up where you left off. Session state is user-specific data across multiple requests — session ID, agent state, that kind of thing."*
 
 ### Technical explanation
 
@@ -264,11 +264,11 @@ The long-term side: built-in strategies — **semantic** (facts), **user prefere
 
 ### What the speaker explains
 
-`26:14` — Akarsha: *"The strategy defines what gets fetched from short-term into long-term memory. Three built-in strategies: **semantic** — the facts in a conversation; **user preferences** — extracting what the user likes; **summary** — one per session, a rolling summary."*
+Akarsha: *"The strategy defines what gets fetched from short-term into long-term memory. Three built-in strategies: **semantic** — the facts in a conversation; **user preferences** — extracting what the user likes; **summary** — one per session, a rolling summary."*
 
-`27:41` — on override: *"Two things come into play — the extraction logic and the consolidation logic. If a preference is already stored I don't want duplicates; if I update my preference — 'I love Python' becomes 'I like Java' — it should update. If you want to override that with your own prompts and your own model, that's the override strategy."*
+On override: *"Two things come into play — the extraction logic and the consolidation logic. If a preference is already stored I don't want duplicates; if I update my preference — 'I love Python' becomes 'I like Java' — it should update. If you want to override that with your own prompts and your own model, that's the override strategy."*
 
-`28:32` — on namespaces: *"A hierarchical concept — prefixes arranged hierarchically that take the IDs you provide… At runtime it resolves the actor: my preferences are only visible to me; when Akarsha uses the same agent, only hers show."* Example on the slide: `retail_agent/{customerId}/preferences` — the `{customerId}` resolves at runtime.
+On namespaces: *"A hierarchical concept — prefixes arranged hierarchically that take the IDs you provide… At runtime it resolves the actor: my preferences are only visible to me; when Akarsha uses the same agent, only hers show."* Example on the slide: `retail_agent/{customerId}/preferences` — the `{customerId}` resolves at runtime.
 
 ### Technical explanation
 
@@ -296,19 +296,19 @@ The complete data flow: the agent writes **events** to short-term memory synchro
 
 ### What the speaker explains
 
-`30:05` — Akarsha: *"Raw events don't just sit there — there's an asynchronous pipeline, a memory extraction module doing smart work behind the scenes. It takes in all the raw data and, depending on the strategies you configured when creating the memory resource, extracts the relevant pieces of information."*
+Akarsha: *"Raw events don't just sit there — there's an asynchronous pipeline, a memory extraction module doing smart work behind the scenes. It takes in all the raw data and, depending on the strategies you configured when creating the memory resource, extracts the relevant pieces of information."*
 
-`32:01` — the retrieval pattern that matters: *"A very common pattern — the last N messages via `listEvents` (say the last five), combined with relevant user preferences or the session summary from long-term memory. You compress the agent's context 60–70% and still get equally good responses as with the entire history."*
+The retrieval pattern that matters: *"A very common pattern — the last N messages via `listEvents` (say the last five), combined with relevant user preferences or the session summary from long-term memory. You compress the agent's context 60–70% and still get equally good responses as with the entire history."*
 
 ### Technical explanation
 
 ```mermaid
 flowchart LR
-    A["🤖 Agent"] -- "create_event (sync)" --> S["Short-term memory<br/>raw events"]
-    S -- "async, per strategy" --> X["Memory Extraction Module<br/>extract → consolidate → embed"]
-    X --> L["Long-term memory<br/>vector store"]
-    A -- "listEvents (recent turns)" --> S
-    A -- "retrieve memories (records)" --> L
+ A["🤖 Agent"] -- "create_event (sync)" --> S["Short-term memory<br/>raw events"]
+ S -- "async, per strategy" --> X["Memory Extraction Module<br/>extract → consolidate → embed"]
+ X --> L["Long-term memory<br/>vector store"]
+ A -- "listEvents (recent turns)" --> S
+ A -- "retrieve memories (records)" --> L
 ```
 
 ### Why it matters
@@ -331,9 +331,9 @@ The module's three stages: **extraction** (per configured strategy, pulling only
 
 ### What the speaker explains
 
-`33:30` — Akarsha on the trigger: *"The pipeline runs asynchronously after every *k* messages or after *x* seconds of inactivity — we don't want it waiting too long."*
+Akarsha on the trigger: *"The pipeline runs asynchronously after every *k* messages or after *x* seconds of inactivity — we don't want it waiting too long."*
 
-`34:58` — the consolidation example: *"The user mentioned in April they like camping spots; in October, exhausted from work, they prefer a beach vacation. This needs an *update* — not two entries, not deleting the old one: 'user preferred camping in April; prefers a beach vacation in October.' Consolidation retrieves similar memories from the existing vector store and can add, update, or skip — then embeds and indexes into long-term memory."*
+The consolidation example: *"The user mentioned in April they like camping spots; in October, exhausted from work, they prefer a beach vacation. This needs an *update* — not two entries, not deleting the old one: 'user preferred camping in April; prefers a beach vacation in October.' Consolidation retrieves similar memories from the existing vector store and can add, update, or skip — then embeds and indexes into long-term memory."*
 
 ### Technical explanation
 
@@ -363,9 +363,9 @@ The deployment picture: an agent on **AgentCore Runtime** talking to the memory 
 
 ### What the speaker explains
 
-`38:55` — Mani: *"You can deploy with Runtime — or if you already have a pipeline, on EKS or Fargate; we want to meet customers where they are."* `39:36` — Akarsha: *"These are all APIs behind the scenes — based on the permissions you've defined, you can call it from anywhere, integrate with any framework, use it with any model."*
+Mani: *"You can deploy with Runtime — or if you already have a pipeline, on EKS or Fargate; we want to meet customers where they are."* — Akarsha: *"These are all APIs behind the scenes — based on the permissions you've defined, you can call it from anywhere, integrate with any framework, use it with any model."*
 
-`40:06` — one important caveat: *"Only the override strategy's model must be a Bedrock model — because extraction and consolidation run inside the service. Your *agent* can be any model — OpenAI, Gemini, whatever."*
+One important caveat: *"Only the override strategy's model must be a Bedrock model — because extraction and consolidation run inside the service. Your *agent* can be any model — OpenAI, Gemini, whatever."*
 
 ### Technical explanation
 
@@ -392,7 +392,7 @@ The first notebook open in JupyterLab: `math-agent-with-checkpointing.ipynb`, wi
 
 ### What the speaker explains
 
-`41:09` — Akarsha: *"Two examples — one with checkpointing, one with long-term memory. First, a LangGraph agent using the default AgentCore memory saver from `langgraph-checkpoint-aws` — it automatically creates checkpoints behind the scenes: an event store that saves all events in short-term memory, retrievable via `listEvents`."*
+Akarsha: *"Two examples — one with checkpointing, one with long-term memory. First, a LangGraph agent using the default AgentCore memory saver from `langgraph-checkpoint-aws` — it automatically creates checkpoints behind the scenes: an event store that saves all events in short-term memory, retrievable via `listEvents`."*
 
 ![Notebook — cells 1–3: pip install, LangGraph imports, AgentCoreMemorySaver + MemoryClient imports](screenshots/c8s14.png)
 
@@ -429,9 +429,9 @@ The wiring cell: `checkpointer = AgentCoreMemorySaver(memory_id, region_name=reg
 
 ### What the speaker explains
 
-`42:14` — Akarsha: *"We import a memory client, create or get memory by name — it retrieves a memory ID — and provide that into our React agent as the checkpointer, the `AgentCoreMemorySaver` class from langgraph-aws, with the memory ID and region."*
+Akarsha: *"We import a memory client, create or get memory by name — it retrieves a memory ID — and provide that into our React agent as the checkpointer, the `AgentCoreMemorySaver` class from langgraph-aws, with the memory ID and region."*
 
-`43:56` — Mani's critical clarification: *"A question we get 99% of the time — do I need to create the memory every time I initialize the agent? **No.** Creating the memory resource is a one-time activity; afterwards you only provide the memory ID. That's why the helper is called *create-or-get* — so you don't accidentally keep creating resources."*
+Mani's critical clarification: *"A question we get 99% of the time — do I need to create the memory every time I initialize the agent? **No.** Creating the memory resource is a one-time activity; afterwards you only provide the memory ID. That's why the helper is called *create-or-get* — so you don't accidentally keep creating resources."*
 
 ### Key takeaway
 
@@ -453,18 +453,18 @@ The wiring cell: `checkpointer = AgentCoreMemorySaver(memory_id, region_name=reg
 
 ```python
 config = {
-    "configurable": {
-        "thread_id": "session-1",      # REQUIRED: maps to AgentCore session_id
-        "actor_id": "react-agent-1",   # REQUIRED: maps to AgentCore actor_id
-    }
+ "configurable": {
+ "thread_id": "session-1", # REQUIRED: maps to AgentCore session_id
+ "actor_id": "react-agent-1", # REQUIRED: maps to AgentCore actor_id
+ }
 }
 ```
 
 ### What the speaker explains
 
-`42:53` — Akarsha: *"We created a very simple graph — at runtime you provide config: two required values, the `thread_id` (which is the session ID) and the `actor_id`. The actor can be agent-level, user-level, project ID, org ID — even a shared one for everyone."*
+Akarsha: *"We created a very simple graph — at runtime you provide config: two required values, the `thread_id` (which is the session ID) and the `actor_id`. The actor can be agent-level, user-level, project ID, org ID — even a shared one for everyone."*
 
-`45:20` — Mani on ID hygiene: *"Provide the memory ID once at init so the agent knows where to store. Then in the config provide actor ID + session ID per conversation — in production these come from your auth layer / request payload, and the memory ID lives in an env var or SSM parameter."*
+Mani on ID hygiene: *"Provide the memory ID once at init so the agent knows where to store. Then in the config provide actor ID + session ID per conversation — in production these come from your auth layer / request payload, and the memory ID lives in an env var or SSM parameter."*
 
 ### Key takeaway
 
@@ -490,7 +490,7 @@ config = {
 
 ### What the speaker explains
 
-`47:42` — Akarsha: *"A math agent with multiply and addition as tools — we interact continuously in multiple steps, and we can retrieve the checkpoints created at different times… LangGraph creates blob events — checkpoints — and also `writes`, which are intermediate checkpoints."*
+Akarsha: *"A math agent with multiply and addition as tools — we interact continuously in multiple steps, and we can retrieve the checkpoints created at different times… LangGraph creates blob events — checkpoints — and also `writes`, which are intermediate checkpoints."*
 
 ### Why it matters
 
@@ -505,7 +505,7 @@ The follow-up question is the proof: the agent recalls *"multiply 1337 by 515321
 Everything from screenshots 13–20 assembled into one readable file — cells that scrolled past the bottom of the screen are marked, nothing invented:
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="math_agent_checkpointing.py — all notebook cells assembled (transcribed from the episode)" files={[
-  { "path": "math_agent_checkpointing.py", "src": "/bedrock-deepti/code/ch8/math_agent_checkpointing.py", "label": "math_agent_checkpointing.py", "highlights": [[13, 16], [38, 44], [47, 52]], "note": "Transcribed from the on-screen notebook — the imports, create_react_agent call, and the required thread_id/actor_id config are fully visible; scrolled-off blocks are marked with comments." }
+ { "path": "math_agent_checkpointing.py", "src": "/bedrock-deepti/code/ch8/math_agent_checkpointing.py", "label": "math_agent_checkpointing.py", "highlights": [[13, 16], [38, 44], [47, 52]], "note": "Transcribed from the on-screen notebook — the imports, create_react_agent call, and the required thread_id/actor_id config are fully visible; scrolled-off blocks are marked with comments." }
 ]} />
 
 ---
@@ -520,7 +520,7 @@ The open-source **Memory Browser** (localhost:3000): querying memory ID `MathLan
 
 ### What the speaker explains
 
-`48:07` — Akarsha: *"A very simple memory browser we created to inspect — actor `react-agent-1`, session `session-1`. Since we have checkpoints, these are events of type blob — LangGraph creates checkpoints and `writes` (intermediate checkpoints). All this code, including the memory browser, Akarsha has shared on our GitHub — the link is provided."*
+Akarsha: *"A very simple memory browser we created to inspect — actor `react-agent-1`, session `session-1`. Since we have checkpoints, these are events of type blob — LangGraph creates checkpoints and `writes` (intermediate checkpoints). All this code, including the memory browser, Akarsha has shared on our GitHub — the link is provided."*
 
 ### Key takeaway
 
@@ -547,7 +547,7 @@ from strands.hooks import AfterInvocationEvent, HookProvider, HookRegistry, Mess
 
 ### What the speaker explains
 
-`49:29` — Akarsha: *"A customer-support agent using the Strands framework — local tools, connected to AgentCore Memory. For the demo we've seeded it with previous interactions so there's context already."*
+Akarsha: *"A customer-support agent using the Strands framework — local tools, connected to AgentCore Memory. For the demo we've seeded it with previous interactions so there's context already."*
 
 ### Key takeaway
 
@@ -567,35 +567,35 @@ The strategy definitions inside `create_or_get_memory_resource()` — all three 
 
 ```python
 strategies = [
-    {
-        StrategyType.USER_PREFERENCE.value: {
-            "name": "CustomerPreferences",
-            "description": "Captures customer preferences and behavior",
-            "namespaces": ["support/customer/{actorId}/preferences"],
-        }
-    },
-    {
-        StrategyType.SEMANTIC.value: {
-            "name": "CustomerSupportSemantic",
-            "description": "Stores facts from conversations",
-            "namespaces": ["support/customer/{actorId}/semantic"],
-        }
-    },
-    {
-        StrategyType.SUMMARY.value: {
-            "name": "CustomerSupportSummary",
-            "description": "Stores summary of conversations",
-            "namespaces": ["support/customer/{actorId}/{sessionId}"],
-        }
-    }
+ {
+ StrategyType.USER_PREFERENCE.value: {
+ "name": "CustomerPreferences",
+ "description": "Captures customer preferences and behavior",
+ "namespaces": ["support/customer/{actorId}/preferences"],
+ }
+ },
+ {
+ StrategyType.SEMANTIC.value: {
+ "name": "CustomerSupportSemantic",
+ "description": "Stores facts from conversations",
+ "namespaces": ["support/customer/{actorId}/semantic"],
+ }
+ },
+ {
+ StrategyType.SUMMARY.value: {
+ "name": "CustomerSupportSummary",
+ "description": "Stores summary of conversations",
+ "namespaces": ["support/customer/{actorId}/{sessionId}"],
+ }
+ }
 ]
 ```
 
 ### What the speaker explains
 
-`50:05` — Akarsha: *"We created all three strategies to show you. Name and description are yours to choose. The important part — namespaces take a path-like structure with variables: `{actorId}`, `{strategyId}`, `{sessionId}`. Summary gets a `sessionId` because a summary is per-session; semantic and preferences divide by actor only."*
+Akarsha: *"We created all three strategies to show you. Name and description are yours to choose. The important part — namespaces take a path-like structure with variables: `{actorId}`, `{strategyId}`, `{sessionId}`. Summary gets a `sessionId` because a summary is per-session; semantic and preferences divide by actor only."*
 
-`51:29` — Mani clarifies actor choice: *"For a travel agent, actor ID is mostly the user ID — but it can be a user+agent combination with branching. It depends on your use case and how you want to separate."*
+Mani clarifies actor choice: *"For a travel agent, actor ID is mostly the user ID — but it can be a user+agent combination with branching. It depends on your use case and how you want to separate."*
 
 ### Key takeaway
 
@@ -613,9 +613,9 @@ The creation call completing: `event_expiry_days=90`, the memory ID persisted to
 
 ### What the speaker explains
 
-`52:01` — Akarsha: *"`create_or_get_memory` with the memory name, description, the strategies list, and event-expiry days — 7 to 365 days. This takes a couple of minutes only on first creation — not for events or retrievals."*
+Akarsha: *"`create_or_get_memory` with the memory name, description, the strategies list, and event-expiry days — 7 to 365 days. This takes a couple of minutes only on first creation — not for events or retrievals."*
 
-`53:00` — Mani's clarification: *"Those few minutes are only for long-term memory — we create a vector store behind the scenes; short-term is really fast. And `event_expiry_days` applies only to short-term events — long-term has no TTL; you delete records via the APIs per your business use case."*
+Mani's clarification: *"Those few minutes are only for long-term memory — we create a vector store behind the scenes; short-term is really fast. And `event_expiry_days` applies only to short-term events — long-term has no TTL; you delete records via the APIs per your business use case."*
 
 ### Key takeaway
 
@@ -637,19 +637,19 @@ The seeding setup: `CUSTOMER_ID = "customer_001"` and `previous_interactions` �
 
 ```python
 memory_client.create_event(
-    memory_id=memory_id,
-    actor_id=CUSTOMER_ID,
-    session_id="previous_session",
-    messages=previous_interactions
+ memory_id=memory_id,
+ actor_id=CUSTOMER_ID,
+ session_id="previous_session",
+ messages=previous_interactions
 )
 # → ✅ Seeded customer history successfully
-#   💾 Interactions saved to Short-Term Memory
-#   ⏳ Long-Term Memory processing will begin automatically…
+# 💾 Interactions saved to Short-Term Memory
+# ⏳ Long-Term Memory processing will begin automatically…
 ```
 
 ### What the speaker explains
 
-`53:52` — Akarsha: *"We seed previous interactions — batch them or send one by one — through `create_event` with memory ID, actor ID (a customer ID here), and a session ID to group them. You can send up to 100 messages in one event. It takes about 20–30 seconds to reflect in long-term memory — here it was fast."*
+Akarsha: *"We seed previous interactions — batch them or send one by one — through `create_event` with memory ID, actor ID (a customer ID here), and a session ID to group them. You can send up to 100 messages in one event. It takes about 20–30 seconds to reflect in long-term memory — here it was fast."*
 
 ### Technical explanation
 
@@ -671,7 +671,7 @@ The payoff cell: `retrieve_memories` against the **preferences** namespace retur
 
 ### What the speaker explains
 
-`55:12` — Akarsha: *"We created three strategies — here we retrieve from preferences via `retrieve_memories` with the namespace, filling `{actorId}` with the customer ID. Notice the extracted format: a preference, tags as categories, and the context — *why* the model extracted it — 'concern about laptop performance and thermal management during intensive tasks, because the user reported overheating issues with MacBook Pro.'"*
+Akarsha: *"We created three strategies — here we retrieve from preferences via `retrieve_memories` with the namespace, filling `{actorId}` with the customer ID. Notice the extracted format: a preference, tags as categories, and the context — *why* the model extracted it — 'concern about laptop performance and thermal management during intensive tasks, because the user reported overheating issues with MacBook Pro.'"*
 
 ### Technical explanation
 
@@ -689,7 +689,7 @@ Two details make this production-grade:
 Everything from screenshots 22–27 assembled — the strategies dict, the `create_or_get_memory` call, `create_event` seeding, and the retrieval cell:
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="customer_support_memory.py — the Strands demo, all cells assembled (transcribed from the episode)" files={[
-  { "path": "customer_support_memory.py", "src": "/bedrock-deepti/code/ch8/customer_support_memory.py", "label": "customer_support_memory.py", "highlights": [[28, 53], [73, 79]], "note": "Transcribed from the on-screen notebook — the three strategy definitions and the create_event call are fully visible; blocks that scrolled off are marked with comments." }
+ { "path": "customer_support_memory.py", "src": "/bedrock-deepti/code/ch8/customer_support_memory.py", "label": "customer_support_memory.py", "highlights": [[28, 53], [73, 79]], "note": "Transcribed from the on-screen notebook — the three strategy definitions and the create_event call are fully visible; blocks that scrolled off are marked with comments." }
 ]} />
 
 ---
@@ -704,7 +704,7 @@ The AgentCore console's Memory view for the `MathLangraphAgent-VeyRYx5jhJ` resou
 
 ### What the speaker explains
 
-`57:12` — Mani, summarizing: *"We shared the memory browser — viewers can change the namespace and experiment themselves. Provide the memory ID, actor ID, session ID and you can inspect everything."*
+Mani, summarizing: *"We shared the memory browser — viewers can change the namespace and experiment themselves. Provide the memory ID, actor ID, session ID and you can inspect everything."*
 
 ### Why it matters
 

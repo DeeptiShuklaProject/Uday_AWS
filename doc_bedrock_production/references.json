@@ -272,6 +272,22 @@
       "refs": [
         { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-observe-evaluate-optimize-your-agent/01-observe/data_protection.py", "title": "data_protection.py — guardrail + CW data-protection policy" }
       ]
+    },
+    "Chapter_11_AgentCore_Evaluations#11-8": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/06-observe-evaluate-optimize-your-agent/02-evaluate", "title": "02-evaluate — llm-as-a-judge, cicd-gated, ground-truth and framework samples" }
+      ]
+    },
+    "Chapter_11_AgentCore_Evaluations#11-10": {
+      "refs": [
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-observe-evaluate-optimize-your-agent/02-evaluate/llm-as-a-judge-evaluation/evaluate.py", "title": "evaluate.py — EvaluationClient on-demand + create_online_evaluation_config" },
+        { "kind": "file", "repo": "awslabs/agentcore-samples", "path": "01-features/06-observe-evaluate-optimize-your-agent/02-evaluate/cicd-gated-evaluation/scripts/agentcore_eval.py", "title": "agentcore_eval.py — CI/CD-gated evaluation script" }
+      ]
+    },
+    "Chapter_11_AgentCore_Evaluations#11-16": {
+      "refs": [
+        { "kind": "repo", "url": "https://github.com/awslabs/agentcore-samples/tree/main/01-features/06-observe-evaluate-optimize-your-agent/02-evaluate", "title": "02-evaluate — episode's 07-AgentCore-evaluations tutorials relocated here" }
+      ]
     }
   }
 }

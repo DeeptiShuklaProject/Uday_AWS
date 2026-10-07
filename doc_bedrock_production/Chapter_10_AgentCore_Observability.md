@@ -53,7 +53,7 @@ Four reasons observability is a first-class requirement for agents — not an af
 
 ### What the speaker explains
 
-`03:06` — the specialists lay out the drivers:
+The specialists lay out the drivers:
 
 | Driver | Why it's different for agents |
 |---|---|
@@ -72,7 +72,7 @@ The diagram above is the mental model for the whole chapter. One request — *"B
 
 ### Why it matters
 
-`~04:30` — the strategic framing: in a world where every competitor can call the same foundation models, **agent quality is the differentiator** — and quality is unmeasurable without observability. You can't improve latency, cost, correctness or safety you can't see.
+The strategic framing: in a world where every competitor can call the same foundation models, **agent quality is the differentiator** — and quality is unmeasurable without observability. You can't improve latency, cost, correctness or safety you can't see.
 
 ### Key takeaway
 
@@ -92,7 +92,7 @@ The feature announcement slide — Observability is GA alongside the rest of the
 
 ### What the speaker explains
 
-`05:0x` — AgentCore Observability is a **purpose-built observability layer for agents**, powered by CloudWatch. Three headline capabilities on the next slides:
+AgentCore Observability is a **purpose-built observability layer for agents**, powered by CloudWatch. Three headline capabilities on the next slides:
 
 ![Slide — "Track your agent in action" — the trajectory view with feature bullets](screenshots/c10s04.png)
 
@@ -120,7 +120,7 @@ Two dashboards work together: **agent telemetry** (what the framework emitted �
 
 ### What the speaker explains
 
-`06:25` — the architectural commitment: **everything is built on OpenTelemetry (OTel)** — the CNCF open standard for telemetry. No proprietary format, no lock-in: the spans your framework emits, the propagation headers, the data model are all stock OTel.
+The architectural commitment: **everything is built on OpenTelemetry (OTel)** — the CNCF open standard for telemetry. No proprietary format, no lock-in: the spans your framework emits, the propagation headers, the data model are all stock OTel.
 
 ### Technical explanation
 
@@ -138,7 +138,7 @@ Because the plumbing is standard, a LangGraph agent on EKS, a Strands agent on A
 
 ### Why it matters
 
-`~07:30` — Pete's point: you are *not* locked into CloudWatch. Run the ADOT wrapper and point the OTLP exporter at Langfuse, Datadog, or any OTel-compatible backend; or use ADOT for CloudWatch. AgentCore Observability also **vends metrics separately** for its managed services, independent of what your framework emits.
+Pete's point: you are *not* locked into CloudWatch. Run the ADOT wrapper and point the OTLP exporter at Langfuse, Datadog, or any OTel-compatible backend; or use ADOT for CloudWatch. AgentCore Observability also **vends metrics separately** for its managed services, independent of what your framework emits.
 
 ### Key takeaway
 
@@ -152,7 +152,7 @@ Because the plumbing is standard, a LangGraph agent on EKS, a Strands agent on A
 
 ### What the speaker explains
 
-`11:30`–`15:05` — the setup checklist for a **locally hosted or custom-hosted agent** (not on AgentCore Runtime):
+The setup checklist for a **locally hosted or custom-hosted agent** (not on AgentCore Runtime):
 
 1. **Enable CloudWatch Transaction Search** — the X-Ray/CloudWatch feature that ingests OTLP spans into the `aws/spans` log group. One-time, per account/region.
 2. **Install the ADOT Python distribution** — `aws-opentelemetry-distro` plus your framework's OTel extension.
@@ -164,7 +164,7 @@ Because the plumbing is standard, a LangGraph agent on EKS, a Strands agent on A
 
 ### Technical explanation — the environment contract
 
-`15:0x` — the environment variables shown on screen (and in the sample's `.env.example`):
+The environment variables shown on screen (and in the sample's `.env.example`):
 
 ![The environment variable table — OTEL_PYTHON_DISTRO=aws_distro, OTEL_PYTHON_CONFIGURATOR=aws_configurator, OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf, OTLP logs headers](screenshots/c10s14.png)
 
@@ -199,13 +199,13 @@ Notice what's **not** here: no code changes, no SDK calls in the agent, no colle
 
 ### What the speaker explains
 
-`16:08` — when the agent runs on **AgentCore Runtime**, the environment contract collapses: the starter toolkit bakes the OTEL instrumentation into the deployment — no env vars, no wrapper command to manage yourself.
+When the agent runs on **AgentCore Runtime**, the environment contract collapses: the starter toolkit bakes the OTEL instrumentation into the deployment — no env vars, no wrapper command to manage yourself.
 
 ![requirements.txt — strands-agents[otel], bedrock-agentcore, ddgs, aws-opentelemetry-distro](screenshots/c10s17.png)
 
 ### What you are seeing
 
-`17:0x` — the demo agent's `requirements.txt`. The two lines that matter: `strands-agents[otel]` (the framework's OTel extension) and `aws-opentelemetry-distro` (ADOT itself).
+The demo agent's `requirements.txt`. The two lines that matter: `strands-agents[otel]` (the framework's OTel extension) and `aws-opentelemetry-distro` (ADOT itself).
 
 ![The agent file — imports plus the note that OTEL instrumentation is handled by the starter toolkit via opentelemetry-instrument in the Dockerfile CMD](screenshots/c10s18.png)
 
@@ -213,7 +213,7 @@ Notice what's **not** here: no code changes, no SDK calls in the agent, no colle
 
 ### Technical explanation
 
-`16:30` — adapting a local agent for Runtime is the same `BedrockAgentCoreApp` + `@app.entrypoint` + `app.run()` pattern from Chapters 8–9. The observability difference is that **the starter toolkit's generated Dockerfile already wraps the start command in `opentelemetry-instrument`**:
+Adapting a local agent for Runtime is the same `BedrockAgentCoreApp` + `@app.entrypoint` + `app.run()` pattern from Chapters 8–9. The observability difference is that **the starter toolkit's generated Dockerfile already wraps the start command in `opentelemetry-instrument`**:
 
 ![The Dockerfile — uv base image, requirements install, aws-opentelemetry-distro pinned install, non-root user, and the opentelemetry-instrument start command](screenshots/c10s20.png)
 
@@ -237,7 +237,7 @@ Two paths, one destination: **self-hosted** agents configure OTel via env vars; 
 
 ### What the speaker explains
 
-`17:51` — agent/framework spans are only half the picture. The **managed services themselves** — Runtime, Memory, Gateway — emit their own telemetry, enabled per-resource in the console.
+Agent/framework spans are only half the picture. The **managed services themselves** — Runtime, Memory, Gateway — emit their own telemetry, enabled per-resource in the console.
 
 ![The Runtime resources list — 76 runtimes including orchestrator_strands, weather_agent_lang, travel_subagent_strands](screenshots/c10s23.png)
 
@@ -247,14 +247,14 @@ Two paths, one destination: **self-hosted** agents configure OTel via env vars; 
 
 ### Technical explanation
 
-`18:xx` — two independent switches per resource:
+Two independent switches per resource:
 
 | Switch | What it turns on | Destination |
 |---|---|---|
 | **Log delivery** | The service's own application logs | A vended CloudWatch log group (`/aws/vendedlogs/bedrock-agentcore/…`) |
 | **Tracing** | Service-emitted spans (invoke operations, health) | `aws/spans` — merged with your framework spans by trace ID |
 
-The distinction Rajes draws at `~19:30`:
+The distinction Rajes draws:
 
 | | Framework-emitted | Service-emitted |
 |---|---|---|
@@ -283,7 +283,7 @@ The **GenAI Observability → Bedrock AgentCore** landing dashboard in CloudWatc
 
 ### What the speaker explains — the tour
 
-`19:5x`–`21:4x` — the walkthrough proceeds tab by tab:
+The walkthrough proceeds tab by tab:
 
 ![The Agents tab for a single agent — 1 session, 2 traces, 1.3K tokens](screenshots/c10s27.png)
 
@@ -307,7 +307,7 @@ The **GenAI Observability → Bedrock AgentCore** landing dashboard in CloudWatc
 
 ### The two kinds of "session"
 
-`48:11` — a sharp question from the hosts about two different session counts. The answer, worth memorizing:
+A sharp question from the hosts about two different session counts. The answer, worth memorizing:
 
 - **Runtime session IDs** — AgentCore Runtime's microVM isolation boundary (§9.x covered microVM-per-session)
 - **OTel session ID** — *your* application-level session, propagated via baggage (§10.11)
@@ -330,7 +330,7 @@ Same word, different layer: one is platform tenancy, the other is your conversat
 
 ### What the speaker explains
 
-`23:49` — the vocabulary reset. The three pillars aren't interchangeable:
+The vocabulary reset. The three pillars aren't interchangeable:
 
 - **Logs** — *what happened*: discrete events with payloads
 - **Traces** — *how it happened*: the causal chain of operations
@@ -340,13 +340,13 @@ Same word, different layer: one is platform tenancy, the other is your conversat
 
 ### Technical explanation — the span document
 
-`24:xx` — every operation emits a **span**: a JSON document with `traceId` (which tree it belongs to), `spanId` + `parentId` (the hierarchy), `duration`, `events` (things that happened inside it), `attributes` (metadata like model ID or token counts) and `baggage` (your propagated context).
+Every operation emits a **span**: a JSON document with `traceId` (which tree it belongs to), `spanId` + `parentId` (the hierarchy), `duration`, `events` (things that happened inside it), `attributes` (metadata like model ID or token counts) and `baggage` (your propagated context).
 
 ![Slide — "Tracing key concepts" — Session → Trace → Span → Sub-span tree](screenshots/c10s38.png)
 
 ### The hierarchy
 
-`25:xx` — the nesting model:
+The nesting model:
 
 | Level | Meaning | Example |
 |---|---|---|
@@ -371,7 +371,7 @@ This hierarchy is why dashboards can roll up and drill down: sum span durations 
 
 ### What you are seeing
 
-`28:xx`–`30:xx` — the end-to-end pipeline Rajes draws: **two instrumentation layers** feed the OTel SDK, which exports to backends.
+The end-to-end pipeline Rajes draws: **two instrumentation layers** feed the OTel SDK, which exports to backends.
 
 ### Technical explanation — who emits what
 
@@ -381,7 +381,7 @@ This hierarchy is why dashboards can roll up and drill down: sum span durations 
 | **Auto-instrumentation** | HTTP calls, DB calls, API calls, errors, **context propagation headers** | `opentelemetry-instrument` wrapper + ADOT |
 | **OTel SDK (ADOT)** | Collects both, adds resource attributes, batches + exports | Providers for traces/metrics/logs → OTLP → CloudWatch `aws/spans` + log groups |
 
-`29:xx` — the key insight about **different libraries, same standard**: Strands' OTel extension, LangGraph's `openinference`, CrewAI's instrumentation all emit *semantically similar but differently-named* attributes. AgentCore Observability does the **attribute mapping/normalization** for the popular libraries, so you pick your framework's natural telemetry library and the dashboard still interprets it — you don't hand-translate formats.
+The key insight about **different libraries, same standard**: Strands' OTel extension, LangGraph's `openinference`, CrewAI's instrumentation all emit *semantically similar but differently-named* attributes. AgentCore Observability does the **attribute mapping/normalization** for the popular libraries, so you pick your framework's natural telemetry library and the dashboard still interprets it — you don't hand-translate formats.
 
 ### Why it matters
 
@@ -399,19 +399,19 @@ This is the "no lock-in" story made concrete: standard OTel in, CloudWatch (or a
 
 ### What the speaker explains
 
-`35:08` — the distributed-tracing mechanism, explained simply: the **originator creates a trace ID**; OTel injects it into request headers; every receiving system that's OTel-aware reads the same ID and emits spans carrying it. All spans land in the same backend (`aws/spans`) — so the system reassembles the **end-to-end view across processes, hosts and even different runtimes**.
+The distributed-tracing mechanism, explained simply: the **originator creates a trace ID**; OTel injects it into request headers; every receiving system that's OTel-aware reads the same ID and emits spans carrying it. All spans land in the same backend (`aws/spans`) — so the system reassembles the **end-to-end view across processes, hosts and even different runtimes**.
 
-`36:30` — and it's not limited to HTTP: OTel propagation works over **gRPC, Kafka queues, database calls** — the instrumentation hooks each transport.
+And it's not limited to HTTP: OTel propagation works over **gRPC, Kafka queues, database calls** — the instrumentation hooks each transport.
 
 ### Technical explanation — baggage
 
-`37:34` — **baggage** is OTel's user-defined context: arbitrary key/value pairs (`session.id`, `tenant.id`, `conversation.id`, a billing unit) attached to the context and propagated in headers alongside the trace ID. Every downstream span inherits it — which is how a `session.id` set once in the orchestrator shows up on a LangGraph sub-agent's spans three services away.
+**baggage** is OTel's user-defined context: arbitrary key/value pairs (`session.id`, `tenant.id`, `conversation.id`, a billing unit) attached to the context and propagated in headers alongside the trace ID. Every downstream span inherits it — which is how a `session.id` set once in the orchestrator shows up on a LangGraph sub-agent's spans three services away.
 
 ![Slide — the OTel header propagation mechanics](screenshots/c10s44.png)
 
 ### What it looks like in code
 
-`49:57` — in the demo, the orchestrator sets baggage before invoking sub-agents. The real sample shows the pattern — baggage set once, propagated automatically:
+In the demo, the orchestrator sets baggage before invoking sub-agents. The real sample shows the pattern — baggage set once, propagated automatically:
 
 <GitHubExplorer repo="awslabs/agentcore-samples" ref="main" expanded="true" title="01-observe/baggage_context.py — BaggageSpanProcessor propagates context to every span" files={[{"path":"01-features/06-observe-evaluate-optimize-your-agent/01-observe/baggage_context.py","label":"baggage_context.py","highlights":[[55,73],[79,96]],"note":"55–73: BaggageSpanProcessor copies all baggage to every span's attributes at export — no per-span set_attribute() needed. The DISABLE_ADOT_OBSERVABILITY toggle shows the no-lock-in path: swap ADOT for a third-party OTLP endpoint via env vars. 79–96: set session.id + tenant.id + environment once — they ride every child span."}]} />
 
@@ -427,7 +427,7 @@ This is the "no lock-in" story made concrete: standard OTel in, CloudWatch (or a
 
 ### What the speaker explains
 
-`~12:xx` — auto-instrumentation covers HTTP/model/tool calls, but **your business logic** (a session boundary, a specific step, a business attribute) needs explicit spans. The sample's `custom_span_agent.py` shows both moves: create a span with `tracer.start_as_current_span(...)`, and attach attributes via the Strands `trace_attributes` dict.
+Auto-instrumentation covers HTTP/model/tool calls, but **your business logic** (a session boundary, a specific step, a business attribute) needs explicit spans. The sample's `custom_span_agent.py` shows both moves: create a span with `tracer.start_as_current_span(...)`, and attach attributes via the Strands `trace_attributes` dict.
 
 ![custom_span_agent.py imports — from opentelemetry import baggage, context, trace — plus the Strands Agent imports](screenshots/c10s12.png)
 
@@ -447,9 +447,9 @@ This is the "no lock-in" story made concrete: standard OTel in, CloudWatch (or a
 
 ### What the speaker explains
 
-`30:17` — the overhead question every team asks: OTel batching means the exporter flushes asynchronously (default interval ~2s, tunable) — tracing adds minimal per-request latency, and there's a deliberate trade-off between flush frequency and overhead.
+The overhead question every team asks: OTel batching means the exporter flushes asynchronously (default interval ~2s, tunable) — tracing adds minimal per-request latency, and there's a deliberate trade-off between flush frequency and overhead.
 
-`32:00` — then the security question: *what about PII inside spans and logs?* Two layers of answer:
+Then the security question: *what about PII inside spans and logs?* Two layers of answer:
 
 ![CloudWatch log group → Data protection tab](screenshots/c10s41.png)
 
@@ -467,7 +467,7 @@ This is the "no lock-in" story made concrete: standard OTel in, CloudWatch (or a
 
 ### Why it matters
 
-`34:xx` — the episode's honest framing: *don't build agent-specific privacy plumbing*. CloudWatch data protection and Bedrock Guardrails are battle-tested; use them at the log group and the model layer and your traces stay useful without leaking PII.
+The episode's honest framing: *don't build agent-specific privacy plumbing*. CloudWatch data protection and Bedrock Guardrails are battle-tested; use them at the log group and the model layer and your traces stay useful without leaking PII.
 
 ### Key takeaway
 
@@ -481,36 +481,34 @@ This is the "no lock-in" story made concrete: standard OTel in, CloudWatch (or a
 
 ### What the speaker explains
 
-`43:48` — Madu's advanced scenario is the strongest proof of the open-standards story: a **hierarchical multi-agent pattern** where different teams own different agents on **different runtimes**, connected by OTel distributed tracing.
+Madu's advanced scenario is the strongest proof of the open-standards story: a **hierarchical multi-agent pattern** where different teams own different agents on **different runtimes**, connected by OTel distributed tracing.
 
 ```mermaid
 flowchart LR
-    U["🧑 Invoke<br/>prompt + session.id"] --> ORCH
+ U["🧑 Invoke<br/>prompt + session.id"] --> ORCH
 
-    subgraph R1["AgentCore Runtime #1"]
-        ORCH["ORCHESTRATOR<br/>Strands Agent<br/>baggage: session.id"]
-    end
+ subgraph R1["AgentCore Runtime #1"]
+ ORCH["ORCHESTRATOR<br/>Strands Agent<br/>baggage: session.id"]
+ end
 
-    subgraph R2["AgentCore Runtime #2"]
-        TRAVEL["TRAVEL sub-agent<br/>Strands + web_search"]
-    end
+ subgraph R2["AgentCore Runtime #2"]
+ TRAVEL["TRAVEL sub-agent<br/>Strands + web_search"]
+ end
 
-    subgraph R3["AgentCore Runtime #3"]
-        WEATHER["WEATHER sub-agent<br/>LangGraph"]
-    end
+ subgraph R3["AgentCore Runtime #3"]
+ WEATHER["WEATHER sub-agent<br/>LangGraph"]
+ end
 
-    ORCH -- "invoke_agent_runtime()<br/>traceparent header" --> TRAVEL
-    ORCH -- "invoke_agent_runtime()<br/>traceparent header" --> WEATHER
-    SSM[("SSM Param Store<br/>sub-agent ARNs")] -.-> ORCH
+ ORCH -- "invoke_agent_runtime()<br/>traceparent header" --> TRAVEL
+ ORCH -- "invoke_agent_runtime()<br/>traceparent header" --> WEATHER
+ SSM[("SSM Param Store<br/>sub-agent ARNs")] -.-> ORCH
 
-    ORCH & TRAVEL & WEATHER -- "spans (one traceId)" --> CW[["CloudWatch<br/>aws/spans → GenAI<br/>Observability"]]
+ ORCH & TRAVEL & WEATHER -- "spans (one traceId)" --> CW[["CloudWatch<br/>aws/spans → GenAI<br/>Observability"]]
 ```
 
 ![The architecture — Part 2: Multi-Runtime, Multi-Framework, Multi-Agent. Three separate AgentCore Runtimes: an ORCHESTRATOR (Strands) on Runtime #1 invokes a TRAVEL sub-agent (Strands + web_search) on Runtime #2 and a WEATHER sub-agent (LangGraph) on Runtime #3](screenshots/c10s47.png)
 
 ### Technical explanation — how they connect
-
-`44:xx`–`47:xx`:
 
 - **Runtime #1** — orchestrator agent (Strands): sets `session.id` in **OTel baggage**, then calls sub-agents via `invoke_agent_runtime()`
 - **Runtime #2** — travel sub-agent (Strands + `web_search` tool)
@@ -530,7 +528,7 @@ Look closely at `custom-span-agent-demo`: its environment is **"other"** — the
 
 ### Reading the stitched trace
 
-`49:xx`–`52:xx` — drilling into one trace:
+Drilling into one trace:
 
 ![Runtime metrics panel — 8/8 agents reporting, 15 sessions, 27 invocations](screenshots/c10s51.png)
 
@@ -544,11 +542,11 @@ Look closely at `custom-span-agent-demo`: its environment is **"other"** — the
 
 ![The tree view — POST /invocations → invoke_agent Travel Agent → execute_event_loop_cycle → chat claude-haiku + execute_tool web_search](screenshots/c10s56.png)
 
-`50:47` — what to notice: **one trace ID** contains the orchestrator's Strands spans (agentic loop, `execute_event_loop_cycle`), the Runtime's service-emitted `InvokeAgentRuntime` spans, *and* the LangGraph sub-agent's spans from a different runtime. 15 spans on the orchestrator side, 13 on the LangGraph side — stitched end to end.
+What to notice: **one trace ID** contains the orchestrator's Strands spans (agentic loop, `execute_event_loop_cycle`), the Runtime's service-emitted `InvokeAgentRuntime` spans, *and* the LangGraph sub-agent's spans from a different runtime. 15 spans on the orchestrator side, 13 on the LangGraph side — stitched end to end.
 
 ### Why it matters
 
-`51:04` — Pete's stakeholder-trust point: this is the answer to the *"agents are a black box"* objection. You can walk a business user through the trajectory view and show each step, each tool, each handoff — instead of raw logs.
+Pete's stakeholder-trust point: this is the answer to the *"agents are a black box"* objection. You can walk a business user through the trajectory view and show each step, each tool, each handoff — instead of raw logs.
 
 ### Key takeaway
 
@@ -560,7 +558,7 @@ Look closely at `custom-span-agent-demo`: its environment is **"other"** — the
 
 ### What the speaker explains
 
-`52:47`–`58:xx` — the last mile: turning spans into **operational signals**. Because everything flows through CloudWatch, all the standard machinery applies.
+The last mile: turning spans into **operational signals**. Because everything flows through CloudWatch, all the standard machinery applies.
 
 ![CloudWatch Metrics browse — the GenAI dimension combinations: Environment/RemoteEnvironment/RemoteService/Service, RemoteOperation, RemoteResourceIdentifier, ServiceType](screenshots/c10s57.png)
 
@@ -575,19 +573,19 @@ Look closely at `custom-span-agent-demo`: its environment is **"other"** — the
 
 ![A custom dashboard — input/output token bar chart plus per-agent latency (AWS-BedrockRuntime, travel_subagent_strands, weather_agent_lang compared side by side)](screenshots/c10s58.png)
 
-`55:2x` — the latency dashboard above compares the three agents side by side: orchestrator, travel sub-agent, weather sub-agent — plus input/output token counts. This is the *"all the agents seem slow today"* investigation made visual: **which agent, which span, which hop**.
+The latency dashboard above compares the three agents side by side: orchestrator, travel sub-agent, weather sub-agent — plus input/output token counts. This is the *"all the agents seem slow today"* investigation made visual: **which agent, which span, which hop**.
 
 ![Dashboard detail — a span record showing resource attributes (aws.local.service, service.type gen_ai_agent, telemetry.sdk.language) and the custom attribute search.provider=duckduckgo; alarm widgets for memory latency and token_output_alarm](screenshots/c10s60.png)
 
 ### Baggage → queryable attributes
 
-`56:0x` — the payoff of §10.11: custom baggage attributes (like `search.provider=duckduckgo` here) become **queryable fields** in Logs Insights — so you can ask questions like *"which web-search provider answers fastest?"* or *"which tenant is burning tokens?"*
+The payoff of §10.11: custom baggage attributes (like `search.provider=duckduckgo` here) become **queryable fields** in Logs Insights — so you can ask questions like *"which web-search provider answers fastest?"* or *"which tenant is burning tokens?"*
 
 ![The dashboard scrolled — log record fields (@logStream aws/spans, data_format AWS-OTEL-TRACE-V1) and the alarms widgets](screenshots/c10s61.png)
 
 ### Alarms
 
-`56:4x` — CloudWatch alarms on any emitted metric: a memory resource taking too long, token usage spiking from one agent ARN, error rate climbing. The demo shows `memory latency` (OK) and `token_output_alarm` (firing on `GenAISystem-OutputTokens > 100`).
+CloudWatch alarms on any emitted metric: a memory resource taking too long, token usage spiking from one agent ARN, error rate climbing. The demo shows `memory latency` (OK) and `token_output_alarm` (firing on `GenAISystem-OutputTokens > 100`).
 
 ![CloudWatch Overview — Bedrock-AgentCore alarms: token_output_alarm in ALARM, memory latency OK at ~709ms](screenshots/c10s26.png)
 
@@ -603,9 +601,9 @@ Look closely at `custom-span-agent-demo`: its environment is **"other"** — the
 
 ### What the speaker explains
 
-`40:39`–`43:33` — the synthesis slide ties the chapter together: **three telemetry sources** — your agent's framework spans, the managed services' own telemetry, and tool-level data — all normalized into one system. `41:5x` — and crucially, **latency isn't just a framework problem**: runtime hops, gateway calls and memory operations all contribute, which is why the unified view exists.
+The synthesis slide ties the chapter together: **three telemetry sources** — your agent's framework spans, the managed services' own telemetry, and tool-level data — all normalized into one system. — and crucially, **latency isn't just a framework problem**: runtime hops, gateway calls and memory operations all contribute, which is why the unified view exists.
 
-`42:1x` — the data also **powers AgentCore Evaluations**: at production scale with thousands of agent instances, you can't eyeball traces — evaluations run automated quality scoring on the same telemetry, surfacing correctness/helpfulness regressions continuously. (The next episode is the evaluations deep dive.)
+The data also **powers AgentCore Evaluations**: at production scale with thousands of agent instances, you can't eyeball traces — evaluations run automated quality scoring on the same telemetry, surfacing correctness/helpfulness regressions continuously. (The next episode is the evaluations deep dive.)
 
 ### Why it matters
 
@@ -623,7 +621,7 @@ This is the closing argument for "observability-first": the same data that debug
 
 ### What the speaker explains
 
-`59:30` — Rajes' closing: *"The data that you collect makes or breaks your agent quality"* — and everything shown is production-ready today, built on open standards. The docs and samples are live; the same observability extends to the rest of the AgentCore services (Memory, Gateway, Identity, built-in tools).
+Rajes' closing: *"The data that you collect makes or breaks your agent quality"* — and everything shown is production-ready today, built on open standards. The docs and samples are live; the same observability extends to the rest of the AgentCore services (Memory, Gateway, Identity, built-in tools).
 
 <Conversation title="The Episode, As a Conversation" speakers={[{"id":"learner","name":"You","role":"Learner","side":"left","color":"#3b82f6"},{"id":"rajes","name":"Rajes","role":"AgentCore Observability","side":"right","color":"#f97316"},{"id":"madu","name":"Madu","role":"GenAI Observability","side":"right","color":"#22c55e"},{"id":"pete","name":"Pete","role":"Host","side":"right","color":"#a855f7"}]} messages={[{"who":"learner","text":"What do I actually need to make my local agent observable?"},{"who":"rajes","text":"Four things: enable CloudWatch Transaction Search, install the AWS OTel distro plus your framework's OTel extension, set the environment variables (log group, service.name, AGENT_OBSERVABILITY_ENABLED), then run under opentelemetry-instrument. No code changes."},{"who":"learner","text":"And if my agent runs on AgentCore Runtime instead?"},{"who":"madu","text":"Even less work — the starter toolkit wraps the container's start command in opentelemetry-instrument for you. Separately, flip on log delivery and tracing per resource in the console to get the service-emitted telemetry: runtime invocations, memory ops, gateway calls."},{"who":"learner","text":"How do spans from a LangGraph agent end up in the same trace as my Strands orchestrator?"},{"who":"rajes","text":"Trace ID propagation. The originator creates the trace ID; OTel injects it into headers on every call — HTTP, gRPC, Kafka, databases. Every OTel-aware receiver emits child spans with the same ID. All spans land in aws/spans, so the system reassembles the end-to-end view across runtimes and frameworks."},{"who":"learner","text":"What about PII in all those spans?"},{"who":"madu","text":"Two layers. Bedrock Guardrails protect the model interaction itself; CloudWatch data protection policies mask managed identifiers or custom regex matches at the log group — including the vended runtime logs. Use the mature AWS machinery, don't reinvent it for agents."},{"who":"learner","text":"What's the thing people miss about sessions?"},{"who":"pete","text":"There are two. Runtime session IDs are the microVM isolation boundary — platform tenancy. Your OTel session.id is application context you propagate through baggage. Same word, different layer — the dashboards show both."},{"who":"learner","text":"So what does all this data buy me long term?"},{"who":"rajes","text":"Debugging today, quality at scale tomorrow. The same telemetry feeds AgentCore Evaluations — automated scoring across correctness and quality criteria. Data collection is what makes or breaks agent quality; everything else builds on it."}]} />
 

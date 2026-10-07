@@ -32,6 +32,7 @@ export default function Sidebar({ open, onClose, sectionTitle = 'Modules', foote
                 <a
                   href={mod.to || `/chapter/${mod.id}`}
                   className={`sidebar-nav-link${isActive ? ' active' : ''}`}
+                  title={`${mod.number}. ${mod.title}`}
                   onClick={e => { e.preventDefault(); select(mod.id); }}
                 >
                   <span className="nav-icon">{mod.icon}</span>

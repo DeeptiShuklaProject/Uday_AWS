@@ -104,7 +104,7 @@ const mdChapters = (dir, subPath, extraFor) =>
 
 // Mirror only markdown + media + json + code samples referenced by
 // GitHubExplorer "src" overrides (skip __pycache__/backup junk).
-const CODE = /\.(py|js|ts|jsx|tsx|sh|ya?ml|toml|sql|java|go|rs|txt|agentcore)$/i;
+const CODE = /\.(py|js|ts|jsx|tsx|sh|ya?ml|toml|sql|java|go|rs|txt|agentcore|cedar)$/i;
 function mirrorDocs(srcDir, outDir) {
   rmSync(outDir, { recursive: true, force: true });
   const copy = (src, dst) => {

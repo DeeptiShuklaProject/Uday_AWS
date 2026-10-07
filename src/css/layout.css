@@ -99,13 +99,17 @@
   width: 280px;
   background: var(--surface-sidebar);
   color: var(--color-neutral-300);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   z-index: var(--z-sticky);
   border-right: 1px solid rgba(255,255,255,0.06);
   transition: transform var(--transition-slow);
 }
 .sidebar-section {
   padding: var(--space-4) 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 .sidebar-section-title {
   padding: var(--space-2) var(--space-5);
@@ -228,7 +232,7 @@
 .sidebar-footer {
   padding: var(--space-4) var(--space-5);
   border-top: 1px solid rgba(255,255,255,0.06);
-  margin-top: auto;
+  flex: 0 0 auto;
 }
 
 /* ============================================================
