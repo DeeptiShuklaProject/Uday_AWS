@@ -1136,9 +1136,9 @@ AWS CodePipeline is the orchestration layer for CI/CD in the AWS ecosystem. Key 
 ## Architecture
 ```mermaid
 flowchart LR
-    Git[GitHub<br>Push] --> Source[Source Stage]
-    Source --> Build[Build Stage<br>CodeBuild]
-    Build --> Deploy[Deploy Stage<br>ECS/CodeDeploy]
+    Git["GitHub, Push"] --> Source[Source Stage]
+    Source --> Build["Build Stage, CodeBuild"]
+    Build --> Deploy["Deploy Stage, ECS/CodeDeploy"]
 ```
 
 ### Step 1 — Create Pipeline

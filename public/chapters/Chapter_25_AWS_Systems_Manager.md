@@ -254,19 +254,140 @@ aws ssm create-document \
 
 ---
 
-## 10-18. Architecture through DR
+## 10. AWS CLI Commands
+
+```bash
+# Start SSM session (replace SSH)
+aws ssm start-session --target i-1234567890abcdef0
+
+# Send command to multiple instances
+aws ssm send-command --document-name "AWS-RunShellScript" \
+    --targets "Key=tag:Environment,Values=prod" \
+    --parameters commands=["yum update -y"]
+
+# Get parameter
+aws ssm get-parameter --name /prod/db/endpoint --with-decryption
+
+# Put parameter
+aws ssm put-parameter --name /prod/db/endpoint \
+    --value "prod-db.xxx.rds.amazonaws.com" \
+    --type SecureString
+```
+
+---
+
+## 11. Hands-On Practical
+
+*(Session Manager demo covered in EC2 and VPC practicals)*
+
+---
+
+## 12. Production Architecture
+
+```
+Production SSM Setup:
+  - Session Manager: replace SSH/RDP for all instances
+  - Parameter Store: all config values (endpoints, feature flags)
+  - Patch Manager: weekly patching with maintenance windows
+  - Run Command: execute commands across fleet
+  - Automation: runbooks for common operations
+  - State Manager: enforce desired state on instances
+```
+
+---
+
+## 13. Security Best Practices
+
+1. **Session Manager over SSH** -- no port 22, all sessions logged
+2. **IAM-based access** -- control who can start sessions on which instances
+3. **Session logging** -- CloudWatch Logs + S3 for audit
+4. **SecureString parameters** -- encrypt sensitive values with KMS
+5. **Parameter Store hierarchy** -- /env/app/setting for organization
+6. **Patch Manager baselines** -- define approved patches
+
+---
+
+## 14. High Availability
+
+```
+SSM Built-in HA:
+  - Regional managed service, multi-AZ
+  - Agent-based: SSM Agent on each instance
+  - No single point of failure
+  - Works in private subnets (with VPC endpoints)
+```
+
+---
+
+## 15. Scalability
+
+```
+Parameter Store:
+  - Standard: 10,000 parameters, free, 40 TPS
+  - Advanced: 100,000 parameters, $0.05/param/month, higher TPS
+  - Use standard tier unless you need more
+
+Run Command:
+  - Target thousands of instances simultaneously
+  - Use tags or resource groups for targeting
+```
+
+---
+
+## 16. Monitoring & Observability
+
+```
+Session Manager Logging:
+  - CloudWatch Logs: real-time session transcripts
+  - S3: session logs for long-term storage
+  - CloudTrail: who started sessions, when
+
+Run Command:
+  - Command execution status and output in console
+  - CloudWatch Events for command completion
+
+Alarms:
+  - Patch compliance < 100% -> alert
+  - Failed Run Commands -> alert
+```
+
+---
+
+## 17. Cost Optimization
+
+```
+Pricing:
+  - Session Manager: free
+  - Run Command: free
+  - Parameter Store (Standard): free (10,000 params)
+  - Parameter Store (Advanced): $0.05/param/month
+  - Patch Manager: free
+  - Automation: free for AWS-provided runbooks
+```
+
+---
+
+## 18. Disaster Recovery
+
+```
+DR:
+  - Parameter Store: replicate to DR region via Lambda/IaC
+  - Automation runbooks: stored as SSM documents (version controlled)
+  - Patch baselines: create same baselines in DR region
+  - IaC: define all SSM resources in CloudFormation
+```
 
 ### Production SSM Architecture
 ```mermaid
 flowchart TD
-    Admin[Admin / DevOps] -->|Session Manager| EC2[EC2 Instances<br>SSM Agent]
+    Admin[Admin / DevOps] -->|Session Manager| EC2["EC2 Instances, SSM Agent"]
     Admin -->|Run Command| EC2
     Admin -->|Patch Manager| EC2
     
-    EC2 -->|Read Config| PS[Parameter Store<br>/app/prod/*]
+    EC2 -->|Read Config| PS["Parameter Store, /app/prod/*"]
     EC2 -->|Report Inventory| Inventory[SSM Inventory]
     
-    PM[Patch Manager] -->|Scheduled| MW[Maintenance Window<br>Sunday 3-5 AM]
+    PM[Patch Manager] -->|Scheduled| MW["Maintenance Window, Sunday 3-5 AM"]
     MW --> EC2
 ```
 
@@ -306,6 +427,32 @@ Check:
 
 ---
 
+## 20. Common Production Problems
+
+| # | Problem | Root Cause | Prevention |
+|---|---------|------------|------------|
+| 1 | SSM Agent offline | Instance can't reach SSM endpoint | VPC endpoints or NAT Gateway |
+| 2 | Session Manager fails | Missing IAM role/policy | Attach AmazonSSMManagedInstanceCore |
+| 3 | Parameter not found | Wrong path or region | Use full path, check region |
+| 4 | Patch compliance failure | Instances not in patch group | Tag instances correctly |
+
+---
+
+## 21. Real-World Scenario
+
+### Scenario: Emergency Patching Across 500 Instances
+
+**Event**: Critical CVE announced, need to patch all instances immediately.
+
+**Response**:
+1. SSM Patch Manager: create patch baseline with critical patch
+2. Run Command: target all instances by tag (Environment=prod)
+3. Maintenance window: immediate (override scheduled window)
+4. Monitor: patch compliance dashboard shows progress
+5. Result: 500 instances patched in 30 minutes, no SSH needed
+
+---
+
 ## 22. Interview Questions
 
 ### Basic Questions (10)
@@ -340,9 +487,107 @@ A: A JSON or YAML definition of actions to perform. Types: Command (Run Command)
 **Q10: Can SSM manage on-premises servers?**
 A: Yes. Install SSM Agent on on-premises servers, register as managed instances. Enables Session Manager, Run Command, Patch Manager for hybrid environments.
 
-### Intermediate-Advanced Questions (30)
+### Intermediate Questions (10)
 
-**Q11-Q40**: *(Cover: SSM in private subnets, VPC endpoints for SSM, maintenance windows, State Manager associations, Inventory collection, Automation runbooks, change management with Change Manager, OpsCenter for operational issues, hybrid management, fleet-wide compliance, SSM + CloudWatch integration, and operational best practices.)*
+**Q11: How do you use SSM with instances in private subnets that have no internet access?**
+A: Create **Interface VPC Endpoints** for `com.amazonaws.<region>.ssm`, `ssmmessages`, and `ec2messages` (plus `kms` if sessions are encrypted, `logs` for CloudWatch logging, and an S3 **Gateway** endpoint for patch baselines and output). Enable Private DNS on the endpoints. Allow HTTPS (443) from the instance security group to the endpoint security group. Then SSM Agent reaches Systems Manager without a NAT Gateway or public IP.
+
+**Q12: What are Maintenance Windows?**
+A: Scheduled time ranges (cron/rate expressions, with duration and cutoff) when SSM runs tasks on registered targets: Run Command, Automation, Lambda, or Step Functions. Use them for patching, AMI updates, and backups outside business hours. You can control concurrency (`MaxConcurrency`) and error thresholds (`MaxErrors`) so a bad patch doesn't take down the whole fleet.
+
+**Q13: What is State Manager and what is an association?**
+A: State Manager keeps instances in a defined state. An **association** binds an SSM document (e.g., install CloudWatch Agent, enforce config, join domain) to targets on a schedule. If something drifts (e.g., someone uninstalls the agent), the next run fixes it. It is useful for configuration enforcement and bootstrapping new instances that match a tag.
+
+**Q14: What does SSM Inventory collect?**
+A: Metadata from managed nodes: installed applications, AWS components, network config, Windows updates, services, files, registry, and custom inventory. Use **Resource Data Sync** to send inventory from all accounts and Regions to one S3 bucket, then query it with Athena or QuickSight, e.g., "which instances run OpenSSL < 3.0?"
+
+**Q15: What are Automation runbooks?**
+A: Multi-step workflows (YAML/JSON) that call AWS APIs, run scripts, branch, wait for approval, and run Run Command on instances. Examples: `AWS-RestartEC2Instance`, `AWS-CreateImage`, and custom "patch → test → create golden AMI". They can be triggered manually, by EventBridge, by Config remediation, or by maintenance windows. They support rate control across many targets and accounts.
+
+**Q16: How do you organize Parameter Store parameters?**
+A: Use hierarchies like `/<app>/<env>/<component>/<key>` (e.g., `/orders/prod/db/host`). Fetch a whole environment with `GetParametersByPath --recursive`. Restrict IAM by path (`arn:aws:ssm:*:*:parameter/orders/prod/*`). Use tags for ownership, parameter labels and versions for rollback, and **Advanced** tier for values over 4 KB or for parameter policies (expiration and notifications).
+
+**Q17: How do you enable session logging and auditing in Session Manager?**
+A: In Session Manager preferences, enable logging of session output to S3 (encrypted) and/or CloudWatch Logs, and require KMS encryption of the session data. CloudTrail logs `StartSession`/`TerminateSession` (who, when, which instance). Use the `SSM-SessionManagerRunShell` document to set the run-as user, idle timeout, and shell profile.
+
+**Q18: How do you restrict who can start sessions on which instances?**
+A: Use IAM policies on `ssm:StartSession` with resource ARNs and tag conditions (`ssm:resourceTag/Environment = dev`). Limit the documents users can call (e.g., only `AWS-StartPortForwardingSession`). Allow `ssm:TerminateSession` only for the user's own sessions (`${aws:userid}`). Enable run-as with OS users mapped through the `SSMSessionRunAs` tag.
+
+**Q19: What is port forwarding with Session Manager?**
+A: Session Manager can tunnel a local port to a port on the instance (`AWS-StartPortForwardingSession`) or to a remote host through the instance (`AWS-StartPortForwardingSessionToRemoteHost`), e.g., to reach a private RDS database from your laptop. No bastion host, no open inbound ports, and everything is audited.
+
+**Q20: How does SSM integrate with CloudWatch?**
+A: Run Command and Session Manager output go to CloudWatch Logs. The CloudWatch Agent config is stored in Parameter Store and deployed through State Manager or Run Command. EventBridge rules react to SSM events (command failed, non-compliant patch status) to send notifications or remediate. Use dashboards and alarms on compliance metrics and OpsCenter OpsItems created by alarms.
+
+### Advanced Questions (10)
+
+**Q21: What is Change Manager?**
+A: A change-management framework in SSM. You define change templates with required approvers, then submit change requests that run Automation runbooks after approval. It respects change calendars (freeze periods), works across accounts through Organizations, and keeps a full audit trail. It integrates with ITSM tools such as ServiceNow and Jira.
+
+**Q22: What is OpsCenter?**
+A: A central place to view and fix operational issues (OpsItems). CloudWatch alarms, EventBridge rules, Config, and Security Hub can create OpsItems automatically, including related resources, runbooks, and logs. Engineers can run Automation runbooks from the OpsItem to fix it. It cuts mean time to resolution (MTTR) and de-duplicates similar issues.
+
+**Q23: How do you manage a hybrid (on-prem + AWS) fleet?**
+A: Create a **hybrid activation** (activation code + ID with an IAM service role), install SSM Agent on on-prem servers or VMs, and register them. They show up as `mi-xxxxxxxx` managed nodes. You can then use Session Manager, Run Command, Patch Manager, Inventory, and State Manager the same way as on EC2. Use the advanced-instances tier for Session Manager on many on-prem nodes.
+
+**Q24: How do you achieve fleet-wide patch compliance across multiple accounts?**
+A: Use **Quick Setup** or Patch Policies with AWS Organizations to deploy patch baselines and schedules to all accounts and Regions. Use custom baselines per OS with auto-approval delays (e.g., critical patches after 7 days). Patch dev first, then prod, with maintenance windows. Aggregate compliance via Resource Data Sync and Security Hub, and alert on non-compliant nodes.
+
+**Q25: What is Distributor?**
+A: An SSM feature to package and publish software (agents, tools) as versioned packages, then install or uninstall them across the fleet through Run Command or State Manager. AWS publishes packages such as the CloudWatch Agent and security agents. It is good for standardizing third-party agent rollout.
+
+**Q26: What is Fleet Manager?**
+A: A console UI to manage nodes remotely: file system browser, performance counters, logs, users/groups, Windows registry, and RDP (Remote Desktop) to Windows instances through Session Manager without opening port 3389. It removes the need for jump boxes.
+
+**Q27: How do you use Parameter Store in Lambda and ECS without slowing every request?**
+A: For Lambda, use the **AWS Parameters and Secrets Lambda Extension**, which caches values locally with a TTL, or fetch once during init outside the handler. For ECS, reference parameters in the task definition `secrets` field (`valueFrom: arn:aws:ssm:...`). They are injected as environment variables at container start. Watch the Parameter Store throughput limits (raise with higher throughput settings).
+
+**Q28: What is AppConfig and how does it relate to Parameter Store?**
+A: AWS AppConfig (a Systems Manager capability) handles dynamic configuration and feature flags with **controlled deployments**: validators (JSON schema/Lambda), gradual rollout strategies, and automatic rollback on CloudWatch alarms. Parameter Store is a simple key-value store with no deployment safety. Use AppConfig for runtime flags you change often in production.
+
+**Q29: What IAM permissions does an instance need to be managed by SSM?**
+A: An instance profile with `AmazonSSMManagedInstanceCore` (core agent communication). Add `CloudWatchAgentServerPolicy` for the CloudWatch agent, S3 and KMS permissions for session logs and encryption, and `ssm:GetParameter*` only on required paths. Alternatively, enable **Default Host Management Configuration** so EC2 instances are managed without attaching a profile.
+
+**Q30: How do you troubleshoot an instance that doesn't appear in Fleet Manager?**
+A: Check: 1) SSM Agent installed and running (`systemctl status amazon-ssm-agent`). 2) The instance profile has `AmazonSSMManagedInstanceCore` (or DHMC is enabled). 3) Network path to SSM endpoints (NAT or VPC endpoints, SG/NACL on 443, DNS resolution). 4) Correct Region. 5) Agent logs at `/var/log/amazon/ssm/amazon-ssm-agent.log`. 6) Run the `AWSSupport-TroubleshootManagedInstance` automation runbook.
+
+### Scenario-Based Questions (10)
+
+**Q31: Your security team wants to close port 22 on all EC2 instances. How do you do it?**
+A: Roll out SSM Agent and the `AmazonSSMManagedInstanceCore` role (or DHMC) to all instances. Add VPC endpoints for private subnets. Enable Session Manager logging to S3 and CloudWatch with KMS. Train engineers on `aws ssm start-session` and port forwarding. Then remove port 22 rules from security groups and use AWS Config rules (`restricted-ssh`) with auto-remediation to keep them closed.
+
+**Q32: A critical CVE needs patching across 2,000 instances tonight. What is your approach?**
+A: Use Patch Manager with a custom baseline that approves the CVE patch. Run `AWS-RunPatchBaseline` through a maintenance window or Run Command targeting by tags. Use rate control: start with a canary of 5%, `MaxConcurrency=10%`, and `MaxErrors=2%`. Use ASG instance refresh or a new golden AMI for immutable fleets. Track progress in Patch compliance and Inventory, and report to stakeholders.
+
+**Q33: An application keeps failing because someone manually changes a config file on servers. How do you prevent it?**
+A: Store the desired configuration in an SSM document or S3, and create a State Manager association that re-applies it every 30 minutes. Remove direct SSH and use Session Manager with restricted run-as users. Use Change Manager for approved changes. Alert on drift through association compliance status in EventBridge.
+
+**Q34: You need to rotate a config value used by 50 microservices without redeploying them. What do you do?**
+A: Put the value in Parameter Store (or AppConfig for safe rollout). Services read it at runtime with caching (TTL of a few minutes) through the SDK or Lambda extension. Update the parameter and services pick it up on the next refresh. For instant propagation, use EventBridge on the `Parameter Store Change` event to trigger cache refresh. For risky changes, use AppConfig with gradual deployment and alarm-based rollback.
+
+**Q35: A developer needs temporary access to a production database in a private subnet. How do you grant it securely?**
+A: Use Session Manager port forwarding to a remote host through an SSM-managed instance (or ECS task). Grant time-bound IAM permissions through IAM Identity Center with a permission set allowing `ssm:StartSession` only with the `AWS-StartPortForwardingSessionToRemoteHost` document on that target. Use database credentials from Secrets Manager. Everything is logged and no inbound port is opened.
+
+**Q36: Your patching window keeps running over and causing outages. How do you improve it?**
+A: Split the fleet into patch groups (by tag) and stagger windows. Use rate control and `MaxErrors` to stop early. Use pre- and post-patch hooks (Automation) to take instances out of the load balancer, patch, run health checks, and add them back. Move to immutable infrastructure: build a patched golden AMI with EC2 Image Builder and roll it out with ASG instance refresh.
+
+**Q37: How would you automatically remediate a non-compliant resource found by AWS Config?**
+A: Attach an SSM Automation runbook as the Config rule's remediation action (e.g., `AWS-DisablePublicAccessForSecurityGroup`, `AWS-EnableS3BucketEncryption`). Set automatic remediation with a retry limit and give it an assume role with least privilege. Track results in Config and OpsCenter.
+
+**Q38: Run Command shows "Undeliverable" or "Pending" for some instances. What do you check?**
+A: The instance is offline or not connected: agent stopped, outdated agent, wrong IAM role, missing endpoints/NAT, DNS issues, or the instance is stopped. Check the ping status in Fleet Manager, then update the agent (`AWS-UpdateSSMAgent`). Run `AWSSupport-TroubleshootManagedInstance`. Make sure targets match the right tags and that the command's timeout is long enough.
+
+**Q39: How do you build a golden AMI pipeline using SSM?**
+A: Automation runbook (or EC2 Image Builder): launch from the latest base AMI (read from the public SSM parameter `/aws/service/ami-amazon-linux-latest/...`), run patching and hardening (CIS) with Run Command, install agents, run Inspector scans, create the AMI, store its ID in Parameter Store (`/golden-ami/latest`), share it with accounts, and terminate the build instance. Schedule it monthly. Launch templates reference the parameter.
+
+**Q40: What are SSM operational best practices for production?**
+A: Use Session Manager only (no SSH) with logging and KMS. Use VPC endpoints for private subnets. Organize Parameter Store by hierarchy with path-based IAM. Use patch baselines with staged maintenance windows and rate control. Enforce configuration with State Manager. Centralize Inventory and compliance with Resource Data Sync. Use Automation and Change Manager for repeatable, approved changes. Use OpsCenter for incidents. Set up Quick Setup across the Organization.
+
+---
+
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above)*
 
 ---
 

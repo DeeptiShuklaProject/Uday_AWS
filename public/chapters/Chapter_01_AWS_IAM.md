@@ -254,15 +254,15 @@ arn:aws:lambda:ap-south-1:123456789012:function:my-func
 ```mermaid
 flowchart TD
     subgraph Identity["Identity Layer"]
-        User[IAM User<br>Console/CLI]
-        Fed[Federated User<br>AD/SAML/OIDC]
-        App[Application<br>EC2/Lambda/ECS]
+        User["IAM User, Console/CLI"]
+        Fed["Federated User, AD/SAML/OIDC"]
+        App["Application, EC2/Lambda/ECS"]
     end
     
     subgraph IAM_Service["AWS IAM"]
-        Auth[Authentication<br>Who are you?]
-        Authz[Authorization<br>What can you do?]
-        Policy[Policy Evaluation<br>JSON policies]
+        Auth["Authentication, Who are you?"]
+        Authz["Authorization, What can you do?"]
+        Policy["Policy Evaluation, JSON policies"]
     end
     
     subgraph Resources["AWS Resources"]
@@ -279,7 +279,7 @@ flowchart TD
     Authz --> Policy
     Policy -->|Allow/Deny| Resources
     
-    CT[CloudTrail<br>Audit Logs] -.-> IAM_Service
+    CT["CloudTrail, Audit Logs"] -.-> IAM_Service
 ```
 
 ### How IAM Request Flow Works
@@ -547,9 +547,9 @@ Create a secure IAM structure for a three-team organization with least-privilege
 ```mermaid
 flowchart TD
     subgraph Groups["IAM Groups"]
-        Admins[Admins Group<br>Full Access + MFA Required]
-        Devs[Developers Group<br>EC2+S3+Lambda+DynamoDB]
-        RO[ReadOnly Group<br>View-only Access]
+        Admins["Admins Group, Full Access + MFA Required"]
+        Devs["Developers Group, EC2+S3+Lambda+DynamoDB"]
+        RO["ReadOnly Group, View-only Access"]
     end
     
     subgraph Users["IAM Users"]
@@ -565,9 +565,9 @@ flowchart TD
     Eve --> RO
     
     subgraph Roles["IAM Roles"]
-        EC2Role[WebAppRole<br>For EC2 instances]
-        LambdaRole[LambdaExecRole<br>For Lambda functions]
-        CrossRole[CrossAccountRole<br>For monitoring account]
+        EC2Role["WebAppRole, For EC2 instances"]
+        LambdaRole["LambdaExecRole, For Lambda functions"]
+        CrossRole["CrossAccountRole, For monitoring account"]
     end
 ```
 
@@ -669,10 +669,10 @@ flowchart TD
             SCP[Service Control Policies]
         end
         subgraph ProdAcct["Production Account"]
-            ProdRoles[Production Roles<br>Deploy, Monitor, Operate]
+            ProdRoles["Production Roles, Deploy, Monitor, Operate"]
         end
         subgraph DevAcct["Development Account"]
-            DevRoles[Development Roles<br>Build, Test, Debug]
+            DevRoles["Development Roles, Build, Test, Debug"]
         end
     end
     
@@ -1138,15 +1138,15 @@ Everything you do in AWS passes through IAM. Master it, and you've secured the f
 
 ```mermaid
 flowchart TD
-    Root[Root Account<br>🔒 MFA Enabled<br>Never used daily] --> IAM[IAM Service]
+    Root["Root Account, 🔒 MFA Enabled, Never used daily"] --> IAM[IAM Service]
     
-    IAM --> AdminGroup[Admin Group<br>AdministratorAccess]
-    IAM --> DevGroup[Developer Group<br>Custom Dev Policy]
-    IAM --> AuditGroup[Auditor Group<br>ReadOnlyAccess]
+    IAM --> AdminGroup["Admin Group, AdministratorAccess"]
+    IAM --> DevGroup["Developer Group, Custom Dev Policy"]
+    IAM --> AuditGroup["Auditor Group, ReadOnlyAccess"]
     
-    AdminGroup --> AdminUser[admin-user<br>MFA ✅]
-    DevGroup --> DevUser[dev-user<br>MFA ✅]
-    AuditGroup --> AuditUser[audit-user<br>MFA ✅]
+    AdminGroup --> AdminUser["admin-user, MFA ✅"]
+    DevGroup --> DevUser["dev-user, MFA ✅"]
+    AuditGroup --> AuditUser["audit-user, MFA ✅"]
 ```
 
 ## What You Will Learn
@@ -1601,9 +1601,9 @@ aws iam delete-group --group-name Auditors
 
 ```mermaid
 flowchart LR
-    EC2[EC2 Instance<br>t2.micro] -->|Assume Role<br>via Instance Profile| STS[STS<br>Temp Credentials]
+    EC2["EC2 Instance, t2.micro"] -->|Assume Role<br>via Instance Profile| STS["STS, Temp Credentials"]
     STS -->|Auto-refreshed| EC2
-    EC2 -->|s3:ListBucket<br>s3:GetObject| S3[S3 Bucket<br>prod-demo-bucket]
+    EC2 -->|s3:ListBucket<br>s3:GetObject| S3["S3 Bucket, prod-demo-bucket"]
 ```
 
 ## What You Will Learn

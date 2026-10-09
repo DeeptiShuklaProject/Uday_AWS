@@ -19,7 +19,11 @@ function loadProgress(storageKey) {
   try {
     const raw = localStorage.getItem(storageKey);
     const parsed = raw ? JSON.parse(raw) : null;
-    return parsed && typeof parsed === 'object' && parsed.modules ? parsed : freshProgress();
+    // Merge over defaults — a stored blob from an older schema can lack
+    // labsCompleted/achievements/etc and crash getStats() on render.
+    return parsed && typeof parsed === 'object' && parsed.modules
+      ? { ...freshProgress(), ...parsed }
+      : freshProgress();
   } catch {
     return freshProgress();
   }

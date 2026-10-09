@@ -727,10 +727,10 @@ Amazon ECS is AWS's native, highly integrated container orchestration service. K
 ## Architecture
 ```mermaid
 flowchart TD
-    ALB[ALB] --> ECS[ECS Service<br>Desired: 2]
-    ECS --> Task1[Task 1<br>Container]
-    ECS --> Task2[Task 2<br>Container]
-    Task1 & Task2 --> ECR[ECR<br>Image Source]
+    ALB[ALB] --> ECS["ECS Service, Desired: 2"]
+    ECS --> Task1["Task 1, Container"]
+    ECS --> Task2["Task 2, Container"]
+    Task1 & Task2 --> ECR["ECR, Image Source"]
 ```
 
 ### Step 1 — Create ECS Cluster

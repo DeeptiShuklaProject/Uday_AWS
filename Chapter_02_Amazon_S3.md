@@ -554,11 +554,11 @@ Create a production S3 bucket with versioning, encryption, lifecycle rules, even
 #### Architecture
 ```mermaid
 flowchart LR
-    App[Application] -->|Upload| Bucket[S3 Bucket<br>ap-south-1<br>Versioned + Encrypted]
-    Bucket -->|Event| Lambda[Lambda<br>Process Upload]
-    Bucket -->|Lifecycle| IA[Standard-IA<br>30 days]
-    IA --> Glacier[Glacier<br>90 days]
-    Bucket -->|CRR| DR[DR Bucket<br>us-west-2]
+    App[Application] -->|Upload| Bucket["S3 Bucket, ap-south-1, Versioned + Encrypted"]
+    Bucket -->|Event| Lambda["Lambda, Process Upload"]
+    Bucket -->|Lifecycle| IA["Standard-IA, 30 days"]
+    IA --> Glacier["Glacier, 90 days"]
+    Bucket -->|CRR| DR["DR Bucket, us-west-2"]
 ```
 
 #### Step 1 — Create Production Bucket
@@ -1026,7 +1026,13 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 23. Common Mistakes
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above — Q31 through Q40)*
+
+---
+
+## 24. Common Mistakes
 
 1. **Public bucket for "testing"** — attackers scan for open S3 buckets constantly
 2. **No lifecycle rules** — paying full price for data accessed once a year
@@ -1041,7 +1047,7 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 24. Production Checklist
+## 25. Production Checklist
 
 - [ ] Block Public Access enabled at account level
 - [ ] Block Public Access enabled at bucket level
@@ -1062,7 +1068,7 @@ A: S3 replication only applies to NEW objects uploaded AFTER replication is enab
 
 ---
 
-## 25. Chapter Summary
+## 26. Chapter Summary
 
 Amazon S3 is the most used AWS service — virtually every architecture includes it. Key takeaways:
 
@@ -1469,3 +1475,102 @@ aws s3api get-bucket-replication \
 
 ---
 
+# 🔬 Practical Lab 27 — S3 bucket Cross-Account Replication (CRR)
+
+## Lab Overview
+| Item | Detail |
+|------|--------|
+| **Difficulty** | Advanced |
+| **Duration** | 30 minutes |
+| **Cost** | A few cents (storage in second bucket, replication data transfer) |
+| **Prerequisites** | Two AWS Accounts (Source Account A, Destination Account B) |
+| **Lab Environment** | Two AWS Accounts, Source Bucket in Account A, Destination Bucket in Account B |
+
+## Business Scenario
+> Your organization uses a multi-account strategy. You need to replicate all backups stored in a centralized production account (Account A) to a separate, isolated disaster recovery account (Account B) in a different region. The destination account belongs to a completely different AWS organization unit, ensuring that if Account A is compromised, the data in Account B remains secure.
+
+### Step 1 — Create Destination Bucket in Account B
+1. Log in to your **Destination AWS Account (Account B)**.
+2. Go to **S3** → **Create bucket**.
+3. **Bucket name**: e.g., `dr-destination-bucket-{account-b-id}` (can be any region, usually different for CRR).
+4. **Bucket Versioning**: Click **Enable** (Required for replication).
+5. Click **Create bucket**.
+
+### Step 2 — Attach Bucket Policy in Account B
+To allow Account A to replicate objects into Account B's bucket, we need a bucket policy on the destination bucket.
+1. Open the newly created destination bucket in Account B.
+2. Go to the **Permissions** tab.
+3. Scroll down to **Bucket policy** and click **Edit**.
+4. Paste the following policy. Replace `<DESTINATION_BUCKET_NAME>` with your actual bucket name, and `<ACCOUNT_A_ID>` with the AWS Account ID of the source account.
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Sid": "AllowReplicationFromAccountA",
+               "Effect": "Allow",
+               "Principal": {
+                   "AWS": "arn:aws:iam::<ACCOUNT_A_ID>:root"
+               },
+               "Action": [
+                   "s3:ReplicateObject",
+                   "s3:ReplicateDelete"
+               ],
+               "Resource": "arn:aws:s3:::<DESTINATION_BUCKET_NAME>/*"
+           },
+           {
+               "Sid": "AllowReplicationListFromAccountA",
+               "Effect": "Allow",
+               "Principal": {
+                   "AWS": "arn:aws:iam::<ACCOUNT_A_ID>:root"
+               },
+               "Action": [
+                   "s3:List*",
+                   "s3:GetBucketVersioning",
+                   "s3:PutBucketVersioning"
+               ],
+               "Resource": "arn:aws:s3:::<DESTINATION_BUCKET_NAME>"
+           }
+       ]
+   }
+   ```
+5. Click **Save changes**. Note down the Destination Bucket ARN.
+
+### Step 3 — Create Source Bucket in Account A
+1. Log in to your **Source AWS Account (Account A)**.
+2. Go to **S3** → **Create bucket**.
+3. **Bucket name**: e.g., `prod-source-bucket-{account-a-id}`.
+4. **Bucket Versioning**: Click **Enable** (Required for replication).
+5. Click **Create bucket**.
+
+### Step 4 — Create Replication Rule in Account A
+1. In **Account A**, click into your source bucket.
+2. Go to the **Management** tab.
+3. Scroll down to **Replication rules** and click **Create replication rule**.
+4. **Rule name**: e.g., `CrossAccountReplication`.
+5. **Status**: Ensure it is **Enabled**.
+6. **Source bucket**: Select **Apply to all objects in the bucket**.
+7. **Destination**:
+   - Select **Specify a bucket in another account**.
+   - **Account ID**: Enter the 12-digit AWS Account ID of Account B.
+   - **Bucket name**: Enter the name of the destination bucket (e.g., `dr-destination-bucket-{account-b-id}`).
+   - Check the box **Change object ownership to destination bucket owner** (Highly recommended so Account B owns the replicated files).
+8. **IAM Role**: Select **Create new role**. (AWS will automatically create an IAM role with the correct permissions to read from Source and write to Destination).
+9. Click **Save**. If prompted to replicate existing objects, choose **No, do not replicate existing objects**.
+
+### Step 5 — Verify the Setup
+1. In **Account A**, upload a new file (e.g., `test-backup.txt`) to the source bucket.
+2. Click on the uploaded file and check the **Object properties**. Scroll to **Replication status**; it should initially say **PENDING**.
+3. Wait a few minutes and refresh. It should change to **COMPLETED**.
+4. Log in to **Account B** and navigate to the destination bucket.
+5. You should see `test-backup.txt` successfully replicated.
+
+### Step 6 — Clean Up
+1. In **Account B**, empty and delete the destination bucket.
+2. In **Account A**, empty and delete the source bucket.
+3. In **Account A**, go to **IAM** → **Roles**, find the role starting with `s3crr_role_for_...` and delete it.
+
+🎯 **Interview Insight**: "Why use Cross-Account Replication instead of Same-Account Replication?"
+> **Strong answer**: "Cross-Account Replication provides strict security isolation. In the event of a total compromise of the primary production AWS account (e.g., credentials leaked, malicious deletion), the backups in the separate disaster recovery account remain safe, as the compromised account lacks permissions to delete objects in the destination account bucket. Changing the replica owner to the destination account guarantees full ownership separation."
+
+---

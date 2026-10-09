@@ -217,18 +217,18 @@ flowchart TD
     subgraph VPC["Production VPC"]
         subgraph Public["Public Subnets"]
             ALB[ALB]
-            Bastion[Bastion Host<br>or SSM]
+            Bastion["Bastion Host, or SSM"]
         end
         subgraph Private["Private Subnets"]
             subgraph AZA["AZ-A"]
-                EC2A[EC2-A<br>m5.large<br>Web App]
+                EC2A["EC2-A, m5.large, Web App"]
             end
             subgraph AZB["AZ-B"]
-                EC2B[EC2-B<br>m5.large<br>Web App]
+                EC2B["EC2-B, m5.large, Web App"]
             end
         end
         subgraph Data["Data Subnets"]
-            RDS[(RDS<br>Multi-AZ)]
+            RDS["(RDS, Multi-AZ)"]
         end
     end
     
@@ -558,19 +558,125 @@ Access:
 
 ---
 
-## 14-18. HA, Scalability, Monitoring, Cost, DR
+## 14. High Availability
 
-*(Covered by Chapter 04 VPC for networking HA, Chapter 05 CloudWatch for monitoring, Chapter 39 Auto Scaling for scalability, Chapter 47 Cost Explorer for cost optimization)*
+```
+EC2 HA Strategy:
+  - Deploy across minimum 2 AZs using Auto Scaling Group
+  - ALB distributes traffic across healthy instances in multiple AZs
+  - ASG replaces unhealthy instances automatically (health checks)
+  - Multi-AZ placement: ASG balanced across configured AZs
+  - EC2 Auto Recovery: CloudWatch alarm restarts instance on same host
 
-### Quick Reference
+Key Configurations:
+  - ASG: min=2, desired=2, max=6 (always 2+ instances running)
+  - ALB health checks: /health endpoint, 30s interval, 2 unhealthy threshold
+  - Instance recovery: StatusCheckFailed_System alarm → auto-recover
+  - EBS: snapshots for data persistence across instance replacements
+```
 
-| Topic | Key Point |
-|-------|-----------|
-| HA | Use ASG across multiple AZs with ALB |
-| Scalability | Auto Scaling Group with Target Tracking policy |
-| Monitoring | CloudWatch metrics + CloudWatch Agent for memory/disk |
-| Cost | Rightsizing, Savings Plans, Spot for non-critical |
-| DR | AMI copied to DR region, ASG with Min=0 in DR |
+---
+
+## 15. Scalability
+
+```
+Vertical Scaling:
+  - Change instance type (stop → modify → start)
+  - Brief downtime required
+  - Useful for: database servers, single-instance workloads
+
+Horizontal Scaling:
+  - Auto Scaling Group adds/removes instances based on demand
+  - Target Tracking policy: maintain CPU at 60%
+  - Step Scaling: add 2 instances when CPU > 80%, remove 1 when CPU < 30%
+  - Scheduled Scaling: pre-scale for known traffic patterns
+  - Predictive Scaling: ML-based forecasting (24-hour ahead)
+
+Instance Types for Scale:
+  - General: t3/m6i (web servers, small apps)
+  - Compute: c6i (batch processing, encoding)
+  - Memory: r6i (caching, in-memory databases)
+  - Graviton: t4g/m7g (20% cheaper, 40% better perf)
+```
+
+---
+
+## 16. Monitoring & Observability
+
+```
+CloudWatch Default Metrics (5-min, free):
+  - CPUUtilization, NetworkIn/Out, DiskReadOps/WriteOps
+  - StatusCheckFailed_Instance, StatusCheckFailed_System
+  - EBSReadOps, EBSWriteOps, EBSByteBalance%
+
+CloudWatch Agent (custom metrics):
+  - Memory utilization (not available by default!)
+  - Disk space utilization
+  - Swap usage
+  - Custom application metrics
+
+Alarms to Configure:
+  CPUUtilization > 80% for 5 min → alert + scale out
+  StatusCheckFailed_System = 1 → auto-recover instance
+  Memory > 90% → alert (requires CW Agent)
+  Disk > 85% → alert (requires CW Agent)
+
+EC2 Instance Connect / SSM Session Manager:
+  - Replace SSH with Session Manager (no port 22 needed)
+  - All sessions logged to CloudWatch Logs / S3
+```
+
+---
+
+## 17. Cost Optimization
+
+```
+Pricing Models:
+  - On-Demand: pay per second, no commitment
+  - Reserved Instances: 30-60% savings (1 or 3 year)
+  - Savings Plans: flexible commitment (compute or instance)
+  - Spot Instances: up to 90% savings (can be interrupted)
+  - Dedicated Hosts: per-host billing (BYOL licensing)
+
+Right-Sizing:
+  - AWS Compute Optimizer: ML-based recommendations
+  - CloudWatch CPU < 20% consistently → downsize
+  - Use Graviton (t4g/m7g): 20% cheaper, better performance
+  - t3/t4g burstable for variable workloads
+
+Cost Reduction Checklist:
+  ✅ Stop non-production instances nights/weekends (Instance Scheduler)
+  ✅ Use Spot for batch/CI/CD/dev workloads
+  ✅ Savings Plans for stable baseline
+  ✅ gp3 storage (20% cheaper than gp2)
+  ✅ Delete unattached EBS volumes and old snapshots
+  ✅ Use Graviton instances where possible
+```
+
+---
+
+## 18. Disaster Recovery
+
+```
+EC2 DR Strategy:
+  - AMI: copy to DR region (automated with AWS Backup or EventBridge)
+  - EBS Snapshots: cross-region copy for data recovery
+  - ASG in DR region: min=0 (pilot light), scale up during DR event
+  - Launch Templates: versioned, stored per region
+
+Recovery Strategies:
+  Strategy          | RTO       | Cost
+  ─────────────────────────────────
+  Backup & Restore  | Hours     | Low (AMI + snapshots in DR)
+  Pilot Light       | 30 min    | Low (ASG min=0, scale on event)
+  Warm Standby      | Minutes   | Medium (ASG min=1, pre-warmed)
+  Active-Active     | Near-zero | High (full ASG in both regions)
+
+Automation:
+  - AWS Backup: scheduled AMI + snapshot creation
+  - EventBridge: trigger cross-region copy on snapshot completion
+  - CloudFormation/Terraform: IaC for DR region infrastructure
+```
 
 ---
 
@@ -723,9 +829,75 @@ A: AWS's next-generation virtualization platform. Benefits: nearly bare-metal pe
 **Q20: How do you encrypt an existing unencrypted EBS volume?**
 A: You can't encrypt in-place. Process: 1) Create snapshot of unencrypted volume. 2) Copy snapshot with encryption enabled. 3) Create new volume from encrypted snapshot. 4) Detach old volume, attach new encrypted volume.
 
-### Advanced & Scenario-Based Questions (20)
+### Advanced Questions (10)
 
-**Q21-Q40**: *(Cover topics including: designing HA architectures, Spot interruption handling, multi-AZ deployment strategies, EC2 fleet management, hibernation, capacity reservations, dedicated hosts for licensing, bare metal instances, migration from on-premises, troubleshooting kernel panics, network performance optimization, cost optimization for 1000-instance fleet, blue/green deployment with EC2, auto-recovery, EBS performance tuning, instance store use cases, and security hardening runbooks.)*
+**Q21: Design an HA architecture for a web application using EC2.**
+A: ALB in public subnets across 2+ AZs, ASG with EC2 instances in private subnets. Launch Template with user data for bootstrap. Target Tracking policy (CPU 60%). Health checks: ALB HTTP /health. Min=2 for HA. Graviton instances for cost. AMI baked with application for fast launch. Secrets Manager for credentials, SSM Parameter Store for config.
+
+**Q22: How do you handle Spot Instance interruptions?**
+A: Spot gives 2-minute warning via instance metadata and CloudWatch Events. Strategies: 1) Use Spot Fleet with capacity-optimized allocation (least likely to be interrupted). 2) Mix instance types and AZs (diversification). 3) Checkpointing: save work state periodically. 4) EventBridge rule on EC2 Spot Interruption → Lambda drains connections. 5) ASG mixed instances policy: 70% Spot + 30% On-Demand for baseline.
+
+**Q23: Compare EC2 pricing models for a 100-instance production workload.**
+A: Baseline (60 instances, steady): Compute Savings Plan (3-year, all upfront) = ~60% savings. Variable (30 instances, predictable): Standard Reserved Instances (1-year) = ~40% savings. Burst (10 instances, unpredictable): Spot with On-Demand fallback = ~70% savings on Spot portion. Dev/test: Spot instances with hibernation support. Total savings: 40-55% vs all On-Demand.
+
+**Q24: How does EC2 hibernation work and when would you use it?**
+A: Hibernation saves RAM contents to encrypted EBS root volume, then stops the instance. On restart, RAM is restored — applications resume exactly where they left off. Requirements: encrypted EBS, supported instance types, <150 GB RAM. Use cases: long-running analytics (pause/resume), pre-warmed environments, preserving in-memory caches overnight.
+
+**Q25: Explain the difference between Dedicated Hosts and Dedicated Instances.**
+A: Dedicated Instances: run on hardware dedicated to your account, but AWS controls placement. Dedicated Hosts: you get a physical server with visibility into sockets/cores. Use Dedicated Hosts when: BYOL (bring your own license) for Oracle/SQL Server (per-socket licensing), compliance requires physical host affinity, need to track placement. Dedicated Instances when: compliance requires no multi-tenancy but no licensing needs.
+
+**Q26: How do you perform a blue/green deployment with EC2?**
+A: 1) Create new ASG (green) with new Launch Template version (new AMI). 2) Attach green ASG to same ALB target group or create new target group. 3) Route 53 weighted routing: shift traffic gradually (10% → 50% → 100%). 4) Monitor error rates and latency on green. 5) If issues: shift back to blue. 6) If healthy: deregister blue ASG. Alternative: swap ALB target groups using CodeDeploy.
+
+**Q27: How do you troubleshoot an EC2 instance that becomes unreachable?**
+A: 1) Check instance status checks (system vs instance). 2) System check failed: hardware issue — stop/start to migrate to new host. 3) Instance check failed: OS issue — check console output (Actions → Get System Log). 4) Check security group allows inbound. 5) Check NACL allows traffic. 6) Check route table. 7) Screenshot (Actions → Get Instance Screenshot) for boot issues. 8) If SSH fails: use SSM Session Manager or EC2 Serial Console.
+
+**Q28: What is Instance Metadata Service (IMDS) and why require v2?**
+A: IMDS provides instance info (instance ID, IAM role credentials, user data) at 169.254.169.254. IMDSv1: simple GET request (vulnerable to SSRF attacks — attacker tricks app into reading metadata). IMDSv2: requires PUT to get session token, then GET with token header. Enforce v2: `--metadata-options HttpTokens=required`. This blocks SSRF attacks that can steal IAM role credentials.
+
+**Q29: How do you optimize EBS performance for I/O-intensive workloads?**
+A: 1) Use io2 Block Express for highest IOPS (256,000). 2) gp3: configure IOPS and throughput independently (3,000-16,000 IOPS). 3) EBS-optimized instances (enabled by default on modern types). 4) RAID 0 for striping across volumes (aggregate IOPS). 5) Instance store for temporary high-IOPS (NVMe, millions of IOPS). 6) Monitor: VolumeQueueLength > 1 means bottleneck. 7) Avoid: EBS snapshots during peak I/O.
+
+**Q30: Design a security hardening runbook for EC2 instances.**
+A: 1) IMDSv2 required. 2) No SSH/RDP open to 0.0.0.0/0 — use SSM Session Manager. 3) IAM Instance Profile with least-privilege policy. 4) EBS encryption enabled (default account setting). 5) Private subnet, no public IP. 6) Security group: only ALB SG allowed inbound. 7) CIS Benchmark AMI or Inspector scanning. 8) Systems Manager Patch Manager for OS patching. 9) CloudWatch Agent for monitoring. 10) AWS Backup for automated snapshots.
+
+### Scenario-Based Questions (10)
+
+**Q31: Your EC2 instance CPU is at 100% but the application response time is normal. Why?**
+A: Likely a t3/t3a burstable instance using CPU credits. When credits are available, the instance can sustain 100% CPU. Check: CloudWatch CPUCreditBalance — if depleting, performance will degrade when credits run out. Fix: switch to unlimited mode (charges for sustained burst) or upgrade to m-type instance for sustained workloads.
+
+**Q32: An Auto Scaling Group isn't launching new instances despite high CPU. Troubleshoot.**
+A: 1) Check ASG max capacity — already at max? 2) Check scaling cooldown period — waiting for cooldown to expire? 3) Check Launch Template — invalid AMI or instance type? 4) Check subnet capacity — no available IPs in subnets? 5) Check service quotas — vCPU limit reached? 6) Check ASG activity history for error messages. 7) Scaling policy threshold: is the metric actually crossing the threshold?
+
+**Q33: You need to migrate 50 on-premises VMs to EC2. Plan the migration.**
+A: Use AWS Application Migration Service (MGN): 1) Install replication agent on source VMs. 2) Agent replicates data to AWS continuously (block-level). 3) Test: launch test instances, validate applications. 4) Cutover: launch production instances, switch DNS. 5) Post-migration: decommission on-premises. For database: use DMS. Timeline: 2-4 weeks for testing, cutover in maintenance window. Alternative for large-scale: AWS Snowball for initial data transfer.
+
+**Q34: Your Spot Instances are being interrupted frequently. How do you reduce disruptions?**
+A: 1) Diversify: use Spot Fleet with multiple instance types and AZs (capacity-optimized allocation). 2) Use instance types with historically low interruption rates (check Spot Advisor). 3) Increase bid price (or use On-Demand price cap). 4) Mix instance families: m5, m5a, m5n, m6i, m6g. 5) Use capacity-optimized-prioritized strategy. 6) Implement graceful shutdown: EventBridge → Lambda → drain connections. 7) Consider On-Demand fallback in ASG mixed instances.
+
+**Q35: EC2 instance can't connect to the internet from a private subnet. Troubleshoot.**
+A: Refer to VPC troubleshooting (Chapter 04): 1) NAT Gateway exists and is "available"? 2) Private subnet route table has 0.0.0.0/0 → NAT Gateway? 3) NAT Gateway is in a public subnet with IGW route? 4) Security group allows outbound? 5) NACL allows outbound + ephemeral ports inbound? 6) NAT Gateway EIP still associated?
+
+**Q36: How do you handle a kernel panic on an EC2 instance?**
+A: 1) Get console output: `aws ec2 get-console-output --instance-id i-xxx`. 2) Get screenshot: Actions → Get Instance Screenshot. 3) If system StatusCheck failed: stop → start (migrates to new host). 4) If instance StatusCheck failed: OS-level issue. Detach root EBS, attach to rescue instance, fix filesystem/config. 5) If recurring: check AMI for issues, use EC2 Serial Console for live debugging.
+
+**Q37: Design an EC2 fleet for a CI/CD build system processing 500 builds/day.**
+A: Use Spot Fleet with: m5.xlarge, m5a.xlarge, m6i.xlarge, m6g.xlarge (Graviton). capacity-optimized allocation. Spot savings: ~70%. ASG with min=2 On-Demand (availability guarantee), max=20 Spot (burst). Jenkins/GitLab runners registered on launch via user data. EBS gp3 for build caches. Build artifacts → S3. Instance lifecycle: terminate after idle for 15 minutes.
+
+**Q38: Your EBS volume latency suddenly increased. Investigate.**
+A: 1) CloudWatch: VolumeReadLatency/VolumeWriteLatency spike? 2) Check VolumeQueueLength — if >1, I/O requests are queuing. 3) Check BurstBalance (gp2) or IOPSConsumedReadWriteOps vs provisioned (io1/io2). 4) gp2: burst credits depleted? Migrate to gp3 with provisioned IOPS. 5) Check instance type: is it EBS-optimized? 6) Check for snapshot in progress (degrades performance). 7) Fix: upgrade to gp3 with explicit IOPS, or io2 for consistent performance.
+
+**Q39: How do you implement auto-recovery for a single critical EC2 instance?**
+A: Create CloudWatch alarm: metric = StatusCheckFailed_System, threshold = 1 for 2 consecutive periods. Action: recover instance. Recovery: restarts instance on new hardware, preserves instance ID, private IP, EBS volumes, Elastic IP. Limitations: doesn't work for instance store, Spot instances, or Dedicated Hosts. For application-level failures: use ASG with min/max=1 (replaces the instance entirely).
+
+**Q40: Compare user data vs launch template vs AMI baking for instance configuration.**
+A: User data: shell script runs at launch. Slow (installs packages each launch, 5-10 min). Good for simple config. Launch Template: standardizes instance config (type, SG, IAM role, user data). Versioned. Required for ASG. AMI baking (Packer/EC2 Image Builder): pre-install everything into a golden AMI. Fast launch (30 sec). Best for production. Recommendation: bake heavy dependencies into AMI, use user data for dynamic config (secrets, endpoints), launch template ties it all together.
+
+---
+
+## 23. Scenario-Based Interview Questions
+
+*(Covered in section 22 above — Q31 through Q40)*
 
 ---
 
@@ -805,11 +977,11 @@ EC2 is where your applications run. Master instance types, security, and operati
 
 ```mermaid
 flowchart TD
-    Internet[Internet] -->|HTTP :80| SG[Security Group<br>prod-ec2-sg<br>Allow 80]
-    SG --> EC2[EC2 t2.micro<br>Amazon Linux 2023<br>Nginx Web Server]
-    EC2 --> EBS[EBS gp3 8 GB<br>Encrypted]
-    EC2 -->|Session Manager| SSM[AWS SSM<br>No SSH Needed]
-    EC2 -->|Instance Profile| Role[IAM Role<br>SSM + CloudWatch]
+    Internet["Internet"] -->|HTTP :80| SG["Security Group (prod-ec2-sg, Allow 80)"]
+    SG --> EC2["EC2 t2.micro (Amazon Linux 2023, Nginx Web Server)"]
+    EC2 --> EBS["EBS gp3 8 GB (Encrypted)"]
+    EC2 -->|Session Manager| SSM["AWS SSM (No SSH Needed)"]
+    EC2 -->|Instance Profile| Role["IAM Role (SSM + CloudWatch)"]
 ```
 
 ## What You Will Learn

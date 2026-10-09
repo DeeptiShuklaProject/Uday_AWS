@@ -218,15 +218,15 @@ AfterAllowTraffic
 
 ```mermaid
 flowchart TD
-    S3[S3 Bucket<br>Application Revision] --> CD[CodeDeploy]
+    S3["S3 Bucket, Application Revision"] --> CD[CodeDeploy]
     
     subgraph ASG["Auto Scaling Group"]
         subgraph Batch1["Batch 1 (Deploying)"]
-            EC2A[EC2-A<br>Updating...]
+            EC2A["EC2-A, Updating..."]
         end
         subgraph Batch2["Batch 2 (Waiting)"]
-            EC2B[EC2-B<br>Running v1]
-            EC2C[EC2-C<br>Running v1]
+            EC2B["EC2-B, Running v1"]
+            EC2C["EC2-C, Running v1"]
         end
     end
     
@@ -234,7 +234,7 @@ flowchart TD
     ALB --> EC2C
     CD -->|Deploy v2| EC2A
     
-    Agent[CodeDeploy Agent<br>Running on each EC2] -.-> CD
+    Agent["CodeDeploy Agent, Running on each EC2"] -.-> CD
 ```
 
 ### Blue/Green Deployment Architecture
@@ -494,12 +494,12 @@ Deploy a web application update using blue/green strategy with automatic rollbac
 #### Architecture
 ```mermaid
 flowchart TD
-    Pipeline[CodePipeline] --> Build[CodeBuild<br>Build + Test]
-    Build --> S3[S3<br>Revision]
-    S3 --> Deploy[CodeDeploy<br>Blue/Green]
+    Pipeline[CodePipeline] --> Build["CodeBuild, Build + Test"]
+    Build --> S3["S3, Revision"]
+    S3 --> Deploy["CodeDeploy, Blue/Green"]
     Deploy --> ALB[ALB]
-    ALB -->|Blue| TG1[Target Group 1<br>v1 Instances]
-    ALB -.->|Green| TG2[Target Group 2<br>v2 Instances]
+    ALB -->|Blue| TG1["Target Group 1, v1 Instances"]
+    ALB -.->|Green| TG2["Target Group 2, v2 Instances"]
 ```
 
 #### Step 1 — Prepare Application Bundle
@@ -593,7 +593,7 @@ aws deploy get-deployment --deployment-id $DEPLOYMENT_ID
 flowchart TD
     Dev[Developer] -->|git push| GH[GitHub/CodeCommit]
     GH -->|Webhook| CP[CodePipeline]
-    CP --> CB[CodeBuild<br>Build + Test]
+    CP --> CB["CodeBuild, Build + Test"]
     CB -->|Artifact| S3[S3 Bucket]
     S3 --> CD[CodeDeploy]
     
@@ -601,7 +601,7 @@ flowchart TD
     CD -->|If fail| Rollback[Automatic Rollback]
     CD -->|Success| SNS[SNS Notification]
     
-    CW[CloudWatch Alarm<br>Error Rate] -.->|Trigger| Rollback
+    CW["CloudWatch Alarm, Error Rate"] -.->|Trigger| Rollback
 ```
 
 ### Production CodeDeploy Configuration

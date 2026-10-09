@@ -99,18 +99,18 @@ flowchart TD
     end
 
     subgraph SecurityOU["Security OU"]
-        Log[Log<br>Archive Account]
-        Sec[Security<br>Tooling Account]
+        Log["Log, Archive Account"]
+        Sec["Security, Tooling Account"]
     end
 
     subgraph InfrastructureOU["Infrastructure<br>OU"]
-        Net[Network<br>Hub Account]
-        Shared[Shared<br>Services Account]
+        Net["Network, Hub Account"]
+        Shared["Shared, Services Account"]
     end
 
     subgraph WorkloadsOU["Workloads OU"]
         Prod[Production Account]
-        Dev[Development<br>Account]
+        Dev["Development, Account"]
     end
 
     Root --> SecurityOU
@@ -599,8 +599,8 @@ AWS Organizations and Control Tower are mandatory for any enterprise operating a
 ```mermaid
 flowchart TD
     Mgmt[Management Account] --> Root[Root OU]
-    Root --> ProdOU[Production OU<br>SCP: Deny DeleteTrail]
-    Root --> DevOU[Development OU<br>SCP: Deny us-east-1 only]
+    Root --> ProdOU["Production OU, SCP: Deny DeleteTrail"]
+    Root --> DevOU["Development OU, SCP: Deny us-east-1 only"]
     Root --> SecOU[Security OU]
     ProdOU --> ProdAcct[Production Account]
     DevOU --> DevAcct[Development Account]

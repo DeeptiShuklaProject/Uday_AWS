@@ -54,9 +54,7 @@ const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
   // ── API: GET /api/lab/:moduleId ──
-  // Allow module-* plus namespaced ids like bedrock-<course>-<chapter>
-  // (safe charset only — no '.', '/', or ':' → no traversal or invalid filenames).
-  const getMatch = pathname.match(/^\/api\/lab\/([A-Za-z0-9_-]+)$/);
+  const getMatch = pathname.match(/^\/api\/lab\/(module-\d+)$/);
   if (getMatch && req.method === 'GET') {
     const file = path.join(LABS, getMatch[1] + '-lab.html');
     if (fs.existsSync(file)) {
@@ -71,7 +69,7 @@ const server = http.createServer((req, res) => {
   }
 
   // ── API: POST /api/lab/:moduleId ──
-  const postMatch = pathname.match(/^\/api\/lab\/([A-Za-z0-9_-]+)$/);
+  const postMatch = pathname.match(/^\/api\/lab\/(module-\d+)$/);
   if (postMatch && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => { body += chunk; });

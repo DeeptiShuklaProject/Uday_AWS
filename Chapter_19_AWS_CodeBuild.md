@@ -198,10 +198,10 @@ CODEBUILD_BUILD_ARN             — build ARN
 ```mermaid
 flowchart LR
     Git[GitHub/CodeCommit] -->|Source| CP[CodePipeline]
-    CP -->|Build| CB[CodeBuild<br>Test + Build + Docker]
+    CP -->|Build| CB["CodeBuild, Test + Build + Docker"]
     CB -->|Image| ECR[ECR]
     CB -->|Artifact| S3[S3]
-    CP -->|Deploy| CD[CodeDeploy<br>or ECS Deploy]
+    CP -->|Deploy| CD["CodeDeploy, or ECS Deploy"]
 ```
 
 ### Docker Build Flow
@@ -624,7 +624,20 @@ A: Both are CI services. CodeBuild: AWS-native, better AWS integration, pay per 
 **Q25: How do you handle a monorepo with multiple services in CodeBuild?**
 A: 1) Path-based triggers (only build changed service). 2) Shared buildspec with conditional logic. 3) Or separate CodeBuild projects per service with CodePipeline filters. 4) Build cache per service.
 
-**Q26-Q30**: *(Cover: cross-account builds, batch builds, build notifications via EventBridge, CodeBuild + Terraform, and build artifact versioning strategies.)*
+**Q26: How do you set up cross-account builds?**
+A: Create a CodeBuild project in Account A. Grant the service role permission to assume a role in Account B (via `sts:AssumeRole`). In the buildspec, assume the cross-account role and use those credentials to deploy to Account B. The target account's role trust policy must trust Account A's CodeBuild service role.
+
+**Q27: What are batch builds?**
+A: Run multiple builds in parallel from one `StartBuild` call. Define build graph or build list in buildspec. Use for: build matrix (test Node 18, 20, 22), parallel stages (lint + test + security scan), or multi-platform Docker builds. Each batch element runs independently. The batch succeeds only if all elements pass.
+
+**Q28: How do you set up build notifications via EventBridge?**
+A: CodeBuild emits events for state changes (`IN_PROGRESS`, `SUCCEEDED`, `FAILED`, `STOPPED`). Create an EventBridge rule matching `source: aws.codebuild` with the desired state. Target: SNS for email/Slack, Lambda for custom actions, or Step Functions for orchestration. Filter by project name to avoid noise.
+
+**Q29: How do you use CodeBuild with Terraform?**
+A: Install Terraform in the build image (or use a custom image with it pre-installed). Buildspec: `install` → download providers/modules, `pre_build` → `terraform init`, `build` → `terraform plan -out=plan`, approve, `terraform apply plan`. Store state in S3 with DynamoDB locking. Use the CodeBuild service role for AWS provider credentials.
+
+**Q30: What are good build artifact versioning strategies?**
+A: Tag artifacts with git commit SHA for traceability (`app-abc123f.zip`). Use S3 versioning on the artifact bucket. Store build metadata (commit, branch, build ID, timestamp) in artifact metadata or a manifest file. For Docker: tag with commit SHA + semantic version. Never overwrite production artifacts.
 
 ### Scenario-Based Questions (10)
 
@@ -637,7 +650,26 @@ A: 1) `ecr get-login-password` ran before push? 2) Service role has ecr:GetAutho
 **Q33: Builds are queuing — 10 builds waiting. How do you fix?**
 A: Default concurrent build limit is 60. Check current limit. If at limit, request increase via AWS Support. Or reduce build frequency (batch similar commits).
 
-**Q34-Q40**: *(Cover: VPC build internet access issues, secret rotation breaking builds, build costs optimization at scale, cross-region artifact deployment, buildspec for multi-stage Docker builds, CodeBuild batch builds for testing matrix, and integrating third-party tools.)*
+**Q34: Your VPC-based CodeBuild project can't pull npm packages from the internet. Why?**
+A: When CodeBuild runs in a VPC, it loses default internet access. The build container is in your private subnet. Fix: add a NAT Gateway in a public subnet and route the private subnet through it. Or use VPC endpoints for AWS services (S3, ECR, Secrets Manager) and an internal npm registry (CodeArtifact) to avoid needing internet entirely.
+
+**Q35: A secret was rotated in Secrets Manager and now builds fail. How do you prevent this?**
+A: The buildspec references the secret by name, which always resolves to `AWSCURRENT`. After rotation, `AWSCURRENT` points to the new value. If the build uses a password for an external service that wasn't updated, it fails. Fix: coordinate rotation with dependent systems. Use Secrets Manager staging labels (`AWSCURRENT` vs `AWSPENDING`) to validate before promotion. Test rotation in staging first.
+
+**Q36: How do you optimize CodeBuild costs at scale (hundreds of builds/day)?**
+A: 1) Right-size compute types (don't use `BUILD_GENERAL1_LARGE` for a 2-minute lint). 2) Cache aggressively (S3 + local Docker layer cache). 3) Reduce build duration (faster = cheaper, billed per minute). 4) Use reserved capacity for predictable workloads. 5) Batch commits (don't build every push in dev). 6) Use ARM/Graviton compute (`BUILD_GENERAL1_SMALL` ARM is cheaper). 7) Clean up old build logs.
+
+**Q37: How do you deploy build artifacts to multiple Regions?**
+A: In CodePipeline: add a cross-region action that copies artifacts to an S3 bucket in the target Region. Or in the buildspec: push Docker images to ECR in multiple Regions, or use `aws s3 cp` to copy artifacts to regional buckets. For CloudFormation: use StackSets for multi-region deploys. Artifact encryption keys must be accessible in all Regions.
+
+**Q38: Write a buildspec for a multi-stage Docker build with ECR push.**
+A: `pre_build`: `aws ecr get-login-password | docker login`. `build`: `docker build --cache-from $REPO:latest -t $REPO:$COMMIT_SHA -t $REPO:latest .` (multi-stage Dockerfile handles build vs runtime). `post_build`: `docker push $REPO:$COMMIT_SHA && docker push $REPO:latest`. Output: write `imagedefinitions.json` with `[{name: container, imageUri: $REPO:$COMMIT_SHA}]` for ECS deploy.
+
+**Q39: How do you run a test matrix (multiple Node versions, multiple OSes) in CodeBuild?**
+A: Use batch builds with a `buildspec-batch` block. Define a build matrix: `env.variables` with `NODE_VERSION: [18, 20, 22]`. CodeBuild runs one build per combination in parallel. Each gets its own compute and logs. The batch build reports overall pass/fail. Alternative: use a single build with a script that loops through versions using `nvm`.
+
+**Q40: How do you integrate third-party tools (SonarQube, Snyk, Artifactory) with CodeBuild?**
+A: Install the tool's CLI in the build image or custom image. Store credentials in Secrets Manager. In buildspec: resolve secrets → run scan/upload (`sonar-scanner`, `snyk test`, `jfrog rt upload`). For SonarQube: add `sonar-project.properties`, run scanner in `post_build`. For Artifactory: push/pull dependencies in `install` phase. Report results as CodeBuild reports or fail the build on findings.
 
 ---
 

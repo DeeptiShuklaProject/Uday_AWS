@@ -693,10 +693,10 @@ Elastic Load Balancing is the entry point for almost all highly available AWS ar
 
 ```mermaid
 flowchart TD
-    Internet[Internet] -->|HTTP :80| ALB[Application Load Balancer<br>prod-web-alb<br>Public Subnets]
-    ALB --> TG[Target Group<br>prod-web-tg<br>Health Check: /]
-    TG --> EC2A[EC2 Web Server<br>AZ-1 Private Subnet]
-    TG --> EC2B[EC2 Web Server<br>AZ-2 Private Subnet]
+    Internet[Internet] -->|HTTP :80| ALB["Application Load Balancer, prod-web-alb, Public Subnets"]
+    ALB --> TG["Target Group, prod-web-tg, Health Check: /"]
+    TG --> EC2A["EC2 Web Server, AZ-1 Private Subnet"]
+    TG --> EC2B["EC2 Web Server, AZ-2 Private Subnet"]
 ```
 
 ---
@@ -832,9 +832,9 @@ aws ec2 terminate-instances --instance-ids $INSTANCE_A $INSTANCE_B
 
 ```mermaid
 flowchart TD
-    ALB[ALB<br>prod-web-alb] -->|/api/*| API_TG[API Target Group<br>API Servers]
-    ALB -->|/web/*| Web_TG[Web Target Group<br>Web Servers]
-    ALB -->|Default /*| Default_TG[Default Target Group<br>Main App]
+    ALB["ALB, prod-web-alb"] -->|/api/*| API_TG["API Target Group, API Servers"]
+    ALB -->|/web/*| Web_TG["Web Target Group, Web Servers"]
+    ALB -->|Default /*| Default_TG["Default Target Group, Main App"]
 ```
 
 ---

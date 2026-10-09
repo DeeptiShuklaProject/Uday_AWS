@@ -182,8 +182,8 @@ When scaling in, ASG decides which instance to terminate:
 ```mermaid
 flowchart TD
     subgraph Monitoring
-        CW[CloudWatch<br>CPU, Memory, Request Count]
-        Alarm[CloudWatch Alarm<br>CPU > 70%]
+        CW["CloudWatch, CPU, Memory, Request Count"]
+        Alarm["CloudWatch Alarm, CPU > 70%"]
     end
     
     subgraph ASG["Auto Scaling Group"]
@@ -197,12 +197,12 @@ flowchart TD
         end
     end
     
-    ALB[Application Load Balancer<br>Public Subnets] --> ASG
+    ALB["Application Load Balancer, Public Subnets"] --> ASG
     CW --> Alarm
     Alarm -->|Scale Out| ASG
     ASG -->|Metrics| CW
     
-    LT[Launch Template<br>AMI + Config] -.->|Defines| ASG
+    LT["Launch Template, AMI + Config"] -.->|Defines| ASG
 ```
 
 ### Request Flow with Auto Scaling
@@ -547,7 +547,7 @@ Your company's web application must handle variable traffic (100-10,000 concurre
 
 ```mermaid
 flowchart TD
-    User[Users] --> ALB[ALB<br>Public Subnets]
+    User[Users] --> ALB["ALB, Public Subnets"]
     
     subgraph ASG["Auto Scaling Group (Min:2 Max:10)"]
         subgraph AZA["AZ-A Private Subnet"]
@@ -561,8 +561,8 @@ flowchart TD
     ALB --> EC2A
     ALB --> EC2B
     
-    CW[CloudWatch<br>CPU Alarm] -->|Scale Policy| ASG
-    SNS[SNS<br>Notifications] -.-> ASG
+    CW["CloudWatch, CPU Alarm"] -->|Scale Policy| ASG
+    SNS["SNS, Notifications"] -.-> ASG
 ```
 
 #### Step 1 — Create Launch Template
@@ -660,7 +660,7 @@ flowchart TD
     
     subgraph AWS["AWS Production"]
         R53[Route 53] --> CF[CloudFront + WAF]
-        CF --> ALB[ALB + ACM<br>Public Subnets Multi-AZ]
+        CF --> ALB["ALB + ACM, Public Subnets Multi-AZ"]
         
         subgraph ASG["Auto Scaling Group"]
             subgraph AZA["AZ-A"]
@@ -674,8 +674,8 @@ flowchart TD
         end
         
         ALB --> ASG
-        ASG --> RDS[(RDS Multi-AZ)]
-        ASG --> Cache[(ElastiCache)]
+        ASG --> RDS["(RDS Multi-AZ)"]
+        ASG --> Cache["(ElastiCache)"]
         
         CW[CloudWatch] -->|Alarms| ASG
         SNS[SNS] -.->|Notifications| Team[Ops Team]
@@ -1284,12 +1284,12 @@ Auto Scaling is used in nearly every production AWS architecture. Mastering it i
 ## Architecture
 ```mermaid
 flowchart TD
-    ALB[ALB<br>prod-web-alb] --> ASG[Auto Scaling Group<br>Min:2 Desired:2 Max:6]
+    ALB["ALB, prod-web-alb"] --> ASG["Auto Scaling Group, Min:2 Desired:2 Max:6"]
     ASG --> EC2A[EC2 AZ-1]
     ASG --> EC2B[EC2 AZ-2]
-    ASG -.->|Scale Out| EC2C[EC2 AZ-1<br>new]
-    ASG -.->|Scale Out| EC2D[EC2 AZ-2<br>new]
-    CW[CloudWatch Alarm<br>CPU > 70%] -->|Trigger| ASG
+    ASG -.->|Scale Out| EC2C["EC2 AZ-1, new"]
+    ASG -.->|Scale Out| EC2D["EC2 AZ-2, new"]
+    CW["CloudWatch Alarm, CPU > 70%"] -->|Trigger| ASG
 ```
 
 ### Step 1 — Create Launch Template

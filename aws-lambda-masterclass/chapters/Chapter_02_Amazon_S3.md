@@ -1204,56 +1204,79 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
 ## Business Scenario
 > Your company wants to host a highly available, blazingly fast frontend SPA (React/Angular) or a static marketing website. It must be served over HTTPS using a custom domain name, and the S3 bucket itself must remain completely private to the public internet to adhere to security best practices.
 
-### Step 1 — Request an SSL/TLS Certificate (ACM)
+### Step 1 — Create a Route 53 Hosted Zone
+1. Go to **Route 53** → **Hosted zones** → **Create hosted zone**.
+2. **Domain name**: Enter your registered domain name (e.g., `example.com`).
+3. **Type**: Select **Public hosted zone**.
+4. Click **Create hosted zone**.
+![alt text](image-3.png)
+
+### Step 2 — Request an SSL/TLS Certificate (ACM)
 > **CRITICAL**: CloudFront requires the certificate to be requested in the **us-east-1 (N. Virginia)** region, regardless of where your S3 bucket is located.
 
 1. Switch your AWS Console region to **N. Virginia (us-east-1)**.
 2. Go to **AWS Certificate Manager (ACM)** → **Request a certificate**.
+![alt text](image.png)
 3. Select **Request a public certificate**.
 4. **Fully qualified domain name**: Enter your domain (e.g., `example.com`) and click **Add another name to this certificate** to add `*.example.com`.
 5. **Validation method**: Choose **DNS validation**.
+![alt text](image-1.png)
 6. Click **Request**.
+![alt text](image-2.png)
 7. Once requested, click into the certificate and click **Create records in Route 53**. This automatically creates the CNAME records to prove you own the domain.
+![alt text](image-4.png)
 8. Wait for the status to change to **Issued** (usually takes a few minutes).
+![alt text](image-8.png)
 
-### Step 2 — Create a Private S3 Bucket
+### Step 3 — Create a Private S3 Bucket
 1. Go to **S3** → **Create bucket**.
 2. **Bucket name**: e.g., `my-secure-frontend-bucket` (can be any region).
+![alt text](image-6.png)
 3. **Block Public Access settings**: Leave this **ON** (Block all public access). We want to keep the bucket private.
 4. **Bucket Versioning**: Enable (best practice for websites).
 5. Click **Create bucket**.
+![alt text](image-7.png)
 
-### Step 3 — Upload Website Files
+### Step 4 — Upload Website Files
 1. Open your bucket and click **Upload**.
+![alt text](image-9.png)
 2. Upload a simple `index.html` (and optionally an `error.html`).
    ```html
    <!-- index.html -->
    <h1>Welcome to my secure CloudFront website!</h1>
    ```
+   ![alt text](image-10.png)
 3. Click **Upload**.
+![alt text](image-11.png)
 
-### Step 4 — Create a CloudFront Distribution
+### Step 5 — Create a CloudFront Distribution
 1. Go to **CloudFront** → **Create Distribution**.
+![alt text](image-12.png)
 2. **Origin domain**: Select your S3 bucket from the dropdown.
+
 3. **Origin access**: Select **Origin access control settings (recommended)**.
    - Click **Create control setting** and save the default configuration.
 4. **Viewer protocol policy**: Select **Redirect HTTP to HTTPS**.
 5. **Web Application Firewall (WAF)**: Select **Do not enable security protections** (to save costs for this lab).
 6. **Alternate domain name (CNAME)**: Enter your custom domain (e.g., `www.example.com`).
-7. **Custom SSL certificate**: Select the certificate you created in Step 1.
+7. **Custom SSL certificate**: Select the certificate you created in Step 2.
 8. **Default root object**: Type `index.html`.
 9. Click **Create distribution**.
+![alt text](image-13.png)
 10. **IMPORTANT**: At the top of the screen, you will see a banner saying you must update the S3 bucket policy. Click **Copy policy**.
 
-### Step 5 — Update S3 Bucket Policy
+### Step 6 — Update S3 Bucket Policy
 1. Go back to your **S3 Bucket** → **Permissions** tab.
 2. Scroll to **Bucket policy** and click **Edit**.
 3. Paste the policy copied from CloudFront. It allows CloudFront (using the Origin Access Control) to read the bucket, while keeping it blocked from the public internet.
+
 4. Click **Save changes**.
 
-### Step 6 — Point Route 53 to CloudFront
+### Step 7 — Point Route 53 to CloudFront
 1. Go to **Route 53** → **Hosted zones** → Click your domain.
+![alt text](image-14.png)
 2. Click **Create record**.
+![alt text](image-15.png)
 3. **Record name**: Enter the subdomain (e.g., `www`) or leave blank for the root domain.
 4. **Record type**: `A - Routes traffic to an IPv4 address and some AWS resources`.
 5. Turn on the **Alias** toggle.
@@ -1261,12 +1284,13 @@ aws s3api list-object-versions --bucket prod-assets-xxx --prefix app-config.json
    - Select **Alias to CloudFront distribution**.
    - Paste the CloudFront Distribution domain name (e.g., `d111111abcdef8.cloudfront.net`).
 7. Click **Create records**.
+![alt text](image-16.png)
 
-### Step 7 — Verify the Setup
+### Step 8 — Verify the Setup
 1. Wait for the CloudFront distribution status to show as **Deployed** (can take 5-10 minutes).
 2. Open your browser and navigate to `https://www.example.com` (your custom domain).
 3. You should see your `index.html` file loaded securely with a padlock icon!
-
+![alt text](image-17.png)
 🎯 **Interview Insight**: "Why use CloudFront with S3 instead of just S3 Static Website Hosting?"
 > **Strong answer**: "Using CloudFront allows you to attach a custom SSL certificate (HTTPS), caches content at edge locations for faster global load times, and allows you to keep the S3 bucket entirely private via Origin Access Control (OAC), satisfying strict security and compliance requirements."
 
@@ -1444,4 +1468,103 @@ aws s3api get-bucket-replication \
 > **Strong answer**: "CRR automatically replicates every new object from a source bucket to a destination bucket in a different AWS region. Both buckets must have versioning enabled. It requires an IAM role granting S3 permission to replicate. Replication is asynchronous — typically seconds to minutes. It only applies to new objects; existing objects require S3 Batch Replication. Key use cases are disaster recovery, compliance (data residency), and latency reduction. For SLA-guaranteed replication, enable Replication Time Control (RTC) which ensures 99.99% of objects are replicated within 15 minutes."
 
 ---
-
+
+# 🔬 Practical Lab 27 — S3 bucket Cross-Account Replication (CRR)
+
+## Lab Overview
+| Item | Detail |
+|------|--------|
+| **Difficulty** | Advanced |
+| **Duration** | 30 minutes |
+| **Cost** | A few cents (storage in second bucket, replication data transfer) |
+| **Prerequisites** | Two AWS Accounts (Source Account A, Destination Account B) |
+| **Lab Environment** | Two AWS Accounts, Source Bucket in Account A, Destination Bucket in Account B |
+
+## Business Scenario
+> Your organization uses a multi-account strategy. You need to replicate all backups stored in a centralized production account (Account A) to a separate, isolated disaster recovery account (Account B) in a different region. The destination account belongs to a completely different AWS organization unit, ensuring that if Account A is compromised, the data in Account B remains secure.
+
+### Step 1 — Create Destination Bucket in Account B
+1. Log in to your **Destination AWS Account (Account B)**.
+2. Go to **S3** → **Create bucket**.
+3. **Bucket name**: e.g., `dr-destination-bucket-{account-b-id}` (can be any region, usually different for CRR).
+4. **Bucket Versioning**: Click **Enable** (Required for replication).
+5. Click **Create bucket**.
+
+### Step 2 — Attach Bucket Policy in Account B
+To allow Account A to replicate objects into Account B's bucket, we need a bucket policy on the destination bucket.
+1. Open the newly created destination bucket in Account B.
+2. Go to the **Permissions** tab.
+3. Scroll down to **Bucket policy** and click **Edit**.
+4. Paste the following policy. Replace `<DESTINATION_BUCKET_NAME>` with your actual bucket name, and `<ACCOUNT_A_ID>` with the AWS Account ID of the source account.
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Sid": "AllowReplicationFromAccountA",
+               "Effect": "Allow",
+               "Principal": {
+                   "AWS": "arn:aws:iam::<ACCOUNT_A_ID>:root"
+               },
+               "Action": [
+                   "s3:ReplicateObject",
+                   "s3:ReplicateDelete"
+               ],
+               "Resource": "arn:aws:s3:::<DESTINATION_BUCKET_NAME>/*"
+           },
+           {
+               "Sid": "AllowReplicationListFromAccountA",
+               "Effect": "Allow",
+               "Principal": {
+                   "AWS": "arn:aws:iam::<ACCOUNT_A_ID>:root"
+               },
+               "Action": [
+                   "s3:List*",
+                   "s3:GetBucketVersioning",
+                   "s3:PutBucketVersioning"
+               ],
+               "Resource": "arn:aws:s3:::<DESTINATION_BUCKET_NAME>"
+           }
+       ]
+   }
+   ```
+5. Click **Save changes**. Note down the Destination Bucket ARN.
+
+### Step 3 — Create Source Bucket in Account A
+1. Log in to your **Source AWS Account (Account A)**.
+2. Go to **S3** → **Create bucket**.
+3. **Bucket name**: e.g., `prod-source-bucket-{account-a-id}`.
+4. **Bucket Versioning**: Click **Enable** (Required for replication).
+5. Click **Create bucket**.
+
+### Step 4 — Create Replication Rule in Account A
+1. In **Account A**, click into your source bucket.
+2. Go to the **Management** tab.
+3. Scroll down to **Replication rules** and click **Create replication rule**.
+4. **Rule name**: e.g., `CrossAccountReplication`.
+5. **Status**: Ensure it is **Enabled**.
+6. **Source bucket**: Select **Apply to all objects in the bucket**.
+7. **Destination**:
+   - Select **Specify a bucket in another account**.
+   - **Account ID**: Enter the 12-digit AWS Account ID of Account B.
+   - **Bucket name**: Enter the name of the destination bucket (e.g., `dr-destination-bucket-{account-b-id}`).
+   - Check the box **Change object ownership to destination bucket owner** (Highly recommended so Account B owns the replicated files).
+8. **IAM Role**: Select **Create new role**. (AWS will automatically create an IAM role with the correct permissions to read from Source and write to Destination).
+9. Click **Save**. If prompted to replicate existing objects, choose **No, do not replicate existing objects**.
+
+### Step 5 — Verify the Setup
+1. In **Account A**, upload a new file (e.g., `test-backup.txt`) to the source bucket.
+2. Click on the uploaded file and check the **Object properties**. Scroll to **Replication status**; it should initially say **PENDING**.
+3. Wait a few minutes and refresh. It should change to **COMPLETED**.
+4. Log in to **Account B** and navigate to the destination bucket.
+5. You should see `test-backup.txt` successfully replicated.
+
+### Step 6 — Clean Up
+1. In **Account B**, empty and delete the destination bucket.
+2. In **Account A**, empty and delete the source bucket.
+3. In **Account A**, go to **IAM** → **Roles**, find the role starting with `s3crr_role_for_...` and delete it.
+
+🎯 **Interview Insight**: "Why use Cross-Account Replication instead of Same-Account Replication?"
+> **Strong answer**: "Cross-Account Replication provides strict security isolation. In the event of a total compromise of the primary production AWS account (e.g., credentials leaked, malicious deletion), the backups in the separate disaster recovery account remain safe, as the compromised account lacks permissions to delete objects in the destination account bucket. Changing the replica owner to the destination account guarantees full ownership separation."
+
+---

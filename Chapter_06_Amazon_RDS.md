@@ -165,18 +165,18 @@ Apply to instance (some require reboot)
 
 ```mermaid
 flowchart TD
-    ALB[ALB<br>Public Subnets] --> EC2A[EC2 AZ-A]
+    ALB["ALB, Public Subnets"] --> EC2A[EC2 AZ-A]
     ALB --> EC2B[EC2 AZ-B]
     
-    EC2A --> Primary[RDS Primary<br>Private Subnet AZ-A]
+    EC2A --> Primary["RDS Primary, Private Subnet AZ-A"]
     EC2B --> Primary
     
-    Primary -->|Synchronous| Standby[RDS Standby<br>Private Subnet AZ-B]
-    Primary -->|Asynchronous| Replica[Read Replica<br>Private Subnet AZ-B]
+    Primary -->|Synchronous| Standby["RDS Standby, Private Subnet AZ-B"]
+    Primary -->|Asynchronous| Replica["Read Replica, Private Subnet AZ-B"]
     
-    SM[Secrets Manager<br>Auto-Rotation] --> EC2A & EC2B
+    SM["Secrets Manager, Auto-Rotation"] --> EC2A & EC2B
     Primary -.->|Encrypted| KMS[KMS CMK]
-    Primary -.->|Backups| Backup[Automated Backups<br>35 days retention]
+    Primary -.->|Backups| Backup["Automated Backups, 35 days retention"]
 ```
 
 ---
@@ -315,8 +315,8 @@ aws rds reboot-db-instance --db-instance-identifier prod-db --force-failover
 #### Architecture
 ```mermaid
 flowchart LR
-    EC2[EC2 App Server] -->|Port 5432| RDS[RDS PostgreSQL<br>Multi-AZ<br>Private Subnet]
-    EC2 -->|GetSecretValue| SM[Secrets Manager<br>Auto-Rotation 30 days]
+    EC2[EC2 App Server] -->|Port 5432| RDS["RDS PostgreSQL, Multi-AZ, Private Subnet"]
+    EC2 -->|GetSecretValue| SM["Secrets Manager, Auto-Rotation 30 days"]
 ```
 
 #### Step 1 — Create RDS with Managed Password
@@ -599,14 +599,60 @@ A: `--manage-master-user-password` flag: RDS creates and manages the password in
 **Q15: What is a Parameter Group?**
 A: Database engine configuration (max_connections, shared_buffers). Create custom group, don't modify default. Some params need reboot. Apply at instance level.
 
-**Q16-Q20**: *(Cover: RDS Proxy for Lambda, storage auto-scaling, Enhanced Monitoring, maintenance windows, and engine version upgrades.)*
+**Q16: Why is RDS Proxy important for Lambda functions?**
+A: Lambda creates a new database connection per invocation. Under high concurrency (hundreds/thousands of Lambdas), this exhausts RDS `max_connections`. RDS Proxy pools and reuses connections — Lambda connects to Proxy, Proxy maintains a warm pool to RDS. Benefits: reduces connection overhead by up to 97%, handles failover transparently (Proxy waits and retries), and supports IAM authentication. Without Proxy, Lambda at scale = connection storms = database crashes.
+
+**Q17: How does RDS storage auto-scaling work?**
+A: When enabled, RDS automatically increases storage when free space drops below 10% and the low-storage condition persists for 5+ minutes, with at least 6 hours since the last scaling event. You set `--max-allocated-storage` (e.g., 500 GB). Scaling increments are the greater of 10% of current storage, 10 GB, or predicted growth. Important: storage can only scale UP, never down. Always set a max threshold to prevent runaway costs.
+
+**Q18: What is Enhanced Monitoring and how does it differ from CloudWatch?**
+A: Enhanced Monitoring provides OS-level metrics at up to 1-second granularity — CPU breakdown per process, memory usage (active, inactive, buffers), file system details, and OS processes list. CloudWatch only gives instance-level metrics at 1-minute (or 5-minute) intervals. Enhanced Monitoring uses a lightweight agent on the RDS host, publishing to CloudWatch Logs. Use it to diagnose: is the OS swapping? Which process consumes memory? Is it the DB engine or a monitoring agent?
+
+**Q19: What is the RDS maintenance window and how should you configure it?**
+A: The maintenance window is a weekly time slot when AWS applies pending patches, OS updates, and hardware changes. Best practices: schedule during lowest-traffic period (e.g., Sunday 03:00-04:00 UTC), keep it short (30-60 minutes), enable Multi-AZ (maintenance applies to standby first, then failover, then patches old primary — minimizes downtime). If no window is specified, AWS assigns a random 30-minute window. You can defer non-critical patches but security patches may be forced.
+
+**Q20: How do you perform an RDS engine version upgrade?**
+A: Two types: Minor upgrades (e.g., 16.3 → 16.4) — can enable auto-minor-version-upgrade, applied during maintenance window. Major upgrades (e.g., 15 → 16) — manual, require compatibility testing. Process: 1) Take a manual snapshot (rollback safety). 2) Test upgrade on a snapshot-restored instance. 3) Modify the production instance with the new engine version. 4) Apply during maintenance window or immediately. Multi-AZ: standby upgraded first → failover → old primary upgraded. Downtime: typically 5-30 minutes depending on engine and DB size.
 
 ### Advanced Questions (10)
 
 **Q21: Design a production RDS architecture for a high-traffic e-commerce site.**
 A: PostgreSQL on db.r6g.xlarge, Multi-AZ, 2 Read Replicas, gp3 with auto-scaling, KMS encryption, Secrets Manager rotation, Performance Insights, CloudWatch alarms (CPU, memory, connections, storage), private subnet, RDS Proxy for connection management.
 
-**Q22-Q30**: *(Cover: blue-green deployments for upgrades, cross-region DR strategy, connection pooling patterns, Aurora vs RDS decision, database migration with DMS, and cost optimization with Reserved Instances.)*
+**Q22: What are RDS Blue/Green Deployments and when would you use them?**
+A: Blue/Green creates a staging environment (green) that mirrors your production (blue) using logical replication. Use for: major engine upgrades, parameter group changes, or schema changes. Process: 1) Create blue/green deployment — green copies blue. 2) Test changes on green. 3) Switchover — green becomes new production (typically under 1 minute of downtime). 4) Old blue kept for rollback. Advantages over in-place upgrade: test before cutover, rollback possible, minimal downtime. Supported for MySQL, MariaDB, and PostgreSQL.
+
+**Q23: Design a cross-region DR strategy for RDS.**
+A: Tiered approach depending on RPO/RTO requirements:
+- **Backup-based (RPO: hours, RTO: 1-2 hours)**: Automated cross-region snapshot copy → restore in DR region. Cheapest but slowest recovery.
+- **Read Replica (RPO: seconds, RTO: minutes)**: Cross-region Read Replica with async replication. Promote to standalone during DR. Near-real-time data, fast recovery.
+- **Aurora Global Database (RPO: <1 sec, RTO: <1 min)**: Storage-level replication across regions. Sub-second data lag. Managed failover. Best RPO/RTO but higher cost.
+For most production: Cross-region Read Replica + automated snapshot copy for belt-and-suspenders.
+
+**Q24: Compare connection pooling options: RDS Proxy vs PgBouncer vs application-level pooling.**
+A: **RDS Proxy**: Fully managed, supports IAM auth, automatic failover handling, pin-aware multiplexing. Best for Lambda/serverless. Cost: per-vCPU pricing.
+**PgBouncer**: Open-source, self-managed on EC2, lightweight, transaction-level pooling. Requires operational overhead. No IAM integration.
+**Application-level (HikariCP, etc.)**: Built into the app, no extra infrastructure. Cannot pool across multiple app instances. Doesn't help with Lambda.
+Production recommendation: RDS Proxy for Lambda workloads, application-level pooling (HikariCP) for traditional EC2/ECS apps, PgBouncer when you need fine-grained control and want to avoid Proxy costs.
+
+**Q25: When should you choose Aurora over standard RDS?**
+A: Choose Aurora when you need: 5x MySQL / 3x PostgreSQL throughput, storage auto-scales to 128 TB, 6-way replication across 3 AZs (self-healing storage), up to 15 low-latency Read Replicas with single reader endpoint, Global Database for sub-second cross-region replication, Serverless v2 for variable workloads, faster failover (~30 seconds). Choose standard RDS when: budget is tight (Aurora is ~20% more expensive), you need Oracle or SQL Server, workload is small/predictable, or you need exact engine version compatibility.
+
+**Q26: How do you migrate an on-premises database to RDS using DMS?**
+A: AWS Database Migration Service (DMS) steps: 1) Create a replication instance in your VPC. 2) Define source endpoint (on-prem DB) and target endpoint (RDS). 3) Create a migration task — choose full-load, CDC (change data capture), or full-load + CDC. 4) For minimal downtime: full-load + CDC — bulk copy then replicate ongoing changes. 5) When CDC lag = 0, cutover application to RDS. 6) Use Schema Conversion Tool (SCT) if changing engines (e.g., Oracle → PostgreSQL). Key considerations: VPN/Direct Connect for network connectivity, test with a dry-run first, validate row counts and data integrity post-migration.
+
+**Q27: How do Reserved Instances optimize RDS costs?**
+A: Reserved Instances (RIs) offer 30-60% discount over on-demand pricing for 1-year or 3-year commitments. Options: **All Upfront** (maximum discount, ~60%), **Partial Upfront** (~45%), **No Upfront** (~30%). RIs apply to instance class, engine, region, and deployment type (Multi-AZ vs Single-AZ). Strategy: use on-demand for initial sizing (1-3 months), analyze usage patterns, then purchase RIs for stable baseline. Combine with right-sizing — a smaller RI is better than over-provisioned on-demand. RIs also apply to Read Replicas.
+
+**Q28: What is the difference between Multi-AZ DB Instance and Multi-AZ DB Cluster?**
+A: **Multi-AZ DB Instance**: One primary + one standby (not readable). Synchronous replication. Failover: 60-120 seconds. Standby wastes compute (can't serve reads).
+**Multi-AZ DB Cluster**: One writer + two reader instances across 3 AZs. Readers handle read traffic (like Aurora). Failover: ~35 seconds. Transaction log-based replication. Available for MySQL and PostgreSQL. Better utilization — readers serve traffic, faster failover. Choose Cluster for production workloads needing both HA and read scaling.
+
+**Q29: How do you handle RDS credentials rotation with zero-downtime?**
+A: Use Secrets Manager with multi-user rotation strategy: 1) Two database users: `app_user` and `app_user_clone`. 2) Rotation Lambda alternates between them — updates password for the inactive user, then swaps the "current" label. 3) Application always reads the current secret — gets valid credentials. 4) Connection pooling libraries refresh credentials on pool cycle. For simpler setups: single-user rotation with `--manage-master-user-password` — RDS handles everything automatically. Application must handle brief connection failures during rotation (retry logic).
+
+**Q30: How do you benchmark and right-size an RDS instance?**
+A: Process: 1) Start with instance size based on estimated workload (db.r6g.large for most). 2) Run production-like load tests using pgbench (PostgreSQL) or sysbench (MySQL). 3) Monitor for 2-4 weeks: CPU utilization (target: <70% average), FreeableMemory (target: >25% free), ReadIOPS/WriteIOPS (below provisioned limits), DatabaseConnections (below 80% of max). 4) Right-size: if CPU <30% consistently → downsize. If CPU >80% → upsize or add Read Replicas. 5) Use Graviton instances (db.r6g/r7g) for 20% cost savings with better performance. 6) Document baseline metrics for future comparison.
 
 ### Scenario-Based Questions (10)
 
@@ -616,7 +662,29 @@ A: 1) Performance Insights: identify top SQL by load. 2) Check DatabaseConnectio
 **Q32: Application can't connect to RDS after deployment. Troubleshooting steps?**
 A: 1) RDS status: "available"? 2) Security group: app SG allowed on port? 3) Correct endpoint in app config? 4) Credentials valid (Secrets Manager rotation changed password?). 5) SSL required but app not using SSL?
 
-**Q33-Q40**: *(Cover: failover during peak, storage full emergency, cross-region DR activation, connection limit troubleshooting, Performance Insights analysis, upgrade strategy, and backup recovery testing.)*
+**Q33: Your RDS failover during peak traffic caused application errors. How do you prevent this?**
+A: Root cause: application connections dropped during DNS update. Prevention: 1) Implement retry logic with exponential backoff in application. 2) Use RDS Proxy — it buffers connections during failover and reconnects transparently. 3) Set DNS TTL low in application connection string (RDS endpoint TTL is 5 seconds). 4) Use Multi-AZ Cluster instead of Multi-AZ Instance (failover ~35 sec vs ~120 sec). 5) Connection pool health checks — validate connections before use (`testOnBorrow=true`). 6) Set up CloudWatch Event for failover → SNS notification → team alerted.
+
+**Q34: RDS storage is full and writes are failing in production. Emergency response?**
+A: Immediate actions: 1) Check if storage auto-scaling is enabled — if not, enable it NOW with `modify-db-instance --max-allocated-storage`. 2) If auto-scaling is on but hit the max, increase the max threshold. 3) Manual increase: `modify-db-instance --allocated-storage <larger_size>` (apply immediately). 4) While waiting for scaling: identify and kill long-running transactions holding space. 5) PostgreSQL: run `VACUUM FULL` on bloated tables. MySQL: `OPTIMIZE TABLE`. 6) Delete old/archived data. Post-incident: set CloudWatch alarm on `FreeStorageSpace < 20%`, enable auto-scaling with appropriate max, implement data archival strategy (old data → S3).
+
+**Q35: Walk through activating cross-region DR for your RDS database.**
+A: Assuming a cross-region Read Replica exists: 1) Verify replica lag is minimal (ReplicaLag metric → near 0). 2) Stop writes to primary (application maintenance mode). 3) Wait for replica lag = 0 (ensures no data loss). 4) Promote Read Replica: `aws rds promote-read-replica --db-instance-identifier dr-replica`. 5) Replica becomes standalone primary (~5-10 minutes). 6) Update application config to point to new endpoint in DR region. 7) Update DNS (Route 53) if using custom domain. 8) Verify application connectivity and data integrity. 9) Create new Read Replica in DR region for HA. Post-event: replicate back to original region when recovered.
+
+**Q36: DatabaseConnections metric is near max_connections. Troubleshooting?**
+A: Investigation: 1) Check current connections: `SELECT count(*) FROM pg_stat_activity;` 2) Identify idle connections: `SELECT * FROM pg_stat_activity WHERE state = 'idle' AND query_start < now() - interval '10 minutes';` 3) Check which application/host has most connections: `SELECT client_addr, count(*) FROM pg_stat_activity GROUP BY client_addr ORDER BY count DESC;` Root causes: connection leak (app opens but doesn't close), no connection pooling, too many app instances. Fix: 1) Kill idle connections: `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'idle' AND query_start < now() - interval '30 minutes';` 2) Implement connection pooling (RDS Proxy or HikariCP). 3) Set `idle_in_transaction_session_timeout` in parameter group. 4) Increase `max_connections` via parameter group (requires reboot). 5) Scale up instance (larger instance = higher default max_connections).
+
+**Q37: Using Performance Insights, how do you identify and fix a slow query problem?**
+A: Step-by-step: 1) Open Performance Insights → Database load chart. 2) If load exceeds Max vCPU line → database is overloaded. 3) Check "Top SQL" tab → identify queries consuming the most Average Active Sessions (AAS). 4) Check "Wait events" → IO:DataFileRead (missing index), Lock:Relation (contention), CPU:Compute (complex query). 5) Copy the slow SQL → run `EXPLAIN ANALYZE` to see execution plan. 6) Common fixes: add missing index (sequential scan → index scan), rewrite subqueries as JOINs, add covering indexes, partition large tables. 7) After fix: verify in Performance Insights that query AAS dropped. 8) Set `log_min_duration_statement = 1000` to log queries > 1 second for ongoing monitoring.
+
+**Q38: Plan a major engine upgrade (PostgreSQL 15 → 16) for a production RDS instance with zero downtime.**
+A: Strategy using Blue/Green Deployment: 1) Take manual snapshot (safety net). 2) Create Blue/Green deployment — green environment created with current version. 3) Modify green instance to PostgreSQL 16. 4) Test on green: run integration tests, verify application compatibility, check extensions compatibility. 5) Performance test on green with production-like load. 6) Schedule switchover during low-traffic window. 7) Switchover: green becomes production (< 1 minute downtime). 8) Monitor for 24 hours — if issues, switchover back to blue. 9) Delete blue environment after validation period. Alternative without Blue/Green: use Read Replica promotion — create replica, upgrade replica, promote replica, switch application.
+
+**Q39: How do you test and validate your RDS backup and recovery process?**
+A: Regular testing (quarterly recommended): 1) Restore from automated backup: `aws rds restore-db-instance-to-point-in-time --target-db-instance-identifier test-restore --source-db-instance-identifier prod-db --restore-time <timestamp>`. 2) Verify restored instance: check row counts, recent data, application connectivity. 3) Test snapshot restore: restore from latest manual snapshot, compare data. 4) Measure RTO: time from restore command to instance "available" (typically 15-60 min depending on size). 5) Test cross-region: copy snapshot to DR region, restore there, verify data. 6) Document results: actual RTO vs target RTO, data integrity checks, any issues. 7) Automate: schedule monthly restore tests with Lambda + Step Functions. 8) Clean up: delete test instances after validation.
+
+**Q40: Your application experiences intermittent "too many connections" errors only during business hours. Diagnose and fix.**
+A: Diagnosis: 1) CloudWatch → DatabaseConnections metric — check if it spikes during business hours and correlates with errors. 2) Correlate with application auto-scaling — more EC2 instances = more connections. 3) Check connection pool settings per app instance (e.g., HikariCP `maximumPoolSize`). 4) Calculate: (number of app instances) × (pool size per instance) > max_connections? Root cause: as ASG scales out during peak traffic, total connections exceed max_connections. Fix: 1) Implement RDS Proxy — decouples app connections from DB connections. 2) Reduce per-instance pool size (e.g., 20 → 10). 3) Increase max_connections via parameter group. 4) Use Read Replicas to offload read traffic (fewer connections needed on primary). 5) Set CloudWatch alarm: DatabaseConnections > 70% of max → scale up or alert.
 
 ---
 
@@ -691,10 +759,64 @@ A: 1) RDS status: "available"? 2) Security group: app SG allowed on port? 3) Cor
 ## Architecture
 ```mermaid
 flowchart TD
-    ALB[ALB] --> EC2[EC2<br>Private Subnet]
-    EC2 -->|Port 5432| RDS[(RDS PostgreSQL<br>Private Subnet<br>Encrypted + Multi-AZ)]
-    RDS --> Standby[(Standby<br>AZ-2)]
+    ALB[ALB] --> EC2["EC2, Private Subnet"]
+    EC2 -->|Port 5432| RDS["(RDS PostgreSQL, Private Subnet, Encrypted + Multi-AZ)"]
+    RDS --> Standby["(Standby, AZ-2)"]
 ```
+
+### Step 0 — Pre-requisite Infrastructure Setup
+Before configuring RDS, you must set up the networking and compute environments.
+
+#### A. Create VPC and Subnets
+1. Navigate to the **VPC Console** → **Your VPCs** → **Create VPC**.
+2. **Resources to create**: Select **VPC only**.
+3. **Name tag**: Enter `prod-vpc`.
+4. **IPv4 CIDR block**: Enter `10.0.0.0/16` and click **Create VPC**.
+5. On the left navigation pane, click **Subnets** → **Create subnet**.
+6. **VPC ID**: Select `prod-vpc`.
+7. **Private Subnet 1**:
+   - Name: `prod-private-subnet-1`, AZ: Choose your first AZ (e.g., `us-east-1a`), CIDR: `10.0.1.0/24`
+8. Click **Add new subnet**.
+9. **Private Subnet 2**:
+   - Name: `prod-private-subnet-2`, AZ: Choose a different AZ (e.g., `us-east-1b`), CIDR: `10.0.2.0/24`
+10. Click **Add new subnet**.
+11. **Public Subnet** *(Required for NAT Gateway)*:
+    - Name: `prod-public-subnet`, AZ: Choose any AZ, CIDR: `10.0.3.0/24`
+12. Click **Create subnet**.
+
+#### B. Configure Internet Access (IGW & NAT Gateway)
+*SSM requires the EC2 instance to have outbound internet access. We will provide this securely via a NAT Gateway.*
+1. **Internet Gateway (IGW)**:
+   - Go to **Internet Gateways** → **Create internet gateway**. Name it `prod-igw`.
+   - Select it → **Actions** → **Attach to VPC** → select `prod-vpc`.
+2. **Public Route Table**:
+   - Go to **Route Tables** → **Create route table**. Name it `prod-public-rt`, select `prod-vpc`.
+   - Select `prod-public-rt` → **Routes** tab → **Edit routes** → Add `0.0.0.0/0` targeting `Internet Gateway` (`prod-igw`).
+   - **Subnet associations** tab → **Edit subnet associations** → Select `prod-public-subnet` → **Save**.
+3. **NAT Gateway**:
+   - Go to **NAT Gateways** → **Create NAT gateway**.
+   - Name it `prod-nat`, select `prod-public-subnet`.
+   - Click **Allocate Elastic IP** and click **Create NAT gateway** (wait for it to become available).
+4. **Private Route Table**:
+   - Go to **Route Tables**. Find the default main route table for `prod-vpc` and rename it to `prod-private-rt`.
+   - Select it → **Routes** tab → **Edit routes** → Add `0.0.0.0/0` targeting `NAT Gateway` (`prod-nat`).
+   - *(Since this is the main route table, the private subnets are automatically associated with it).*
+
+#### C. Launch EC2 Instance with SSM Access
+1. **EC2 Console** → **Launch instance**
+2. **Name**: `db-client-ec2`
+3. **AMI**: Amazon Linux 2023
+4. **Network settings**:
+   - **VPC**: `prod-vpc`
+   - **Subnet**: Select one of the private subnets
+   - **Auto-assign public IP**: Disable
+5. **Advanced details** → **IAM instance profile**: Attach a role with the `AmazonSSMManagedInstanceCore` policy.
+6. Click **Launch instance**.
+
+#### C. Connect via SSM Session Manager
+1. In the **EC2 Console**, select the instance.
+2. Click **Connect** → choose the **Session Manager** tab.
+3. Click **Connect** to open a browser-based terminal.
 
 ### Step 1 — Create DB Subnet Group
 1. **RDS Console** → **Subnet groups** → **Create DB subnet group**

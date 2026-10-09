@@ -339,9 +339,9 @@ flowchart LR
     APIGW[Amazon API Gateway] -->|HTTP REST Payload| Lambda[AWS Lambda]
     S3[Amazon S3 Bucket] -->|ObjectCreated<br>Event| Lambda
     DynamoDB[DynamoDB Stream] -->|Record Batch| Lambda
-    Lambda -->|Store Data| DynamoDBTable[(Amazon DynamoDB)]
+    Lambda -->|Store Data| DynamoDBTable["(Amazon DynamoDB)"]
     Lambda -->|Send Alert| SNS[Amazon SNS Topic]
-    Lambda -->|Stream Logs| CloudWatch[Amazon<br>CloudWatch Logs]
+    Lambda -->|Stream Logs| CloudWatch["Amazon, CloudWatch Logs"]
 ```
 
 ---

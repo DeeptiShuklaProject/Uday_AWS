@@ -189,23 +189,23 @@ flowchart TD
     subgraph VPC["Production VPC"]
         subgraph AZA["AZ-A"]
             SubA[Private Subnet A]
-            MT_A[Mount Target<br>10.0.3.100]
+            MT_A["Mount Target, 10.0.3.100"]
             EC2A[EC2-A]
             EC2A -->|NFS mount| MT_A
         end
         
         subgraph AZB["AZ-B"]
             SubB[Private Subnet B]
-            MT_B[Mount Target<br>10.0.4.100]
+            MT_B["Mount Target, 10.0.4.100"]
             EC2B[EC2-B]
             EC2B -->|NFS mount| MT_B
         end
         
-        EFS[(EFS File System<br>fs-abc123<br>Encrypted)]
+        EFS["(EFS File System, fs-abc123, Encrypted)"]
         MT_A --- EFS
         MT_B --- EFS
         
-        SG[Security Group<br>Allow NFS 2049<br>from EC2 SG]
+        SG["Security Group, Allow NFS 2049, from EC2 SG"]
         SG -.-> MT_A
         SG -.-> MT_B
     end
@@ -435,9 +435,9 @@ Your web application runs on multiple EC2 instances behind an ALB. Users upload 
 #### Architecture
 ```mermaid
 flowchart TD
-    ALB[ALB] --> EC2A[EC2-A<br>AZ-A]
-    ALB --> EC2B[EC2-B<br>AZ-B]
-    EC2A -->|Mount /mnt/efs| EFS[(EFS<br>Shared Storage)]
+    ALB[ALB] --> EC2A["EC2-A, AZ-A"]
+    ALB --> EC2B["EC2-B, AZ-B"]
+    EC2A -->|Mount /mnt/efs| EFS["(EFS, Shared Storage)"]
     EC2B -->|Mount /mnt/efs| EFS
 ```
 
@@ -545,7 +545,7 @@ aws efs delete-file-system --file-system-id $FS_ID
 ```mermaid
 flowchart TD
     subgraph VPC["Production VPC"]
-        ALB[ALB<br>Public Subnets]
+        ALB["ALB, Public Subnets"]
         
         subgraph ASG["Auto Scaling Group"]
             subgraph AZA["AZ-A"]
@@ -558,7 +558,7 @@ flowchart TD
             end
         end
         
-        EFS[(EFS<br>Encrypted<br>Multi-AZ)]
+        EFS["(EFS, Encrypted, Multi-AZ)"]
         
         ALB --> EC2A1
         ALB --> EC2A2
@@ -570,7 +570,7 @@ flowchart TD
         EC2B1 ---|NFS| EFS
         EC2B2 ---|NFS| EFS
         
-        Backup[AWS Backup<br>Daily snapshots]
+        Backup["AWS Backup, Daily snapshots"]
         Backup -.-> EFS
     end
 ```
@@ -1043,10 +1043,10 @@ EFS is the glue that enables stateless, horizontally scalable applications on AW
 ## Architecture
 ```mermaid
 flowchart TD
-    EFS[Amazon EFS<br>Shared Filesystem] --- MTA[Mount Target AZ-1]
+    EFS["Amazon EFS, Shared Filesystem"] --- MTA[Mount Target AZ-1]
     EFS --- MTB[Mount Target AZ-2]
-    MTA --- EC2A[EC2 Instance A<br>AZ-1]
-    MTB --- EC2B[EC2 Instance B<br>AZ-2]
+    MTA --- EC2A["EC2 Instance A, AZ-1"]
+    MTB --- EC2B["EC2 Instance B, AZ-2"]
 ```
 
 ### Step 1 — Create EFS Filesystem

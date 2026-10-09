@@ -157,19 +157,19 @@ X-Ray doesn't trace every request (cost/performance). Sampling rules determine w
 
 ```mermaid
 flowchart TD
-    User[User] -->|HTTPS| APIGW[API Gateway<br>X-Ray Enabled]
-    APIGW --> Lambda[Lambda<br>X-Ray Active Tracing]
+    User[User] -->|HTTPS| APIGW["API Gateway, X-Ray Enabled"]
+    APIGW --> Lambda["Lambda, X-Ray Active Tracing"]
     Lambda --> DDB[DynamoDB]
     Lambda --> S3[S3]
     Lambda --> SNS[SNS]
     
-    APIGW -.->|Segments| XRay[AWS X-Ray<br>Service]
+    APIGW -.->|Segments| XRay["AWS X-Ray, Service"]
     Lambda -.->|Segments| XRay
     DDB -.->|Segments| XRay
     
-    XRay --> ServiceMap[Service Map<br>Visual Architecture]
-    XRay --> Traces[Trace Details<br>Per-Request View]
-    XRay --> Analytics[X-Ray Analytics<br>Aggregated Insights]
+    XRay --> ServiceMap["Service Map, Visual Architecture"]
+    XRay --> Traces["Trace Details, Per-Request View"]
+    XRay --> Analytics["X-Ray Analytics, Aggregated Insights"]
 ```
 
 ### How Traces Flow
@@ -421,10 +421,10 @@ Instrument a Lambda-backed API to trace requests end-to-end and identify perform
 #### Architecture
 ```mermaid
 flowchart LR
-    User[User] -->|HTTPS| APIGW[API Gateway<br>X-Ray ON]
-    APIGW --> Lambda[Lambda<br>X-Ray Active]
-    Lambda --> DDB[DynamoDB<br>Auto-traced]
-    Lambda --> S3[S3<br>Auto-traced]
+    User[User] -->|HTTPS| APIGW["API Gateway, X-Ray ON"]
+    APIGW --> Lambda["Lambda, X-Ray Active"]
+    Lambda --> DDB["DynamoDB, Auto-traced"]
+    Lambda --> S3["S3, Auto-traced"]
 ```
 
 #### Step 1 — Create Lambda with X-Ray SDK
@@ -525,9 +525,9 @@ flowchart TD
     end
     
     subgraph Observability["Observability Stack"]
-        CW_Metrics[CloudWatch Metrics<br>WHAT happened]
-        CW_Logs[CloudWatch Logs<br>WHY it happened]
-        XRay[X-Ray Traces<br>WHERE it happened]
+        CW_Metrics["CloudWatch Metrics, WHAT happened"]
+        CW_Logs["CloudWatch Logs, WHY it happened"]
+        XRay["X-Ray Traces, WHERE it happened"]
     end
     
     subgraph Actions["Response"]

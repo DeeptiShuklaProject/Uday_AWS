@@ -246,26 +246,26 @@ fields @timestamp, httpMethod, path, statusCode
 ```mermaid
 flowchart TD
     subgraph Sources["Data Sources"]
-        EC2[EC2<br>CPU, Network + Agent: Memory, Disk]
-        RDS[RDS<br>CPU, IOPS, Connections]
-        Lambda[Lambda<br>Invocations, Errors, Duration]
-        ALB[ALB<br>Latency, 5xx, Request Count]
-        ECS[ECS<br>CPU, Memory per Task]
-        Apps[App Logs<br>Errors, Latency, Business KPIs]
+        EC2["EC2, CPU, Network + Agent: Memory, Disk"]
+        RDS["RDS, CPU, IOPS, Connections"]
+        Lambda["Lambda, Invocations, Errors, Duration"]
+        ALB["ALB, Latency, 5xx, Request Count"]
+        ECS["ECS, CPU, Memory per Task"]
+        Apps["App Logs, Errors, Latency, Business KPIs"]
     end
     
     subgraph CW["Amazon CloudWatch"]
-        Metrics[Metrics<br>Built-in + Custom]
-        Logs[Logs<br>Log Groups + Insights]
-        Alarms[Alarms<br>Threshold + Composite]
-        Dashboard[Dashboards<br>Real-time Visualization]
+        Metrics["Metrics, Built-in + Custom"]
+        Logs["Logs, Log Groups + Insights"]
+        Alarms["Alarms, Threshold + Composite"]
+        Dashboard["Dashboards, Real-time Visualization"]
     end
     
     subgraph Actions["Automated Actions"]
         SNS[SNS → Slack/PagerDuty]
-        ASG[Auto Scaling<br>Scale In/Out]
-        Lambda_Fix[Lambda<br>Auto-Remediate]
-        SSM[SSM Automation<br>Runbook]
+        ASG["Auto Scaling, Scale In/Out"]
+        Lambda_Fix["Lambda, Auto-Remediate"]
+        SSM["SSM Automation, Runbook"]
     end
     
     Sources --> Metrics
@@ -521,7 +521,7 @@ Configure CloudWatch monitoring with Agent, alarms, metric filters, dashboard, a
 #### Architecture
 ```mermaid
 flowchart LR
-    EC2[EC2 + CW Agent<br>CPU, Mem, Disk, Logs] --> CW[CloudWatch]
+    EC2["EC2 + CW Agent, CPU, Mem, Disk, Logs"] --> CW[CloudWatch]
     CW -->|Alarm| SNS[SNS → Slack]
     CW -->|Metric Filter| Alarm2[Error Alarm]
     Alarm2 --> SNS
